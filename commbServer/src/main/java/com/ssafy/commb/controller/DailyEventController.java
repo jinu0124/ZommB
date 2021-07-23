@@ -10,20 +10,27 @@ import org.springframework.web.bind.annotation.RestController;
 public class DailyEventController {
 
     @GetMapping("")
-    public Object findWeeklyEventList(){
+    public Object findDailyEventList(){
         return null;
     }
 
-    @GetMapping("/{bookId}/feeds")
+    @GetMapping("/{dailyId}/feeds")
     public Object findDailyEventFeedList(
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("dailyId") Integer dailyId
     ){
         return null;
     }
 
-    @GetMapping("/{bookId}/users")
+    @GetMapping("/{dailyId}/users")
     public Object findDailyEventUserList(
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("dailyId") Integer dailyId
+    ){
+        return null;
+    }
+
+    @GetMapping("/{dailyId}/users/cnt")
+    public Object findDailyEventUserCnt(
+            @PathVariable("dailyId") Integer dailyId
     ){
         return null;
     }
