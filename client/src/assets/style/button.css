@@ -1,0 +1,22 @@
+.btn-1 {
+  border: none;
+  width: 16rem;
+  height: 2.5rem;
+  border-radius: 1.25rem;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-1:hover {
+  font-size: 1.05rem;
+}
+
+.btn-yellow {
+  background-color: #FFDC7C;
+  color: #585858;
+}
+.btn-grey {
+  background-color: #A4A4A4;
+  color: #fff;
+}
