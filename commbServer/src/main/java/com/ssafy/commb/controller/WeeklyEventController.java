@@ -14,16 +14,23 @@ public class WeeklyEventController {
         return null;
     }
 
-    @GetMapping("/{bookId}/feeds")
+    @GetMapping("/{weeklyId}/feeds")
     public Object findWeeklyEventFeedList(
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("weeklyId") Integer weeklyId
     ){
         return null;
     }
 
-    @GetMapping("/{bookId}/users")
+    @GetMapping("/{weeklyId}/users")
     public Object findWeeklyEventUserList(
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("weeklyId") Integer weeklyId
+    ){
+        return null;
+    }
+
+    @GetMapping("/{weeklyId}/users/cnt")
+    public Object findWeeklyEventUserCnt(
+            @PathVariable("weeklyId") Integer weeklyId
     ){
         return null;
     }
