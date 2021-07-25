@@ -20,14 +20,14 @@ public class WeeklyEventDto {
     private boolean weeklyParticipate;
 
     static class Weekly{
-        Long id;
+        int id;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private Long today;
+        private int today;
     }
 
     @Getter

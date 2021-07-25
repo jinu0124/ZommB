@@ -16,9 +16,9 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class CommentDto {
-    private Long id;
+    private int id;
     private String content;
-    private Long userId;
+    private int userId;
     private String nickname;
     private int thumbCnt;
     private int createAt;

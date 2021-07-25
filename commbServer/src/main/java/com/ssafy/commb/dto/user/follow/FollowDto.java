@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class FollowDto {
-    private Long following;
-    private Long follower;
+    private int following;
+    private int follower;
     private boolean isFollow;
 
 }

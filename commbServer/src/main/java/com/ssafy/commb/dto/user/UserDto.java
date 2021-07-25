@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class UserDto {
-    private Long id;
+    private int id;
     private String email;
     private String name;
     private String nickname;

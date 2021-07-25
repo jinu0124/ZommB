@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                // Builder 패턴 사용
 public class BookDto {
-    private Long id;
+    private int id;
     private String bookName;
     private String author;
     private String publisher;

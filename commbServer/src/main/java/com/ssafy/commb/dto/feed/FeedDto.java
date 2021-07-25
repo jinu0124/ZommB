@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class FeedDto {
-    private Long id;
+    private int id;
     private int createAt;
     private String content;
     private boolean isThumb;

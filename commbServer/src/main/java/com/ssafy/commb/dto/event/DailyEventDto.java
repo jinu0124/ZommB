@@ -17,14 +17,14 @@ public class DailyEventDto {
     private KeywordDto keyword;
 
     static class Daily{
-        Long id;
+        int id;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private Long today;
+        private int today;
     }
 
     @Getter
