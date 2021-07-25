@@ -6,6 +6,7 @@ import com.ssafy.commb.dto.user.UserDto;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -21,7 +22,7 @@ public class CommentDto {
     private int userId;
     private String nickname;
     private int thumbCnt;
-    private int createAt;
+    private Date createAt;
     private boolean isThumb;
     private boolean isMod;
 

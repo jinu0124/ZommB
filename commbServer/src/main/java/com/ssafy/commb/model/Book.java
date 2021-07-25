@@ -37,4 +37,8 @@ public class Book {
 
     @OneToMany(mappedBy = "bookShelves")
     private List<BookShelves> bookShelves = new ArrayList<BookShelves>();
+
+    @OneToMany(mappedBy = "weeklyEvent")
+    private List<WeeklyEvent> weeklyEvents = new ArrayList<WeeklyEvent>();
+
 }

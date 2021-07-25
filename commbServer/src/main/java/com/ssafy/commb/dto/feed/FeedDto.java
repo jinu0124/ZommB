@@ -6,6 +6,7 @@ import com.ssafy.commb.dto.user.UserDto;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -17,7 +18,7 @@ import java.util.List;
 @Builder                                    // Builder 패턴 사용
 public class FeedDto {
     private int id;
-    private int createAt;
+    private Date createAt;
     private String content;
     private boolean isThumb;
     private int thumbCnt;

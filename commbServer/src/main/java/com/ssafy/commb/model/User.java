@@ -49,6 +49,10 @@ public class User {
     @OneToMany(mappedBy = "bookShelves")
     private List<BookShelves> bookShelves = new ArrayList<BookShelves>();
 
+    /* 유저의 주간 이벤트 참여 */
+    @OneToMany(mappedBy = "weeklyEventParticipate")
+    private List<WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<WeeklyEventParticipate>();
+
     /* 유저의 상단도서 */
     @ManyToMany
     @JoinTable(name="Top_Book", joinColumns = @JoinColumn(name="user_id")
