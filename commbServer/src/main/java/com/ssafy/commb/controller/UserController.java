@@ -1,13 +1,22 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.BookDto;
+import com.ssafy.commb.dto.user.MyDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="/users")
 public class UserController {
 
     @GetMapping("")
-    public Object finUserList(){
+    public Object findUserList(){
+
         return null;
     }
 
@@ -27,8 +36,13 @@ public class UserController {
     }
 
     @GetMapping("/login")
-    public Object login(){
-        return null;
+    public ResponseEntity<MyDto.Response> login(){
+
+        MyDto my = MyDto.builder().id(1L).nickname("닉네임").userFileUrl("url").build();
+        MyDto.Response myRes = new MyDto.Response();
+        myRes.setData(my);
+
+        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
     }
 
     @GetMapping("/{userId}")

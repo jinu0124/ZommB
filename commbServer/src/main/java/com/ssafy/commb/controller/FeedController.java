@@ -1,19 +1,55 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.BookDto;
+import com.ssafy.commb.dto.feed.CommentDto;
+import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.feed.HashTagDto;
+import com.ssafy.commb.dto.user.UserDto;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EmbeddedId;
+import javax.persistence.Entity;
+import javax.xml.stream.events.Comment;
+import java.awt.print.Book;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="/feeds")
 public class FeedController {
 
     // 게시물 리스트 검색
-    @GetMapping("/")
-    public Object getFeeds(@RequestBody String searchWord){
-        return null;
+    @GetMapping("")
+    public Object getFeeds(@RequestParam String searchWord){
+        UserDto user = UserDto.builder().id(3L).nickname("nick").userFileUrl("rehert").build();
+        BookDto book = new BookDto();
+
+        List<HashTagDto> hashTags = new ArrayList<>();
+        hashTags.add(HashTagDto.builder().tag("hre").build());
+
+        List<CommentDto> comments = new ArrayList<>();
+        comments.add(CommentDto.builder().id(12L).content("geww").userId(45L).nickname("nick2").thumbCnt(560).createAt(52352352).isThumb(false).isMod(false).build());
+
+
+        FeedDto feed = FeedDto.builder().id(1L).createAt(532).content("few").isThumb(true)
+                .thumbCnt(565).feedFileUrl("fwergrwe").user(user).book(book).hashTags(hashTags).comments(comments).build();
+
+        FeedDto.Response feedRes = new FeedDto.Response();
+        feedRes.setData(feed);
+
+        List<FeedDto.Response> feedResList = new ArrayList<>();
+        feedResList.add(feedRes);
+
+        return new ResponseEntity<List<FeedDto.Response>>(feedResList, HttpStatus.OK);
     }
 
     // 게시물 작성
-    @PostMapping("/")
+    @PostMapping("")
     public Object uploadFeed(@RequestBody Object feed){
         return null;
     }
@@ -48,6 +84,7 @@ public class FeedController {
         return null;
     }
 
+
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")
     public Object modifyComment(@PathVariable String commentId, @PathVariable String feedId, @RequestBody Object feed){
@@ -60,22 +97,24 @@ public class FeedController {
         return null;
     }
 
-    // 댓글 좋아요
+    // 댓글 좋아요 or 취소
     @PostMapping("/{feedId}/comments/{commentId}/comment-like")
     public Object likeComment(@PathVariable String feedId, @PathVariable String commentId){
         return null;
     }
 
 
-    // 댓글 삭제
-    @DeleteMapping("/{feedId}/comments/{commentId}/comment-like")
-    public Object deleteLikeComment(@PathVariable String feedId, @PathVariable String commentId){
-        return null;
-    }
+    // 댓글 좋아요 취소 삭제
+//    @DeleteMapping("/{feedId}/comments/{commentId}/comment-like")
+//    public Object deleteLikeComment(@PathVariable String feedId, @PathVariable String commentId){
+//        return null;
+//    }
 
     // 피드 신고
     @PostMapping("/{feedId}/reports")
     public Object reportFeed(@PathVariable String feedId, @RequestBody Object report){
         return null;
     }
+
+
 }
