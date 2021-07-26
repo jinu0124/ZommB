@@ -46,66 +46,88 @@ public class UserController {
             e.printStackTrace();
         }
     }
-
+    // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
     public Object findUserList(){
+        LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).bookmarkOn(bool).pencilOn(bool).build();
+        UserDto user = UserDto.builder().id(id).email("email").name(name).nickname(nickname).role("role").level(level).userFileUrl(url).build();
 
-        return null;
+        UserDto.Response userRes = new UserDto.Response();
+        userRes.setData(user);
+
+        List<UserDto.Response> users = new ArrayList<>();
+        users.add(userRes);
+
+        return new ResponseEntity<List<UserDto.Response>>(users, HttpStatus.OK);
     }
 
+    // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
-    public Object singUp(){
-        return null;
+    public ResponseEntity singUp(){
+
+        return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    // 회원가입/로그인 - Email 중복 확인
     @GetMapping("/email")
-    public Object duplicateEmail(){
-        return null;
+    public ResponseEntity duplicateEmail(){
+
+        return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // 회원가입/로그인 - 소셜 회원가입
     @PostMapping("/social/kakao")
     public Object kakaoLogin(){
-        return null;
-    }
 
-    @GetMapping("/login")
-    public ResponseEntity<MyDto.Response> login(){
-
-        MyDto my = MyDto.builder().id(1).nickname("닉네임").userFileUrl("url").build();
+        MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
 
         return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
     }
 
+    // 회원가입/로그인 - 자체 로그인
+    @GetMapping("/login")
+    public ResponseEntity<MyDto.Response> login(){
+
+        MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
+        MyDto.Response myRes = new MyDto.Response();
+        myRes.setData(my);
+
+        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
+    }
+
+    // 회원가입/로그인 - 비밀번호 찾기
     @GetMapping("/{userId}")
-    public Object findUser(
-        @PathVariable("userId") Integer userId
-    ){
+    public Object findUser(@PathVariable("userId") Integer userId){
+
+        // email 인증 flow 구현 뒤에 수정해야함!!!!!
+
         return null;
     }
 
+    // 회원가입/로그인 - 프로필 수정
     @PostMapping("/{userId}")
-    public Object updateUser(
-            @PathVariable("userId") Integer userId
-    ){
-        return null;
+    public ResponseEntity updateUser(@PathVariable("userId") Integer userId){
+
+        return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
-    public Object updateUserInfo(
-            @PathVariable("userId") Integer userId
-    ){
-        return null;
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId){
+
+        return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // 회원가입/로그인 - 회원 탈퇴
     @DeleteMapping("/{userId}")
-    public Object deleteUser(
-            @PathVariable("userId") Integer userId
-    ){
-        return null;
+    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId){
+
+        return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // 회원 프로필 - 1인 게시물(피드) 리스트 조회
     // 피드 게시물 리스트 조회
     @GetMapping("/{userId}/feeds")
     public ResponseEntity<List<FeedDto.Response>> findUserFeed(
