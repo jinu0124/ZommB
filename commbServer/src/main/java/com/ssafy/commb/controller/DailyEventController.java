@@ -1,6 +1,5 @@
 package com.ssafy.commb.controller;
 
-import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.event.DailyEventDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,9 +7,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value="/daily-events")
@@ -34,23 +30,20 @@ public class DailyEventController {
     }
 
     @GetMapping("/{dailyId}/feeds")
-    public Object findDailyEventFeedList(
-            @PathVariable("dailyId") Integer dailyId
-    ){
-        return null;
+    public Object findDailyEventFeedList(@PathVariable("dailyId") Integer dailyId){
+
+        return new ResponseEntity<DailyEventDto.Response>((DailyEventDto.Response) null, HttpStatus.OK);
     }
 
     @GetMapping("/{dailyId}/users")
-    public Object findDailyEventUserList(
-            @PathVariable("dailyId") Integer dailyId
-    ){
-        return null;
+    public Object findDailyEventUserList(@PathVariable("dailyId") Integer dailyId){
+        return new ResponseEntity<DailyEventDto.Response>((DailyEventDto.Response) null, HttpStatus.OK);
     }
 
     @GetMapping("/{dailyId}/users/cnt")
-    public Object findDailyEventUserCnt(
-            @PathVariable("dailyId") Integer dailyId
-    ){
-        return null;
+    public Object findDailyEventUserCnt(@PathVariable("dailyId") Integer dailyId)
+    {
+
+        return new ResponseEntity<DailyEventDto.Response>((DailyEventDto.Response) null, HttpStatus.OK);
     }
 }

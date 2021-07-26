@@ -33,9 +33,7 @@ public class BookController {
 
 
     @GetMapping("/{bookId}")
-    public Object findBookList(
-            @PathVariable("bookId") Integer bookId
-    ){
+    public Object findBookList(@PathVariable("bookId") Integer bookId){
 
         return new ResponseEntity<BookDto.Response>((BookDto.Response) null, HttpStatus.OK);
     }
