@@ -17,6 +17,7 @@ import javax.xml.stream.events.Comment;
 import java.awt.print.Book;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -26,17 +27,16 @@ public class FeedController {
     // 게시물 리스트 검색
     @GetMapping("")
     public Object getFeeds(@RequestParam String searchWord){
-        UserDto user = UserDto.builder().id(3L).nickname("nick").userFileUrl("rehert").build();
+        UserDto user = UserDto.builder().id(3).nickname("nick").userFileUrl("rehert").build();
         BookDto book = new BookDto();
 
         List<HashTagDto> hashTags = new ArrayList<>();
         hashTags.add(HashTagDto.builder().tag("hre").build());
 
         List<CommentDto> comments = new ArrayList<>();
-        comments.add(CommentDto.builder().id(12L).content("geww").userId(45L).nickname("nick2").thumbCnt(560).createAt(52352352).isThumb(false).isMod(false).build());
+        comments.add(CommentDto.builder().id(12).content("geww").userId(45).nickname("nick2").thumbCnt(560).createAt(new Date("2021-07-31")).isThumb(false).isMod(false).build());
 
-
-        FeedDto feed = FeedDto.builder().id(1L).createAt(532).content("few").isThumb(true)
+        FeedDto feed = FeedDto.builder().id(1).createAt(new Date("2021-07-22")).content("few").isThumb(true)
                 .thumbCnt(565).feedFileUrl("fwergrwe").user(user).book(book).hashTags(hashTags).comments(comments).build();
 
         FeedDto.Response feedRes = new FeedDto.Response();

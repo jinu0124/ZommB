@@ -38,7 +38,7 @@ public class UserController {
     @GetMapping("/login")
     public ResponseEntity<MyDto.Response> login(){
 
-        MyDto my = MyDto.builder().id(1L).nickname("닉네임").userFileUrl("url").build();
+        MyDto my = MyDto.builder().id(1).nickname("닉네임").userFileUrl("url").build();
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
 
