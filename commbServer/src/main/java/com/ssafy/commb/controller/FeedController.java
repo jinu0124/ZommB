@@ -47,7 +47,7 @@ public class FeedController {
     @GetMapping("")
     public Object getFeeds(@RequestParam String searchWord) throws ParseException {
         UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
-        BookDto book = new BookDto();
+        BookDto book = BookDto.builder().id(id).bookName("책이름").build();
 
         List<HashTagDto> hashTags = new ArrayList<>();
         hashTags.add(HashTagDto.builder().tag(tag).build());
@@ -56,7 +56,7 @@ public class FeedController {
         comments.add(CommentDto.builder().id(id).content(content).userId(id).nickname(nickname).thumbCnt(cnt).createAt(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-07-31 12:10:00")).isThumb(bool).isMod(bool).build());
 
 
-        FeedDto feed = FeedDto.builder().id(id).createAt(new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").parse("2021-07-31 10:12:15")).content(content).isThumb(bool)
+        FeedDto feed = FeedDto.builder().id(id).createAt(date).content(content).isThumb(bool)
                 .thumbCnt(cnt).feedFileUrl(url).user(user).book(book).hashTags(hashTags).comments(comments).build();
 
         FeedDto.Response feedRes = new FeedDto.Response();
