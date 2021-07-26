@@ -19,9 +19,10 @@ public class Keyword {
 
     private String keyword;
 
+    /* 유저키워드 */
     @OneToMany(mappedBy = "keyword")
     private List<UserKeyword> userKeywords = new ArrayList<UserKeyword>();
 
     @OneToMany(mappedBy = "keyword")
-    private List<>
+    private List<DailyEvent> dailyEvents = new ArrayList<DailyEvent>();
 }
