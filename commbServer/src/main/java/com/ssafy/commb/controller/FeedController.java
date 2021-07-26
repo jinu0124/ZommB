@@ -89,13 +89,14 @@ public class FeedController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // 게시물 좋아요 or 취소
+    // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
     public ResponseEntity likeFeed(@PathVariable String feedId){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    // 게시물 좋아요 취소
     @DeleteMapping("/{feedId}/feed-like")
     public ResponseEntity deleteLikeFeed(@PathVariable String feedId){
 
