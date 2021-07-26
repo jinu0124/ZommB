@@ -33,18 +33,18 @@ public class Book {
 
     /* 책과 피드는 일대다 관계 */
     @OneToMany(mappedBy = "book")
-    private List<Feed> feeds = new ArrayList<Feed>();
+    private List<temp.Feed> feeds = new ArrayList<temp.Feed>();
 
     @OneToMany(mappedBy = "book")
-    private List<BookShelves> bookShelves = new ArrayList<BookShelves>();
+    private List<temp.BookShelves> bookShelves = new ArrayList<temp.BookShelves>();
 
     @OneToMany(mappedBy = "book")
-    private List<WeeklyEvent> weeklyEvents = new ArrayList<WeeklyEvent>();
+    private List<temp.WeeklyEvent> weeklyEvents = new ArrayList<temp.WeeklyEvent>();
 
 
     // 도서 키워드
     @ManyToMany
     @JoinTable(name="Book_Keyword", joinColumns = @JoinColumn(name="book_id")
             , inverseJoinColumns = @JoinColumn(name="keyword_id"))
-    private List<Keyword> keywords = new ArrayList<Keyword>();
+    private List<temp.Keyword> keywords = new ArrayList<temp.Keyword>();
 }
