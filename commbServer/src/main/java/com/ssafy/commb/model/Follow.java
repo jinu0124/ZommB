@@ -4,12 +4,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Entity
 @Table(name="Follow")
 @Getter
 @Setter
-public class Follow {
+public class Follow implements Serializable {
 
     @Id
     @ManyToOne

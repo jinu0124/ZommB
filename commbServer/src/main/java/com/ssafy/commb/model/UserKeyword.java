@@ -17,10 +17,10 @@ public class UserKeyword {
     private int cnt;
 
     @ManyToOne
-    @JoinColumn(name="keyword_id")
+    @JoinColumn(name="keyword_id", insertable=false, updatable=false)
     private Keyword keyword;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", insertable=false, updatable=false)
     private User user;
 }
