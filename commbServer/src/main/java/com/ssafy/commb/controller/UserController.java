@@ -10,8 +10,6 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
-import com.ssafy.commb.model.Book;
-import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
