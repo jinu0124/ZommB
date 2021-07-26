@@ -30,6 +30,7 @@ public class BookShelfDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response{               // 반환
         private BookShelfDto data;
         private String retMsg;

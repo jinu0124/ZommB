@@ -47,6 +47,7 @@ public class UserDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response{               // 반환
         private UserDto data;
         private String retMsg;

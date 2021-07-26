@@ -29,6 +29,6 @@ public class WeeklyEvent {
     private Book book;
 
     @OneToMany(mappedBy = "weeklyEvent")
-    private List<temp.WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<temp.WeeklyEventParticipate>();
+    private List<WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<WeeklyEventParticipate>();
 
 }

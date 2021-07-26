@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.user.MyDto;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpStatus;
@@ -8,7 +9,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 
 @RestController
@@ -27,6 +30,7 @@ public class UserController {
     static final String genre = "공포";
     static final int year = 2021;
     static final float rate = 3.5f;
+    static final String keyword = "키워드입니다";
 
     static {
         try {
@@ -175,18 +179,28 @@ public class UserController {
         return null;
     }
 
+    // 친구 추천 목록 조회
     @GetMapping("/{userId}/follow-recommend")
     public Object findFollowRecommend(
             @PathVariable("userId") Integer userId
     ){
+
         return null;
     }
 
+    // 추천 키워드 목록
     @GetMapping("/{userId}/keyword-recommend")
-    public Object findKeywordRecommend(
+    public ResponseEntity<List<KeywordDto.Response>> findKeywordRecommend(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+        KeywordDto keywordDto = KeywordDto.builder().id(id).keyword(keyword).cnt(cnt).build();
+        KeywordDto.Response keywordRes = new KeywordDto.Response();
+        keywordRes.setData(keywordDto);
+
+        List<KeywordDto.Response> keywordResList = new ArrayList<KeywordDto.Response>();
+        keywordResList.add(keywordRes);
+
+        return new ResponseEntity<List<KeywordDto.Response>>(keywordResList, HttpStatus.OK);
     }
 
 }

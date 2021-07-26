@@ -20,6 +20,7 @@ public class KeywordDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
         private KeywordDto data;
         private String retMsg;

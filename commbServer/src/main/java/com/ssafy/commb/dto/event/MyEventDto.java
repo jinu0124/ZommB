@@ -31,6 +31,7 @@ public class MyEventDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response{               // 반환
         private MyEventDto data;
         private String retMsg;

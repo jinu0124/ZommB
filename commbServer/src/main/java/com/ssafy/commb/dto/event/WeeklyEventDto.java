@@ -34,6 +34,7 @@ public class WeeklyEventDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response{               // 반환
         private WeeklyEventDto data;
         private String retMsg;

@@ -15,10 +15,10 @@ public class Follow implements Serializable {
     @Id
     @ManyToOne
     @JoinColumn(name="follower")
-    private temp.User follower;
+    private User follower;
 
     @Id
     @ManyToOne
     @JoinColumn(name="following")
-    private temp.User following;
+    private User following;
 }

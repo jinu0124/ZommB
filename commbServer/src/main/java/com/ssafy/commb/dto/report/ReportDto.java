@@ -24,6 +24,7 @@ public class ReportDto {
     @Setter
     @NoArgsConstructor
     @AllArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
         private ReportDto data;
         private String retMsg;

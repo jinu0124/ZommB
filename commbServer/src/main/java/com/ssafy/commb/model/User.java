@@ -51,7 +51,7 @@ public class User {
 
     /* 유저의 주간 이벤트 참여 */
     @OneToMany(mappedBy = "user")
-    private List<temp.WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<temp.WeeklyEventParticipate>();
+    private List<WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<WeeklyEventParticipate>();
 
     /* 유저의 상단도서 */
     @ManyToMany
@@ -60,7 +60,7 @@ public class User {
     private List<Book> topBooks = new ArrayList<Book>();
 
     @OneToMany(mappedBy = "user")
-    private List<temp.UserKeyword> userKeywords = new ArrayList<temp.UserKeyword>();
+    private List<UserKeyword> userKeywords = new ArrayList<UserKeyword>();
 
     @OneToMany(mappedBy = "user")
     private List<DailyEventParticipate> dailyEventParticipates = new ArrayList<DailyEventParticipate>();

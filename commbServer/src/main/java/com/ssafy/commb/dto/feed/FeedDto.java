@@ -44,6 +44,7 @@ public class FeedDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {               // 반환
         private FeedDto data;
         private String retMsg;                  // message

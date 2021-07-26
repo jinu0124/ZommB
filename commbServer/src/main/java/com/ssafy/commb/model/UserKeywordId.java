@@ -1,5 +1,7 @@
 package com.ssafy.commb.model;
 
+import lombok.AllArgsConstructor;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.io.Serializable;
@@ -13,7 +15,7 @@ public class UserKeywordId implements Serializable {
     @Column(name = "user_id")
     private int userId;
 
-    UserKeywordId() {}
+    public UserKeywordId() {}
 
     public UserKeywordId(int keywordId, int userId) {
         this.keywordId = keywordId;

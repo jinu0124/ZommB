@@ -19,6 +19,7 @@ public class BookShelfCntDto {
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {
         private BookShelfCntDto data;
         private String retMsg;
