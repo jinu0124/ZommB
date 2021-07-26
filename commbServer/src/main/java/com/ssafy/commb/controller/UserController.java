@@ -10,6 +10,8 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,6 +23,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping(value="/users")
+@Api("User Controller API V1")
 public class UserController {
 
     static final int id = 1;
@@ -48,7 +51,8 @@ public class UserController {
     }
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
-    public Object findUserList(){
+    @ApiOperation(value="(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
+    public ResponseEntity<List<UserDto.Response>> findUserList(){
         LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).bookmarkOn(bool).pencilOn(bool).build();
         UserDto user = UserDto.builder().id(id).email("email").name(name).nickname(nickname).role("role").level(level).userFileUrl(url).build();
 
@@ -63,6 +67,7 @@ public class UserController {
 
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
+    @ApiOperation(value="자체 회원가입")
     public ResponseEntity singUp(){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
@@ -70,6 +75,7 @@ public class UserController {
 
     // 회원가입/로그인 - Email 중복 확인
     @GetMapping("/email")
+    @ApiOperation(value="Email 중복 확인")
     public ResponseEntity duplicateEmail(){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -77,17 +83,19 @@ public class UserController {
 
     // 회원가입/로그인 - 소셜 회원가입
     @PostMapping("/social/kakao")
-    public Object kakaoLogin(){
+    @ApiOperation(value="소셜 회원가입", response = MyDto.Response.class)
+    public ResponseEntity<MyDto.Response> kakaoLogin(){
 
         MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
 
-        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
+        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.valueOf(201));
     }
 
     // 회원가입/로그인 - 자체 로그인
     @GetMapping("/login")
+    @ApiOperation(value="자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> login(){
 
         MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
@@ -99,6 +107,7 @@ public class UserController {
 
     // 회원가입/로그인 - 비밀번호 찾기
     @GetMapping("/{userId}")
+    @ApiOperation(value="비밀번호 찾기 (미정)")
     public Object findUser(@PathVariable("userId") Integer userId){
 
         // email 인증 flow 구현 뒤에 수정해야함!!!!!
@@ -108,6 +117,7 @@ public class UserController {
 
     // 회원가입/로그인 - 프로필 수정
     @PostMapping("/{userId}")
+    @ApiOperation(value="프로필 수정")
     public ResponseEntity updateUser(@PathVariable("userId") Integer userId){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -115,6 +125,7 @@ public class UserController {
 
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
+    @ApiOperation(value="비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -122,6 +133,7 @@ public class UserController {
 
     // 회원가입/로그인 - 회원 탈퇴
     @DeleteMapping("/{userId}")
+    @ApiOperation(value="회원탈퇴")
     public ResponseEntity deleteUser(@PathVariable("userId") Integer userId){
 
         return new ResponseEntity(HttpStatus.valueOf(204));
@@ -130,6 +142,7 @@ public class UserController {
     // 회원 프로필 - 1인 게시물(피드) 리스트 조회
     // 피드 게시물 리스트 조회
     @GetMapping("/{userId}/feeds")
+    @ApiOperation(value="1인 피드 리스트 조회", response = FeedDto.Response.class)
     public ResponseEntity<List<FeedDto.Response>> findUserFeed(
             @PathVariable("userId") Integer userId
     ){
@@ -155,6 +168,7 @@ public class UserController {
 
     // 회원의 게시물(피드) 수
     @GetMapping("/{userId}/feeds/cnt")
+    @ApiOperation(value="회원의 피드 수")
     public ResponseEntity<Map<String, Integer>> findUserFeedCnt(
             @PathVariable("userId") Integer userId
     ){
@@ -166,6 +180,7 @@ public class UserController {
 
     // 서재/북카트 내 도서 검색
     @GetMapping("/{userId}/bookshelves")
+    @ApiOperation(value="북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
             @RequestParam BookDto book
@@ -183,19 +198,21 @@ public class UserController {
         return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
     }
 
-    // 책 추가
+    // 서재/북카트 책 추가
     @PostMapping("/{userId}/bookshelves")
+    @ApiOperation(value="북카트/서재 도서 추가")
     public ResponseEntity insertUserBookShelves(
             @PathVariable("userId") Integer userId,
             @RequestBody BookDto book
     ){
 
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
     // 읽은/읽을 책 수 반환
     @GetMapping("/{userId}/bookshelves/cnt")
+    @ApiOperation(value="읽은/읽을(서재/북카트) 도서 수", response = BookShelfCntDto.Response.class)
     public ResponseEntity<BookShelfCntDto.Response> findUserBookShelvesCnt(
             @PathVariable("userId") Integer userId
     ){
@@ -209,6 +226,7 @@ public class UserController {
 
     // 서재 책 1권 삭제하기
     @DeleteMapping("/{userId}/bookshelves/{bookId}")
+    @ApiOperation(value="서재/북카트 도서 1권 삭제하기")
     public ResponseEntity deleteUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
@@ -218,6 +236,7 @@ public class UserController {
 
     // 북카트에서 서재로 옮기기
     @PatchMapping("/{userId}/bookshelves/{bookId}")
+    @ApiOperation(value="북카트에서 서재로 도서 이동")
     public ResponseEntity updateUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
@@ -230,6 +249,7 @@ public class UserController {
     // /users/2/top-bar
     // 상단 바 도서 목록 조회
     @GetMapping("/{userId}/top-bar")
+    @ApiOperation(value="상단 바 도서 목록 조회", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findUserTopBar(
             @PathVariable("userId") Integer userId
     ){
@@ -247,6 +267,7 @@ public class UserController {
 
     // 상단 바 도서 등록
     @PostMapping("/{userId}/top-bar")
+    @ApiOperation(value="상단 바 도서 등록")
     public ResponseEntity InsertUserTopBar(
             @PathVariable("userId") Integer userId
     ){
@@ -256,6 +277,7 @@ public class UserController {
 
     // 상단 바 도서 전체 삭제
     @DeleteMapping("/{userId}/top-bar")
+    @ApiOperation(value="상단 바 도서 전체 삭제")
     public ResponseEntity deleteUserTopBarAll(
             @PathVariable("userId") Integer userId
     ){
@@ -266,6 +288,7 @@ public class UserController {
 
     // 상단바 도서 삭제
     @DeleteMapping("/{userId}/top-bar/{bookId}")
+    @ApiOperation(value="상단 바 도서 1권 삭제")
     public ResponseEntity deleteUserTopBar(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
@@ -278,6 +301,7 @@ public class UserController {
     // /users/2/follow-recommend
     // 친구 추천 목록 조회
     @GetMapping("/{userId}/follow-recommend")
+    @ApiOperation(value="친구 추천 목록 조회", response = UserDto.Response.class)
     public ResponseEntity<List<UserDto.Response>> findFollowRecommend(
             @PathVariable("userId") Integer userId
     ){
@@ -299,6 +323,7 @@ public class UserController {
     // /users/1/keyword-recommend
     // 추천 키워드 목록
     @GetMapping("/{userId}/keyword-recommend")
+    @ApiOperation(value="추천 키워드 리스트", response = KeywordDto.Response.class)
     public ResponseEntity<List<KeywordDto.Response>> findKeywordRecommend(
             @PathVariable("userId") Integer userId
     ){

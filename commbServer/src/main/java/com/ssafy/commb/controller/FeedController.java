@@ -7,6 +7,8 @@ import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.report.ReportDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,6 +25,7 @@ import static java.lang.System.currentTimeMillis;
 
 @RestController
 @RequestMapping(value="/feeds")
+@Api("Feed Controller API V1")
 public class FeedController {
 
     static final int id = 1;
@@ -45,7 +48,8 @@ public class FeedController {
     // /feeds?searchWord="abc"
     // 게시물 리스트 검색
     @GetMapping("")
-    public Object getFeeds(@RequestParam String searchWord) throws ParseException {
+    @ApiOperation(value="피드 리스트 검색", response = FeedDto.Response.class)
+    public ResponseEntity<List<FeedDto.Response>> getFeeds(@RequestParam String searchWord) throws ParseException {
         UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
         BookDto book = BookDto.builder().id(id).bookName("책이름").build();
 
@@ -70,35 +74,40 @@ public class FeedController {
 
     // 게시물 작성
     @PostMapping("")
+    @ApiOperation(value="피드 작성")
     public ResponseEntity uploadFeed(@RequestBody FeedDto feed, MultipartHttpServletRequest request){
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
     // 게시물 수정
     @PutMapping("/{feedId}")
-    public ResponseEntity modifyFeed(@RequestBody FeedDto feed, @PathVariable String feedId){
+    @ApiOperation(value="피드 수정")
+    public ResponseEntity modifyFeed(@RequestBody FeedDto feed, @PathVariable Integer feedId){
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
     // 게시물 삭제
     @DeleteMapping("/{feedId}")
-    public ResponseEntity deleteFeed(@PathVariable String feedId){
+    @ApiOperation(value="피드 삭제")
+    public ResponseEntity deleteFeed(@PathVariable Integer feedId){
 
-        return new ResponseEntity(HttpStatus.OK);
+        return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
     // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
-    public ResponseEntity likeFeed(@PathVariable String feedId){
+    @ApiOperation(value="게시물 좋아요 누르기")
+    public ResponseEntity likeFeed(@PathVariable Integer feedId){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
     // 게시물 좋아요 취소
     @DeleteMapping("/{feedId}/feed-like")
-    public ResponseEntity deleteLikeFeed(@PathVariable String feedId){
+    @ApiOperation(value="피드 좋아요 취소")
+    public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId){
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -106,7 +115,8 @@ public class FeedController {
     // /feeds/5/feed-likes
     // 게시물 좋아요 목록
     @GetMapping("/{feedId}/feed-likes")
-    public ResponseEntity<MyDto.Response> likeFeeds(@PathVariable String feedId){
+    @ApiOperation(value="피드 좋아요 리스트", response = MyDto.Response.class)
+    public ResponseEntity<MyDto.Response> likeFeeds(@PathVariable Integer feedId){
         MyDto.Response myRes = new MyDto.Response();
         MyDto my = MyDto.builder().id(id).nickname(nickname).userFileUrl(url).isFollow(bool).build();
 
@@ -116,7 +126,8 @@ public class FeedController {
 
     // 댓글 작성
     @PostMapping("/{feedId}/comments")
-    public ResponseEntity uploadComment(@PathVariable String feedId, @RequestBody FeedDto feed){
+    @ApiOperation(value="댓글 작성")
+    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody FeedDto feed){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -124,27 +135,31 @@ public class FeedController {
 
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")
-    public ResponseEntity modifyComment(@PathVariable String commentId, @PathVariable String feedId, @RequestBody FeedDto feed){
+    @ApiOperation(value="댓글 수정")
+    public ResponseEntity modifyComment(@PathVariable Integer commentId, @PathVariable Integer feedId, @RequestBody FeedDto feed){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
     // 댓글 삭제
     @DeleteMapping("/{feedId}/comments/{commentId}")
-    public ResponseEntity deleteComment(@PathVariable String commentId, @PathVariable String feedId){
+    @ApiOperation(value="댓글 삭제")
+    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer feedId){
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
     // 댓글 좋아요 or 취소
     @PostMapping("/{feedId}/comments/{commentId}/comment-like")
-    public ResponseEntity likeComment(@PathVariable String feedId, @PathVariable String commentId){
+    @ApiOperation(value="댓글 좋아요 누르기")
+    public ResponseEntity likeComment(@PathVariable Integer feedId, @PathVariable Integer commentId){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
     @DeleteMapping("/{feedId}/comments/{commentId}/comment-like")
-    public ResponseEntity deleteLikeComment(@PathVariable String feedId, @PathVariable String commentId){
+    @ApiOperation(value="댓글 좋아요 취소")
+    public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId){
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -152,7 +167,8 @@ public class FeedController {
     // /feeds/5/following/feeds
     // 내가 팔로잉하는 사람들의 피드 목록
     @GetMapping("/{userid}/following/feeds")
-    public Object getFollowingFeeds(@PathVariable String userid) throws ParseException {
+    @ApiOperation(value="내가 팔로잉 하는 사람들의 피드 리스트", response = FeedDto.Response.class)
+    public ResponseEntity<List<FeedDto.Response>> getFollowingFeeds(@PathVariable String userid) throws ParseException {
         UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
         BookDto book = new BookDto();
 
@@ -178,7 +194,8 @@ public class FeedController {
 
     // 피드 신고
     @PostMapping("/{feedId}/reports")
-    public ResponseEntity reportFeed(@PathVariable String feedId, @RequestBody ReportDto report){
+    @ApiOperation(value="피드 신고")
+    public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody ReportDto report){
 
          return new ResponseEntity(HttpStatus.valueOf(201));
     }
