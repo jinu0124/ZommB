@@ -2,6 +2,9 @@ package com.ssafy.commb.controller;
 
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.dto.user.follow.FollowDto;
+import com.ssafy.commb.dto.user.level.LevelDto;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +34,8 @@ public class UserController {
     static final int year = 2021;
     static final float rate = 3.5f;
     static final String keyword = "키워드입니다";
+    static final int bookmark = 4;
+    static final int pencil = 2;
 
     static {
         try {
@@ -176,18 +181,33 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ){
+
+
         return null;
     }
 
+    // /users/2/follow-recommend
     // 친구 추천 목록 조회
     @GetMapping("/{userId}/follow-recommend")
-    public Object findFollowRecommend(
+    public ResponseEntity<List<UserDto.Response>> findFollowRecommend(
             @PathVariable("userId") Integer userId
     ){
 
-        return null;
+        FollowDto follow = FollowDto.builder().isFollow(bool).build();
+        LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).build();
+
+        UserDto user = UserDto.builder().id(id).name(name).nickname(nickname).userFileUrl(url).follow(follow).level(level).build();
+
+        UserDto.Response userRes = new UserDto.Response();
+        userRes.setData(user);
+
+        List<UserDto.Response> userResList = new ArrayList<>();
+        userResList.add(userRes);
+
+        return new ResponseEntity<List<UserDto.Response>>(userResList, HttpStatus.OK);
     }
 
+    // /users/1/keyword-recommend
     // 추천 키워드 목록
     @GetMapping("/{userId}/keyword-recommend")
     public ResponseEntity<List<KeywordDto.Response>> findKeywordRecommend(
