@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.event.DailyEventDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

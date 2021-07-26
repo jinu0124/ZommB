@@ -10,7 +10,7 @@ import java.util.ArrayList;
 
 @RestController
 @RequestMapping(value="/my-events")
-public class MyEventsContoller {
+public class MyEventsController {
     @GetMapping("")
     public ResponseEntity<List<MyEventDto, MyEventDto.Response>> myEventList(){
 
