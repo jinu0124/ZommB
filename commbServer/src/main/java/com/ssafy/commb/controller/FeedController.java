@@ -9,14 +9,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.xml.stream.events.Comment;
-import java.awt.print.Book;
-import java.io.Serializable;
+
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -33,10 +28,10 @@ public class FeedController {
         hashTags.add(HashTagDto.builder().tag("hre").build());
 
         List<CommentDto> comments = new ArrayList<>();
-        comments.add(CommentDto.builder().id(12).content("geww").userId(45).nickname("nick2").thumbCnt(560).createAt(52352352).isThumb(false).isMod(false).build());
+        comments.add(CommentDto.builder().id(12).content("geww").userId(45).nickname("nick2").thumbCnt(560).createAt(new Date("2021-07-31")).isThumb(false).isMod(false).build());
 
 
-        FeedDto feed = FeedDto.builder().id(1).createAt(532).content("few").isThumb(true)
+        FeedDto feed = FeedDto.builder().id(1).createAt(new Date("2021-07-31")).content("few").isThumb(true)
                 .thumbCnt(565).feedFileUrl("fwergrwe").user(user).book(book).hashTags(hashTags).comments(comments).build();
 
         FeedDto.Response feedRes = new FeedDto.Response();
