@@ -1,6 +1,11 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.feed.CommentDto;
+import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
