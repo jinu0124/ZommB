@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
@@ -18,10 +19,10 @@ public class DailyEventParticipate {
     private Date createAt;
 
     @ManyToOne
-    @JoinColumn(name="daily_id")
+    @JoinColumn(name="daily_id", insertable=false, updatable=false)
     private DailyEvent dailyEvent;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", insertable=false, updatable=false)
     private User user;
 }

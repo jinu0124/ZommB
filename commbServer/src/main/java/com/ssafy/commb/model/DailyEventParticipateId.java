@@ -5,12 +5,13 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.Objects;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Embeddable
-public class DailyEventParticipateId {
+public class DailyEventParticipateId implements Serializable {
 
     @Column(name="daily_id")
     private int dailyId;
