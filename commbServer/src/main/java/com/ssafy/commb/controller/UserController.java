@@ -1,21 +1,44 @@
 package com.ssafy.commb.controller;
 
-import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.user.MyDto;
+import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.List;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 
 @RestController
 @RequestMapping(value="/users")
 public class UserController {
 
+    static final int id = 1;
+    static final String nickname = "크루엘라";
+    static final String url = "URL 자리";
+    static final String tag = "#오늘도 힘내세요";
+    static final String content = "이것은 글입니다.";
+    static final int cnt = 134;
+    static Date date;
+    static final boolean bool = true;
+    static final String name = "트럼프";
+    static final String genre = "공포";
+    static final int year = 2021;
+    static final float rate = 3.5f;
+
+    static {
+        try {
+            date = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").parse("2021-07-31 10:12:15");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+    }
+
     @GetMapping("")
     public Object findUserList(){
+
 
         return null;
     }
