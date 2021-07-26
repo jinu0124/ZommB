@@ -17,17 +17,17 @@ public class WeeklyEventDto {
     private BookDto book;
 
     private String bookFileUrl;
-    private boolean weeklyParticipate;
+    private Boolean weeklyParticipate;
 
     static class Weekly{
-        int id;
+        Integer id;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private int today;
+        private Integer today;
     }
 
     @Getter

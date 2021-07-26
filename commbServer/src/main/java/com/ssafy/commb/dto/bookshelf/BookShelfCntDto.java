@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BookShelfCntDto {
-    private int libraryCnt;
-    private int bookcartCnt;
+    private Integer libraryCnt;
+    private Integer bookcartCnt;
 
     @Getter
     @Setter

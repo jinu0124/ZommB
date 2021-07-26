@@ -22,7 +22,7 @@ public class BookShelfDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private boolean isRead;
+        private Boolean isRead;
 
     }
 

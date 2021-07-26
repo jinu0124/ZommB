@@ -17,11 +17,11 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class FeedDto {
-    private int id;
+    private Integer id;
     private Date createAt;
     private String content;
-    private boolean isThumb;
-    private int thumbCnt;
+    private Boolean isThumb;
+    private Integer thumbCnt;
     private String feedFileUrl;
 
     private UserDto user;

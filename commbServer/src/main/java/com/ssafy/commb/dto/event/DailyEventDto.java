@@ -20,14 +20,14 @@ public class DailyEventDto {
     @Getter
     @AllArgsConstructor
     public static class Daily{
-        int id;
+        Integer id;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private int today;
+        private Integer today;
     }
 
     @Getter

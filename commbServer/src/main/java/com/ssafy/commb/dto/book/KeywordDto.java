@@ -12,9 +12,9 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class KeywordDto {
-    private int id;
+    private Integer id;
     private String keyword;
-    private int cnt;
+    private Integer cnt;
 
     @Getter
     @Setter

@@ -14,9 +14,9 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class MyEventDto {
-    private int id;
-    private int bookmark;
-    private int dailyParticipate;
+    private Integer id;
+    private Integer bookmark;
+    private Integer dailyParticipate;
 
     private List<WeeklyEventDto> weekly;
 
@@ -24,7 +24,7 @@ public class MyEventDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request{                // 요청
-        private int today;
+        private Integer today;
     }
 
     @Getter

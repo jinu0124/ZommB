@@ -12,8 +12,8 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class LevelDto {
-    private int bookmark;
-    private int pencil;
+    private Integer bookmark;
+    private Integer pencil;
     private boolean bookmarkOn;
     private boolean pencilOn;
 

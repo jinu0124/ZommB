@@ -17,7 +17,7 @@ public class ReportDto {
     @NoArgsConstructor
     public static class Request {
         private String reason;
-        private int feedId;
+        private Integer feedId;
     }
 
     @Getter

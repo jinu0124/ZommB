@@ -17,14 +17,14 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class CommentDto {
-    private int id;
+    private Integer id;
     private String content;
-    private int userId;
+    private Integer userId;
     private String nickname;
-    private int thumbCnt;
+    private Integer thumbCnt;
     private Date createAt;
-    private boolean isThumb;
-    private boolean isMod;
+    private Boolean isThumb;
+    private Boolean isMod;
 
     @Getter
     @AllArgsConstructor

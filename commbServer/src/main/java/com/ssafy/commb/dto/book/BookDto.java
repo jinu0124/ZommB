@@ -14,20 +14,20 @@ import java.util.List;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                // Builder 패턴 사용
 public class BookDto {
-    private int id;
+    private Integer id;
     private String bookName;
     private String author;
     private String publisher;
-    private int year;
+    private Integer year;
     private String genre;
     private String isbn;
     private String bookFileUrl;
-    private int readCnt;
+    private Integer readCnt;
 
     private String contents;
 
-    private boolean isRead;
-    private float rate;
+    private Boolean isRead;
+    private Float rate;
 
     private List<KeywordDto> keyword;
 

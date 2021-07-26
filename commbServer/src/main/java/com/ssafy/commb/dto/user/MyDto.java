@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
 public class MyDto {
-    private int id;
+    private Integer id;
     private String nickname;
     private String userFileUrl;
-    private boolean isFollow;
+    private Boolean isFollow;
 
     @Getter
     @AllArgsConstructor
