@@ -41,6 +41,14 @@ public class FeedDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RegisterRequest {                // 요청
+        private String bookId;
+        private String content;
+    }
+
+    @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor

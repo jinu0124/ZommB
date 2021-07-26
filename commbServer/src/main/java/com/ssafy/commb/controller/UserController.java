@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
@@ -10,11 +11,11 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -26,9 +27,10 @@ import java.util.*;
 @Api("User Controller API V1")
 public class UserController {
 
+    // Dummy Data Set----------------------------------------------------------------------
     static final int id = 1;
     static final String nickname = "크루엘라";
-    static final String url = "URL 자리";
+    static final String url = "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F484319%3Ftimestamp%3D20201124225204";
     static final String tag = "#오늘도 힘내세요";
     static final String content = "이것은 글입니다.";
     static final int cnt = 134;
@@ -49,10 +51,14 @@ public class UserController {
             e.printStackTrace();
         }
     }
+    // Dummy Data Set----------------------------------------------------------------------
+
+
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
     @ApiOperation(value="(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
-    public ResponseEntity<List<UserDto.Response>> findUserList(){
+    public ResponseEntity<List<UserDto.Response>> findUserList(@RequestParam String nickname){
+
         LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).bookmarkOn(bool).pencilOn(bool).build();
         UserDto user = UserDto.builder().id(id).email("email").name(name).nickname(nickname).role("role").level(level).userFileUrl(url).build();
 
@@ -68,7 +74,7 @@ public class UserController {
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
     @ApiOperation(value="자체 회원가입")
-    public ResponseEntity singUp(){
+    public ResponseEntity singUp(@RequestBody MyDto.Request myReq){
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -76,7 +82,7 @@ public class UserController {
     // 회원가입/로그인 - Email 중복 확인
     @GetMapping("/email")
     @ApiOperation(value="Email 중복 확인")
-    public ResponseEntity duplicateEmail(){
+    public ResponseEntity duplicateEmail(@RequestParam String email){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -94,9 +100,9 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 자체 로그인
-    @GetMapping("/login")
+    @PostMapping("/login")
     @ApiOperation(value="자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> login(){
+    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq){
 
         MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
         MyDto.Response myRes = new MyDto.Response();
@@ -118,7 +124,9 @@ public class UserController {
     // 회원가입/로그인 - 프로필 수정
     @PostMapping("/{userId}")
     @ApiOperation(value="프로필 수정")
-    public ResponseEntity updateUser(@PathVariable("userId") Integer userId){
+    public ResponseEntity updateUser(@PathVariable("userId") Integer userId,
+                                     @RequestBody MyDto.ModifyRequest myReq,
+                                     MultipartHttpServletRequest request){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -126,7 +134,8 @@ public class UserController {
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
     @ApiOperation(value="비밀번호 변경")
-    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId){
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
+                                         @RequestBody UserDto.ModifyPwRequest userReq){
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -183,7 +192,7 @@ public class UserController {
     @ApiOperation(value="북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
-            @RequestParam BookDto book
+            @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq
     ){
         BookDto bookDto = BookDto.builder().id(id).bookName(name).author(name).publisher(name).year(year)
                 .genre(genre).isbn("1234567891230").bookFileUrl(url).readCnt(cnt).rate(rate).build();
@@ -194,7 +203,6 @@ public class UserController {
         List<BookDto.Response> bookResList = new ArrayList<>();
         bookResList.add(bookRes);
 
-
         return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
     }
 
@@ -203,9 +211,8 @@ public class UserController {
     @ApiOperation(value="북카트/서재 도서 추가")
     public ResponseEntity insertUserBookShelves(
             @PathVariable("userId") Integer userId,
-            @RequestBody BookDto book
+            @RequestBody BookDto.RegisterRequest book
     ){
-
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -269,7 +276,8 @@ public class UserController {
     @PostMapping("/{userId}/top-bar")
     @ApiOperation(value="상단 바 도서 등록")
     public ResponseEntity InsertUserTopBar(
-            @PathVariable("userId") Integer userId
+            @PathVariable("userId") Integer userId,
+            @RequestBody BookDto.TopBarRegisterRequest bookReq
     ){
 
         return new ResponseEntity(HttpStatus.valueOf(201));

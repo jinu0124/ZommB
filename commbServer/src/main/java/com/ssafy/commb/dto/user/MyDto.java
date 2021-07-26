@@ -28,6 +28,22 @@ public class MyDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LoginRequest{                // 요청
+        private String email;
+        private String password;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ModifyRequest{                // 요청
+        private String nickname;
+    }
+
+
+    @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor

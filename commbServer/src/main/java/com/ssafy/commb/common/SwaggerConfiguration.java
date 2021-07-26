@@ -1,6 +1,5 @@
 package com.ssafy.commb.common;
 
-import com.google.common.base.Predicate;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+// 스웨거
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
@@ -42,7 +42,7 @@ public class SwaggerConfiguration {
         return new Docket(DocumentationType.SWAGGER_2).consumes(getConsumeContentTypes()).produces(getProduceContentTypes())
                 .apiInfo(apiInfo()).groupName(version).select()
                 .apis(RequestHandlerSelectors.basePackage("com.ssafy.commb.controller"))
-                .paths(postPaths()).build()
+                .paths(PathSelectors.any()).build()
                 .useDefaultResponseMessages(false)
                 .globalResponseMessage(RequestMethod.GET,responseMessages);
     }
@@ -59,10 +59,6 @@ public class SwaggerConfiguration {
         Set<String> produces = new HashSet<>();
         produces.add("application/json;charset=UTF-8");
         return produces;
-    }
-
-    private Predicate<String> postPaths() {
-        return PathSelectors.any();
     }
 
     // API에 대한 설명

@@ -44,6 +44,14 @@ public class UserDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ModifyPwRequest{                // 요청
+        private String oldPassword;
+        private String newPassword;
+    }
+
+    @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor
