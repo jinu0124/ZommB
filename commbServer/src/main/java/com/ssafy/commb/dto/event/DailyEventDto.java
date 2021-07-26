@@ -16,7 +16,10 @@ public class DailyEventDto {
     private Daily daily;
     private KeywordDto keyword;
 
-    static class Daily{
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    public static class Daily{
         int id;
     }
 

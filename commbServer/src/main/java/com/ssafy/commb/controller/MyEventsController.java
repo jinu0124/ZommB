@@ -2,17 +2,19 @@ package com.ssafy.commb.controller;
 
 import com.ssafy.commb.dto.event.MyEventDto;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="/my-events")
-public class MyEventsController {
+public class  MyEventsController {
     @GetMapping("")
-    public ResponseEntity<List<MyEventDto, MyEventDto.Response>> myEventList(){
+    public ResponseEntity<List<MyEventDto.Response>> myEventList(){
 
         MyEventDto myEvent = MyEventDto.builder().id(9).bookmark(7).dailyParticipate(26).build();
 
@@ -22,6 +24,6 @@ public class MyEventsController {
         List<MyEventDto.Response> myEvents = new ArrayList<>();
         myEvents.add(myEventRes);
 
-        return new ResponseEntity<List<MyEventDto, MyEventDto.Response>>(myEvents, HttpStatus.OK);
+        return new ResponseEntity<List<MyEventDto.Response>>(myEvents, HttpStatus.OK);
     }
 }

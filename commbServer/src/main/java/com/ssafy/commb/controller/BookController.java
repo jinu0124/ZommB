@@ -1,7 +1,6 @@
 package com.ssafy.commb.controller;
 
 import com.ssafy.commb.dto.book.BookDto;
-import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
