@@ -12,17 +12,17 @@ import java.util.Date;
 @Setter
 public class WeeklyEventParticipate {
     @EmbeddedId
-    private WeeklyEventParticipateId id;
+    private temp.WeeklyEventParticipateId id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
     @ManyToOne
-    @JoinColumn(name="weekly_id")
+    @JoinColumn(name="weekly_id", insertable=false, updatable=false)
     private WeeklyEvent weeklyEvent;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", insertable=false, updatable=false)
     private User user;
 
 }

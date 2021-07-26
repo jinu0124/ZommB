@@ -16,10 +16,10 @@ public class Report {
     private String reason;
 
     @ManyToOne
-    @JoinColumn(name="feed_id")
+    @JoinColumn(name="feed_id", insertable=false, updatable=false )
     private Feed feed;
 
     @ManyToOne
-    @JoinColumn(name="user_id")
+    @JoinColumn(name="user_id", insertable=false, updatable=false)
     private User user;
 }

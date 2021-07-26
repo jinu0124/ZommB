@@ -21,7 +21,7 @@ public class Keyword {
 
     /* 유저키워드 */
     @OneToMany(mappedBy = "keyword")
-    private List<UserKeyword> userKeywords = new ArrayList<UserKeyword>();
+    private List<temp.UserKeyword> userKeywords = new ArrayList<temp.UserKeyword>();
 
     @OneToMany(mappedBy = "keyword")
     private List<DailyEvent> dailyEvents = new ArrayList<DailyEvent>();
