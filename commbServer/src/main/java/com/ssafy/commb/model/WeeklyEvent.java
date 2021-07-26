@@ -28,7 +28,7 @@ public class WeeklyEvent {
     @JoinColumn(name="book_id")
     private Book book;
 
-    @OneToMany(mappedBy = "weeklyEventParticipate")
+    @OneToMany(mappedBy = "weeklyEvent")
     private List<WeeklyEventParticipate> weeklyEventParticipates = new ArrayList<WeeklyEventParticipate>();
 
 }

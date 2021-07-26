@@ -49,7 +49,7 @@ public class Feed {
     private List<Comment> comments = new ArrayList<Comment>();
 
     /* 피드에 달린 해시태그 */
-    @OneToMany(mappedBy = "hashtag")
+    @OneToMany(mappedBy = "feed")
     private List<HashTag> hashTags = new ArrayList<HashTag>();
 
 
