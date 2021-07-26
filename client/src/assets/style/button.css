@@ -12,6 +12,20 @@
   font-size: 1.05rem;
 }
 
+.btn-2 {
+  border: none;
+  width: 210px;
+  height: 35px;
+  border-radius: 20px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-2:hover {
+  font-size: 1.05rem;
+}
+
 .btn-yellow {
   background-color: #FFDC7C;
   color: #585858;
@@ -19,4 +33,9 @@
 .btn-grey {
   background-color: #A4A4A4;
   color: #fff;
+}
+
+.btn-text-s {
+  color: #A4A4A4;
+  font-size: 0.75rem;
 }

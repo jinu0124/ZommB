@@ -1,5 +1,5 @@
 <template>
-  <div class="header">
+  <div class="header fixed-top">
     <div class="d-flex justify-content-between align-items-center">
       <i 
         class="nav-toggle fas fa-water"
@@ -43,6 +43,7 @@ export default {
   .header {
     background: #7B60F1;
     padding: 12px 20px;
+    height: 60px;
   }
   .nav-toggle {
     font-size: 1.5rem;
