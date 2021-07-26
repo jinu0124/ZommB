@@ -12,7 +12,7 @@ import java.util.Date;
 @Setter
 public class WeeklyEventParticipate {
     @EmbeddedId
-    private WeeklyEventParticipateId id;
+    private temp.WeeklyEventParticipateId id;
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
