@@ -1,10 +1,16 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.feed.CommentDto;
+import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
+import com.ssafy.commb.model.Book;
 import org.springframework.context.annotation.EnableMBeanExport;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,9 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @RestController
@@ -47,7 +51,6 @@ public class UserController {
 
     @GetMapping("")
     public Object findUserList(){
-
 
         return null;
     }
@@ -105,85 +108,151 @@ public class UserController {
         return null;
     }
 
+    // 피드 게시물 리스트 조회
     @GetMapping("/{userId}/feeds")
-    public Object findUserFeed(
+    public ResponseEntity<List<FeedDto.Response>> findUserFeed(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+        UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
+        BookDto book = BookDto.builder().id(id).bookName(name).build();
+
+        List<HashTagDto> hashTags = new ArrayList<>();
+        hashTags.add(HashTagDto.builder().tag(tag).build());
+
+        List<CommentDto> comments = new ArrayList<>();
+        comments.add(CommentDto.builder().id(id).content(content).userId(id).nickname(nickname).thumbCnt(cnt).createAt(date).isThumb(bool).isMod(bool).build());
+
+        FeedDto feed = FeedDto.builder().id(id).createAt(date).content(content).isThumb(bool).thumbCnt(cnt).feedFileUrl(url).user(user).book(book).hashTags(hashTags).comments(comments).build();
+
+        FeedDto.Response feedRes = new FeedDto.Response();
+        feedRes.setData(feed);
+
+        List<FeedDto.Response> feedResList = new ArrayList<>();
+        feedResList.add(feedRes);
+
+        return new ResponseEntity<List<FeedDto.Response>>(feedResList, HttpStatus.OK);
     }
 
+    // 회원의 게시물(피드) 수
     @GetMapping("/{userId}/feeds/cnt")
-    public Object findUserFeedCnt(
+    public ResponseEntity<Map<String, Integer>> findUserFeedCnt(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+        HashMap<String, Integer> map = new HashMap<>();
+        map.put("cnt", cnt);
+
+        return new ResponseEntity<Map<String, Integer>>(map, HttpStatus.OK);
     }
 
+    // 서재/북카트 내 도서 검색
     @GetMapping("/{userId}/bookshelves")
-    public Object findUserBookShelvesList(
-            @PathVariable("userId") Integer userId
+    public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
+            @PathVariable("userId") Integer userId,
+            @RequestParam BookDto book
     ){
-        return null;
+        BookDto bookDto = BookDto.builder().id(id).bookName(name).author(name).publisher(name).year(year)
+                .genre(genre).isbn("1234567891230").bookFileUrl(url).readCnt(cnt).rate(rate).build();
+
+        BookDto.Response bookRes = new BookDto.Response();
+        bookRes.setData(bookDto);
+
+        List<BookDto.Response> bookResList = new ArrayList<>();
+        bookResList.add(bookRes);
+
+
+        return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
     }
+
+    // 책 추가
     @PostMapping("/{userId}/bookshelves")
-    public Object insertUserBookShelves(
-            @PathVariable("userId") Integer userId
+    public ResponseEntity insertUserBookShelves(
+            @PathVariable("userId") Integer userId,
+            @RequestBody BookDto book
     ){
-        return null;
+
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
+    // 읽은/읽을 책 수 반환
     @GetMapping("/{userId}/bookshelves/cnt")
-    public Object findUserBookShelvesCnt(
+    public ResponseEntity<BookShelfCntDto.Response> findUserBookShelvesCnt(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+        BookShelfCntDto bookShelfCnt = BookShelfCntDto.builder().libraryCnt(cnt).bookcartCnt(cnt).build();
+
+        BookShelfCntDto.Response bookShelfCntRes = new BookShelfCntDto.Response();
+        bookShelfCntRes.setData(bookShelfCnt);
+
+        return new ResponseEntity<BookShelfCntDto.Response>(bookShelfCntRes, HttpStatus.OK);
     }
 
+    // 서재 책 1권 삭제하기
     @DeleteMapping("/{userId}/bookshelves/{bookId}")
-    public Object deleteUserBookShelf(
+    public ResponseEntity deleteUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ){
-        return null;
+        return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // 북카트에서 서재로 옮기기
     @PatchMapping("/{userId}/bookshelves/{bookId}")
-    public Object updateUserBookShelf(
+    public ResponseEntity updateUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ){
-        return null;
+
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
+    // /users/2/top-bar
+    // 상단 바 도서 목록 조회
     @GetMapping("/{userId}/top-bar")
-    public Object findUserTopBar(
+    public ResponseEntity<List<BookDto.Response>> findUserTopBar(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+        BookDto book = BookDto.builder().id(id).bookFileUrl(url).build();
+
+        List<BookDto.Response> bookResList = new ArrayList<>();
+
+        BookDto.Response bookRes = new BookDto.Response();
+        bookRes.setData(book);
+
+        bookResList.add(bookRes);
+
+        return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
     }
 
+    // 상단 바 도서 등록
     @PostMapping("/{userId}/top-bar")
-    public Object InsertUserTopBar(
+    public ResponseEntity InsertUserTopBar(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+
+        return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    // 상단 바 도서 전체 삭제
     @DeleteMapping("/{userId}/top-bar")
-    public Object deleteUserTopBarAll(
+    public ResponseEntity deleteUserTopBarAll(
             @PathVariable("userId") Integer userId
     ){
-        return null;
+
+
+        return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // 상단바 도서 삭제
     @DeleteMapping("/{userId}/top-bar/{bookId}")
-    public Object deleteUserTopBar(
+    public ResponseEntity deleteUserTopBar(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ){
 
 
-        return null;
+        return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
     // /users/2/follow-recommend
