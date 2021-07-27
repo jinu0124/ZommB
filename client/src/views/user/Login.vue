@@ -143,6 +143,7 @@ export default {
 </script>
 
 <style src="@/assets/style/button.css"></style>
+<style src="@/assets/style/accounts.css"></style>
 <style scoped>
   .login {
     display: flex;
@@ -164,69 +165,6 @@ export default {
     color: #fff;
     font-weight: 300;
     font-size: 0.7rem;
-  }
-  .account-form {
-    flex: 1;
-    position: relative;
-    background-color: #fff;
-    margin-left: 20px;
-    border-radius: 30px 0px 0px 0px;
-  }
-  .account-deco {
-    width: 45px;
-    height: 60px;
-    position: absolute;
-    top: -5px;
-    left: 25px;
-  }
-
-  .account-input-box {
-    position: relative;
-  }
-
-  .account-input {
-    width: 210px !important;
-    height: 35px;
-    margin-top: 15px;
-    background-color: #F1F1F1;
-    color: #212121;
-    box-shadow: none;
-    border: none;
-    outline: none;
-    height: 35px;
-    padding-left: 20px;
-    font-size: 0.875rem;
-    border-radius: 20px;
-    transition: none;
-  }
-  .account-input ~ label{
-    position: absolute;
-    color: #A4A4A4;
-    font-size: 0.875rem;
-    left: 20px;
-    top: 22px;
-    transition: 0.4s ease all;
-    pointer-events:none;
-  }
-  .account-input:focus {
-    background-color: #F1F1F1;
-    box-shadow: none;
-    border: none;
-    outline: none;
-  }
-  .account-input:focus ~ label,
-  .account-input:valid ~ label {
-    top: -5px; 
-    font-size: 0.7rem; 
-    color: #585858; 
-    transition: 0.4s ease all;
-    pointer-events:none;
-  }
-  .error-text {
-    padding-left: 20px;
-    color: #FF7777;
-    font-size: 0.75rem;
-    font-weight: 400;
   }
 
   .social-login {
@@ -255,9 +193,5 @@ export default {
     max-width: 70%;
     height: auto;
   }
-
-
-
-  
 
 </style>
