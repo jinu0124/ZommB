@@ -3,6 +3,7 @@ import VueRouter from 'vue-router'
 import Index from '@/views/Index'
 import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
+import SignupEmail from '@/views/user/SignupEmail'
 
 Vue.use(VueRouter)
 
@@ -21,6 +22,11 @@ const routes = [
     path: '/signup',
     name: 'Signup',
     component: Signup
+  },
+  {
+    path: '/signup/email',
+    name: 'SignupEmail',
+    component: SignupEmail
   },
 ]
 
