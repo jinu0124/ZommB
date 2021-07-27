@@ -87,9 +87,6 @@
         >회원가입</button>
       </div>
     </div>
-    <!-- <button
-      @click="moveToSignupEmail"
-    >이메일 인증 화면(임시)</button> -->
     <div
       v-if="emailAlert"
       class="backdrop"
