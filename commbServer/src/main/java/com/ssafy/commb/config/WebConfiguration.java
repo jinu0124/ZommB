@@ -1,5 +1,6 @@
-package com.ssafy.commb.common;
+package com.ssafy.commb.config;
 
+import com.ssafy.commb.common.QueryStringArgumentResolver;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
