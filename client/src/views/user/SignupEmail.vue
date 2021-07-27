@@ -5,7 +5,7 @@
       <div>nickname !</div>
       <img src="@/assets/image/camel/camelSunglassCircle.svg" alt="">
     </div>
-    <div class="email-content my-4 d-flex flex-column justify-content-center align-items-center">
+    <div class="email-content my-3 d-flex flex-column justify-content-center align-items-center">
       <div>
         회원 가입을 위한<br/>
         <strong>인증 메일을 발송했습니다.</strong><br/>
@@ -45,7 +45,7 @@ export default {
   }
 
   .email-header img {
-    width: 180px;
+    width: 150px;
     filter: drop-shadow(0.35rem 0.35rem 0.4rem rgba(0, 0, 0, 0.5));
   }
 
