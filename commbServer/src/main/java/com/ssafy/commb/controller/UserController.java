@@ -13,7 +13,6 @@ import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.*;
-import org.hibernate.engine.jdbc.spi.SqlExceptionHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +21,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.validation.Valid;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -84,7 +82,7 @@ public class UserController {
     @PostMapping("")
     @ApiOperation(value = "자체 회원가입")
     public ResponseEntity singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
-        if(bindingResult.hasErrors())
+        if (bindingResult.hasErrors())
             return new ResponseEntity(HttpStatus.valueOf(400));
 
         if (userService.isExistEmail(myReq.getEmail()))
@@ -99,6 +97,8 @@ public class UserController {
     @GetMapping("/email")
     @ApiOperation(value = "Email 중복 확인")
     public ResponseEntity duplicateEmail(@RequestParam String email) {
+        if (userService.isExistEmail(email))
+            return new ResponseEntity(HttpStatus.valueOf(404));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -118,13 +118,12 @@ public class UserController {
     // 회원가입/로그인 - 자체 로그인
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
+    public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
 
-        MyDto my = MyDto.builder().id(1).nickname(nickname).userFileUrl(url).build();
-        MyDto.Response myRes = new MyDto.Response();
-        myRes.setData(my);
+        MyDto my = userService.login(myReq);
+        if (my == null) return new ResponseEntity<MyDto>(new MyDto(), HttpStatus.valueOf(401));
 
-        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
+        return new ResponseEntity<MyDto>(my, HttpStatus.valueOf(200));
     }
 
     // 회원가입/로그인 - 비밀번호 찾기

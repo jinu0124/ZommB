@@ -1,0 +1,12 @@
+spring:
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: commbzomb@gmail.com
+    password: ssafy602!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
