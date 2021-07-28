@@ -8,7 +8,7 @@
         data-bs-target="#offcanvasWithBothOptions" 
         aria-controls="offcanvasWithBothOptions"
       ></i>
-      <span class="header-logo">CommB</span>
+      <span class="header-logo pt-1">CommB</span>
       <div class="dropdown">
         <img 
           class="user-profile dropdown-toggle"

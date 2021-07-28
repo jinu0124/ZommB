@@ -27,7 +27,7 @@ import { mapActions } from "vuex"
 export default {
   name: 'Index',
   methods: {
-    ...mapActions('user', ['moveToLogin', 'moveToSignup'])
+    ...mapActions('user', ['moveToLogin', 'moveToSignup', 'moveToUpdateInfo'])
   }
 }
 </script>
