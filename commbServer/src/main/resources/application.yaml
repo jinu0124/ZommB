@@ -1,0 +1,19 @@
+# server.port=8081
+
+spring:
+  datasource:
+    url : jdbc:mysql://i5a602.p.ssafy.io/CommBTest
+    username : root
+    password : 1234
+
+  redis:
+    host : 127.0.0.1
+    password : 1234
+    port : 6379
+
+
+security:
+  expire:
+    accesstoken: 60000
+    refreshtoken: 300000
+  secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg

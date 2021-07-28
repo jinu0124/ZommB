@@ -1,0 +1,18 @@
+{
+  "properties": [
+    {
+      "name": "security.secretkey",
+      "type": "java.lang.String",
+      "description": "Description for security.secretkey."
+    },
+    {
+      "name": "security.expire.accesstoken",
+      "type": "java.lang.Long",
+      "description": "Description for security.expire.accesstoken."
+    },
+    {
+      "name": "security.expire.refreshtoken",
+      "type": "java.lang.Long",
+      "description": "Description for security.expire.refreshtoken."
+    }
+  ] }
