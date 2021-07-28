@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import java.util.Map;
 
@@ -37,8 +38,8 @@ public class SecurityController {
 
     // dummy test용
     @GetMapping("/valid/access")
-    public String validAccessToken(@RequestParam String acToken) {
-
+    public String validAccessToken(@RequestParam String acToken, HttpServletRequest req) {
+        System.out.println(req.getAttribute("userId"));
 
         return acToken;
     }

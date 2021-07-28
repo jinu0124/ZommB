@@ -24,6 +24,8 @@ public class BookController {
     @ApiOperation(value="검색 책 리스트(searchType, Word)", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findBookList(@QueryStringArgResolver BookDto.BookSearchRequest bookReq){
 
+
+
         BookDto book = BookDto.builder().id(1).bookName(bookReq.getSearchWord()).author("문성욱").publisher("싸피괴물").year(2021).genre("스릴러")
         .isbn("1234567891234").bookFileUrl(url).readCnt(9999999).rate(3.5f).build();
 

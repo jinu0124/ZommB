@@ -28,7 +28,7 @@ public class AuthInterceptor implements HandlerInterceptor {
     // 로그인 Authorization
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws Exception {
-        System.out.println("Interceptor Pre / Request Url : " + request.getContextPath());
+        System.out.println("Interceptor Pre / Request Url : " + request.getRequestURI());
 
         Map<String, Object> map = new HashMap<>();
         Gson gson = new Gson();
@@ -47,6 +47,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             map = securityService.validRefreshToken(acToken, rfToken);
             if((int) map.get("status") == 200) {
                 response.setHeader("access-token", (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
+                request.setAttribute("userId", map.get("userId"));
             }
         }
         else{                                                                         // Access 토큰만 있을 때
@@ -59,9 +60,10 @@ public class AuthInterceptor implements HandlerInterceptor {
                 map.put("msg", "AccessToken is invalid");
                 map.put("status", 403);
             }
-            else{
+            else {
+                request.setAttribute("userId", ret);
                 map.put("status", 200);                                                // AccessToken이 유효할 때
-                 }
+            }
         }
         jsonObject.addProperty("token", (String) map.get("token"));
         jsonObject.addProperty("msg", (String) map.get("msg"));

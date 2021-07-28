@@ -140,6 +140,7 @@ public class SecurityService {
             map.put("token", createAccessToken((String) userIdAccToken.get(0), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
             map.put("status", 200);
             map.put("msg", "Access Token Updated Complete");
+            map.put("userId", userIdAccToken.get(0));
         }
 
         return map;
