@@ -67,7 +67,6 @@
           </button>
         </div>
       </div>
-
     </div>
   </div>
 </template>
@@ -149,7 +148,7 @@ export default {
     display: flex;
     flex-flow: column;
     height: 100%;
-    min-height: 100%;
+    min-height: 100vh;
   }
   .login-header {
     margin: 65px 20px 20px;

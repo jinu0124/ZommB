@@ -202,7 +202,7 @@ export default {
     display: flex;
     flex-flow: column;
     height: 100%;
-    min-height: 100%;
+    min-height: 100vh;
   }
   .backdrop {
     position: fixed;
