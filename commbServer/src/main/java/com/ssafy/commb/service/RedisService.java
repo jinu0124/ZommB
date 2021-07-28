@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,12 +12,10 @@ public class RedisService {
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    public boolean setStringValue(String key, List<String> value, Long expTime){
-        if(expTime < 0) return false;
+    public void setStringValue(String key, List<String> value, Long expTime) {
         redisTemplate.opsForList().rightPush(key, value.get(0));
         redisTemplate.opsForList().rightPush(key, value.get(1));
         redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
-        return true;
     }
 
     public List<Object> getStringValue(String key){

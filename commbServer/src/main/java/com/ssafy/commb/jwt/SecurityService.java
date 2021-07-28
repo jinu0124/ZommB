@@ -4,13 +4,9 @@ import com.ssafy.commb.service.RedisService;
 import io.jsonwebtoken.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.crypto.spec.SecretKeySpec;
-import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
 import javax.xml.bind.DatatypeConverter;
 import java.security.Key;
@@ -123,15 +119,12 @@ public class SecurityService {
     }
 
     // AccessToken 의 무제한 발행을 막아야한다!  // 1가지 해결 필요 : 유효하지만 만료된 Access토큰과 유효한 RefreshToken을 보냈을때 1번만 발행해야하는데 계속 발행 가능
-    // RefreshToken 받아서 AccessToken 발행/RefreshToken 재발행 및 반환
-    public Map<String, Object> validRefreshToken(String acToken,
-                                 String rfToken){
-
+    // RefreshToken 받아서 AccessToken 재발행
+    public Map<String, Object> validRefreshToken(String acToken, String rfToken){
         Map<String, Object> map = new HashMap<>();
 
         String acUserId = decodeToken(acToken, SECRET_KEY);    // AccessToken을 통해 userId를 추출한다. -> 만료라면 "expire" 반환
-        List<Object> userIdAccToken = find(rfToken);         // redis로 부터 key(refreshToken)를 통해 user가 처음 발급했던 AccessToken = RefreshToken의 SecretKey를 가져온다.
-        System.out.println(acUserId.equals(userIdAccToken.get(0)));
+        List<Object> userIdAccToken = find(rfToken);         // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
 
         if(userIdAccToken.size() < 2) {
             map.put("msg", "Not Valid Refresh Token");
@@ -142,7 +135,7 @@ public class SecurityService {
             map.put("msg", "AccessToken Already Valid.");
             map.put("status", 403);    // 발급 불가
         }
-        // RefreshToken 유효 & AccessToken 유효한 값이지만 만료
+        // RefreshToken 유효 & AccessToken 유효한 값이지만 만료 => 재발급
         else {
             map.put("token", createAccessToken((String) userIdAccToken.get(0), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
             map.put("status", 200);
