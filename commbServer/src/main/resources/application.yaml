@@ -11,6 +11,26 @@ spring:
     password : 1234
     port : 6379
 
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            authorization-grant-type: authorization_code
+            client-id: 816e60a58fc8adaf01fa27c0bc3ed383
+            client-secret: gUfGcX3lSRaX4y1uVNOBrvdr7WIEhy2F
+            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            scope:
+            client-authentication-method: POST
+            client-name: Kakao
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
 
 security:
   expire:
