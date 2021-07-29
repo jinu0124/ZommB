@@ -2,7 +2,12 @@ package com.ssafy.commb.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
+
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 @Component
 @Getter                                     // Getter 생성
@@ -20,17 +25,25 @@ public class MyDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class Request{                // 요청
+    public static class Request {                // 요청
+        @Email
+        @NotNull
         private String email;
+
+        @Pattern(regexp = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$")
         private String password;
+        
+        @NotNull
         private String name;
+
+        @Length(min = 1, max = 10)
         private String nickname;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class LoginRequest{                // 요청
+    public static class LoginRequest {                // 요청
         private String email;
         private String password;
     }
@@ -38,7 +51,15 @@ public class MyDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class ModifyRequest{                // 요청
+    public static class TokenRequest {                // 요청
+        private Integer id;
+        private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ModifyRequest {                // 요청
         private String nickname;
     }
 
@@ -48,7 +69,7 @@ public class MyDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Response{               // 반환
+    public static class Response {               // 반환
         private MyDto data;
         private String retMsg;
     }

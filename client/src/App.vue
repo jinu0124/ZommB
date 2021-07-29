@@ -16,13 +16,16 @@ export default {
   computed: {
     // Header 표시 여부 계산
     needHeader() {
-      if (this.$route.name === 'Index' || this.$route.name === 'Login') {
+      if (this.$route.name === 'Index' 
+        || this.$route.name === 'Login'
+        || this.$route.name === 'Signup') {
         return false
       }
       return true
     },
     isAccountsPage() {
-      if (this.$route.name === 'Login') {
+      if (this.$route.name === 'Login'
+        || this.$route.name === 'Signup') {
         return true
       }
       return false
