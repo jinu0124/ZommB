@@ -38,7 +38,7 @@
             v-model="nickname"
             type="text"
             autocapitalize="off"
-            maxlength="10"
+            maxlength="11"
             required
           />
             <label>닉네임</label>
@@ -155,7 +155,7 @@ export default {
     },
     checkForm() {
       if (
-        this.nickname.length >= 10
+        this.nickname.length > 10
       )
         this.error.nickname = "닉네임은 최대 10자까지 가능합니다.";
       else this.error.password = false;
@@ -172,7 +172,9 @@ export default {
         !this.passwordSchema.validate(this.password)
       ) {
         this.error.password = "영문,숫자 포함 8 자리이상이어야 합니다."
-      } else if ( this.password === this.oldPassword) {
+      } else if (
+        this.password.length > 0 && 
+        this.password === this.oldPassword) {
         this.error.password = "기존 비밀번호와 일치합니다."
       } else {
         this.error.password = false;
@@ -182,7 +184,7 @@ export default {
         this.passwordConfirm.length > 0 &&
         this.passwordConfirm != this.password
       )
-        this.error.passwordConfirm = "영문,숫자 포함 8 자리이상이어야 합니다.";
+        this.error.passwordConfirm = "입력하신 비밀번호와 일치하지 않습니다.";
       else this.error.passwordpasswordConfirm = false;
 
       let isSubmit = true;
