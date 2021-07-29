@@ -61,6 +61,7 @@ public class MyDto {
     @NoArgsConstructor
     public static class ModifyRequest {                // 요청
         private String nickname;
+        private Integer flag;
     }
 
 

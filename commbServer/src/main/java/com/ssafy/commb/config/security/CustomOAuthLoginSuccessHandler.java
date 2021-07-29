@@ -4,7 +4,7 @@ import com.ssafy.commb.model.OauthProvider;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.OauthProviderRepository;
 import com.ssafy.commb.repository.UserRepository;
-import com.ssafy.commb.service.RedisService;
+import com.ssafy.commb.service.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -20,7 +20,7 @@ import java.util.UUID;
 public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired
-    RedisService redisService;
+    RedisServiceImpl redisService;
 
     @Autowired
     OauthProviderRepository oauthProviderRepository;
