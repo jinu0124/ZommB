@@ -11,6 +11,12 @@ spring:
     password : 1234
     port : 6379
 
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 21MB
+
 
 security:
   expire:

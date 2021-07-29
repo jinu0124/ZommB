@@ -11,21 +11,34 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
+import com.ssafy.commb.service.ProfileService;
 import io.swagger.annotations.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.servlet.ServletException;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 
+@CrossOrigin(
+		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
+		allowCredentials = "true",
+		allowedHeaders = "*",
+		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
+)
 @RestController
 @RequestMapping(value="/users")
 @Api("User Controller API V1")
 public class UserController {
+
+    @Autowired
+    private ProfileService userService;
 
     // Dummy Data Set----------------------------------------------------------------------
     static final int id = 1;
@@ -121,14 +134,22 @@ public class UserController {
         return null;
     }
 
-    // 회원가입/로그인 - 프로필 수정
+    // 회원가입/로그인 - 프로필 수정        // flag : 0:유지 , 1:수정, 2:삭제
+    // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 -> formData 형식에서는 사용치 않아야한다.
     @PostMapping("/{userId}")
     @ApiOperation(value="프로필 수정")
-    public ResponseEntity updateUser(@PathVariable("userId") Integer userId,
-                                     @RequestBody MyDto.ModifyRequest myReq,
-                                     MultipartHttpServletRequest request){
+    public ResponseEntity updateUser(@PathVariable Integer userId,
+                                     MyDto.ModifyRequest myReq,
+                                     MultipartHttpServletRequest request) throws IOException, ServletException {
+        if(myReq != null){
+            if(myReq.getNickname().length() < 4 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
+        }
+        else return new ResponseEntity(HttpStatus.valueOf(400));
+
+        if( !userService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
+
     }
 
     // 회원가입/로그인 - 비밀번호 변경
@@ -136,6 +157,7 @@ public class UserController {
     @ApiOperation(value="비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq){
+//        userReq
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
