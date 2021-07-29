@@ -3,6 +3,7 @@ package com.ssafy.commb.controller;
 import com.ssafy.commb.jwt.SecurityService;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +24,12 @@ public class SecurityController {
     @Autowired
     private SecurityService securityService;
 
+    @Value("${security.accesstoken}")
+    private String accessToken;
+
+    @Value("${security.refreshtoken}")
+    private String refreshToken;
+
     // 로그인 후 토큰 발행
     @Transactional
     @GetMapping("/create/token")
@@ -30,8 +37,9 @@ public class SecurityController {
         Map<String, Object> map = securityService.createToken(userId);
 
         HttpHeaders resHeader = new HttpHeaders();
-        resHeader.set("access-token", (String) map.get("acToken"));
-        resHeader.set("refresh-token", (String) map.get("rfToken"));
+
+        resHeader.set(accessToken, (String) map.get("acToken"));
+        resHeader.set(refreshToken, (String) map.get("rfToken"));
 
         return ResponseEntity.ok().headers(resHeader).build();
     }

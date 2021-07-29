@@ -14,5 +14,15 @@
       "name": "security.expire.refreshtoken",
       "type": "java.lang.Long",
       "description": "Description for security.expire.refreshtoken."
+    },
+    {
+      "name": "security.accesstoken",
+      "type": "java.lang.String",
+      "description": "Description for security.accesstoken."
+    },
+    {
+      "name": "security.refreshtoken",
+      "type": "java.lang.String",
+      "description": "Description for security.refreshtoken."
     }
   ] }

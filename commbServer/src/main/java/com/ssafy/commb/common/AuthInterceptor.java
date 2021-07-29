@@ -24,6 +24,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${security.secretkey}")
     private String secretKey;
 
+    @Value("${security.accesstoken}")
+    private String accessToken;
+
     // Authorization : Bearer <TOKEN>
     // 로그인 Authorization
     @Override
@@ -46,7 +49,7 @@ public class AuthInterceptor implements HandlerInterceptor {
         else if(rfToken != null && rfToken.length() >= 24){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
             map = securityService.validRefreshToken(acToken, rfToken);
             if((int) map.get("status") == 200) {
-                response.setHeader("access-token", (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
+                response.setHeader(accessToken, (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
                 request.setAttribute("userId", map.get("userId"));
             }
         }

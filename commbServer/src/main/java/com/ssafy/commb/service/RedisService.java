@@ -18,7 +18,18 @@ public class RedisService {
         redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
     }
 
-    public List<Object> getStringValue(String key){
+    public void setStringValue(String key, Long expTime){
+        redisTemplate.opsForList().rightPush(key, "valid");
+        redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
+    }
+
+    public String getStringValue(String key){
+        String ret = (String) redisTemplate.opsForList().rightPop(key);
+        System.out.println(ret);
+        return ret;
+    }
+
+    public List<Object> getListValue(String key){
         List<Object> ret = redisTemplate.opsForList().range(key, 0, -1);
         System.out.println(ret);
         return ret;

@@ -88,9 +88,19 @@ public class SecurityService {
         redisService.setStringValue(token, userIdAccToken, expTime);
     }
 
+    // Redis save
+    public void save(String token){
+        Long expTime = 60000L;
+        redisService.setStringValue(token, expTime);
+    }
+
+    public String get(String token){
+        return redisService.getStringValue(token);
+    }
+
     // Redis select
     public List<Object> find(String token){
-        List<Object> userId = redisService.getStringValue(token);
+        List<Object> userId = redisService.getListValue(token);
         return userId;
     }
 
@@ -145,6 +155,5 @@ public class SecurityService {
 
         return map;
     }
-
 }
 
