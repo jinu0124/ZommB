@@ -103,6 +103,17 @@ public class UserController {
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // 회원가입/로그인 - Email 인증
+    @PostMapping("/confirm-email")
+    @ApiOperation(value = "Email 인증")
+    public String viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
+
+        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
+        userService.confirmEmail(token);
+
+        return "redirect:/login";
+    }
+
     // 회원가입/로그인 - 소셜 회원가입
     @PostMapping("/social/kakao")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)

@@ -51,6 +51,14 @@ public class MyDto {
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class TokenRequest {                // 요청
+        private Integer id;
+        private String email;
+    }
+
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class ModifyRequest {                // 요청
         private String nickname;
     }
