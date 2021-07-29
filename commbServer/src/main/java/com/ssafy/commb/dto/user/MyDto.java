@@ -49,7 +49,6 @@ public class MyDto {
     }
 
     @Getter
-    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TokenRequest {                // 요청

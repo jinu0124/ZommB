@@ -20,7 +20,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 
-
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
@@ -45,9 +44,8 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional
     @Override
     public boolean updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
-//        int userId = (int) request.getAttribute("userId");              // jwt 토큰으로 인증된 userId
-
-        int userId = 10000001;              // jwt 토큰으로 인증된 userId
+        int userId = (int) request.getAttribute("userId");              // jwt 토큰으로 인증된 userId
+//        int userId = 10000001;              // 임시 테스트
 
         Collection<Part> parts = request.getParts();                // Multipart parts 받아오기
 

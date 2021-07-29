@@ -11,11 +11,11 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
-import com.ssafy.commb.service.ProfileService;
 import com.ssafy.commb.jwt.SecurityService;
+import com.ssafy.commb.service.ProfileService;
 import com.ssafy.commb.service.UserService;
-import io.swagger.annotations.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -26,27 +26,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
-import java.io.IOException;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-@CrossOrigin(
-		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
-		allowCredentials = "true",
-		allowedHeaders = "*",
-		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
-)
+//@CrossOrigin(
+//		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
+//		allowCredentials = "true",
+//		allowedHeaders = "*",
+//		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
+//)
 @RestController
 @RequestMapping(value = "/users")
 @Api("User Controller API V1")
 public class UserController {
 
-    @Autowired
-    private ProfileService userService;
 
     // Dummy Data Set----------------------------------------------------------------------
     static final int id = 1;
@@ -74,9 +72,15 @@ public class UserController {
     }
     // Dummy Data Set----------------------------------------------------------------------
 
+    @Autowired
+    private ProfileService profileService;
 
     @Autowired
     private SecurityService securityService;
+
+    @Autowired
+    private UserService userService;
+
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -101,9 +105,6 @@ public class UserController {
 
         return new ResponseEntity<List<UserDto.Response>>(users, HttpStatus.OK);
     }
-
-    @Autowired
-    private UserService userService;
 
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
@@ -142,7 +143,7 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 소셜 회원가입
-    @PostMapping("/social/kakao")
+    @GetMapping("/social/kakao")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> kakaoLogin() {
 
@@ -154,16 +155,16 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 자체 로그인
-    @Transactional
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
-
+        System.out.println("login");
         MyDto my = userService.login(myReq);
-        if (my == null) return new ResponseEntity<MyDto>(new MyDto(), HttpStatus.valueOf(401));
+        if (my == null) return new ResponseEntity(HttpStatus.valueOf(401));
 
-        int userId = 1;
-        Map<String, Object> map = securityService.createToken(userId);
+        int userId = 10000001;
+        System.out.println(my.getId());
+        Map<String, Object> map = securityService.createToken(my.getId());
 
         HttpHeaders resHeader = new HttpHeaders();
 
@@ -195,7 +196,7 @@ public class UserController {
         }
         else return new ResponseEntity(HttpStatus.valueOf(400));
 
-        if( !userService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
+        if( !profileService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -205,8 +206,7 @@ public class UserController {
     @ApiOperation(value = "비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq) {
-                                         @RequestBody UserDto.ModifyPwRequest userReq){
-//        userReq
+
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
