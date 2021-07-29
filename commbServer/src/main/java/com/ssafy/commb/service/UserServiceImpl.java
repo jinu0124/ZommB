@@ -67,10 +67,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean updatePassword(UserDto.ModifyPwRequest userReq, HttpServletRequest request) {
-        int userId = 10000001;
-//        Optional<User> user = userRepository.findByIdAndPassword((int) request.getAttribute("userId"), userReq.getOldPassword());
+//        int userId = 10000001;
+//        Optional<User> user = userRepository.findByIdAndPassword(userId, userReq.getOldPassword()); // 테스트용
+
+        Optional<User> user = userRepository.findByIdAndPassword((int) request.getAttribute("userId"), userReq.getOldPassword());
         System.out.println(userReq.getNewPassword());
-        Optional<User> user = userRepository.findByIdAndPassword(userId, userReq.getOldPassword()); // 테스트용
+
         if(!user.isPresent()) {
             System.out.println(user.get().getEmail());
             return false;
