@@ -4,15 +4,30 @@
       <div class="title">My Info</div>
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
+
     <div class="account-form p-5 d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
       
       <div class="d-flex flex-column align-items-center">
-        <img class="profile" src="@/assets/image/test/profileTest.jpg" alt="">
-        <div 
-          class="btn-text-primary mt-1"
-          type="button"
-        >프로필 사진 변경</div>
+        <!-- 사진 수정하면 preview -->
+        <img v-if="preview" class="profile" :src="preview" alt="">
+        <!-- 아니면 기존 이미지 -->
+        <img v-else class="profile" src="@/assets/image/test/profileTest.jpg" alt="">
+        
+        <div class="btn-text-primary mt-1">
+          <label for="input-file">프로필 변경</label>
+          <input
+            id="input-file" 
+            type="file"
+            accept="image/*"
+            @change="onFileChange"
+          >
+          <span class="mx-1">•</span>
+          <span
+            type="button"
+            @click="onFileDelete"
+          >프로필 삭제</span>
+        </div>
       </div>
       <div class="account-inputs">
         <!-- 닉네임 input -->
@@ -23,6 +38,7 @@
             v-model="nickname"
             type="text"
             autocapitalize="off"
+            maxlength="10"
             required
           />
             <label>닉네임</label>
@@ -73,12 +89,18 @@
               <label>새로운 비밀번호 확인</label>
             <div class="error-text" v-if="error.passwordConfirm">{{error.passwordConfirm}}</div>
           </div>
-
         </div>
-        <!-- 로그인 버튼 -->
-        <button
-          class="btn-2 btn-yellow mt-4"
-        >수정 완료</button>
+
+        <!-- 수정 완료 / 취소 버튼 -->
+        <div class="submit-btns d-flex justify-content-center gap-3">
+          <button
+            class="btn-5 btn-grey mt-4"
+            @click="$router.go(-1)"
+          >취소</button>
+          <button
+            class="btn-5 btn-yellow mt-4"
+          >수정 완료</button>
+        </div>
       </div>
     </div>
   </div>
@@ -91,6 +113,9 @@ export default {
   name: 'UpdateInfo',
   data: () => {
     return {
+      profileImg: null,
+      preview: null,
+      profileUpdate: 0,
       nickname: '',
       oldPassword: '',
       password: '',
@@ -110,13 +135,55 @@ export default {
     passwordToggle() {
       this.updatePassword = !this.updatePassword
     },
+    onFileChange (event) {
+      console.log(event)
+      const input = event.target
+      if (input.files && input.files[0]) {
+        let reader = new FileReader()
+        reader.onload = (e) => {
+          this.preview = e.target.result
+        }
+        reader.readAsDataURL(input.files[0])
+        this.profileImg = input.files[0]
+        this.profileUpdate = 1
+      }
+    },
+    onFileDelete () {
+      this.profileUpdate = 2
+      this.preview = null
+      this.profileImg = null
+    },
     checkForm() {
       if (
-        this.password.length >= 0 &&
-        !this.passwordSchema.validate(this.password)
+        this.nickname.length >= 10
       )
-        this.error.password = "영문,숫자 포함 8 자리이상이어야 합니다.";
+        this.error.nickname = "닉네임은 최대 10자까지 가능합니다.";
       else this.error.password = false;
+
+      if (
+        this.oldPassword.length > 0 &&
+        !this.passwordSchema.validate(this.oldPassword)
+      )
+        this.error.oldPassword = "영문,숫자 포함 8 자리이상이어야 합니다.";
+      else this.error.oldPassword = false;
+
+      if (
+        this.password.length > 0 &&
+        !this.passwordSchema.validate(this.password)
+      ) {
+        this.error.password = "영문,숫자 포함 8 자리이상이어야 합니다."
+      } else if ( this.password === this.oldPassword) {
+        this.error.password = "기존 비밀번호와 일치합니다."
+      } else {
+        this.error.password = false;
+      }
+      
+      if (
+        this.passwordConfirm.length > 0 &&
+        this.passwordConfirm != this.password
+      )
+        this.error.passwordConfirm = "영문,숫자 포함 8 자리이상이어야 합니다.";
+      else this.error.passwordpasswordConfirm = false;
 
       let isSubmit = true;
       Object.values(this.error).map(v => {
@@ -137,7 +204,16 @@ export default {
       .letters();
   },
   watch: {
+    nickname: function() {
+      this.checkForm()
+    },
+    oldPassword: function() {
+      this.checkForm()
+    },
     password: function() {
+      this.checkForm();
+    },
+    passwordConfirm: function() {
       this.checkForm();
     },
   },
@@ -171,5 +247,9 @@ export default {
     width: 80px;
     height: 80px;
     border-radius: 100%;
+  }
+
+  #input-file {
+    display: none;
   }
 </style>
