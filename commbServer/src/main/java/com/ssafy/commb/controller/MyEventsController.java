@@ -18,6 +18,8 @@ import java.util.List;
 @RequestMapping(value="/my-events")
 @Api("MyEvent Controller API V1")
 public class  MyEventsController {
+
+    // 내 이벤트 정보
     @GetMapping("/{userId}")
     @ApiOperation(value="내 이벤트 정보", response = MyEventDto.Response.class)
     public ResponseEntity<MyEventDto.Response> myEvent(@PathVariable Integer userId){

@@ -11,15 +11,19 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
+import com.ssafy.commb.jwt.SecurityService;
 import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -56,6 +60,16 @@ public class UserController {
         }
     }
     // Dummy Data Set----------------------------------------------------------------------
+
+
+    @Autowired
+    private SecurityService securityService;
+
+    @Value("${security.accesstoken}")
+    private String accessToken;
+
+    @Value("${security.refreshtoken}")
+    private String refreshToken;
 
 
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
@@ -127,6 +141,7 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 자체 로그인
+    @Transactional
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
@@ -134,7 +149,15 @@ public class UserController {
         MyDto my = userService.login(myReq);
         if (my == null) return new ResponseEntity<MyDto>(new MyDto(), HttpStatus.valueOf(401));
 
-        return new ResponseEntity<MyDto>(my, HttpStatus.valueOf(200));
+        int userId = 1;
+        Map<String, Object> map = securityService.createToken(userId);
+
+        HttpHeaders resHeader = new HttpHeaders();
+
+        resHeader.set(accessToken, (String) map.get("acToken"));
+        resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        return ResponseEntity.ok().headers(resHeader).body(my);
     }
 
     // 회원가입/로그인 - 비밀번호 찾기
