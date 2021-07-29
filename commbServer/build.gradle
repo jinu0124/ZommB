@@ -57,6 +57,12 @@ dependencies {
 
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
 
+    // spring-security-oauth2-autoconfigure
+    implementation group: 'org.springframework.security.oauth.boot', name: 'spring-security-oauth2-autoconfigure', version: '2.3.12.RELEASE'
+    // spring-security-oauth2-client
+    implementation group: 'org.springframework.security', name: 'spring-security-oauth2-client', version: '5.4.5'
+
+
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     implementation 'org.springframework.boot:spring-boot-starter-mail'
 

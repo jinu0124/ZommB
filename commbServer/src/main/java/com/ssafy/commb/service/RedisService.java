@@ -23,6 +23,11 @@ public class RedisService {
         redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
     }
 
+    public void setStringValue(String key, Object value, Long expTime){
+        redisTemplate.opsForList().rightPush(key, value);
+        redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
+    }
+
     public String getStringValue(String key){
         String ret = (String) redisTemplate.opsForList().rightPop(key);
         System.out.println(ret);
