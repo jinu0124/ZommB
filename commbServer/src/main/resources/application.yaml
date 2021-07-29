@@ -5,6 +5,22 @@ spring:
     url : jdbc:mysql://i5a602.p.ssafy.io/CommBTest
     username : root
     password : 1234
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: commbzomb@gmail.com
+    password: ssafy602!
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+          connectiontimeout: 5000
+          timeout: 5000
+          writetimeout: 5000
+
 
   redis:
     host : 127.0.0.1
@@ -25,3 +41,4 @@ security:
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
   accesstoken: "access-token"
   refreshtoken: "refresh-token"
+
