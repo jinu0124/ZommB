@@ -4,7 +4,6 @@
       <div class="title">My Info</div>
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
-
     <div class="account-form p-5 d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
       
@@ -15,13 +14,19 @@
         <img v-else class="profile" src="@/assets/image/test/profileTest.jpg" alt="">
         
         <div class="btn-text-primary mt-1">
-          <label for="input-file">프로필 변경</label>
+          <span
+            type="button" 
+            data-bs-toggle="modal" 
+            data-bs-target="#exampleModal"
+          >프로필 변경</span>
+          <ProfileCrop/>
+          <!-- <label for="input-file">프로필 변경</label>
           <input
             id="input-file" 
             type="file"
             accept="image/*"
             @change="onFileChange"
-          >
+          > -->
           <span class="mx-1">•</span>
           <span
             type="button"
@@ -108,11 +113,16 @@
 
 <script>
 import PV from "password-validator"
+import ProfileCrop from '@/components/user/ProfileCrop'
 
 export default {
   name: 'UpdateInfo',
+  components: {
+    ProfileCrop
+  },
   data: () => {
     return {
+      myCroppa: null,
       profileImg: null,
       preview: null,
       profileUpdate: 0,
@@ -129,25 +139,28 @@ export default {
       isSubmit: false,
       passwordSchema: new PV(),
       updatePassword: false,
+      dialog: false,
     }
   },
   methods: {
     passwordToggle() {
       this.updatePassword = !this.updatePassword
     },
-    onFileChange (event) {
-      console.log(event)
-      const input = event.target
-      if (input.files && input.files[0]) {
-        let reader = new FileReader()
-        reader.onload = (e) => {
-          this.preview = e.target.result
-        }
-        reader.readAsDataURL(input.files[0])
-        this.profileImg = input.files[0]
-        this.profileUpdate = 1
-      }
-    },
+    // onFileChange (event) {
+    //   console.log(event)
+    //   const input = event.target
+    //   if (input.files && input.files[0]) {
+    //     let reader = new FileReader()
+    //     reader.onload = (e) => {
+    //       this.preview = e.target.result
+    //       this.$refs.cropper.replace(this.preview)
+    //     }
+    //     reader.readAsDataURL(input.files[0])
+    //     this.profileImg = input.files[0]
+    //     this.profileUpdate = 1
+    //     this.dialog = true
+    //   }
+    // },
     onFileDelete () {
       this.profileUpdate = 2
       this.preview = null
