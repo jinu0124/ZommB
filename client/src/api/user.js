@@ -10,4 +10,13 @@ export default {
   signup(userData) {
     return axios.post(`${SERVER_URL}/users`, userData)
   },
+  checkEmail(userData) {
+    return axios.get(
+      `${SERVER_URL}/users/email`,
+      { params: { email: userData } }
+    )
+  },
+  sendEmail(userData) {
+    return axios.post(`${SERVER_URL}/users/confirm-email`, userData)
+  },
 }
