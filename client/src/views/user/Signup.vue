@@ -73,7 +73,7 @@
             id="nickname"
             class="account-input"
             v-model="nickname"
-            type="password"
+            type="text"
             @keyup.enter="onSignup"
             required
           />
@@ -102,6 +102,7 @@
 </template>
 
 <script>
+import userApi from '@/api/user'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
@@ -135,7 +136,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['onSignup', 'moveToSignupEmail']),
+    ...mapActions('user', ['moveToSignupEmail']),
     checkForm() {
       if (this.email.length >= 0 && !EmailValidator.validate(this.email))
         this.error.email = "이메일 형식이 아닙니다."
@@ -171,6 +172,19 @@ export default {
         if (v) isSubmit = false
       })
       this.isSubmit = isSubmit
+    },
+    async onSignup () {
+      const userData = {
+        'email': this.email,
+        'name': this.name,
+        'nickname': this.nickname,
+        'password': this.password
+      }
+      const response = await userApi.signup(userData)
+      console.log(response)
+      // if (response.status === 200) {
+      //   console.log(response)
+      // }
     }
   },
   created() {
@@ -190,8 +204,27 @@ export default {
     },
     email: function() {
       this.checkForm();
-    }
+    },
+    passwordConfirm: function() {
+      this.checkForm();
+    },
+    name: function() {
+      this.checkForm();
+    },
+    nickname: function() {
+      this.checkForm();
+    },
   },
+  // computed: {
+  //   userData: function () {
+  //     return {
+  //       'email': this.email,
+  //       'name': this.name,
+  //       'nickname': this.nickname,
+  //       'password': this.password
+  //     }
+  //   },
+  // },
 }
 </script>
 
