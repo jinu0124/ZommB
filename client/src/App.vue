@@ -1,5 +1,5 @@
 <template>
-  <div id="app">
+  <div id="app" :class="{accounts: isAccountsPage}">
     <Header v-if="needHeader"/>
     <router-view/>
   </div>
@@ -16,10 +16,23 @@ export default {
   computed: {
     // Header 표시 여부 계산
     needHeader() {
-      if (this.$route.name === 'Index') {
+      if (this.$route.name === 'Index' 
+        || this.$route.name === 'Login'
+        || this.$route.name === 'Signup'
+        || this.$route.name === 'PageNotFound'
+        || this.$route.name === 'ServerError'
+        ) {
         return false
       }
       return true
+    },
+    isAccountsPage() {
+      if (this.$route.name === 'Login'
+        || this.$route.name === 'Signup'
+        || this.$route.name === 'UpdateInfo') {
+        return true
+      }
+      return false
     }
   }
 }
@@ -28,20 +41,14 @@ export default {
 <style>
 #app {
   font-family: 'Noto Sans KR', sans-serif;
+  height: 100%;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+.accounts {
+  background-color: #7B60F1;
+  
 }
 </style>
