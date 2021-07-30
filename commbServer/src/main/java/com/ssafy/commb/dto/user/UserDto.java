@@ -5,7 +5,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import lombok.*;
+import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+
+import javax.persistence.Column;
 
 @Component
 @Getter                                     // Getter 생성
@@ -19,8 +22,10 @@ public class UserDto {
     private String email;
     private String name;
     private String nickname;
-    private String userFileUrl;
     private String role;
+
+    @Nullable
+    private String userFileUrl;
 
     @JsonIgnore
     private String password;
@@ -48,6 +53,8 @@ public class UserDto {
     @NoArgsConstructor
     public static class ModifyPwRequest{                // 요청
         private String oldPassword;
+
+        @Column(name = "password")
         private String newPassword;
     }
 
