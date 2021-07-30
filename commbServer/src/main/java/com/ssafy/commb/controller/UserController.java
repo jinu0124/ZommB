@@ -33,13 +33,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-@CrossOrigin(
-		origins = "http://localhost:8000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
-		allowCredentials = "true",
-		allowedHeaders = "*",
-		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS},
-		exposedHeaders = "*"
-)
 @RestController
 @RequestMapping(value = "/users")
 @Api("User Controller API V1")
@@ -168,10 +161,6 @@ public class UserController {
 
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
-        List<String> headerExposeList = new ArrayList<>();
-        headerExposeList.add(accessToken);
-        headerExposeList.add(refreshToken);
-        resHeader.setAccessControlExposeHeaders(headerExposeList);
 
         return ResponseEntity.ok().headers(resHeader).body(my);
     }
