@@ -1,7 +1,6 @@
 package com.ssafy.commb.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +10,8 @@ import java.util.List;
 @Table(name="User")
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class User {
 
     @Id
@@ -67,4 +68,11 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private ConfirmationToken confirmationToken;
+
+    public User(String email, String password, String name, String nickname){
+        this.email = email;
+        this.password = password;
+        this.name = name;
+        this.nickname = nickname;
+    }
 }

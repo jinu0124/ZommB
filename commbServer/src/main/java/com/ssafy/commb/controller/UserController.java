@@ -102,16 +102,16 @@ public class UserController {
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
     @ApiOperation(value = "자체 회원가입")
-    public ResponseEntity singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Integer>> singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return new ResponseEntity(HttpStatus.valueOf(400));
+            return ResponseEntity.status(400).build();
 
         if (userService.isExistEmail(myReq.getEmail()))
-            return new ResponseEntity(HttpStatus.valueOf(409));
+            return ResponseEntity.status(409).build();
 
-        userService.joinUser(myReq);
-
-        return new ResponseEntity(HttpStatus.valueOf(201));
+        Map<String, Integer> map = new HashMap<>();
+        map.put("id", userService.joinUser(myReq));
+        return new ResponseEntity<>(map, HttpStatus.valueOf(201));
     }
 
     // 회원가입/로그인 - Email 중복 확인
@@ -119,7 +119,7 @@ public class UserController {
     @ApiOperation(value = "Email 중복 확인")
     public ResponseEntity duplicateEmail(@RequestParam String email) {
         if (userService.isExistEmail(email))
-            return new ResponseEntity(HttpStatus.valueOf(404));
+            return new ResponseEntity(HttpStatus.valueOf(400));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -151,14 +151,12 @@ public class UserController {
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
-        System.out.println("login");
         MyDto my = userService.login(myReq);
         if (my == null) return new ResponseEntity(HttpStatus.valueOf(401));
 
         Map<String, Object> map = securityService.createToken(my.getId());
 
         HttpHeaders resHeader = new HttpHeaders();
-
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
@@ -187,6 +185,7 @@ public class UserController {
         }
         else return new ResponseEntity(HttpStatus.valueOf(400));
 
+        request.setAttribute("userId", userId);                   // 테스트용(Auto Interceptor WebConfig 적용 전)
         if( !profileService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -195,11 +194,13 @@ public class UserController {
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
-    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer user,
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq,
                                         HttpServletRequest request) {
         if(userReq == null) return ResponseEntity.status(401).build();
-        if(!userService.checkPassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        if(!userService.validatePassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+
+        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
         if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -208,7 +209,10 @@ public class UserController {
     // 회원가입/로그인 - 회원 탈퇴
     @DeleteMapping("/{userId}")
     @ApiOperation(value = "회원탈퇴")
-    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId) {
+    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId,
+                                     HttpServletRequest request) {
+//        userService.deleteUser((int) request.getAttribute("userId"));
+        userService.deleteUser(userId);                            // 테스트용(Auto Interceptor WebConfig 적용 전)
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
