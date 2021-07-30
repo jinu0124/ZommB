@@ -27,20 +27,19 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-//@CrossOrigin(
-//		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
-//		allowCredentials = "true",
-//		allowedHeaders = "*",
-//		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
-//)
+@CrossOrigin(
+		origins = "http://localhost:8000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
+		allowCredentials = "true",
+		allowedHeaders = "*",
+		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS},
+		exposedHeaders = "*"
+)
 @RestController
 @RequestMapping(value = "/users")
 @Api("User Controller API V1")
@@ -163,14 +162,16 @@ public class UserController {
         MyDto my = userService.login(myReq);
         if (my == null) return new ResponseEntity(HttpStatus.valueOf(401));
 
-        int userId = 10000001;
-        System.out.println(my.getId());
         Map<String, Object> map = securityService.createToken(my.getId());
 
         HttpHeaders resHeader = new HttpHeaders();
 
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
+        List<String> headerExposeList = new ArrayList<>();
+        headerExposeList.add(accessToken);
+        headerExposeList.add(refreshToken);
+        resHeader.setAccessControlExposeHeaders(headerExposeList);
 
         return ResponseEntity.ok().headers(resHeader).body(my);
     }
