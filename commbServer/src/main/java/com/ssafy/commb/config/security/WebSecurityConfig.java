@@ -37,15 +37,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .anyRequest().permitAll()
-            .and().cors().configurationSource(corsConfigurationSource())
-            .and().csrf().disable()
-            .oauth2Login()
-                .successHandler(successHandler())
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                .cors()
+                .and().csrf().disable()
+                .authorizeRequests()
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .anyRequest().permitAll()
+                .and()
+                .oauth2Login()
+                    .successHandler(successHandler())
+                    .userInfoEndpoint()
+                    .userService(customOAuth2UserService);
     }
 
     // cors 허용설정
