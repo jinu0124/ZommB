@@ -6,9 +6,9 @@
           <h5 class="modal-title" id="exampleModalLabel">프로필 사진 선택</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
-        <div class="modal-body d-flex justify-content-center">
+        <div class="modal-body d-flex flex-column align-items-center">
           <croppa 
-            v-model="myCroppa"
+            v-model="croppa"
             :width="320"
             :height="320"
             :quality="2"
@@ -18,12 +18,26 @@
             :placeholder-font-size="0"
             :disabled="false"
             :prevent-white-space="true"
-            :show-remove-button="true">
+            :show-remove-button="false">
           </croppa>
+          <div class="d-flex mt-2 gap-2">
+            <button
+              class="btn-5 btn-grey"
+              @click="croppa.remove()"
+            >삭제</button>
+            <button
+              class="btn-5 btn-yellow"
+              @click="croppa.chooseFile()"
+            >다시 선택</button>
+          </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+          <button
+            type="button"
+            class="btn btn-primary"
+            data-bs-dismiss="modal"
+          >저장</button>
         </div>
       </div>
     </div>
@@ -40,9 +54,12 @@ export default {
   name: 'ProfileCrop',
   data: () => {
     return {
-      myCroppa: null,
+      croppa: null,
     }
   },
+  methods: {
+
+  }
 }
 </script>
 

@@ -23,19 +23,53 @@ const actions = {
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
   },
-
   // api 요청
   async onLogin ({ commit }, userData) {
-    const response = await userApi.login(userData)
-    if (response.status === 200) {
-      console.log(response)
-      commit('SET_ISLOGIN', true)
-      commit('SET_ACCESS_TOKEN', response.data.accessToken)
-      commit('SET_REFRESH_TOKEN', response.data.refreshToken)
+    try {
+      const response = await userApi.login(userData)
+      // 로그인 성공 시, 기본 정보 state 저장 + 메인 피드로 이동
+      if (response.status === 200) {
+        console.log(response)
+        commit('SET_ISLOGIN', true)
+        commit('SET_ACCESS_TOKEN', response.data.accessToken)
+        commit('SET_REFRESH_TOKEN', response.data.refreshToken)
+      }
+    } catch(err) {
+        // 400 Bad Request > Login.vue에서 처리
+        return '400'
+    }
+    
+    
+  },
+  async onSignup ({ dispatch }, userData) {
+    try {
+      const response = await userApi.signup(userData)
+      // 회원가입 성공 시, 인증 메일 발송 요청
+      if (response.status === 201) {
+        // 인증 메일 발송을 위한 데이터 준비
+        const userInfo = {
+          email: userData.email,
+          id: response.data.userId
+        }
+        // 메일 발송 요청 함수로 연결
+        dispatch('sendEmail', userInfo)
+      }
+    } catch(err) {
+        // 실패 > 왜 실패할까..
+        console.log(err)
     }
   },
-  onSignup () {
-    console.log('작성 중')
+  async sendEmail ({ dispatch }, userData) {
+    try {
+      const response = await userApi.sendEmail(userData)
+      if (response.status === 200) {
+        // 페이지 이동
+        dispatch('moveToSignupEmail')
+      }
+    } catch(err) {
+        // 실패 > 왜 실패할까..
+        console.log(err)
+    }
   }
 }
 

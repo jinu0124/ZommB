@@ -43,7 +43,7 @@
             v-model="nickname"
             type="text"
             autocapitalize="off"
-            maxlength="11"
+            maxlength="10"
             required
           />
             <label>닉네임</label>
