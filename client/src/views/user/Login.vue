@@ -72,6 +72,7 @@
 </template>
 
 <script>
+import userApi from '@/api/user'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
@@ -114,10 +115,16 @@ export default {
       });
       this.isSubmit = isSubmit;
     },
-    onLogin() {
-      // 백엔드 되면 작성
+    async onLogin() {
+      const userData = {
+        'email': this.email,
+        'password': this.password
+      }
+      const response = await userApi.login(userData)
+      if (response.status === 200) {
+        console.log(response)
+      }
     },
-
   },
   created() {
     this.passwordSchema
@@ -131,10 +138,10 @@ export default {
       .letters();
   },
   watch: {
-    password: function() {
+    email: function() {
       this.checkForm();
     },
-    email: function() {
+    password: function() {
       this.checkForm();
     }
   },
