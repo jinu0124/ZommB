@@ -4,6 +4,7 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.model.User;
+import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
 @Service
@@ -61,19 +63,33 @@ public class UserServiceImpl implements UserService {
         return my;
     }
 
-    private final ConfirmationTokenServiceImpl confirmationTokenService;
+    private final ConfirmationTokenService confirmationTokenService;
+    private final ConfirmationTokenRepository confirmationTokenRepository;
 
-    // 토큰 생성
+    // 토큰 생성 & 메일 발송 & Redis query 저장
     public String TokenGeneration(int userId, String receiverEmail){
-        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail);
+        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail);        // 유저 ID, 이메일로 토큰 발행 및 이메일 발송 / DB에 토큰 정보 저장
     }
 
-    // 이메일 인증 로직
-    public void confirmEmail(String token) {
-        ConfirmationToken findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(token);
-        Optional<User> user = userRepository.findById(findConfirmationToken.getUserId());
-        findConfirmationToken.useToken();   // 토큰 만료 로직
-        user.get().setRole("USR");    // 유저의 이메일 인증 값 변경 로직
+    // 이메일 인증
+    public boolean confirmEmail(String key) {
+        Optional<ConfirmationToken> findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(key); // token
+
+        AtomicBoolean ret = new AtomicBoolean(false);
+
+        findConfirmationToken.ifPresent(select -> {
+            Optional<User> user = userRepository.findById(select.getUserId());    // 유저의 Role 변경 로직
+
+            user.ifPresent(userSelect -> {
+                userSelect.setRole("USR");
+                userRepository.save(userSelect);
+            });
+            ret.set(true);
+            select.useToken();
+            confirmationTokenRepository.delete(select);
+        });
+
+        return ret.get();
     }
 
     @Override

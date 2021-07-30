@@ -10,7 +10,9 @@ public interface UserService {
     public boolean isExistEmail(String email);
     public MyDto login(MyDto.LoginRequest myReq);
     public String TokenGeneration(int userId, String receiverEmail);
-    public void confirmEmail(String token);
+    public boolean confirmEmail(String token);
+//    public void updateUserRole(int userId);
+
     public boolean updatePassword(UserDto.ModifyPwRequest userReq, HttpServletRequest request);
     public boolean validatePassword(String password);
 

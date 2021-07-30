@@ -13,17 +13,21 @@ import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.jwt.SecurityService;
 import com.ssafy.commb.service.ProfileService;
+import com.ssafy.commb.service.RedisService;
 import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.util.RedirectUrlBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -74,6 +78,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedisService redisService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -130,9 +136,21 @@ public class UserController {
     public String viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
 
         String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
-        userService.confirmEmail(token);
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/checkEmailComplete")
+    @ApiOperation(value = "Email 인증 확인")
+    public String checkEmailComplete(@RequestParam String key, RedirectAttributes redirect){
+        if(userService.confirmEmail(key)) {
+//            RedirectUrlBuilder redirectUrl = new RedirectUrlBuilder();
+//            redirectUrl.setContextPath("index.html");
+            // Redirect를 어떻게 시키지.. 그냥 빈페이지에 인증되었다고만 적어두어도 괜찮나..??
+            return "인증이 완료되었습니다. 돌아가! 로그인해!";
+        }
+
+        return "토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
