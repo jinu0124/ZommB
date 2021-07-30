@@ -28,7 +28,7 @@ const actions = {
   async onLogin ({ commit }, userData) {
     const response = await userApi.login(userData)
     if (response.status === 200) {
-      console.log(response.data)
+      console.log(response)
       commit('SET_ISLOGIN', true)
       commit('SET_ACCESS_TOKEN', response.data.accessToken)
       commit('SET_REFRESH_TOKEN', response.data.refreshToken)
