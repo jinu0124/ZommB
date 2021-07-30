@@ -8,6 +8,8 @@ import lombok.*;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.Column;
+
 @Component
 @Getter                                     // Getter 생성
 @Setter                                     // Setter 생성
@@ -51,6 +53,8 @@ public class UserDto {
     @NoArgsConstructor
     public static class ModifyPwRequest{                // 요청
         private String oldPassword;
+
+        @Column(name = "password")
         private String newPassword;
     }
 

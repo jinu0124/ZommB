@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
@@ -204,9 +205,12 @@ public class UserController {
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
-    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
-                                         @RequestBody UserDto.ModifyPwRequest userReq) {
-
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer user,
+                                         @RequestBody UserDto.ModifyPwRequest userReq,
+                                        HttpServletRequest request) {
+        if(userReq == null) return ResponseEntity.status(401).build();
+        if(!userService.checkPassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
