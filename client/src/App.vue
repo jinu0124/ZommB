@@ -18,14 +18,18 @@ export default {
     needHeader() {
       if (this.$route.name === 'Index' 
         || this.$route.name === 'Login'
-        || this.$route.name === 'Signup') {
+        || this.$route.name === 'Signup'
+        || this.$route.name === 'PageNotFound'
+        || this.$route.name === 'ServerError'
+        ) {
         return false
       }
       return true
     },
     isAccountsPage() {
       if (this.$route.name === 'Login'
-        || this.$route.name === 'Signup') {
+        || this.$route.name === 'Signup'
+        || this.$route.name === 'UpdateInfo') {
         return true
       }
       return false
@@ -37,7 +41,8 @@ export default {
 <style>
 #app {
   font-family: 'Noto Sans KR', sans-serif;
-  height: 100vh;
+  height: 100%;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -40,6 +40,20 @@
   font-size: 1.05rem;
 }
 
+.btn-5 {
+  border: none;
+  width: 110px;
+  height: 35px;
+  border-radius: 20px;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.btn-5:hover {
+  font-size: 0.95rem;
+}
+
 .btn-6 {
   border: none;
   width: 50px;
@@ -66,4 +80,10 @@
 .btn-text-s {
   color: #A4A4A4;
   font-size: 0.75rem;
+}
+
+.btn-text-primary {
+  color: #683EC9;
+  font-size: 0.75rem;
+  font-weight: 500;
 }

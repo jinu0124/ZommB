@@ -1,7 +1,7 @@
 <template>
   <ul class="dropdown-menu" aria-labelledby="UserMenuDropdown">
     <li><a class="dropdown-item" href="#">내 프로필</a></li>
-    <li><a class="dropdown-item" href="#">계정 관리</a></li>
+    <li><router-link class="dropdown-item" :to="{ name: 'UpdateInfo' }">계정 관리</router-link></li>
     <li><a class="dropdown-item" href="#">로그아웃</a></li>
     <li><a class="dropdown-item" href="#">회원 탈퇴</a></li>
   </ul>
