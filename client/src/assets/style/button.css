@@ -60,20 +60,29 @@
   height: 20px;
   border-radius: 10px;
   outline: none;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
 }
 
 .btn-6:hover {
-  font-size: 11pt;
+  font-size: 0.6rem;
 }
 
 
+.btn-primary1 {
+  background-color: #683EC9;
+  color: #fff;
+}
 .btn-yellow {
   background-color: #FFDC7C;
   color: #585858;
 }
 .btn-grey {
   background-color: #A4A4A4;
+  color: #fff;
+}
+.btn-disabled {
+  background-color: #585858;
+  pointer-events: none;
   color: #fff;
 }
 
