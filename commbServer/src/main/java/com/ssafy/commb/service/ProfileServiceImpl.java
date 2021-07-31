@@ -45,7 +45,7 @@ public class ProfileServiceImpl implements ProfileService {
     @Override
     public boolean updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
         int userId = (int) request.getAttribute("userId");              // jwt 토큰으로 인증된 userId
-//        int userId = 10000001;              // 임시 테스트
+//        int userId = 10000001;            // 테스트용
 
         Collection<Part> parts = request.getParts();                // Multipart parts 받아오기
 

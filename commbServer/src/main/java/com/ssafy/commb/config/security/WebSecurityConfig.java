@@ -2,6 +2,7 @@ package com.ssafy.commb.config.security;
 
 import com.ssafy.commb.service.CustomOAuth2UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +18,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Value("${security.accesstoken}")
+    private String accessToken;
+
+    @Value("${security.refreshtoken}")
+    private String refreshToken;
 
     @Autowired
     private CustomOAuth2UserServiceImpl customOAuth2UserService;
@@ -57,11 +64,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.addAllowedOrigin("*");
         configuration.addAllowedHeader("*");
         configuration.addAllowedMethod("*");
-        configuration.setAllowCredentials(false);
-        configuration.setMaxAge(3600L);
+        configuration.setAllowCredentials(true);
+        configuration.addExposedHeader(accessToken);
+        configuration.addExposedHeader(refreshToken);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }

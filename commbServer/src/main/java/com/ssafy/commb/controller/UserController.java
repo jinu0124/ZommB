@@ -13,34 +13,30 @@ import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.jwt.SecurityService;
 import com.ssafy.commb.service.ProfileService;
+import com.ssafy.commb.service.RedisService;
 import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.util.RedirectUrlBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-//@CrossOrigin(
-//		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
-//		allowCredentials = "true",
-//		allowedHeaders = "*",
-//		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
-//)
 @RestController
 @RequestMapping(value = "/users")
 @Api("User Controller API V1")
@@ -82,6 +78,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private RedisService redisService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -110,16 +108,16 @@ public class UserController {
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
     @ApiOperation(value = "자체 회원가입")
-    public ResponseEntity singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Integer>> singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return new ResponseEntity(HttpStatus.valueOf(400));
+            return ResponseEntity.status(400).build();
 
         if (userService.isExistEmail(myReq.getEmail()))
-            return new ResponseEntity(HttpStatus.valueOf(409));
+            return ResponseEntity.status(409).build();
 
-        userService.joinUser(myReq);
-
-        return new ResponseEntity(HttpStatus.valueOf(201));
+        Map<String, Integer> map = new HashMap<>();
+        map.put("id", userService.joinUser(myReq));
+        return new ResponseEntity<>(map, HttpStatus.valueOf(201));
     }
 
     // 회원가입/로그인 - Email 중복 확인
@@ -127,7 +125,7 @@ public class UserController {
     @ApiOperation(value = "Email 중복 확인")
     public ResponseEntity duplicateEmail(@RequestParam String email) {
         if (userService.isExistEmail(email))
-            return new ResponseEntity(HttpStatus.valueOf(404));
+            return new ResponseEntity(HttpStatus.valueOf(400));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
@@ -138,9 +136,21 @@ public class UserController {
     public String viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
 
         String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
-        userService.confirmEmail(token);
 
         return "redirect:/login";
+    }
+
+    @GetMapping("/checkEmailComplete")
+    @ApiOperation(value = "Email 인증 확인")
+    public String checkEmailComplete(@RequestParam String key, RedirectAttributes redirect){
+        if(userService.confirmEmail(key)) {
+//            RedirectUrlBuilder redirectUrl = new RedirectUrlBuilder();
+//            redirectUrl.setContextPath("index.html");
+            // Redirect를 어떻게 시키지.. 그냥 빈페이지에 인증되었다고만 적어두어도 괜찮나..??
+            return "인증이 완료되었습니다. 돌아가! 로그인해!";
+        }
+
+        return "토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -159,16 +169,12 @@ public class UserController {
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
-        System.out.println("login");
         MyDto my = userService.login(myReq);
         if (my == null) return new ResponseEntity(HttpStatus.valueOf(401));
 
-        int userId = 10000001;
-        System.out.println(my.getId());
         Map<String, Object> map = securityService.createToken(my.getId());
 
         HttpHeaders resHeader = new HttpHeaders();
-
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
@@ -197,6 +203,7 @@ public class UserController {
         }
         else return new ResponseEntity(HttpStatus.valueOf(400));
 
+        request.setAttribute("userId", userId);                   // 테스트용(Auto Interceptor WebConfig 적용 전)
         if( !profileService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -205,11 +212,13 @@ public class UserController {
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
-    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer user,
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq,
                                         HttpServletRequest request) {
         if(userReq == null) return ResponseEntity.status(401).build();
-        if(!userService.checkPassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        if(!userService.validatePassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+
+        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
         if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
@@ -218,7 +227,10 @@ public class UserController {
     // 회원가입/로그인 - 회원 탈퇴
     @DeleteMapping("/{userId}")
     @ApiOperation(value = "회원탈퇴")
-    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId) {
+    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId,
+                                     HttpServletRequest request) {
+//        userService.deleteUser((int) request.getAttribute("userId"));
+        userService.deleteUser(userId);                            // 테스트용(Auto Interceptor WebConfig 적용 전)
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
