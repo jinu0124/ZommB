@@ -1,6 +1,6 @@
 <template>
   <div class="email-check d-flex flex-column align-items-center justify-content-center">
-    <div class="content d-flex align-items-center">
+    <div class="content d-flex flex-row align-items-center">
       <img src="@/assets/image/camel/camelSmile.svg" alt="">
       <div class="text">
         사용 가능한 <br/>
