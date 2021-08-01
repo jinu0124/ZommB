@@ -1,22 +1,29 @@
-import axios from 'axios'
-
-const SERVER_URL = 'http://i5a602.p.ssafy.io:8080'
+import instance from "./Default"
 
 export default {
   // user
-  login(userData) {
-    return axios.post(`${SERVER_URL}/users/login`, userData)
-  },
+  // login(userData) {
+  //   return axios.post(`${SERVER_URL}/users/login`, userData)
+  // },
   signup(userData) {
-    return axios.post(`${SERVER_URL}/users`, userData)
+    return instance({
+      url: '/users',
+      method: 'post',
+      data: userData
+    })
   },
   checkEmail(userData) {
-    return axios.get(
-      `${SERVER_URL}/users/email`,
-      { params: { email: userData } }
-    )
+    return instance({
+      url: '/users/email',
+      method: 'get',
+      params: { email: userData }
+    })
   },
   sendEmail(userData) {
-    return axios.post(`${SERVER_URL}/users/confirm-email`, userData)
+    return instance({
+      url: '/users/confirm-email',
+      method: 'post',
+      data: userData
+    })
   },
 }
