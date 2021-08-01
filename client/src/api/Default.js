@@ -2,7 +2,7 @@ import axios from 'axios'
 import router from '@/router'
 
 
-const instance = axios.create({
+const _axios = axios.create({
   baseURL: 'http://i5a602.p.ssafy.io:8080',
   timeout: 1000,
   // 헤더 정보 자동 추가
@@ -16,7 +16,7 @@ const instance = axios.create({
   1) 요청 바로 직전 - 인자값: axios config
   2) 요청 에러 - 인자값: error
 */
-instance.interceptors.request.use(
+_axios.interceptors.request.use(
   function (config) {
     return config;
   }, 
@@ -32,7 +32,7 @@ instance.interceptors.request.use(
   1) 응답 정성 - 인자값: http response
   2) 응답 에러 - 인자값: http error
 */
-instance.interceptors.response.use(
+_axios.interceptors.response.use(
   function (response) {
     return response
   },
@@ -48,4 +48,4 @@ instance.interceptors.response.use(
 );
 
 // 생성한 인스턴스를 익스포트 합니다.
-export default instance;
+export default _axios;

@@ -1,4 +1,4 @@
-import instance from "./Default"
+import _axios from "./Default"
 
 export default {
   // user
@@ -6,21 +6,21 @@ export default {
   //   return axios.post(`${SERVER_URL}/users/login`, userData)
   // },
   signup(userData) {
-    return instance({
+    return _axios({
       url: '/users',
       method: 'post',
       data: userData
     })
   },
   checkEmail(userData) {
-    return instance({
+    return _axios({
       url: '/users/email',
       method: 'get',
       params: { email: userData }
     })
   },
   sendEmail(userData) {
-    return instance({
+    return _axios({
       url: '/users/confirm-email',
       method: 'post',
       data: userData
