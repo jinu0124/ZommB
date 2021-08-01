@@ -9,8 +9,6 @@
   },
   "dependencies": {
     "axios": "^0.21.1",
-    "bootstrap": "^4.5.3",
-    "bootstrap-vue": "^2.21.2",
     "core-js": "^3.6.5",
     "email-validator": "^2.0.4",
     "lodash": "^4.17.21",
