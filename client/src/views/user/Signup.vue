@@ -92,7 +92,7 @@
         <!-- 회원가입 버튼 -->
         <button
           :class="[ isChecked && isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-2', 'mt-4']"
-          @click="onSignup(userData)"
+          @click="onSignup(userInfo)"
         >회원가입</button>
       </div>
     </div>
@@ -161,17 +161,17 @@ export default {
     ...mapActions('user', ['onSignup']),
     // 이메일 중복 확인 요청
     async checkEmail () {
-      try {
-        const response = await userApi.checkEmail(this.email)
-        if (response.status === 200) {
+      await userApi.checkEmail(this.email)
+        .then((res) => {
           this.emailAlert = 1
           this.isChecked = true
-        }
-      } catch(err) {
-          // 실패 시, input 초기화
+          console.log(res)
+        })
+        .catch((err) => {
           this.email = ''
           this.emailAlert = 2
-        }
+          console.log(err)
+        })
     },
     // 이메일 중복 체크 후 input 변경 시, 다시 중복 체크하도록 변경
     resetEmailCheck () {
@@ -262,7 +262,7 @@ export default {
     },
   },
   computed: {
-    userData: function () {
+    userInfo: function () {
       return {
         'email': this.email,
         'name': this.name,
@@ -283,7 +283,7 @@ export default {
   }
   .backdrop {
     position: fixed;
-    width: 100vh;
+    width: 100%;
     height: 100vh;
     z-index: 1040;
     background-color: rgba(0, 0, 0, 0.3);
