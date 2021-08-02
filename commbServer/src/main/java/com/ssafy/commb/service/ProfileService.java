@@ -7,5 +7,5 @@ import javax.servlet.ServletException;
 import java.io.IOException;
 
 public interface ProfileService {
-    public boolean updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException;
+    public MyDto.Response updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException;
 }
