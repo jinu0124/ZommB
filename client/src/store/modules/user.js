@@ -73,7 +73,10 @@ const actions = {
         router.push({ name: 'Feed' })
       })
       .catch((err) => {
-        console.log(err.response)
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
+        }
+        return Promise.reject(err.response)
       })
   },
   onLogout({ commit, dispatch }) {
