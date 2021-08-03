@@ -1,5 +1,7 @@
 package com.ssafy.commb.model.follow;
 
+import lombok.Getter;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Embeddable;
 import javax.persistence.FetchType;
@@ -7,6 +9,7 @@ import javax.persistence.OneToMany;
 import java.util.List;
 
 @Embeddable
+@Getter
 public class Followings {
 
     @OneToMany(
