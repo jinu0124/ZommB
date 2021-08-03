@@ -5,6 +5,7 @@ import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import MyProfile from '@/views/user/MyProfile'
 import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
@@ -70,8 +71,12 @@ const routes = [
     path: '/reply',
     name: 'Reply',
     component: Reply
-  }
-
+  },
+  {
+    path: '/myprofile',
+    name: 'MyProfile',
+    component: MyProfile
+  },
 ]
 
 const router = new VueRouter({

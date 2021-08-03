@@ -8,7 +8,8 @@
       <!-- <p class="menu-item">NewsFeed</p> -->
       <a class="menu-item">Challenge</a>
       <a class="menu-item">Search</a>
-      <a class="menu-item">MyProfile</a>
+      <div><router-link :to="{ name: 'MyProfile' }" class="menu-item" data-bs-dismiss="offcanvas">MyProfile</router-link></div>
+      <!-- <a class="menu-item">MyProfile</a> -->
     </div>
     <img class="offcanvas-deco" src="@/assets/image/camel/camelRotate.svg" alt="">
     <div class="footer mx-4">
