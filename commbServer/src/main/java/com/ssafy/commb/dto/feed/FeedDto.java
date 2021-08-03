@@ -22,6 +22,7 @@ public class FeedDto {
     private String content;
     private Boolean isThumb;
     private Integer thumbCnt;
+    private Integer blocked;
     private String feedFileUrl;
 
     private UserDto user;
@@ -33,8 +34,8 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {                // 요청
-        private String userId;
-        private String bookId;
+        private Integer userId;
+        private Integer bookId;
         private String keywordId;
 
         private String content;
@@ -44,7 +45,7 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RegisterRequest {                // 요청
-        private String bookId;
+        private Integer bookId;
         private String content;
     }
 
