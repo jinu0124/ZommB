@@ -3,12 +3,6 @@
 
 <mapper namespace="com.ssafy.commb.dao.BookDao">
 
-    <select id="userFeed" parameterType="Integer" resultMap="feedInformation">
-
-    </select>
-
-
-
 <!--    <resultMap type="Feed" id="feedInformation">-->
 <!--        <result column="fid" property="id"/>-->
 <!--        <result column="create_at" property="createAt"/>-->
