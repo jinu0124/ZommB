@@ -2,7 +2,6 @@ package com.ssafy.commb.config.security;
 
 import com.ssafy.commb.service.CustomOAuth2UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -44,17 +43,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-            .authorizeRequests()
-                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                .anyRequest().permitAll()
-            .and()
-                .cors().configurationSource(corsConfigurationSource())
+                .cors()
+                .and().csrf().disable()
+                .authorizeRequests()
+                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                    .anyRequest().permitAll()
                 .and()
-                .csrf().disable()
-            .oauth2Login()
-                .successHandler(successHandler())
-                .userInfoEndpoint()
-                .userService(customOAuth2UserService);
+                .oauth2Login()
+                    .successHandler(successHandler())
+                    .userInfoEndpoint()
+                    .userService(customOAuth2UserService);
     }
 
     // cors 허용설정
@@ -68,10 +66,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader(accessToken);
         configuration.addExposedHeader(refreshToken);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }
