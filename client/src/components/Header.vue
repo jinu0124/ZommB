@@ -8,17 +8,33 @@
         data-bs-target="#offcanvasWithBothOptions" 
         aria-controls="offcanvasWithBothOptions"
       ></i>
-      <span class="header-logo pt-1">CommB</span>
+      <span 
+        class="header-logo pt-1"
+        type="button"
+        @click="$router.push({ name: 'Index' })"
+      >CommB</span>
       <div class="dropdown">
         <img 
+          v-if="myInfo.userFileUrl"
           class="user-profile dropdown-toggle"
           type="button" 
           id="UserMenuDropdown"
           data-bs-toggle="dropdown" 
           aria-expanded="false"
-          src="@/assets/image/test/profileTest.jpg" 
-          alt=""
+          :src="myInfo.userFileUrl" 
+          alt="user-profile"
         >
+        <img
+          v-else
+          src="@/assets/image/common/profileDefault.svg"
+          alt="defalut-profile"
+          class="user-profile dropdown-toggle"
+          type="button" 
+          id="UserMenuDropdown"
+          data-bs-toggle="dropdown" 
+          aria-expanded="false"
+        >
+
         <HeaderUserMenu/>
       </div>
     </div>
@@ -29,12 +45,16 @@
 <script>
 import HeaderSideNav from "./HeaderSideNav.vue"
 import HeaderUserMenu from "./HeaderUserMenu.vue"
+import { mapState } from "vuex"
 
 export default {
   name: 'Header',
   components: {
     HeaderSideNav,
     HeaderUserMenu,
+  },
+  computed: {
+    ...mapState('user', ['myInfo'])
   }
 }
 </script>
