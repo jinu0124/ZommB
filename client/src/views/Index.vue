@@ -30,7 +30,7 @@ export default {
 }
 </script>
 
-<style src="@/assets/style/button.css"></style>
+
 <style scoped>
   .index {
     height: 100vh;

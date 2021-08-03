@@ -2,7 +2,7 @@
   <div class="signup-email d-flex flex-column align-items-center">
     <div class="email-header text-center">
       <div>Welcome,</div>
-      <div>nickname !</div>
+      <div>{{ tempNickname }} !</div>
       <img src="@/assets/image/camel/camelSunglassCircle.svg" alt="">
     </div>
     <div class="email-content my-3 d-flex flex-column justify-content-center align-items-center">
@@ -20,12 +20,15 @@
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapActions, mapState } from "vuex"
 
 export default {
   name: 'SignupEmail',
   methods: {
     ...mapActions('user', ['moveToLogin'])
+  },
+  computed: {
+    ...mapState('user', ['tempNickname'])
   }
 }
 </script>
