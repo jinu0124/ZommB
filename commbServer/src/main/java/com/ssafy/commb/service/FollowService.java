@@ -11,4 +11,6 @@ public interface FollowService {
     public void deleteFollowing(int follower, int following);
 
     public List<MyDto> getFollowings(int meId, int userId);
+
+    public List<MyDto> getFollowers(int meId, int userId);
 }

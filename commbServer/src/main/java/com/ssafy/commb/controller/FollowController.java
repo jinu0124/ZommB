@@ -25,12 +25,8 @@ public class FollowController {
 
         int follower = (int) request.getAttribute("userId");
         int following = Integer.parseInt(userId);
-        try {
-            followService.addFollowing(follower, following);
-        } catch(Exception e){
-            e.printStackTrace();
-            return new ResponseEntity(HttpStatus.valueOf(400));
-        }
+
+        followService.addFollowing(follower, following);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -67,8 +63,18 @@ public class FollowController {
 
     // 팔로워 목록
     @GetMapping(value="/{userId}/follower")
-    public Object getFollowers(@PathVariable String userId){
-        return null;
+    public Object getFollowers(
+            @PathVariable int userId,
+            HttpServletRequest request) {
+
+        int meId = (int) request.getAttribute("userId");
+        List<MyDto> myDtoList = followService.getFollowers(meId, userId);
+        MyDto.ResponseList myRes = MyDto.ResponseList.builder()
+                .data(myDtoList)
+                .build();
+
+
+        return new ResponseEntity<MyDto.ResponseList>(myRes, HttpStatus.valueOf(200));
     }
 
     // userId 회원의 피드 리스트

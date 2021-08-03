@@ -5,6 +5,7 @@ import com.ssafy.commb.exception.follow.DuplicateFollowException;
 import com.ssafy.commb.exception.follow.NotFoundFollowException;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.model.follow.Follow;
+import com.ssafy.commb.model.follow.Followers;
 import com.ssafy.commb.model.follow.Followings;
 import com.ssafy.commb.repository.FollowRepository;
 import com.ssafy.commb.repository.UserRepository;
@@ -44,7 +45,7 @@ public class FollowServiceImpl implements FollowService{
         // 2명다 존재하는 유저일경우
         if(followerUser.isPresent() && followingUser.isPresent()){
             // 이미 존재하는 팔로우일 경우 exception
-            if(isFollow(followerUser.get(), followingUser.get())) throw new DuplicateFollowException();
+             if(isFollow(followerUser.get(), followingUser.get())) throw new DuplicateFollowException();
 
             // 팔로우 추가
             followerUser.get().follow(followingUser.get());
@@ -97,6 +98,39 @@ public class FollowServiceImpl implements FollowService{
                             .nickname(following.getNickname())
                             .userFileUrl(following.getFileUrl())
                             .isFollow(isFollow(me, following))
+                            .build();
+                }).collect(Collectors.toList());
+
+        return myDtoList;
+    }
+
+    @Override
+    public List<MyDto> getFollowers(int meId, int userId) {
+        Optional<User> userOp = userRepository.findUserById(userId);
+        Optional<User> meOp = userRepository.findUserById(meId);
+
+        if(!userOp.isPresent() || !meOp.isPresent()) {
+            // User NotFound Exception 추가
+            return null;
+        }
+
+        User user = userOp.get();
+        User me = meOp.get();
+
+        // 타겟유저의 following 목록 가져오기
+        Followers followers = user.getFollowers();
+
+        // 나(me)를 기준으로 follow 여부 확인하며, MyDtoList 생성
+        List<MyDto> myDtoList = followers.getFollowers()
+                .stream()
+                .map(follow -> {
+                    User follower = userRepository.findUserById(follow.getFollower().getId()).get();
+
+                    return MyDto.builder()
+                            .id(follower.getId())
+                            .nickname(follower.getNickname())
+                            .userFileUrl(follower.getFileUrl())
+                            .isFollow(isFollow(me, follower))
                             .build();
                 }).collect(Collectors.toList());
 
