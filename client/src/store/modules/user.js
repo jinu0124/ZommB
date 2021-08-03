@@ -65,11 +65,11 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_ACCESS_TOKEN', res.headers['access-token'])
         commit('SET_REFRESH_TOKEN', res.headers['refresh-token'])
-        commit('SET_MY_INFO', res.data)
+        commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })
       .catch((err) => {
