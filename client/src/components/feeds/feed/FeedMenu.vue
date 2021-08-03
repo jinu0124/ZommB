@@ -12,7 +12,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
   .dropdown-menu {
     border: none;
     background: rgba(0, 0, 0, 0.7);
