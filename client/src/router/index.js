@@ -36,7 +36,7 @@ const routes = [
     component: SignupEmail
   },
   {
-    path: '/updateinfo',
+    path: '/updateinfo/:id',
     name: 'UpdateInfo',
     component: UpdateInfo
   },
