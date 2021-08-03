@@ -22,12 +22,20 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
 
+import com.ssafy.commb.dao.FeedDao;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
 @RequiredArgsConstructor
 @Service
 public class FeedServiceImpl implements FeedService {
 
     @Autowired
-    FeedRepository feedRepository;
+    private FeedRepository feedRepository;
+
+    @Autowired
+    private FeedDao feedDao;
 
     private static final String uploadFolder = "upload";
 
@@ -103,6 +111,27 @@ public class FeedServiceImpl implements FeedService {
             }
         }
         return savingFileName;
+    }
+    
+    @Override
+    public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request) {
+
+        List<FeedDto> feeds = feedDao.userFeed(userId, (Integer) request.getAttribute("userId"));
+
+        for(FeedDto feed : feeds){
+            feed.setHashTags(feedDao.getHashTags(feed.getId()));
+            feed.setComments(feedDao.getComments(feed.getId()));
+        }
+
+        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
+        feedResList.setData(feeds);
+
+        return feedResList;
+    }
+
+    @Override
+    public int getUserFeedCnt(int userId) {
+        return feedDao.userFeedCnt(userId);
     }
 
 }

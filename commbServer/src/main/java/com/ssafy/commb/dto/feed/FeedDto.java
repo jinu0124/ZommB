@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.user.UserDto;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
+@Alias("Feed")
 public class FeedDto {
     private Integer id;
     private Date createAt;
@@ -58,6 +60,17 @@ public class FeedDto {
         private FeedDto data;
         private String retMsg;                  // message
     }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ResponseList {               // 반환
+        private List<FeedDto> data;
+        private String retMsg;                  // message
+    }
+
 
 }
 
