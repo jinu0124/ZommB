@@ -26,6 +26,20 @@
   font-size: 1.05rem;
 }
 
+.btn-3 {
+  border: none;
+  width: 200px;
+  height: 35px;
+  border-radius: 20px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 700;
+}
+
+.btn-3:hover {
+  font-size: 1.05rem;
+}
+
 .btn-4 {
   border: none;
   width: 150px;
