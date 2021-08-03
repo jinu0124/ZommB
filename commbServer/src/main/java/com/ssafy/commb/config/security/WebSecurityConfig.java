@@ -44,16 +44,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors()
-                .and().csrf().disable()
-                .authorizeRequests()
-                    .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-                    .anyRequest().permitAll()
+            .authorizeRequests()
+                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
+                .anyRequest().permitAll()
+            .and()
+                .cors().configurationSource(corsConfigurationSource())
                 .and()
-                .oauth2Login()
-                    .successHandler(successHandler())
-                    .userInfoEndpoint()
-                    .userService(customOAuth2UserService);
+                .csrf().disable()
+            .oauth2Login()
+                .successHandler(successHandler())
+                .userInfoEndpoint()
+                .userService(customOAuth2UserService);
     }
 
     // cors 허용설정
@@ -67,10 +68,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         configuration.setAllowCredentials(true);
         configuration.addExposedHeader(accessToken);
         configuration.addExposedHeader(refreshToken);
+        configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
-
         return source;
     }
 }

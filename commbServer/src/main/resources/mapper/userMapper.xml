@@ -4,7 +4,7 @@
 <mapper namespace="com.ssafy.commb.dao.UserDao">
 
     <select id="userInfo" parameterType="Integer" resultMap="userInformation">
-        SELECT id, email, name, nickname, bookmark, bookmark_on as bookmarkOn, pencil, pencil_on as pencilOn, file_url
+        SELECT id, email, name, nickname, bookmark, bookmark_on as bookmarkOn, pencil, pencil_on as pencilOn, file_url,
                (SELECT COUNT(*) FROM follow WHERE follower = #{userId}) AS following,
                (SELECT COUNT(*) FROM follow WHERE following = #{userId}) AS follower,
                (SELECT COUNT(*) FROM follow WHERE follower = #{myUserId} and following = #{userId}) AS isFollow
