@@ -7,8 +7,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -16,7 +14,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(value = ApplicationException.class)
     public ResponseEntity handleApplicationException(ApplicationException e){
 
-        return ResponseEntity.status(e.getStatus()).body(e.getMsg());
+        return ResponseEntity.status(e.getStatus()).body(e);
     }
 
     // https://withseungryu.tistory.com/95
