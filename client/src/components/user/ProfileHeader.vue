@@ -43,8 +43,8 @@
 </template>
 
 <script>
-import HeaderSideNav from "./HeaderSideNav.vue"
-import HeaderUserMenu from "./HeaderUserMenu.vue"
+import HeaderSideNav from "@/components/HeaderSideNav.vue"
+import HeaderUserMenu from "@/components/HeaderUserMenu.vue"
 import { mapState } from "vuex"
 
 export default {
@@ -72,6 +72,7 @@ export default {
   .header-logo {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.5rem;
+    margin: 0 auto;
     color: #7540EE;
   }
   .user-profile {
