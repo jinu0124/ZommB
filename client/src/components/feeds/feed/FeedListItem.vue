@@ -1,7 +1,7 @@
 <template>
 <div class="feed-list">
   <div class="feed-list-item">
-    <div class="feed-header">
+    <span class="feed-header">
       <img
         alt=""
         class="feed-user-image"
@@ -15,35 +15,44 @@
             class="minibook"
             src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
           />
-          <p class="title">미드나잇 라이브러리</p>
+          <p class="title" type="button">미드나잇 라이브러리</p>
         </div>
       </div>
       <img
         alt=""
-        class="feed-menu"
+        class="feed-menu dropdown-toggle"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
         src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
+        type="button"
+        id="FeedMenuDropdown"
       />
-      <feed-menu></feed-menu>
-    </div>
+      <FeedMenu/>
+    </span>
     <img
       alt=""
       class="feed-image"
       src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
     />
-    <div class="like-reply">
+    <span class="like-reply">
       <img
         alt=""
-        class="like"
+        class="like" type="button" @click="dislike"
         src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
       />
-      <p class="like-num" @click="moveToLike">00</p>
       <img
         alt=""
-        class="reply"
+        class="dislike" type="button" @click="like" display="none"
+        src="https://code.iconify.design/1/1.0.6/iconify.min.js"
+      />
+      <p class="like-num" type="button" @click="moveToLike">00</p>
+      <img
+        alt=""
+        class="reply" type="button" @click="moveToReply"
         src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
       />
-      <p class="reply-num" @click="moveToReply">00</p>
-    </div>
+      <p class="reply-num">00</p>
+    </span>
     <div class="content">
       <p class="feed-user-nickname">Nickname</p>
       <div class="detail-hashtags">
@@ -103,9 +112,8 @@ export default {
   background-color: rgba(255, 255, 255, 1);
   border-radius: 15px 0px 0px;
   padding: 20px 0 82px;
-  display: flex;
+  display: flex-center;
   flex-direction: column;
-  align-items: flex-start;
 }
 .feed-header {
   margin-bottom: 13px;
@@ -117,7 +125,7 @@ export default {
   width: 16.28%;
   align-self: stretch;
   margin-right: 15px;
-  border-radius: 30px;
+  border-radius: 50px;
   object-fit: cover;
 }
 .name-title {
@@ -174,6 +182,22 @@ export default {
   align-self: stretch;
   margin-right: 5.14px;
   object-fit: cover;
+  transition-duration: 0.3s;
+}
+.like:active{
+  margin-left: 5px;
+  margin-top: 5px;
+}
+.dislike {
+  width: 30.89%;
+  align-self: stretch;
+  margin-right: 5.14px;
+  object-fit: cover;
+  transition-duration: 0.3s;
+}
+.dislike:active{
+  margin-left: 5px;
+  margin-top: 5px;
 }
 .like-num {
   font-family: "Noto Sans KR";
@@ -185,6 +209,11 @@ export default {
   &:not(:last-of-type) {
     margin-right: 12px;
   }
+  transition-duration: 0.3s;
+}
+.like-num:active{
+  margin-left: 5px;
+  margin-top: 5px;
 }
 .reply-num {
   font-family: "Noto Sans KR";
@@ -201,6 +230,11 @@ export default {
   width: 27.8%;
   height: 90%;
   margin-right: 6.43px;
+  transition-duration: 0.3s;
+}
+.reply:active{
+  margin-left: 5px;
+  margin-top: 5px;
 }
 .content-reply {
   margin-bottom: 11px;
