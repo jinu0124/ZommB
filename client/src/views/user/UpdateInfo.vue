@@ -106,8 +106,6 @@
         </div>
       </div>
     </div>
-    <!-- 서버 테스트용 -->
-    <input type="file" @change="saveImage">
   </div>
 </template>
 
@@ -115,7 +113,8 @@
 import PV from "password-validator"
 import ProfileCrop from '@/components/user/ProfileCrop'
 import { mapState, mapActions } from "vuex"
-import _axios from "@/api/Default"
+// import _axios from "@/api/Default"
+import userApi from '@/api/user'
 
 export default {
   name: 'UpdateInfo',
@@ -149,27 +148,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['onUpdateInfo', 'onUpdatePassword']),
-    saveImage (event) {
-      console.log(event.target.files[0])
-      var userInfo = new FormData()
-      userInfo.append('userFileUrl', event.target.files[0])
-      userInfo.append('nickname', this.nickname)
-      userInfo.append('flag', 1)
-      // console.log(userInfo)
-      _axios({
-        url: `users/${this.myInfo.id}`,
-        method: 'post',
-        data: userInfo,
-        headers: {
-          'access-token': this.accessToken,
-          'Content-Type': 'multipart/form-data'
-        },
-      })
-        .catch((err) => {
-          console.log(err.response)
-        })
-    },
+    ...mapActions('user', ['onUpdatePassword']),
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -185,7 +164,7 @@ export default {
       this.profilePath = null
       this.myCroppa = null
     },
-    // 작성 중
+    // S3 완성되면 응답 처리 추가 예정
     onUpdate () {
       // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
       if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
@@ -195,15 +174,12 @@ export default {
           userInfo.append('nickname', this.nickname)
           userInfo.append('flag', this.profileUpdate)
           console.log(userInfo)
-          _axios({
-            url: `users/${this.myInfo.id}`,
-            method: 'post',
-            data: userInfo,
-            headers: {
-              'access-token': this.accessToken,
-              'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
-            },
-          })
+
+          userApi.updateInfo(this.myInfo.id, userInfo)
+            .then((res) => {
+              console.log(res.data)
+              // this.$store.commit('user/SET_MY_INFO', res.data)
+            })
             .catch((err) => {
               console.log(err.response)
             })
