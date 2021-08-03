@@ -1,11 +1,15 @@
 package com.ssafy.commb.model;
 
+import com.ssafy.commb.model.follow.Follow;
+import com.ssafy.commb.model.follow.Followers;
+import com.ssafy.commb.model.follow.Followings;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="User")
@@ -67,4 +71,51 @@ public class User {
 
     @OneToOne(mappedBy = "user")
     private ConfirmationToken confirmationToken;
+
+    @Embedded
+    private Followers followers;
+
+    @Embedded
+    private Followings followings;
+
+    public void follow(User following){
+
+        Follow follow = new Follow();
+        follow.setFollower(this);
+        follow.setFollowing(following);
+        this.followings.add(follow);
+        following.followers.add(follow);
+    }
+
+    public void unfollow(User following){
+        Follow follow = new Follow();
+        follow.setFollower(this);
+        follow.setFollowing(following);
+        this.followings.remove(follow);
+        following.followers.remove(follow);
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){
+            return true;
+        }
+        if( o == null || getClass() != o.getClass()){
+            return false;
+        }
+
+        User user = (User) o;
+        return Objects.equals(getId(), user.getId());
+    }
+
+    @Override
+    public int hashCode(){
+        return Objects.hash(getId());
+    }
+
+    @Override
+    public String toString(){
+
+        return Integer.toString(getId());
+    }
 }
