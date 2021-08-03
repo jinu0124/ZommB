@@ -3,6 +3,7 @@ package com.ssafy.commb.service;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.follow.DuplicateFollowException;
 import com.ssafy.commb.exception.follow.NotFoundFollowException;
+import com.ssafy.commb.exception.user.NotFoundUserException;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.model.follow.Follow;
 import com.ssafy.commb.model.follow.Followers;
@@ -42,16 +43,14 @@ public class FollowServiceImpl implements FollowService{
         Optional<User> followerUser = userRepository.findUserById(follower);
         Optional<User> followingUser = userRepository.findUserById(following);
 
-        // 2명다 존재하는 유저일경우
-        if(followerUser.isPresent() && followingUser.isPresent()){
-            // 이미 존재하는 팔로우일 경우 exception
-             if(isFollow(followerUser.get(), followingUser.get())) throw new DuplicateFollowException();
+        // 존재하지 않는 사용자가 있따면 exception
+        if(!followerUser.isPresent() || !followingUser.isPresent()) throw new NotFoundUserException();
 
-            // 팔로우 추가
-            followerUser.get().follow(followingUser.get());
-        }
+        // 이미 존재하는 팔로우일 경우 exception
+        if(isFollow(followerUser.get(), followingUser.get())) throw new DuplicateFollowException();
 
-        // User NotFound Exception 추가
+        // 팔로우 추가
+        followerUser.get().follow(followingUser.get());
     }
 
     @Override
@@ -59,27 +58,22 @@ public class FollowServiceImpl implements FollowService{
         Optional<User> followerUser = userRepository.findUserById(follower);
         Optional<User> followingUser = userRepository.findUserById(following);
 
-        // 2명다 존재하는 유저일 경우
-        if(followerUser.isPresent() && followingUser.isPresent()) {
-            // 존재하지 않는 팔로우일 경우 exception
-            if(isFollow(followerUser.get(), followingUser.get())) throw new NotFoundFollowException();
+        // 존재하지 않는 사용자가 있따면 exception
+        if(!followerUser.isPresent() || !followingUser.isPresent()) throw new NotFoundUserException();
 
-            // 안팔로우
-            followerUser.get().unfollow(followingUser.get());
-        }
+        // 존재하지 않는 팔로우일 경우 exception
+        if(isFollow(followerUser.get(), followingUser.get())) throw new NotFoundFollowException();
 
-        // User NotFound Exception 추가
+        // 안팔로우
+        followerUser.get().unfollow(followingUser.get());
     }
-
+    
     public List<MyDto> getFollowings(int meId, int userId){
 
         Optional<User> userOp = userRepository.findUserById(userId);
         Optional<User> meOp = userRepository.findUserById(meId);
 
-        if(!userOp.isPresent() || !meOp.isPresent()) {
-            // User NotFound Exception 추가
-            return null;
-        }
+        if(!userOp.isPresent() || !meOp.isPresent()) throw new NotFoundUserException();
 
         User user = userOp.get();
         User me = meOp.get();
