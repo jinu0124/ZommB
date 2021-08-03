@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public void validatePassword( String password){
-         String pattern = "(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}";
-         if(password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
+         String pattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$";
+         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
     }
 
     @Override
