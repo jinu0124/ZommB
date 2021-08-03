@@ -97,7 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
     private String fileUpload(String uploadPath, Collection<Part> parts) throws IOException {
         // 파일 업로드 작업
         File uploadDir = new File(uploadPath + File.separator +  uploadFolder);   // File upload Path
-        if(!uploadDir.exists()) if(!uploadDir.mkdirs()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
+        if(!uploadDir.exists()) if(!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
 
         String savingFileName;
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");

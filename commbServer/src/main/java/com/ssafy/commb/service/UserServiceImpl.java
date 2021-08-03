@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
 
-        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보가 없습니다.");
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "프로필 물리 이미지 업로드 실패");
 
         MyDto my = new MyDto();
         my.setId(user.get().getId());
