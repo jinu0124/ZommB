@@ -33,7 +33,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "/daily-events/**", "/weekly-events/**", "/my-events/**",
                         "/feeds/**", "/follows/**", "/users/**")
                 .excludePathPatterns("/security/create/**", "/users/login"
-                , "/users", "/users/email", "/users/email-confirm", "/users/checkEmailComplete",
+                , "/users", "/users/email", "/users/confirm-email", "/users/checkEmailComplete",
                         "/users/social/kakao");
         //
     }

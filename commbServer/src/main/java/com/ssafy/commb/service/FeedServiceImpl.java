@@ -2,12 +2,10 @@ package com.ssafy.commb.service;
 
 import com.ssafy.commb.dao.FeedDao;
 import com.ssafy.commb.dto.feed.FeedDto;
-import com.ssafy.commb.dto.feed.HashTagDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
