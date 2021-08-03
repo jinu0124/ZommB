@@ -3,6 +3,7 @@ package com.ssafy.commb.service;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.Book;
 import com.ssafy.commb.model.Feed;
 import com.ssafy.commb.model.User;
@@ -10,6 +11,7 @@ import com.ssafy.commb.repository.FeedRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
@@ -18,14 +20,11 @@ import javax.servlet.http.Part;
 import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Date;
-import java.util.UUID;
+import java.util.*;
 
 import com.ssafy.commb.dao.FeedDao;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -53,6 +52,7 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
+        user.setId(10000005);
 //        user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
@@ -71,7 +71,7 @@ public class FeedServiceImpl implements FeedService {
 
         FeedDto myfeed = FeedDto.builder().user(userDto).book(bookDto).content(feedReq.getContent()).build();
 
-        System.out.print(myfeed.getId());
+        System.out.println("myfeed.getId : "+ myfeed.getId());
 
         return myfeed;
 
@@ -112,7 +112,7 @@ public class FeedServiceImpl implements FeedService {
         }
         return savingFileName;
     }
-    
+
     @Override
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request) {
 
@@ -132,6 +132,24 @@ public class FeedServiceImpl implements FeedService {
     @Override
     public int getUserFeedCnt(int userId) {
         return feedDao.userFeedCnt(userId);
+    }
+
+    public void modifyFeed(String content, int feedId) {
+        Optional<Feed> feed = feedRepository.findById(feedId);
+
+        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "없는 피드 입니다.");
+
+        feed.ifPresent(feedSelect ->{
+            feedSelect.setContent(content);
+            feedRepository.save(feedSelect);
+        });
+    }
+
+    public void deleteFeed(int feedId){
+        Optional<Feed> feed = feedRepository.findById(feedId);
+        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "피드가 없습니다.");
+
+        feedRepository.deleteById(feedId);
     }
 
 }

@@ -11,4 +11,6 @@ public interface FeedService {
     public FeedDto uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException;
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request);
     public int getUserFeedCnt(int userId);
+    public void modifyFeed(String content, int feedId);
+    public void deleteFeed(int feedId);
 }

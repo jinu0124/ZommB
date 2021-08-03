@@ -80,9 +80,10 @@ public class FeedController {
     // 게시물 작성
     @PostMapping("")
     @ApiOperation(value = "피드 작성")
-//    public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
-      public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq) throws IOException, ServletException {
-
+    // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 → formData 형식에서는 사용 X → swagger에서 MultipartHttpServletRequest 사용 X
+    // swagger feedReq에 직접 { "bookId": (Integer), "content": "(String)" } 넣어서 확인!
+    // public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
+    public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq) throws IOException, ServletException {
         MultipartHttpServletRequest request = null;
 
         FeedDto feed = feedService.uploadFeed(feedReq, request);
@@ -97,13 +98,26 @@ public class FeedController {
     @ApiOperation(value = "피드 수정")
     public ResponseEntity modifyFeed(@RequestBody String content, @PathVariable Integer feedId) {
 
-        return new ResponseEntity(HttpStatus.OK);
+        if(content == null) return ResponseEntity.status(400).build();
+
+        // 토큰 만료되면 401 보내기
+
+        // 권한 없으면 403 보내야함! ← 작성자한테만 수정 버튼 보이도록 front에서 막기
+
+        feedService.modifyFeed(content, feedId);
+
+        return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
     // 게시물 삭제
     @DeleteMapping("/{feedId}")
     @ApiOperation(value = "피드 삭제")
     public ResponseEntity deleteFeed(@PathVariable Integer feedId) {
+        feedService.deleteFeed(feedId);
+
+        // 토큰 만료되면 401 보내기
+
+        // 권한 없으면 403 보내야함! ← 작성자한테만 삭제 버튼 보이도록 front에서 막기
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -210,6 +224,5 @@ public class FeedController {
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
-
 
 }
