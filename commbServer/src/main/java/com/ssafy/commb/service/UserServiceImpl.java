@@ -91,7 +91,7 @@ public class UserServiceImpl implements UserService {
     public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
 
-        if (!user.isPresent()) throw new ApplicationException("회원 정보가 없습니다.", HttpStatus.valueOf(401));
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보가 없습니다.");
 
         MyDto my = new MyDto();
         my.setId(user.get().getId());
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
-        if(user.get().getRole() == null) throw new ApplicationException(my, HttpStatus.valueOf(403));
+        if(user.get().getRole() == null) throw new ApplicationException(HttpStatus.valueOf(403), "이메일 인증 필요", my);
 
         return myRes;
     }
@@ -139,7 +139,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findByIdAndPassword((int) request.getAttribute("userId"), userReq.getOldPassword());
         System.out.println(userReq.getNewPassword());
 
-        if(!user.isPresent()) throw new ApplicationException("회원 정보가 없습니다.", HttpStatus.valueOf(401));
+        if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보가 없습니다.");
 
         user.ifPresent(userSelect -> {
             userSelect.setPassword(userReq.getNewPassword());
@@ -149,7 +149,7 @@ public class UserServiceImpl implements UserService {
 
     public void validatePassword( String password){
          String pattern = "(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}";
-         if(password.matches(pattern)) throw new ApplicationException("비밀번호 형식 오류", HttpStatus.valueOf(409));
+         if(password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
     }
 
     @Override

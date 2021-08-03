@@ -220,7 +220,7 @@ public class UserController {
                                      MyDto.ModifyRequest myReq,
                                      MultipartHttpServletRequest request) throws IOException, ServletException {
         if(myReq != null){
-            if(myReq.getNickname().length() < 4 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
+            if(myReq.getNickname().length() < 2 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
         }
         else return ResponseEntity.status(400).build();
 

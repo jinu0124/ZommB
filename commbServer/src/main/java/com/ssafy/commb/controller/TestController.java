@@ -20,6 +20,6 @@ public class TestController implements ErrorController {
 
     @GetMapping("/index2")
     public String test2(){
-        throw new ApplicationException("에러 메시지", HttpStatus.valueOf(403));
+        throw new ApplicationException(HttpStatus.valueOf(403), "에러 메시지");
     }
 }

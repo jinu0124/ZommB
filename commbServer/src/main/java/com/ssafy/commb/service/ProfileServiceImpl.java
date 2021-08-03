@@ -51,14 +51,14 @@ public class ProfileServiceImpl implements ProfileService {
         Collection<Part> parts = request.getParts();
 
         Optional<User> user = userRepository.findUserById(userId);
-        if(!user.isPresent()) throw new ApplicationException("회원정보 조회 실패", HttpStatus.GONE);
+        if(!user.isPresent()) throw new ApplicationException(HttpStatus.GONE, "회원정보 조회 실패");
         MyDto my = MyDto.builder().userFileUrl(user.get().getFileUrl()).nickname(myReq.getNickname()).id(user.get().getId()).build();
 
         // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
-        if(myReq.getFlag() > 2) throw new ApplicationException("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        if(myReq.getFlag() > 2) throw new ApplicationException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
         else if(myReq.getFlag() != 0){
             File file = new File(uploadPath + File.separator + user.get().getFileUrl());
-            if(file.exists()) if(!file.delete()) throw new ApplicationException("디렉토리 파일 삭제 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+            if(file.exists()) if(!file.delete()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 파일 삭제 실패");
         }
 
         if(myReq.getFlag() == 0) {                                          // 프로필 이미지 유지
@@ -97,7 +97,7 @@ public class ProfileServiceImpl implements ProfileService {
     private String fileUpload(String uploadPath, Collection<Part> parts) throws IOException {
         // 파일 업로드 작업
         File uploadDir = new File(uploadPath + File.separator +  uploadFolder);   // File upload Path
-        if(!uploadDir.exists()) if(!uploadDir.mkdir()) throw new ApplicationException("새 디렉토리 생성 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+        if(!uploadDir.exists()) if(!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
 
         String savingFileName;
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
@@ -116,6 +116,6 @@ public class ProfileServiceImpl implements ProfileService {
             part.write(uploadPath + File.separator + uploadFolder + File.separator + savingFileName);
             return savingFileName;
         }
-        throw new ApplicationException("프로필 물리 이미지 업로드 실패", HttpStatus.INTERNAL_SERVER_ERROR);
+        throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 물리 이미지 업로드 실패");
     }
 }
