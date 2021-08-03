@@ -12,10 +12,7 @@ import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.jwt.SecurityService;
-import com.ssafy.commb.service.FeedService;
-import com.ssafy.commb.service.ProfileService;
-import com.ssafy.commb.service.RedisService;
-import com.ssafy.commb.service.UserService;
+import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpResponse;
@@ -81,6 +78,9 @@ public class UserController {
 
     @Autowired
     private FeedService feedService;
+
+    @Autowired
+    private BookService bookService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -294,18 +294,12 @@ public class UserController {
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
-            @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq
+            @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
+            HttpServletRequest request
     ) {
-        BookDto bookDto = BookDto.builder().id(id).bookName(name).author(name).publisher(name).year(year)
-                .genre(genre).isbn("1234567891230").bookFileUrl(url).readCnt(cnt).rate(rate).build();
+        bookService.getBooksByName(bookReq, request);
 
-        BookDto.Response bookRes = new BookDto.Response();
-        bookRes.setData(bookDto);
-
-        List<BookDto.Response> bookResList = new ArrayList<>();
-        bookResList.add(bookRes);
-
-        return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     // 서재/북카트 책 추가
@@ -315,7 +309,6 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             @RequestBody BookDto.RegisterRequest book
     ) {
-
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
@@ -340,6 +333,7 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ) {
+
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
