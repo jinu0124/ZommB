@@ -1,7 +1,7 @@
 <template>
   <div class="my-profile">
     <ProfileHeader/>
-    <div class="user-image-with-badge">
+    <div class="user-image">
       <!-- user image 위에 뱃지 포함한 div 작성 -->
       <img
         id="myImage"
@@ -9,24 +9,33 @@
         src="@/assets/image/test/profileTest.jpg"
         alt="profileImage"
       >
-      <button class="weekly-event-badge badge"><i class="badge-image"><!-- 주간이벤트 뱃지 이미지 --></i>
-      GOLD</button>
-      <button class="daily-event-badge badge"><i class="badge-image"><!-- 데일리이벤트 뱃지 이미지 --></i>
-      GOLD</button>
     </div>
     <div class="user-info">
-      <p class="user-nickname">Nickname</p>
-      <span class="follow">00 followers</span>
-      <span class="follow">00 followings</span>
+      <span>
+        <b class="user-nickname">Nickname</b>
+        <button class="weekly-event-badge badge"><img class="badge-image"><!-- 주간이벤트 뱃지 이미지 -->
+        GOLD</button>
+        <button class="daily-event-badge badge"><img class="badge-image"><!-- 데일리이벤트 뱃지 이미지 -->
+        GOLD</button>
+      </span>
       <div>
-        <span class="alticle-num">00</span>
-        <span class="library-num">00</span>
-        <span class="bookcart-num">00</span>
+        <span class="follow" type="button">00 followers</span>
+        <span class="follow" type="button">00 followings</span>
+      </div>
+      <!-- <div>
+        <span class="alticle-num num">00</span>
+        <span class="library-num num">00</span>
+        <span class="bookcart-num num">00</span>
       </div>
       <div>
-        <span class="alticle">게시물</span>
-        <span class="library">읽은책</span>
-        <span class="bookcart">읽을책</span>
+        <span class="alticle menu">게시물</span>
+        <span class="library menu">읽은책</span>
+        <span class="bookcart menu">읽을책</span>
+      </div> -->
+      <div class="commb-info">
+        <span><div>00</div><div>게시물</div></span>
+        <span><div>00</div><div>읽은책</div></span>
+        <span><div>00</div><div>읽을책</div></span>
       </div>
       <button class="btn-primary1 btn-1">
         팔로우
@@ -50,7 +59,6 @@
       </div>
     </div>
   </div>
-  
 </template>
 
 <script>
@@ -69,15 +77,44 @@ export default {
 .my-profile{
   display: flex;
   flex-flow: column;
-  height: 100%;
-  min-height: 100vh;
+  padding: 60px 0 0 0;
+  text-align: center;
 }
+.user-image {
+  margin-bottom: 20px;
+}
+#myImage {
+  display: block;
+  margin: 0px auto;
+}
+.profile-image {
+  width: 200px;
+  height: 200px;
+  margin-bottom: 20px;
+}
+.user-info {
+  margin: 0px auto;
+}
+.follow {
+  margin: 20px 10px 0 10px;
 
+}
+.btn-primary1 {
+  margin: 20px 0;
+}
+.commb-info {
+  display: flex;
+  width: 300px;
+  margin-top: 20px;
+}
+.commb-info span {
+  flex: 1;
+}
 .tabs {
-  margin-top: 50px;
+  margin: 50px auto;
+  padding-bottom: 40px;
   background-color: #ffffff;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-  width: 100%;
+  width: 300px;
 }
 .tab-item {
   width: calc(100%/3);

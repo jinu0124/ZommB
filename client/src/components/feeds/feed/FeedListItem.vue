@@ -1,14 +1,14 @@
 <template>
 <div class="feed-list">
   <div class="feed-list-item">
-    <span class="feed-header">
+    <div class="feed-header">
       <img
         alt=""
         class="feed-user-image"
         src="https://static.overlay-tech.com/assets/24ce5dd9-5c1f-4d38-bc58-8204b5a30b12.png"
       />
-      <div class="name-title">
-        <p class="nickname">Nickname</p>
+      <span class="name-title">
+        <p class="nickname" type="button">Nickname</p>
         <div class="book-title">
           <img
             alt=""
@@ -17,7 +17,7 @@
           />
           <p class="title" type="button">미드나잇 라이브러리</p>
         </div>
-      </div>
+      </span>
       <img
         alt=""
         class="feed-menu dropdown-toggle"
@@ -28,7 +28,7 @@
         id="FeedMenuDropdown"
       />
       <FeedMenu/>
-    </span>
+    </div>
     <img
       alt=""
       class="feed-image"
@@ -122,10 +122,11 @@ export default {
   align-items: center;
 }
 .feed-user-image {
-  width: 16.28%;
+  width: 2rem;
+  height: 2rem;
   align-self: stretch;
-  margin-right: 15px;
-  border-radius: 50px;
+  margin: auto 0;
+  border-radius: 100%;
   object-fit: cover;
 }
 .name-title {
@@ -142,9 +143,7 @@ export default {
   font-weight: 400;
   line-height: normal;
   color: rgba(33, 33, 33, 1);
-  text-align: center;
-  margin-bottom: 2px;
-  margin-left: 1px;
+  margin: 0 0 2px 5px;
 }
 .book-title {
   display: flex;
@@ -153,13 +152,12 @@ export default {
 .minibook {
   width: 8.16%;
   height: 71.43%;
-  margin-right: 4px;
+  margin: 2px 4px 4px 5px;
 }
-.title {
-  width: 87.76%;
+.booktitle .title {
+  width: 100%;
   color: rgba(88, 88, 88, 1);
   align-self: stretch;
-  text-align: center;
   font-family: noto-sans-kr-10-bold;
 }
 .feed-menu {
