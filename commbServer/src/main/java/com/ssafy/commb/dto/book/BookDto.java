@@ -51,10 +51,12 @@ public class BookDto {
     }
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class BookShelfSearchRequest{                // 요청
         private String bookName;
+        private int userId;
     }
 
     @Getter
@@ -74,4 +76,13 @@ public class BookDto {
         private String retMsg;
     }
 
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ResponseList{               // 반환
+        private List<BookDto> data;
+        private String retMsg;
+    }
 }

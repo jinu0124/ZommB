@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"    "http://mybatis.org/dtd/mybatis-3-config.dtd">
+
+<configuration>
+
+    <settings>
+        <setting name="callSettersOnNulls" value="true"/>
+        <setting name="mapUnderscoreToCamelCase" value="true"/>
+        <setting name="cacheEnabled" value="false"/>
+    </settings>
+
+    <typeAliases>
+        <package name="com.ssafy.commb.dto"/>
+    </typeAliases>
+
+    <mappers>
+        <mapper resource="mapper/userMapper.xml"></mapper>
+        <mapper resource="mapper/feedMapper.xml"></mapper>
+        <mapper resource="mapper/bookMapper.xml"></mapper>
+    </mappers>
+
+</configuration>

@@ -43,14 +43,16 @@ public class ProfileServiceImpl implements ProfileService {
 
     @Transactional
     @Override
-    public boolean updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
+    public MyDto.Response updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
         int userId = (int) request.getAttribute("userId");              // jwt 토큰으로 인증된 userId
-//        int userId = 10000001;              // 임시 테스트
+//        int userId = 10000001;            // 테스트용
+        MyDto.Response myRes = new MyDto.Response();
 
         Collection<Part> parts = request.getParts();                // Multipart parts 받아오기
 
         Optional<User> user = userRepository.findUserById(userId);
-        if(!user.isPresent()) return false;
+        if(!user.isPresent()) return null;
+        MyDto my = MyDto.builder().userFileUrl(user.get().getFileUrl()).nickname(myReq.getNickname()).id(user.get().getId()).build();
 
         // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
         if(myReq.getFlag() != 0){                                   // 프로필 이미지 삭제 or 새 프로필 이미지 업로드 시
@@ -64,15 +66,29 @@ public class ProfileServiceImpl implements ProfileService {
                     selectUser.setNickname(myReq.getNickname());
                     userRepository.save(selectUser);
                 });
-                return true;
+                myRes.setData(my);
+                return myRes;
             }
-            else if(myReq.getFlag() == 1) return updateDb(user, fileUpload(uploadPath, parts, myReq.getNickname(), user), myReq.getNickname());  // 프로필 이미지 수정
-            else return updateDb(user, null, myReq.getNickname());  // 프로필 이미지 삭제 -> DB userFileUrl -> null
+            else if(myReq.getFlag() == 1) {                                      // 프로필 이미지 수정
+                my.setUserFileUrl(fileUpload(uploadPath, parts, myReq.getNickname(), user));
+                if(updateDb(user, my.getUserFileUrl(), myReq.getNickname())) {
+                    myRes.setData(my);
+                    return myRes;
+                }
+            }
+            else{                                                               // 프로필 이미지 삭제 -> DB userFileUrl -> null
+                if(updateDb(user, null, myReq.getNickname())){
+                    my.setUserFileUrl(null);
+                    myRes.setData(my);
+                    return myRes;
+                }
+            }
         }
         catch(Exception e){
             e.printStackTrace();
-            return false;
+            return null;
         }
+        return null;
     }
 
     private boolean updateDb(Optional<User> user, String savingFileName, String nickname){

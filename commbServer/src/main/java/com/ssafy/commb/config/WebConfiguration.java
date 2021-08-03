@@ -31,9 +31,10 @@ public class WebConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(authInterceptor)
                 .addPathPatterns("/security/**", "/books/**",
                         "/daily-events/**", "/weekly-events/**", "/my-events/**",
-                        "/feeds/**", "/follows/**")
-                .excludePathPatterns("/security/create/**",
-                        "/users/**");
-
+                        "/feeds/**", "/follows/**", "/users/**")
+                .excludePathPatterns("/security/create/**", "/users/login"
+                , "/users", "/users/email", "/users/confirm-email", "/users/checkEmailComplete",
+                        "/users/social/kakao");
+        //
     }
 }

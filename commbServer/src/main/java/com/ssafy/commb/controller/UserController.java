@@ -12,35 +12,29 @@ import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.jwt.SecurityService;
-import com.ssafy.commb.service.ProfileService;
-import com.ssafy.commb.service.UserService;
+import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.web.util.RedirectUrlBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
-import javax.transaction.Transactional;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
-
-//@CrossOrigin(
-//		origins = "http://localhost:3000", // allowCredentials = "true" 일 경우, orogins="*" 는 X
-//		allowCredentials = "true",
-//		allowedHeaders = "*",
-//		methods = {RequestMethod.GET,RequestMethod.POST,RequestMethod.DELETE,RequestMethod.PUT,RequestMethod.HEAD,RequestMethod.OPTIONS}
-//)
 @RestController
 @RequestMapping(value = "/users")
 @Api("User Controller API V1")
@@ -82,6 +76,11 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FeedService feedService;
+
+    @Autowired
+    private BookService bookService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -89,58 +88,77 @@ public class UserController {
     @Value("${security.refreshtoken}")
     private String refreshToken;
 
-
+    // @
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
-    public ResponseEntity<List<UserDto.Response>> findUserList(@RequestParam String nickname) {
+    public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
 
-        LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).bookmarkOn(bool).pencilOn(bool).build();
-        UserDto user = UserDto.builder().id(id).email("email").name(name).nickname(nickname).role("role").level(level).userFileUrl(url).build();
+        UserDto.ResponseList userResList = userService.getUsers(nickname);
 
-        UserDto.Response userRes = new UserDto.Response();
-        userRes.setData(user);
-
-        List<UserDto.Response> users = new ArrayList<>();
-        users.add(userRes);
-
-        return new ResponseEntity<List<UserDto.Response>>(users, HttpStatus.OK);
+        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
 
+//    // 회원관리(관리자) - (관리자) 피드 삭제
+//    @GetMapping("")
+//    @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
+//    public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
+//
+//        UserDto.ResponseList userResList = userService.getUsers(nickname);
+//
+//        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
+//    }
+
+    // @
     // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
     @ApiOperation(value = "자체 회원가입")
-    public ResponseEntity singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
+    public ResponseEntity<Map<String, Integer>> singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
         if (bindingResult.hasErrors())
-            return new ResponseEntity(HttpStatus.valueOf(400));
+            return ResponseEntity.status(400).build();
 
         if (userService.isExistEmail(myReq.getEmail()))
-            return new ResponseEntity(HttpStatus.valueOf(409));
+            return ResponseEntity.status(409).build();
 
-        userService.joinUser(myReq);
-
-        return new ResponseEntity(HttpStatus.valueOf(201));
+        Map<String, Integer> map = new HashMap<>();
+        map.put("id", userService.joinUser(myReq));
+        return new ResponseEntity<>(map, HttpStatus.valueOf(201));
     }
 
+    // @
     // 회원가입/로그인 - Email 중복 확인
     @GetMapping("/email")
     @ApiOperation(value = "Email 중복 확인")
     public ResponseEntity duplicateEmail(@RequestParam String email) {
         if (userService.isExistEmail(email))
-            return new ResponseEntity(HttpStatus.valueOf(404));
+            return new ResponseEntity(HttpStatus.valueOf(400));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // @
     // 회원가입/로그인 - Email 인증
     @PostMapping("/confirm-email")
     @ApiOperation(value = "Email 인증")
-    public String viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
+    public ResponseEntity viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
 
         String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
-        userService.confirmEmail(token);
 
-        return "redirect:/login";
+        return ResponseEntity.ok().build();
+    }
+
+    // @
+    @GetMapping("/checkEmailComplete")
+    @ApiOperation(value = "Email 인증 확인")
+    public String checkEmailComplete(@RequestParam String key, RedirectAttributes redirect){
+        if(userService.confirmEmail(key)) {
+//            RedirectUrlBuilder redirectUrl = new RedirectUrlBuilder();
+//            redirectUrl.setContextPath("index.html");
+            // Redirect를 어떻게 시키지.. 그냥 빈페이지에 인증되었다고만 적어두어도 괜찮나..??
+            return "인증이 완료되었습니다. 돌아가! 로그인해!";
+        }
+
+        return "토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -155,36 +173,47 @@ public class UserController {
         return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.valueOf(201));
     }
 
+    // @
     // 회원가입/로그인 - 자체 로그인
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto> login(@RequestBody MyDto.LoginRequest myReq) {
-        System.out.println("login");
-        MyDto my = userService.login(myReq);
-        if (my == null) return new ResponseEntity(HttpStatus.valueOf(401));
+    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
+        MyDto.Response myRes = userService.login(myReq);
+        if (myRes == null) return new ResponseEntity(HttpStatus.valueOf(401));
+        if("email unauthorized".equals(myRes.getRetMsg())) return ResponseEntity.status(403).body(myRes);
 
-        int userId = 10000001;
-        System.out.println(my.getId());
-        Map<String, Object> map = securityService.createToken(my.getId());
+        Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
         HttpHeaders resHeader = new HttpHeaders();
-
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
-        return ResponseEntity.ok().headers(resHeader).body(my);
+        return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
+
+    // @
+    @GetMapping(value="/{userId}")
+    @ApiOperation(value = "회원 정보 조회")
+    public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
+        UserDto.Response userRes = userService.getUserInfo(userId, request);
+
+        return ResponseEntity.ok().body(userRes);
+    }
+
 
     // 회원가입/로그인 - 비밀번호 찾기
-    @GetMapping("/{userId}")
-    @ApiOperation(value = "비밀번호 찾기 (미정)")
-    public Object findUser(@PathVariable("userId") Integer userId) {
+//    @GetMapping("/{userId}")
+//    @ApiOperation(value = "비밀번호 찾기 (미정)")
+//    public Object findUser(@PathVariable("userId") Integer userId, HttpServletRequest request) {
+//        request.setAttribute("userId", userId);                 // 테스트용
+//
+////        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
+//
+//
+//        return null;
+//    }
 
-        // email 인증 flow 구현 뒤에 수정해야함!!!!!
-
-        return null;
-    }
-
+    // @
     // 회원가입/로그인 - 프로필 수정        // flag : 0:유지 , 1:수정, 2:삭제
     // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 -> formData 형식에서는 사용치 않아야한다.
     @PostMapping("/{userId}")
@@ -197,59 +226,56 @@ public class UserController {
         }
         else return new ResponseEntity(HttpStatus.valueOf(400));
 
-        if( !profileService.updateProfile(myReq, request) ) return new ResponseEntity(HttpStatus.valueOf(401));
+        request.setAttribute("userId", userId);                   // 테스트용(Auto Interceptor WebConfig 적용 전)
+        MyDto.Response myRes = profileService.updateProfile(myReq, request);
+        if( myRes == null ) return new ResponseEntity(HttpStatus.valueOf(401));
 
-        return new ResponseEntity(HttpStatus.valueOf(200));
+        return ResponseEntity.ok().body(myRes);
     }
 
+    // @
     // 회원가입/로그인 - 비밀번호 변경
     @PatchMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
-    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer user,
+    public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq,
                                         HttpServletRequest request) {
         if(userReq == null) return ResponseEntity.status(401).build();
-        if(!userService.checkPassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        if(!userService.validatePassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+
+//        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
         if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
+    // @
     // 회원가입/로그인 - 회원 탈퇴
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("")
     @ApiOperation(value = "회원탈퇴")
-    public ResponseEntity deleteUser(@PathVariable("userId") Integer userId) {
+    public ResponseEntity deleteUser(HttpServletRequest request) {
+        userService.deleteUser((int) request.getAttribute("userId"));
+//        userService.deleteUser(userId);                            // 테스트용(Auto Interceptor WebConfig 적용 전)
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // @
     // 회원 프로필 - 1인 게시물(피드) 리스트 조회
     // 피드 게시물 리스트 조회
     @GetMapping("/{userId}/feeds")
     @ApiOperation(value = "1인 피드 리스트 조회", response = FeedDto.Response.class)
-    public ResponseEntity<List<FeedDto.Response>> findUserFeed(
-            @PathVariable("userId") Integer userId
+    public ResponseEntity<FeedDto.ResponseList> findUserFeed(
+            @PathVariable("userId") Integer userId,
+            HttpServletRequest request
     ) {
-        UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
-        BookDto book = BookDto.builder().id(id).bookName(name).build();
+//        request.setAttribute("userId", 10000001);               // 테스트 용
+        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, request);
 
-        List<HashTagDto> hashTags = new ArrayList<>();
-        hashTags.add(HashTagDto.builder().tag(tag).build());
-
-        List<CommentDto> comments = new ArrayList<>();
-        comments.add(CommentDto.builder().id(id).content(content).userId(id).nickname(nickname).thumbCnt(cnt).createAt(date).isThumb(bool).isMod(bool).build());
-
-        FeedDto feed = FeedDto.builder().id(id).createAt(date).content(content).isThumb(bool).thumbCnt(cnt).feedFileUrl(url).user(user).book(book).hashTags(hashTags).comments(comments).build();
-
-        FeedDto.Response feedRes = new FeedDto.Response();
-        feedRes.setData(feed);
-
-        List<FeedDto.Response> feedResList = new ArrayList<>();
-        feedResList.add(feedRes);
-
-        return new ResponseEntity<List<FeedDto.Response>>(feedResList, HttpStatus.OK);
+        return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
 
+    // @
     // 회원의 게시물(피드) 수
     @GetMapping("/{userId}/feeds/cnt")
     @ApiOperation(value = "회원의 피드 수")
@@ -257,28 +283,23 @@ public class UserController {
             @PathVariable("userId") Integer userId
     ) {
         HashMap<String, Integer> map = new HashMap<>();
-        map.put("cnt", cnt);
+        map.put("cnt", feedService.getUserFeedCnt(userId));
 
         return new ResponseEntity<Map<String, Integer>>(map, HttpStatus.OK);
     }
+
 
     // 서재/북카트 내 도서 검색
     @GetMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
-            @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq
+            @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
+            HttpServletRequest request
     ) {
-        BookDto bookDto = BookDto.builder().id(id).bookName(name).author(name).publisher(name).year(year)
-                .genre(genre).isbn("1234567891230").bookFileUrl(url).readCnt(cnt).rate(rate).build();
+        bookService.getBooksByName(bookReq, request);
 
-        BookDto.Response bookRes = new BookDto.Response();
-        bookRes.setData(bookDto);
-
-        List<BookDto.Response> bookResList = new ArrayList<>();
-        bookResList.add(bookRes);
-
-        return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
+        return ResponseEntity.ok().build();
     }
 
     // 서재/북카트 책 추가
@@ -288,7 +309,6 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             @RequestBody BookDto.RegisterRequest book
     ) {
-
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
@@ -313,6 +333,7 @@ public class UserController {
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId
     ) {
+
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
