@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.service.FollowService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -7,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @RestController
 @RequestMapping(value="/follows")
@@ -21,7 +23,7 @@ public class FollowController {
             @PathVariable String userId,
             HttpServletRequest request){
 
-        int follower = Integer.parseInt((String) request.getAttribute("userId"));
+        int follower = (int) request.getAttribute("userId");
         int following = Integer.parseInt(userId);
         try {
             followService.addFollowing(follower, following);
@@ -39,7 +41,7 @@ public class FollowController {
             @PathVariable String userId,
             HttpServletRequest request){
 
-        int follower = Integer.parseInt((String) request.getAttribute("userId"));
+        int follower = (int) request.getAttribute("userId");
         int following = Integer.parseInt(userId);
 
         followService.deleteFollowing(follower, following);
@@ -49,8 +51,18 @@ public class FollowController {
 
     // 팔로잉 목록
     @GetMapping(value="/{userId}/following")
-    public Object getFollowings(@PathVariable String userId){
-        return null;
+    public Object getFollowings(
+            @PathVariable int userId,
+            HttpServletRequest request){
+
+        int meId = (int) request.getAttribute("userId");
+        List<MyDto> myDtoList = followService.getFollowings(meId, userId);
+        MyDto.ResponseList myRes = MyDto.ResponseList.builder()
+                .data(myDtoList)
+                .build();
+
+
+        return new ResponseEntity<MyDto.ResponseList>(myRes, HttpStatus.valueOf(200));
     }
 
     // 팔로워 목록
