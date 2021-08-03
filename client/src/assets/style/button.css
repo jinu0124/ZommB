@@ -40,26 +40,49 @@
   font-size: 1.05rem;
 }
 
+.btn-5 {
+  border: none;
+  width: 110px;
+  height: 35px;
+  border-radius: 20px;
+  outline: none;
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.btn-5:hover {
+  font-size: 0.95rem;
+}
+
 .btn-6 {
   border: none;
   width: 50px;
   height: 20px;
   border-radius: 10px;
   outline: none;
-  font-size: 0.6rem;
+  font-size: 0.55rem;
 }
 
 .btn-6:hover {
-  font-size: 11pt;
+  font-size: 0.6rem;
 }
 
 
+.btn-primary1 {
+  background-color: #683EC9;
+  color: #fff;
+}
 .btn-yellow {
   background-color: #FFDC7C;
   color: #585858;
 }
 .btn-grey {
   background-color: #A4A4A4;
+  color: #fff;
+}
+.btn-disabled {
+  background-color: #585858;
+  pointer-events: none;
   color: #fff;
 }
 

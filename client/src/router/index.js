@@ -5,6 +5,9 @@ import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import Feed from '@/views/feed/Feed'
+import Like from '@/views/feed/Like'
+import Reply from '@/views/feed/Reply'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 
@@ -33,7 +36,7 @@ const routes = [
     component: SignupEmail
   },
   {
-    path: '/updateinfo',
+    path: '/updateinfo/:id',
     name: 'UpdateInfo',
     component: UpdateInfo
   },
@@ -51,7 +54,24 @@ const routes = [
     path: '/500',
     name : 'ServerError',
     component : ServerError
+  },
+  //feed
+  {
+    path: '/feed',
+      name : 'Feed',
+      component : Feed
+  },
+  {
+    path: '/like',
+      name : 'Like',
+      component : Like
+  },
+  {
+    path: '/reply',
+    name: 'Reply',
+    component: Reply
   }
+
 ]
 
 const router = new VueRouter({

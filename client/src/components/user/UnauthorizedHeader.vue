@@ -3,9 +3,14 @@
     <div class="d-flex align-items-center">
       <i 
         class="back-btn fi-rr-angle-small-left"
-        @click="$router.go(-1)"
+        type="button"
+        @click="$router.push({ name: 'Index' })"
       ></i>
-      <span class="header-logo">CommB</span>
+      <span
+        class="header-logo"
+        type="button"
+        @click="$router.push({ name: 'Index' })"
+      >CommB</span>
     </div>
   </div>
 </template>

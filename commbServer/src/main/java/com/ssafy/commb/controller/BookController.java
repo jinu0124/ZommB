@@ -5,10 +5,17 @@ import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +29,22 @@ public class BookController {
     // 전체 도서 검색
     @GetMapping("")
     @ApiOperation(value="검색 책 리스트(searchType, Word)", response = BookDto.Response.class)
-    public ResponseEntity<List<BookDto.Response>> findBookList(@QueryStringArgResolver BookDto.BookSearchRequest bookReq){
+    public ResponseEntity<List<BookDto.Response>> findBookList(@QueryStringArgResolver BookDto.BookSearchRequest bookReq) throws IOException {
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpGet getRequest = new HttpGet("https://dapi.kakao.com/v3/search/book?sort=accuracy&page=1&size=10&query=JPA&target=title");
+        getRequest.addHeader("Authorization", "KakaoAK 0eb0afb2b825c2c3cf1db56e33c2a9d9"); //KEY 입력
+
+        HttpResponse response = httpClient.execute(getRequest);
+
+        if (response.getStatusLine().getStatusCode() == 200) {
+            ResponseHandler<String> handler = new BasicResponseHandler();
+            String body = handler.handleResponse(response);
+            System.out.println(body);
+        } else {
+            System.out.println("response is error : " + response.getStatusLine().getStatusCode());
+        }
+
 
         BookDto book = BookDto.builder().id(1).bookName(bookReq.getSearchWord()).author("문성욱").publisher("싸피괴물").year(2021).genre("스릴러")
         .isbn("1234567891234").bookFileUrl(url).readCnt(9999999).rate(3.5f).build();

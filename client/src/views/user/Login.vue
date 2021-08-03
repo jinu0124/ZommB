@@ -38,8 +38,8 @@
         </div>
         <!-- 로그인 버튼 -->
         <button
-          class="btn-2 btn-yellow mt-4"
-          @click="onLogin"
+          :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-2', 'mt-4']"
+          @click="onLogin(userData)"
         >로그인</button>
       </div>
 
@@ -84,8 +84,8 @@ export default {
   },
   data: () => {
     return {
-      email: "",
-      password: "",
+      email: '',
+      password: '',
       passwordSchema: new PV(),
       error: {
         email: false,
@@ -95,29 +95,31 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['moveToSignup']),
+    ...mapActions('user', ['moveToSignup', 'onLogin']),
     checkForm() {
-      if (this.email.length >= 0 && !EmailValidator.validate(this.email))
-        this.error.email = "이메일 형식이 아닙니다.";
-      else this.error.email = false;
-
+      // 이메일 형식 검증
+      if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
+        this.error.email = "이메일 형식이 아닙니다."
+      } else {
+        this.error.email = false
+      }
+      // 비밀번호 형식 검증
       if (
         this.password.length >= 0 &&
         !this.passwordSchema.validate(this.password)
-      )
-        this.error.password = "영문,숫자 포함 8 자리이상이어야 합니다.";
-      else this.error.password = false;
+      ) {
+        this.error.password = "영문, 숫자 포함 8자 이상이어야 합니다."
+      } else {
+        this.error.password = false
+      }
 
+      // submit 가능 여부 확인
       let isSubmit = true;
       Object.values(this.error).map(v => {
         if (v) isSubmit = false;
       });
       this.isSubmit = isSubmit;
     },
-    onLogin() {
-      // 백엔드 되면 작성
-    },
-
   },
   created() {
     this.passwordSchema
@@ -131,18 +133,24 @@ export default {
       .letters();
   },
   watch: {
-    password: function() {
-      this.checkForm();
-    },
     email: function() {
       this.checkForm();
+    },
+    password: function() {
+      this.checkForm();
     }
+  },
+  computed: {
+    userData: function () {
+      return {
+        'email': this.email,
+        'password': this.password
+      }
+    },
   },
 }
 </script>
 
-<style src="@/assets/style/button.css"></style>
-<style src="@/assets/style/accounts.css"></style>
 <style scoped>
   .login {
     display: flex;

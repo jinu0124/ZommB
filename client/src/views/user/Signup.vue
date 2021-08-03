@@ -17,12 +17,20 @@
               class="account-input"
               v-model="email"
               type="text"
+              @input="resetEmailCheck"
               @keyup.enter="onSignup"
               autocapitalize="off"
               required
             />
               <button
-                class="btn-6 btn-yellow email-check"
+                v-if="isChecked"
+                class="btn-6 btn-primary1 email-check"
+                disabled
+              >사용가능</button>
+              <button
+                v-else
+                :class="[ error.email ? 'btn-disabled' : 'btn-yellow', 'btn-6', 'email-check']"
+                @click="checkEmail"
               >중복확인</button>
               <label>이메일 계정</label>
           </div>
@@ -73,7 +81,8 @@
             id="nickname"
             class="account-input"
             v-model="nickname"
-            type="password"
+            type="text"
+            maxlength="10"
             @keyup.enter="onSignup"
             required
           />
@@ -82,37 +91,51 @@
         </div>
         <!-- 회원가입 버튼 -->
         <button
-          class="btn-2 btn-yellow mt-4"
-          @click="onSignup"
+          :class="[ isChecked && isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-2', 'mt-4']"
+          @click="onSignup(userInfo)"
         >회원가입</button>
       </div>
     </div>
+
+    <!-- 이메일 중복 확인 관련 alert -->
     <div
       v-if="emailAlert"
       class="backdrop"
     ></div>
-    <SignupEmailCheckAlert
-      v-if="emailAlert"
+    <SignupEmailConfirmAlert
+      v-if="emailAlert === 1"
       class="email-alert"
       data-bs-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
+      @ok="emailAlert=false"
+    />
+    <SignupEmailRejectAlert
+      v-if="emailAlert === 2"
+      class="email-alert"
+      data-bs-backdrop="static"
+      tabindex="-1"
+      aria-hidden="true"
+      @ok="emailAlert=false"
     />
   </div>
 </template>
 
 <script>
+import userApi from '@/api/user'
 import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
-import SignupEmailCheckAlert from '@/components/user/SignupEmailCheckAlert'
+import SignupEmailConfirmAlert from '@/components/user/SignupEmailConfirmAlert'
+import SignupEmailRejectAlert from '@/components/user/SignupEmailRejectAlert'
 
 export default {
   name: 'Signup',
   components: {
     UnauthorizedHeader,
-    SignupEmailCheckAlert
+    SignupEmailConfirmAlert,
+    SignupEmailRejectAlert
   },
   data: () => {
     return {
@@ -135,43 +158,80 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['onSignup', 'moveToSignupEmail']),
+    ...mapActions('user', ['onSignup']),
+    // 이메일 중복 확인 요청
+    async checkEmail () {
+      await userApi.checkEmail(this.email)
+        .then((res) => {
+          this.emailAlert = 1
+          this.isChecked = true
+          console.log(res)
+        })
+        .catch((err) => {
+          this.email = ''
+          this.emailAlert = 2
+          console.log(err)
+        })
+    },
+    // 이메일 중복 체크 후 input 변경 시, 다시 중복 체크하도록 변경
+    resetEmailCheck () {
+      if (this.isChecked === true) {
+        this.isChecked = false
+      }
+    },
+    // 입력 형식 검증
     checkForm() {
-      if (this.email.length >= 0 && !EmailValidator.validate(this.email))
+      // 이메일 형식 검증
+      if (this.email.length > 0 && !EmailValidator.validate(this.email)) {
         this.error.email = "이메일 형식이 아닙니다."
-      else this.error.email = false
-
+      } else if (this.email.length === 0) {
+        this.error.email = "이메일은 필수 항목입니다."
+      } else {
+        this.error.email = false
+      }
+      // 비밀번호 형식 검증
       if (
-        this.password.length >= 0 &&
+        this.password.length > 0 &&
         !this.passwordSchema.validate(this.password)
-      )
+      ) {
         this.error.password = "영문,숫자 포함 8자 이상이어야 합니다."
-      else this.error.password = false
-
+      } else if (this.password.length === 0) {
+        this.error.password = "비밀번호는 필수 항목입니다."
+      } else {
+        this.error.password = false
+      }
+      // 비밀번호 확인 검증
       if (
         this.passwordConfirm.length > 0 &&
+        !this.passwordSchema.validate(this.passwordConfirm)
+      ) {
+        this.error.passwordConfirm = "영문,숫자 포함 8자 이상이어야 합니다."
+      } else if (
         this.passwordConfirm != this.password
       ) {
         this.error.passwordConfirm = "입력하신 비밀번호와 다릅니다."
-      } else {
+      } else if (this.passwordConfirm.length === 0) {
+        this.error.passwordConfirm = "비밀번호를 한 번 더 입력해주세요."
+      }  else {
         this.error.passwordConfirm = false}
-
+      // 이름 입력 확인
       if (this.name.length === 0) {
         this.error.name = "이름을 입력해주세요."
       } else {
-        this.error.name = false}
-
+        this.error.name = false }
+      // 닉네임 입력 확인 (input 태그 maxlength 지정해서 길이 관련 에러 메시지는 제외)
       if (this.nickname.length === 0) {
         this.error.nickname = "닉네임을 입력해주세요."
       } else {
         this.error.nickname = false}
 
+      // submit 가능 여부 확인
       let isSubmit = true
       Object.values(this.error).map(v => {
         if (v) isSubmit = false
       })
       this.isSubmit = isSubmit
-    }
+    },
   },
   created() {
     this.passwordSchema
@@ -185,18 +245,35 @@ export default {
       .letters();
   },
   watch: {
-    password: function() {
-      this.checkForm();
-    },
     email: function() {
-      this.checkForm();
-    }
+      this.checkForm()
+    },
+    password: function() {
+      this.checkForm()
+    },
+    passwordConfirm: function() {
+      this.checkForm()
+    },
+    name: function() {
+      this.checkForm()
+    },
+    nickname: function() {
+      this.checkForm()
+    },
+  },
+  computed: {
+    userInfo: function () {
+      return {
+        'email': this.email,
+        'name': this.name,
+        'nickname': this.nickname,
+        'password': this.password
+      }
+    },
   },
 }
 </script>
 
-<style src="@/assets/style/button.css"></style>
-<style src="@/assets/style/accounts.css"></style>
 <style scoped>
   .signup {
     display: flex;
@@ -206,7 +283,7 @@ export default {
   }
   .backdrop {
     position: fixed;
-    width: 100vh;
+    width: 100%;
     height: 100vh;
     z-index: 1040;
     background-color: rgba(0, 0, 0, 0.3);

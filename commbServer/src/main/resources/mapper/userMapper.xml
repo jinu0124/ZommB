@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.UserDao">
+
+    <select id="userInfo" parameterType="Integer" resultMap="userInformation">
+        SELECT id, email, name, nickname, bookmark, bookmark_on as bookmarkOn, pencil, pencil_on as pencilOn, file_url
+               (SELECT COUNT(*) FROM follow WHERE follower = #{userId}) AS following,
+               (SELECT COUNT(*) FROM follow WHERE following = #{userId}) AS follower,
+               (SELECT COUNT(*) FROM follow WHERE follower = #{myUserId} and following = #{userId}) AS isFollow
+        FROM user
+        WHERE id = #{userId};
+    </select>
+
+    <resultMap type="User" id="userInformation">
+        <result column="id" property="id"/>
+        <result column="email" property="email"/>
+        <result column="name" property="name"/>
+        <result column="nickname" property="nickname"/>
+        <result column="file_url" property="userFileUrl"/>
+        <result column="pencil" property="level.pencil"/>
+        <result column="pencilOn" property="level.pencilOn"/>
+        <result column="bookmark" property="level.bookmark"/>
+        <result column="bookmarkOn" property="level.bookmarkOn"/>
+        <result column="following" property="follow.following"/>
+        <result column="follower" property="follow.follower"/>
+        <result column="isFollow" property="follow.isFollow"/>
+    </resultMap>
+
+<!--        <insert id="register" parameterType="Member" useGeneratedKeys="true" keyColumn="code" keyProperty="keyId">-->
+<!--            insert into member(id, pw, email, mname, reg_date, phone, location_code, prefer)-->
+<!--            values(#{userId}, #{pw}, #{email}, #{name}, now(), #{phone}, #{locationCode}, #{prefer})-->
+<!--        </insert>-->
+
+<!--        <select id="login" parameterType="Member" resultMap="memberLogin">-->
+<!--            select member.code as code, id, pw, mname, phone, email, location_code, IFNULL(fileURL, "0") as fileURL, prefer-->
+<!--            from member left outer join profile_image-->
+<!--            on member.code = profile_image.code-->
+<!--            where id like #{userId} and pw like #{pw}-->
+<!--        </select>-->
+
+
+<!--        <delete id="deleteMember" parameterType="Member">-->
+<!--            delete from member-->
+<!--            where id like #{userId} and pw like #{pw}-->
+<!--        </delete>-->
+
+<!--        <update id="setMemberInfo" parameterType="Member">-->
+<!--            update member-->
+<!--            set mname = #{name}, pw = #{pw}, phone = #{phone}, email = #{email}, location_code = #{locationCode}, prefer = #{prefer}-->
+<!--            where id = #{userId}-->
+<!--        </update>-->
+
+<!--        <select id="checkId" parameterType="String" resultType="int">-->
+<!--            select count(*)-->
+<!--            from member-->
+<!--            where id = #{userId}-->
+<!--        </select>-->
+
+
+
+
+
+</mapper>
