@@ -158,7 +158,7 @@ public class UserController {
             return "인증이 완료되었습니다. 돌아가! 로그인해!";
         }
 
-        return "토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
+        return "이메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -226,7 +226,6 @@ public class UserController {
         }
         else return new ResponseEntity(HttpStatus.valueOf(400));
 
-        request.setAttribute("userId", userId);                   // 테스트용(Auto Interceptor WebConfig 적용 전)
         MyDto.Response myRes = profileService.updateProfile(myReq, request);
         if( myRes == null ) return new ResponseEntity(HttpStatus.valueOf(401));
 
