@@ -54,8 +54,12 @@ spring:
 
 security:
   expire:
-    accesstoken: 60000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
+    accesstoken: 36000000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
     refreshtoken: 300000
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
   accesstoken: "access-token"
   refreshtoken: "refresh-token"
+
+mybatis:
+  config-location: classpath:/config/mybatis-config.xml
+

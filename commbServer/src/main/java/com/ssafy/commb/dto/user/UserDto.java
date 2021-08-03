@@ -5,10 +5,12 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.commb.dto.user.follow.FollowDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 
 import javax.persistence.Column;
+import java.util.List;
 
 @Component
 @Getter                                     // Getter 생성
@@ -17,6 +19,7 @@ import javax.persistence.Column;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
+@Alias("User")
 public class UserDto {
     private Integer id;
     private String email;
@@ -65,6 +68,16 @@ public class UserDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response{               // 반환
         private UserDto data;
+        private String retMsg;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ResponseList{               // 반환
+        private List<UserDto> data;
         private String retMsg;
     }
 

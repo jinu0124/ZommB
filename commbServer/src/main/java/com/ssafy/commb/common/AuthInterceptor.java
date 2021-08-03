@@ -37,10 +37,13 @@ public class AuthInterceptor implements HandlerInterceptor {
         Gson gson = new Gson();
         JsonObject jsonObject = new JsonObject();
 
-        String acToken = request.getParameter("acToken");       // 테스트용
-        String rfToken = request.getParameter("rfToken");
-//        String acToken = request.getHeader("access-token");       // Header를 통해 Token 받기
-//        String rfToken = request.getHeader("refresh-token");
+//        String acToken = request.getParameter("acToken");      //  테스트용
+//        String rfToken = request.getParameter("rfToken");
+
+        String acToken = request.getHeader("access-token");       // Header를 통해 Token 받기
+        String rfToken;
+        if(request.getAttribute("refresh-token") == null) rfToken = null;
+        else rfToken = (String) request.getAttribute("refresh-token");
 
         if(acToken == null || acToken.length() < 24) {                               // Access 토큰이 없을 때
             map.put("status", 401);
@@ -64,7 +67,7 @@ public class AuthInterceptor implements HandlerInterceptor {
                 map.put("status", 403);
             }
             else {
-                request.setAttribute("userId", ret);
+                request.setAttribute("userId", Integer.parseInt(ret));
                 map.put("status", 200);                                                // AccessToken이 유효할 때
             }
         }

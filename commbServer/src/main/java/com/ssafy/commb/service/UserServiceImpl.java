@@ -1,8 +1,14 @@
 package com.ssafy.commb.service;
 
+import ch.qos.logback.core.CoreConstants;
+import com.ssafy.commb.dao.UserDao;
+import com.ssafy.commb.dto.book.BookDto;
+import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.model.ConfirmationToken;
+import com.ssafy.commb.model.Feed;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import com.ssafy.commb.repository.UserRepository;
@@ -14,6 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -39,6 +47,33 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    UserDao userDao;
+
+    @Override
+    public UserDto.ResponseList getUsers(String nickname) {
+        UserDto.ResponseList retRes = new UserDto.ResponseList();
+        Optional<List<User>> users = userRepository.findByNicknameStartsWith(nickname);
+
+        users.ifPresent(selectUser -> {
+            List<UserDto> userResList = new ArrayList<>();
+
+            for(User user : selectUser){
+                LevelDto level = LevelDto.builder().bookmark(user.getBookmark()).bookmarkOn(user.getBookmarkOn() != 0).pencil(user.getPencil())
+                        .pencilOn(user.getPencilOn() != 0).build();
+
+                UserDto userDto = UserDto.builder().id(user.getId()).email(user.getEmail()).name(user.getName()).nickname(user.getNickname())
+                        .role(user.getRole()).userFileUrl(user.getFileUrl()).level(level).build();
+
+                userResList.add(userDto);
+            }
+
+            retRes.setData(userResList);
+        });
+
+        return retRes;
+    }
+
     public int joinUser(MyDto.Request myReq) {
         User user = new User(myReq.getEmail(), myReq.getPassword(), myReq.getName(), myReq.getNickname());
 
@@ -51,16 +86,21 @@ public class UserServiceImpl implements UserService {
         return user.isPresent();
     }
 
-    public MyDto login(MyDto.LoginRequest myReq) {
+    public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
 
         if (!user.isPresent()) return null;
+
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
         my.setUserFileUrl(user.get().getFileUrl() != null ? user.get().getFileUrl() : "");
 
-        return my;
+        MyDto.Response myRes = new MyDto.Response();
+        myRes.setData(my);
+        if(user.get().getRole() == null) myRes.setRetMsg("email unauthorized");
+        else if(user.get().getRole().equals("USR")) myRes.setRetMsg("authorized");
+        return myRes;
     }
 
     private final ConfirmationTokenService confirmationTokenService;
@@ -122,6 +162,15 @@ public class UserServiceImpl implements UserService {
         // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
         File file = new File(uploadPath + File.separator + user.get().getFileUrl());
         if(file.exists()) file.delete();
+    }
+
+    @Override
+    public UserDto.Response getUserInfo(int userId, HttpServletRequest request) {
+        UserDto user = userDao.userInfo(userId, (int) request.getAttribute("userId"));
+        UserDto.Response userRes = new UserDto.Response();
+        userRes.setData(user);
+
+        return userRes;
     }
 
 }
