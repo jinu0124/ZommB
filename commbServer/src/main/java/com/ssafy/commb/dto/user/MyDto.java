@@ -57,6 +57,7 @@ public class MyDto {
     }
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class ModifyRequest {                // 요청

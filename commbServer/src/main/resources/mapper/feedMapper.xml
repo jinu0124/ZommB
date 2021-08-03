@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.FeedDao">
+
+    <select id="userFeed" parameterType="Integer" resultMap="feedInformation">
+        SELECT T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+            (SELECT f.id fid, create_at, content, f.file_url AS f_file_url, u.id AS uid, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                    COUNT(t.user_id) AS thumb_cnt
+             FROM feed f INNER JOIN user u INNER JOIN book b
+             on f.user_id = u.id AND f.book_id = b.id AND u.id = #{userId} AND f.blocked = 0
+             left outer join thumb t
+             on t.feed_id = f.id
+             GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+        ON T1.fid = t.feed_id AND #{myUserId} = t.user_id
+        ORDER BY T1.create_at DESC
+    </select>
+
+    <select id="getHashTags" parameterType="Integer" resultType="HashTag">
+        select tag
+        from hashtag h
+        where #{feed_id} = h.feed_id
+    </select>
+
+    <select id="getComments" parameterType="Integer" resultType="Comment">
+        SELECT T1.cid as id, T1.content, T1.uid as userId, T1.nickname, T1.thumb_cnt, T1.create_at, T1.is_mod, IF(IFNULL(comment_id, 0) = 0, 0, 1) AS is_thumb
+        FROM
+            (SELECT c.id AS cid, c.content, c.user_id AS uid, u.nickname, c.create_at, c.is_mod, COUNT(ct.comment_id) AS thumb_cnt
+             FROM user u INNER JOIN comment c
+             ON c.feed_id = 1 AND u.id = c.user_id
+             left outer join comment_thumb ct
+             ON ct.comment_id = c.id
+             GROUP BY c.id) AS T1 LEFT OUTER JOIN comment_thumb ct
+        ON T1.uid = 10000001 AND T1.cid = ct.comment_id;
+        ORDER BY T1.create_at DESC
+    </select>
+
+    <select id="userFeedCnt" parameterType="Integer" resultType="Integer">
+        select COUNT(id)
+        from feed
+        where user_id = #{userId}
+    </select>
+
+    <resultMap type="Feed" id="feedInformation">
+        <result column="fid" property="id"/>
+        <result column="create_at" property="createAt"/>
+        <result column="content" property="content"/>
+        <result column="f_file_url" property="feedFileUrl"/>
+        <result column="is_thumb" property="isThumb"/>
+        <result column="thumb_cnt" property="thumbCnt"/>
+        <result column="uid" property="user.id"/>
+        <result column="nickname" property="user.nickname"/>
+        <result column="u_file_url" property="user.userFileUrl"/>
+        <result column="bid" property="book.id"/>
+        <result column="book_name" property="book.bookName"/>
+    </resultMap>
+
+</mapper>
