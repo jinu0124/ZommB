@@ -21,7 +21,7 @@ spring:
           timeout: 5000
           writetimeout: 5000
   redis:
-    host : 127.0.0.1
+    host : i5a602.p.ssafy.io
     password : 1234
     port : 6379
 
