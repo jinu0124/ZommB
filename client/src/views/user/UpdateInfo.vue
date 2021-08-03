@@ -106,6 +106,8 @@
         </div>
       </div>
     </div>
+    <!-- 서버 테스트용 -->
+    <input type="file" @change="saveImage">
   </div>
 </template>
 
@@ -143,10 +145,31 @@ export default {
       passwordSchema: new PV(),
       updatePassword: false,
       dialog: false,
+      temp: null,
     }
   },
   methods: {
     ...mapActions('user', ['onUpdateInfo', 'onUpdatePassword']),
+    saveImage (event) {
+      console.log(event.target.files[0])
+      var userInfo = new FormData()
+      userInfo.append('userFileUrl', event.target.files[0])
+      userInfo.append('nickname', this.nickname)
+      userInfo.append('flag', 1)
+      // console.log(userInfo)
+      _axios({
+        url: `users/${this.myInfo.id}`,
+        method: 'post',
+        data: userInfo,
+        headers: {
+          'access-token': this.accessToken,
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+        .catch((err) => {
+          console.log(err.response)
+        })
+    },
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -154,6 +177,7 @@ export default {
     saveNewProfile (croppa) {
       this.preview = croppa.generateDataUrl('image/jpeg')
       this.myCroppa = croppa
+      this.profileUpdate = 1
     },
     onFileDelete () {
       this.profileUpdate = 2
@@ -164,23 +188,28 @@ export default {
     // 작성 중
     onUpdate () {
       // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
-      if (this.profileUpdate != 1 || this.nickname != this.myInfo.nickname) {
+      if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
         this.myCroppa.generateBlob((blob) => {
           var userInfo = new FormData()
-          userInfo.append('userFileUrl', blob)
+          userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
           userInfo.append('nickname', this.nickname)
+          userInfo.append('flag', this.profileUpdate)
           console.log(userInfo)
           _axios({
             url: `users/${this.myInfo.id}`,
             method: 'post',
             data: userInfo,
             headers: {
+              'access-token': this.accessToken,
               'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
             },
           })
+            .catch((err) => {
+              console.log(err.response)
+            })
         })
       }
-      // 
+      // 비밀번호 변경 시에만 요청 보내기
       if (this.updatePassword) {
         const passwordInfo = {
           'newPassword': this.password,
@@ -280,7 +309,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('user', ['myInfo']),
+    ...mapState('user', ['myInfo', 'accessToken']),
   }
 }
 </script>
