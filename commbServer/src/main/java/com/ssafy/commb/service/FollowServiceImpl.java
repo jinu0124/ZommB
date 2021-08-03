@@ -53,6 +53,11 @@ public class FollowServiceImpl implements FollowService{
         followerUser.get().follow(followingUser.get());
     }
 
+    /**
+     *
+     * @param follower 팔로우 취소하는 유저
+     * @param following 언팔로우 대상
+     */
     @Override
     public void deleteFollowing(int follower, int following) {
         Optional<User> followerUser = userRepository.findUserById(follower);
@@ -67,7 +72,13 @@ public class FollowServiceImpl implements FollowService{
         // 안팔로우
         followerUser.get().unfollow(followingUser.get());
     }
-    
+
+    /**
+     *
+     * @param meId : 현재 로그인한 사용자
+     * @param userId : 팔로잉 목록의 대상
+     * @return : MyDtoList
+     */
     public List<MyDto> getFollowings(int meId, int userId){
 
         Optional<User> userOp = userRepository.findUserById(userId);
@@ -98,6 +109,12 @@ public class FollowServiceImpl implements FollowService{
         return myDtoList;
     }
 
+    /**
+     *
+     * @param meId : 현재 로그인한 사용자
+     * @param userId : 팔로워 목록의 대상
+     * @return : MyDtoList
+     */
     @Override
     public List<MyDto> getFollowers(int meId, int userId) {
         Optional<User> userOp = userRepository.findUserById(userId);
