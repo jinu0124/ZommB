@@ -179,8 +179,6 @@ public class UserController {
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
         MyDto.Response myRes = userService.login(myReq);
-        if (myRes == null) return new ResponseEntity(HttpStatus.valueOf(401));
-        if("email unauthorized".equals(myRes.getRetMsg())) return ResponseEntity.status(403).body(myRes);
 
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
@@ -224,10 +222,11 @@ public class UserController {
         if(myReq != null){
             if(myReq.getNickname().length() < 4 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
         }
-        else return new ResponseEntity(HttpStatus.valueOf(400));
+        else return ResponseEntity.status(400).build();
 
+//        request.setAttribute("userId", userId);               // 테스트용
         MyDto.Response myRes = profileService.updateProfile(myReq, request);
-        if( myRes == null ) return new ResponseEntity(HttpStatus.valueOf(401));
+        if( myRes == null ) return new ResponseEntity("알 수 없는 에러라서 백엔드에 다시 요청!", HttpStatus.valueOf(401));
 
         return ResponseEntity.ok().body(myRes);
     }
@@ -240,10 +239,10 @@ public class UserController {
                                          @RequestBody UserDto.ModifyPwRequest userReq,
                                         HttpServletRequest request) {
         if(userReq == null) return ResponseEntity.status(401).build();
-        if(!userService.validatePassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        userService.validatePassword(userReq.getNewPassword());
 
 //        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
-        if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
+        userService.updatePassword(userReq, request);
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }

@@ -12,7 +12,7 @@ public interface FeedDao {
     public List<FeedDto> userFeed(int userId, int myUserId);
 
     public List<HashTagDto> getHashTags(int feedId);
-    public List<CommentDto> getComments(int feedId);
+    public List<CommentDto> getComments(int feedId, int userId);
 
     public int userFeedCnt(int userId);
 }
