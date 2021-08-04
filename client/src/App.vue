@@ -1,6 +1,9 @@
 <template>
-  <div id="app" :class="{accounts: isAccountsPage}">
-    <Header v-if="needHeader"/>
+  <div id="app" :class="{accounts: isAccounts, challenge: isChallenge}">
+    <Header 
+      v-if="needHeader"
+      :class="{accounts: isAccounts, challenge: isChallenge}"
+    />
     <router-view/>
   </div>
 </template>
@@ -26,13 +29,16 @@ export default {
       }
       return true
     },
-    isAccountsPage() {
+    isAccounts() {
       if (this.$route.name === 'Login'
         || this.$route.name === 'Signup'
         || this.$route.name === 'UpdateInfo') {
         return true
       }
       return false
+    },
+    isChallenge() {
+      return this.$route.name === 'Challenge'
     }
   }
 }
@@ -51,6 +57,10 @@ export default {
 
 .accounts {
   background-color: #7B60F1;
-  
+  color: #fff;
+}
+.challenge {
+  background-color: #fff;
+  color: #683EC9;
 }
 </style>
