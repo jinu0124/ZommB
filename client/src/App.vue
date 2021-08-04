@@ -21,6 +21,8 @@ export default {
         || this.$route.name === 'Signup'
         || this.$route.name === 'PageNotFound'
         || this.$route.name === 'ServerError'
+        || this.$route.name === 'Like'
+        || this.$route.name === 'Reply'
         ) {
         return false
       }

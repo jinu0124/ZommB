@@ -1,5 +1,5 @@
 <template>
-  <div class="like">
+  <div class="reply">
     <ReplyHeader/>
     <Content/>
     <ReplyList/>

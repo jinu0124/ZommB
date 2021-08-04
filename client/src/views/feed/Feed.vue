@@ -31,5 +31,6 @@ export default {
 <style>
 .feed{
   padding: 60px 0 0 0;
+  flex-flow: column;
 }
 </style>
