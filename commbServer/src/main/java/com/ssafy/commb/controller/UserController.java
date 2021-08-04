@@ -4,24 +4,18 @@ import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
-import com.ssafy.commb.dto.feed.CommentDto;
 import com.ssafy.commb.dto.feed.FeedDto;
-import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
-import com.ssafy.commb.dto.user.follow.FollowDto;
-import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.jwt.SecurityService;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.web.util.RedirectUrlBuilder;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -81,6 +75,9 @@ public class UserController {
 
     @Autowired
     private BookService bookService;
+
+    @Autowired
+    private KeywordService keywordService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -403,43 +400,31 @@ public class UserController {
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // @
     // /users/2/follow-recommend
     // 친구 추천 목록 조회
     @GetMapping("/{userId}/follow-recommend")
     @ApiOperation(value = "친구 추천 목록 조회", response = UserDto.Response.class)
-    public ResponseEntity<List<UserDto.Response>> findFollowRecommend(
-            @PathVariable("userId") Integer userId
+    public ResponseEntity<UserDto.ResponseList> findFollowRecommend(
+            @PathVariable("userId") Integer userId,
+            HttpServletRequest request
     ) {
+        UserDto.ResponseList userResList = userService.followRecommend(request);
 
-        FollowDto follow = FollowDto.builder().isFollow(bool).build();
-        LevelDto level = LevelDto.builder().bookmark(bookmark).pencil(pencil).build();
-
-        UserDto user = UserDto.builder().id(id).name(name).nickname(nickname).userFileUrl(url).follow(follow).level(level).build();
-
-        UserDto.Response userRes = new UserDto.Response();
-        userRes.setData(user);
-
-        List<UserDto.Response> userResList = new ArrayList<>();
-        userResList.add(userRes);
-
-        return new ResponseEntity<List<UserDto.Response>>(userResList, HttpStatus.OK);
+        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
 
+    // @
     // /users/1/keyword-recommend
     // 추천 키워드 목록
     @GetMapping("/{userId}/keyword-recommend")
     @ApiOperation(value = "추천 키워드 리스트", response = KeywordDto.Response.class)
-    public ResponseEntity<List<KeywordDto.Response>> findKeywordRecommend(
-            @PathVariable("userId") Integer userId
+    public ResponseEntity<KeywordDto.ResponseList> findKeywordRecommend(
+            @PathVariable("userId") Integer userId,
+            HttpServletRequest request
     ) {
-        KeywordDto keywordDto = KeywordDto.builder().id(id).keyword(keyword).cnt(cnt).build();
-        KeywordDto.Response keywordRes = new KeywordDto.Response();
-        keywordRes.setData(keywordDto);
-
-        List<KeywordDto.Response> keywordResList = new ArrayList<KeywordDto.Response>();
-        keywordResList.add(keywordRes);
-
-        return new ResponseEntity<List<KeywordDto.Response>>(keywordResList, HttpStatus.OK);
+        KeywordDto.ResponseList keyResList =  keywordService.keywordRecommend(request);
+        return new ResponseEntity<KeywordDto.ResponseList>(keyResList, HttpStatus.OK);
     }
 
 }

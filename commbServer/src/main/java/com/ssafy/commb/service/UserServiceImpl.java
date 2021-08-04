@@ -173,4 +173,12 @@ public class UserServiceImpl implements UserService {
         return userRes;
     }
 
+    @Override
+    public UserDto.ResponseList followRecommend(HttpServletRequest request) {
+        List<UserDto> users = userDao.getMyFollowerExFollowing( (int) request.getAttribute("userId"));
+        UserDto.ResponseList userResList = new UserDto.ResponseList();
+        userResList.setData(users);
+        return userResList;
+    }
+
 }

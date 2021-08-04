@@ -90,6 +90,7 @@ public class BookServiceImpl implements BookService{
         bookShelves.ifPresent(bookSelect -> {
             bookShelvesRepository.delete(bookSelect);
         });
+        bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
     }
 
     @Override
@@ -100,6 +101,7 @@ public class BookServiceImpl implements BookService{
             bookSelect.setIsRead(Math.abs(bookSelect.getIsRead() - 1));             // toggle
 
             bookShelvesRepository.save(bookSelect);
+            if(bookSelect.getIsRead() == 0) bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
         });
     }
 
@@ -132,8 +134,8 @@ public class BookServiceImpl implements BookService{
     public void deleteBookTop(int bookId, HttpServletRequest request) {
         if(bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId")) != 1)
             throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, bookId + " 도서가 삭제되지 않았습니다.");
-
     }
+
 
 
 }
