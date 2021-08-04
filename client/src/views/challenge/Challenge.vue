@@ -29,6 +29,11 @@
     <ChallengeMy
       v-if="selectedPage === 2"
     />
+    <div>
+      Scroll Test 입니다. <br>
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia quo odit optio!
+      Lorem ispsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia quo odit optio!
+    </div>
   </div>
 </template>
 
@@ -42,7 +47,7 @@ export default {
   components: {
     ChallengeWeekly,
     ChallengeDaily,
-    ChallengeMy
+    ChallengeMy,
   },
   data () {
     return {
@@ -63,8 +68,13 @@ export default {
     height: 100vh;
     border-radius: 30px 0px 0px 0px;
     margin-top: 60px;
-    padding: 20px;
+    padding: 20px 20px 100px;
     color: #fff;
+    position: fixed;
+    overflow: scroll;
+  }
+  .challenge::-webkit-scrollbar {
+    display: none; 
   }
   .ch-header .title {
     font-size: 1.5rem;
