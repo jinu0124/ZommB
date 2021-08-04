@@ -286,117 +286,120 @@ public class UserController {
         return new ResponseEntity<Map<String, Integer>>(map, HttpStatus.OK);
     }
 
-
+    // @
     // 서재/북카트 내 도서 검색
     @GetMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
-    public ResponseEntity<List<BookDto.Response>> findUserBookShelvesList(
+    public ResponseEntity<BookDto.ResponseList> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
             @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
             HttpServletRequest request
     ) {
-        bookService.getBooksByName(bookReq, request);
+        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, request);
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok().body(bookResList);
     }
 
+    // @
     // 서재/북카트 책 추가
     @PostMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 도서 추가")
     public ResponseEntity insertUserBookShelves(
             @PathVariable("userId") Integer userId,
-            @RequestBody BookDto.RegisterRequest book
+            @RequestBody BookDto.RegisterRequest book,
+            HttpServletRequest request
     ) {
+        bookService.addMyShelf(book, request);
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    // @
     // 읽은/읽을 책 수 반환
     @GetMapping("/{userId}/bookshelves/cnt")
     @ApiOperation(value = "읽은/읽을(서재/북카트) 도서 수", response = BookShelfCntDto.Response.class)
     public ResponseEntity<BookShelfCntDto.Response> findUserBookShelvesCnt(
             @PathVariable("userId") Integer userId
     ) {
-        BookShelfCntDto bookShelfCnt = BookShelfCntDto.builder().libraryCnt(cnt).bookcartCnt(cnt).build();
 
-        BookShelfCntDto.Response bookShelfCntRes = new BookShelfCntDto.Response();
-        bookShelfCntRes.setData(bookShelfCnt);
-
-        return new ResponseEntity<BookShelfCntDto.Response>(bookShelfCntRes, HttpStatus.OK);
+        return new ResponseEntity<BookShelfCntDto.Response>(bookService.getUserReadCnt(userId), HttpStatus.OK);
     }
 
+    // @
     // 서재 책 1권 삭제하기
     @DeleteMapping("/{userId}/bookshelves/{bookId}")
     @ApiOperation(value = "서재/북카트 도서 1권 삭제하기")
     public ResponseEntity deleteUserBookShelf(
             @PathVariable("userId") Integer userId,
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("bookId") Integer bookId,
+            HttpServletRequest request
     ) {
-
-        return new ResponseEntity(HttpStatus.valueOf(204));
+        bookService.deleteBookInBookShelf(bookId, request);
+        return ResponseEntity.status(204).build();
     }
 
+    // @
     // 북카트에서 서재로 옮기기
     @PatchMapping("/{userId}/bookshelves/{bookId}")
     @ApiOperation(value = "북카트에서 서재로 도서 이동")
     public ResponseEntity updateUserBookShelf(
             @PathVariable("userId") Integer userId,
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("bookId") Integer bookId,
+            HttpServletRequest request
     ) {
-
+        bookService.moveBook(bookId, request);
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    // @
     // /users/2/top-bar
     // 상단 바 도서 목록 조회
     @GetMapping("/{userId}/top-bar")
     @ApiOperation(value = "상단 바 도서 목록 조회", response = BookDto.Response.class)
-    public ResponseEntity<List<BookDto.Response>> findUserTopBar(
+    public ResponseEntity<BookDto.ResponseList> findUserTopBar(
             @PathVariable("userId") Integer userId
     ) {
-        BookDto book = BookDto.builder().id(id).bookFileUrl(url).build();
+        BookDto.ResponseList bookResList = bookService.getTopBooks(userId);
 
-        List<BookDto.Response> bookResList = new ArrayList<>();
-
-        BookDto.Response bookRes = new BookDto.Response();
-        bookRes.setData(book);
-
-        bookResList.add(bookRes);
-
-        return new ResponseEntity<List<BookDto.Response>>(bookResList, HttpStatus.OK);
+        return new ResponseEntity<BookDto.ResponseList>(bookResList, HttpStatus.OK);
     }
 
-    // 상단 바 도서 등록
+    // @
+    // 상단 바 도서 등록 : 서재에 있는 책인지 확인 후 등록(PRI KEY 조건으로 데이터 중복 시 throw 500)
     @PostMapping("/{userId}/top-bar")
     @ApiOperation(value = "상단 바 도서 등록")
     public ResponseEntity InsertUserTopBar(
             @PathVariable("userId") Integer userId,
-            @RequestBody BookDto.TopBarRegisterRequest bookReq
+            @RequestBody BookDto.TopBarRegisterRequest bookReq,
+            HttpServletRequest request
     ) {
-
-        return new ResponseEntity(HttpStatus.valueOf(201));
+        bookService.addBookTop(bookReq, request);
+        return ResponseEntity.status(201).body(bookReq.getId());
     }
 
+    // @
     // 상단 바 도서 전체 삭제
     @DeleteMapping("/{userId}/top-bar")
     @ApiOperation(value = "상단 바 도서 전체 삭제")
     public ResponseEntity deleteUserTopBarAll(
-            @PathVariable("userId") Integer userId
+            @PathVariable("userId") Integer userId,
+            HttpServletRequest request
     ) {
-
+        bookService.deleteAllBookTop(request);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
+    // @
     // 상단바 도서 삭제
     @DeleteMapping("/{userId}/top-bar/{bookId}")
     @ApiOperation(value = "상단 바 도서 1권 삭제")
     public ResponseEntity deleteUserTopBar(
             @PathVariable("userId") Integer userId,
-            @PathVariable("bookId") Integer bookId
+            @PathVariable("bookId") Integer bookId,
+            HttpServletRequest request
     ) {
-
-
+        bookService.deleteBookTop(bookId, request);
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 

@@ -15,8 +15,13 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ApplicationException.class)
     public ResponseEntity handleApplicationException(ApplicationException e){
-
-        return ResponseEntity.status(e.getStatus()).body(e);
+        if(e.getObj() != null) {
+            Map<String, Object> map = new HashMap<>();
+            map.put("message", e.getMessage());
+            map.put("data", e.getObj());
+            return ResponseEntity.status(e.getStatus()).body(map);
+        }
+        return ResponseEntity.status(e.getStatus()).body(e.getMessage());
     }
 
     // https://withseungryu.tistory.com/95

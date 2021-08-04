@@ -42,6 +42,8 @@
         where user_id = #{userId}
     </select>
 
+
+
     <resultMap type="Feed" id="feedInformation">
         <result column="fid" property="id"/>
         <result column="create_at" property="createAt"/>
