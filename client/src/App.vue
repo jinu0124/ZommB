@@ -23,6 +23,8 @@ export default {
         || this.$route.name === 'ServerError'
         || this.$route.name === 'Like'
         || this.$route.name === 'Reply'
+        || this.$route.name === 'Report'
+        || this.$route.name === 'WriteArticle'
         ) {
         return false
       }

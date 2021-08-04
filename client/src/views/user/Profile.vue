@@ -19,8 +19,8 @@
         GOLD</button>
       </span>
       <div>
-        <span class="follow" type="button">00 followers</span>
-        <span class="follow" type="button">00 followings</span>
+        <span class="follow" type="button" @click="moveToFollower()">00 followers</span>
+        <span class="follow" type="button" @click="moveToFollowing()">00 followings</span>
       </div>
       <!-- <div>
         <span class="alticle-num num">00</span>
@@ -43,32 +43,60 @@
     </div>
     <div class="tabs">
       <input id="alticle-tab" type="radio" name="tab-item" checked>
-      <label class="tab-item" for="alticle-tab">게시물</label>
+      <label class="tab-item" for="alticle-tab" @click=changePage(0)>게시물</label>
       <input id="library-tab" type="radio" name="tab-item">
-      <label class="tab-item" for="library-tab">서재</label>
+      <label class="tab-item" for="library-tab" @click=changePage(1)>서재</label>
       <input id="bookcart-tab" type="radio" name="tab-item">
-      <label class="tab-item" for="bookcart-tab">북카트</label>
+      <label class="tab-item" for="bookcart-tab" @click=changePage(2)>북카트</label>
       <div class="tab-content" id="alticle-content">
         <!-- 게시물이 그리드 형식으로 한 줄에 3개씩 들어오게 됨 -->
+        <ProfileFeeds
+          v-if="selectedPage === 0"
+        />
       </div>
       <div class="tab-content" id="library-content">
         <!-- 서재 표현 -->
+        <ProfileLibrary
+          v-if="selectedPage === 1"
+        />
       </div>
       <div class="tab-content" id="bookcart-content">
         <!-- 북카트 표현 -->
+        <ProfileBookcart
+          v-if="selectedPage === 2"
+        />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import ProfileHeader from '@/components/user/ProfileHeader'
+import ProfileHeader from '@/components/profile/ProfileHeader'
+import ProfileFeeds from '@/components/profile/ProfileFeeds'
+import ProfileLibrary from '@/components/profile/ProfileLibrary'
+import ProfileBookcart from '@/components/profile/ProfileBookcart'
 
 export default {
-  name: 'MyProfile',
+  name: 'Profile',
   components: {
     ProfileHeader,
-  }
+    ProfileFeeds,
+    ProfileLibrary,
+    ProfileBookcart,
+  },
+  data () {
+    return {
+      selectedPage: 0,
+    }
+  },
+  methods: {
+    changePage (val) {
+      this.selectedPage = val;
+    },
+    moveToFollow() {
+      this.$router.push('/follow')
+    },
+  },
 }
 </script>
 

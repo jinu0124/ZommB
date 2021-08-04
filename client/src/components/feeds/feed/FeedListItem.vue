@@ -44,8 +44,15 @@
     <span>
       <img
         alt="좋아요버튼안눌림"
-        class="dislike btn-like" type="button" @click="like"
+        class="dislike btn-like" type="button" @click="like()"
         src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+        v-show="disLike"
+      />
+      <img
+        alt="좋아요버튼눌림"
+        class="like btn-like" type="button" @click="dislike()"
+        src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
+        v-show="Like"
       />
     </span>
     <span type="button" @click="moveToLike">00</span>
@@ -69,13 +76,13 @@
     <span>user1</span>
     <span>
       <div>댓글 어쩌구 저쩌구...</div>
-      <div>좋아요 3개</div>
+      <div class="reply-like-num">좋아요 3개</div>
     </span>
     <span>
       <img
         alt=""
         class="reply-like"
-        src="https://static.overlay-tech.com/assets/5e69b8d4-e125-4d51-bdb6-0db29ca76628.svg"
+        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
       />
     </span>
   </div>
@@ -83,13 +90,13 @@
     <span type="button">user2</span>
     <span>
       <div>댓글 어쩌구 저쩌구...</div>
-      <div>좋아요 3개</div>
+      <div class="reply-like-num">좋아요 3개</div>
     </span>
     <span>
       <img
         alt=""
         class="reply-like"
-        src="https://static.overlay-tech.com/assets/5e69b8d4-e125-4d51-bdb6-0db29ca76628.svg"
+        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
       />
     </span>
   </div>
@@ -101,6 +108,7 @@
 <script>
 import { mapActions } from 'vuex';
 import FeedMenu from './FeedMenu.vue';
+import axios from 'axios'
 
 export default {
   name: 'FeedListItem',
@@ -109,11 +117,20 @@ export default {
   },
   data() {
     return {
-      
+      Like: false,
+      disLike: true,
+      feeds: [],
     };
   },
-  props: {
-    feed: Object,
+  created() {
+    axios.get('/feed')
+    .then( res => {
+      console.log(res);
+      this.feeds = res.data;
+    })
+    .catch( err => {
+      console.log(err);
+    })
   },
   methods: {
     ...mapActions(['currentFeed']),
@@ -122,6 +139,14 @@ export default {
     },
     moveToReply() {
       this.$router.push('/reply');
+    },
+    like() {
+      this.Like = true;
+      this.disLike = false;
+    },
+    dislike() {
+      this.Like = false;
+      this.disLike = true;
     }
   }
 }
@@ -150,6 +175,9 @@ export default {
 .replies{
   display: flex;
   align-items: center;
+}
+.reply-like-num {
+  color: rgb(139, 139, 139);
 }
 .third {
   background-color: rgba(241, 241, 241, 1);

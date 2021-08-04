@@ -19,8 +19,13 @@ export default {
     // FeedMenu,
     // WriteFeed,
   },
-  data() {
-    return {};
+  data: () => {
+    return {
+      id: '',
+      nickname: '',
+      userFileUrl: '',
+      isFollow: '',
+    }
   },
   methods: {
 

@@ -5,7 +5,7 @@
       @mouseover="currentItem(true)"
       @mouseout="currentItem(false)"
       :class="{ 'mouse-over-bgcolor': isColor }"
-    >
+      >
       <span class="user-images">
         <img
           src="@/assets/image/common/profileDefault.svg"
@@ -18,14 +18,17 @@
       <span>
         <button 
           class="follow btn-5 btn-yellow"
-          @click="follow(true)"
+          @click="follow()"
+          v-show="Follow"
         >팔로우
         </button>
       </span>
       <span>
         <button
-          class="follow btn-5 btn-grey mt-1"
-          @click="follow(false)"
+          class="follow btn-5 btn-grey"
+          type="button"
+          @click="unfollow()"
+          v-show="unFollow"
         >팔로우 취소
         </button>
       </span>
@@ -41,7 +44,8 @@ export default {
   data() {
     return{
       isColor: false,
-      isFollow: false,
+      Follow: true,
+      unFollow: false,
     };
   },
   props: {
@@ -51,8 +55,15 @@ export default {
     currentItem(flag) {
       this.isColor = flag;
     },
-    follow(flag) {
-      this.isFollow = flag;
+    follow() {
+      this.Follow = false;
+      this.unFollow = true;
+      console.log("팔로우")
+    },
+    unfollow() {
+      this.Follow = true;
+      this.unFollow = false;
+      console.log("팔로우 취소")
     }
   },
 };
@@ -66,7 +77,7 @@ div {
 }
 .like-list {
   width: 100%;
-  margin: 0 auto;;
+  margin: 20px auto;
 }
 .user-image {
   width: 40px;
@@ -77,6 +88,6 @@ div {
   align-self: right;
 }
 .user-nickname {
-  margin: 0 0 0 3px; 
+  margin: 0 50px 0 3px; 
 }
 </style>
