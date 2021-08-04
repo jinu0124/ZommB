@@ -120,7 +120,7 @@ public class FeedServiceImpl implements FeedService {
 
         for(FeedDto feed : feeds){
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
-            feed.setComments(feedDao.getComments(feed.getId()));
+            feed.setComments(feedDao.getComments(feed.getId(), (Integer) request.getAttribute("userId")));
         }
 
         FeedDto.ResponseList feedResList = new FeedDto.ResponseList();

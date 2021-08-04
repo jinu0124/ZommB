@@ -35,6 +35,9 @@ export default {
       url: `users/${userId}`,
       method: 'post',
       data: userData,
+      headers: {
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+      },
     })
   },
   changePassword(userId, userData) {

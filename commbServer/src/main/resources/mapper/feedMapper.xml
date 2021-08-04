@@ -28,11 +28,11 @@
         FROM
             (SELECT c.id AS cid, c.content, c.user_id AS uid, u.nickname, c.create_at, c.is_mod, COUNT(ct.comment_id) AS thumb_cnt
              FROM user u INNER JOIN comment c
-             ON c.feed_id = 1 AND u.id = c.user_id
+             ON c.feed_id = #{feedId} AND u.id = c.user_id
              left outer join comment_thumb ct
              ON ct.comment_id = c.id
              GROUP BY c.id) AS T1 LEFT OUTER JOIN comment_thumb ct
-        ON T1.uid = 10000001 AND T1.cid = ct.comment_id;
+        ON T1.uid = #{userId} AND T1.cid = ct.comment_id;
         ORDER BY T1.create_at DESC
     </select>
 

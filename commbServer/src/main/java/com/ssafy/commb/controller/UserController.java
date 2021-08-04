@@ -158,7 +158,7 @@ public class UserController {
             return "인증이 완료되었습니다. 돌아가! 로그인해!";
         }
 
-        return "토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
+        return "이메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패했대요~";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -179,8 +179,6 @@ public class UserController {
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
         MyDto.Response myRes = userService.login(myReq);
-        if (myRes == null) return new ResponseEntity(HttpStatus.valueOf(401));
-        if("email unauthorized".equals(myRes.getRetMsg())) return ResponseEntity.status(403).body(myRes);
 
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
@@ -222,13 +220,13 @@ public class UserController {
                                      MyDto.ModifyRequest myReq,
                                      MultipartHttpServletRequest request) throws IOException, ServletException {
         if(myReq != null){
-            if(myReq.getNickname().length() < 4 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
+            if(myReq.getNickname().length() < 2 || myReq.getNickname().length() > 10) return new ResponseEntity(HttpStatus.valueOf(400));
         }
-        else return new ResponseEntity(HttpStatus.valueOf(400));
+        else return ResponseEntity.status(400).build();
 
-        request.setAttribute("userId", userId);                   // 테스트용(Auto Interceptor WebConfig 적용 전)
+//        request.setAttribute("userId", userId);               // 테스트용
         MyDto.Response myRes = profileService.updateProfile(myReq, request);
-        if( myRes == null ) return new ResponseEntity(HttpStatus.valueOf(401));
+        if( myRes == null ) return new ResponseEntity("알 수 없는 에러라서 백엔드에 다시 요청!", HttpStatus.valueOf(401));
 
         return ResponseEntity.ok().body(myRes);
     }
@@ -241,10 +239,10 @@ public class UserController {
                                          @RequestBody UserDto.ModifyPwRequest userReq,
                                         HttpServletRequest request) {
         if(userReq == null) return ResponseEntity.status(401).build();
-        if(!userService.validatePassword(userReq.getNewPassword())) return ResponseEntity.status(409).build();
+        userService.validatePassword(userReq.getNewPassword());
 
 //        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
-        if(!userService.updatePassword(userReq, request)) new ResponseEntity(HttpStatus.valueOf(401));
+        userService.updatePassword(userReq, request);
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }

@@ -73,29 +73,35 @@ const actions = {
         router.push({ name: 'Feed' })
       })
       .catch((err) => {
-        console.log(err.response)
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
+        }
+        return Promise.reject(err.response)
       })
   },
   onLogout({ commit, dispatch }) {
+    commit('SET_ISLOGIN', false)
     dispatch('moveToLogin')
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
-    commit('SET_ISLOGIN', false)
     commit('RESET_MY_INFO')
   },
-  async onUpdateInfo({ commit }, userData) {
-    await userApi.updateInfo(userData)
+  // croppa 처리를 위해 컴포넌트에서 method로 해결 중
+  // async onUpdateInfo({ state, commit }, userData) {
+  //   await userApi.updateInfo(state.myInfo.id, userData)
+  //     .then((res) => {
+  //       commit('SET_MY_INFO', res.data)
+  //       return res
+  //     })
+  //     .catch((err) => {
+  //       console.log(err.response)
+  //       return Promise.reject(err.response)
+  //     })
+  // },
+  async onUpdatePassword({ state }, userData) {
+    await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
-        commit('SET_MY_INFO', res.data)
-      })
-      .catch((err) => {
-        console.log(err.response)
-      })
-  },
-  async onUpdatePassword({ commit }, userData) {
-    await userApi.updatePassword(userData)
-      .then((res) => {
-        commit('SET_MY_INFO', res.data)
+        console.log(res)
       })
       .catch((err) => {
         console.log(err.response)

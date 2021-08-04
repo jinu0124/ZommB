@@ -3,6 +3,7 @@
 
 <mapper namespace="com.ssafy.commb.dao.BookDao">
 
+
 <!--    <resultMap type="Feed" id="feedInformation">-->
 <!--        <result column="fid" property="id"/>-->
 <!--        <result column="create_at" property="createAt"/>-->
