@@ -5,8 +5,9 @@
     </div>
     <div class="offcanvas-body ms-4 d-flex flex-column gap-3">
       <div><router-link :to="{ name: 'Feed' }" class="menu-item" data-bs-dismiss="offcanvas">NewsFeed</router-link></div>
+      <div><router-link :to="{ name: 'Challenge' }" class="menu-item" data-bs-dismiss="offcanvas">Challenge</router-link></div>
       <!-- <p class="menu-item">NewsFeed</p> -->
-      <a class="menu-item">Challenge</a>
+      <!-- <a class="menu-item">Challenge</a> -->
       <a class="menu-item">Search</a>
       <a class="menu-item">MyProfile</a>
     </div>

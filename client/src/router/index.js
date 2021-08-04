@@ -10,6 +10,7 @@ import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
+import Challenge from '@/views/challenge/Challenge'
 
 Vue.use(VueRouter)
 
@@ -74,8 +75,14 @@ const routes = [
     name: 'Reply',
     component: Reply,
     meta: { requireAuth: true }
-  }
-
+  },
+  // challenge
+  {
+    path: '/challenge',
+    name : 'Challenge',
+    component : Challenge,
+    meta: { requireAuth: true }
+  },
 ]
 
 const router = new VueRouter({
