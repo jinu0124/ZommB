@@ -23,16 +23,26 @@
     <ChallengeWeekly
       v-if="selectedPage === 0"
     />
+    <ChallengeDaily
+      v-if="selectedPage === 1"
+    />
+    <ChallengeMy
+      v-if="selectedPage === 2"
+    />
   </div>
 </template>
 
 <script>
 import ChallengeWeekly from '@/components/challenge/ChallengeWeekly'
+import ChallengeDaily from '@/components/challenge/ChallengeDaily'
+import ChallengeMy from '@/components/challenge/ChallengeMy'
 
 export default {
   name: 'Challenge',
   components: {
-    ChallengeWeekly
+    ChallengeWeekly,
+    ChallengeDaily,
+    ChallengeMy
   },
   data () {
     return {

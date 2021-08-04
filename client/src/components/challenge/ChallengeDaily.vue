@@ -1,18 +1,18 @@
 <template>
-  <div class="Weelky">
-    <ChallengeWeeklyBook/>
+  <div class="daily">
+    <ChallengeDailyKeyword/>
     <ChallengeFeedList/>
   </div>
 </template>
 
 <script>
-import ChallengeWeeklyBook from './ChallengeWeeklyBook'
+import ChallengeDailyKeyword from './ChallengeDailyKeyword'
 import ChallengeFeedList from './ChallengeFeedList'
 
 export default {
-  name: 'ChallengeWeekly',
+  name: 'ChallengeDaily',
   components: {
-    ChallengeWeeklyBook,
+    ChallengeDailyKeyword,
     ChallengeFeedList
   }
 }

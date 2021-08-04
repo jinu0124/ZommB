@@ -22,7 +22,7 @@
 import _ from 'lodash'
 
 export default {
-  name: 'ChallengeWeeklyFeedItem',
+  name: 'ChallengeFeedItem',
   data() {
     return {
       content: 'truncate 테스트입니다. 왼쪽은 저희 집 고양이에여. 너무 귀엽죠? 저도 알아여 ㅎㅎㅎ 몇 자에서 끊기는 거니 도대체..',

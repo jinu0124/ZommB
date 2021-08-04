@@ -5,17 +5,17 @@
       <strong>챌린지에 참여</strong>했어요!
     </div>
     <!-- 데이터 들어오면 v-for 추가 -->
-    <ChallengeWeeklyFeedItem/>
+    <ChallengeFeedItem/>
   </div>
 </template>
 
 <script>
-import ChallengeWeeklyFeedItem from './ChallengeWeeklyFeedItem'
+import ChallengeFeedItem from './ChallengeFeedItem'
 
 export default {
-  name: 'ChallengeWeeklyFeedList',
+  name: 'ChallengeFeedList',
   components: {
-    ChallengeWeeklyFeedItem
+    ChallengeFeedItem
   }
 }
 </script>
