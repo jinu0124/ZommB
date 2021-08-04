@@ -52,7 +52,7 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
-        user.setId(10000005);
+        user.setId(10000005); // 테스트용
 //        user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
@@ -85,12 +85,12 @@ public class FeedServiceImpl implements FeedService {
         return "";
     }
 
-    private String fileUpload(String uploadPath, Collection<Part> parts) {
+    private String fileUpload(String uploadPath, Collection<Part> parts) throws IOException {
         // 파일 업로드 작업
         File uploadDir = new File(uploadPath + File.separator +  uploadFolder);   // File upload Path
-        if(!uploadDir.exists()) uploadDir.mkdir();
+        if(!uploadDir.exists()) if(!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
 
-        String savingFileName = null;
+        String savingFileName;
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
         for(Part part : parts){
             String fileName = getFileName(part);
@@ -103,14 +103,11 @@ public class FeedServiceImpl implements FeedService {
 
             // 물리 파일 쓰기 작업
             savingFileName = uuid + date + "." + extension;
-            try {
-                part.write(uploadPath + File.separator + uploadFolder + File.separator + savingFileName);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return "failed";
-            }
+
+            part.write(uploadPath + File.separator + uploadFolder + File.separator + savingFileName);
+            return savingFileName;
         }
-        return savingFileName;
+        throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 물리 이미지 업로드 실패");
     }
 
     @Override
@@ -136,8 +133,7 @@ public class FeedServiceImpl implements FeedService {
 
     public void modifyFeed(String content, int feedId) {
         Optional<Feed> feed = feedRepository.findById(feedId);
-
-        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "없는 피드 입니다.");
+        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
 
         feed.ifPresent(feedSelect ->{
             feedSelect.setContent(content);
@@ -145,9 +141,14 @@ public class FeedServiceImpl implements FeedService {
         });
     }
 
+    public int getUserId(int feedId){
+        Optional<Feed> feed = feedRepository.findById(feedId);
+        return feed.get().getUser().getId();
+    }
+
     public void deleteFeed(int feedId){
         Optional<Feed> feed = feedRepository.findById(feedId);
-        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "피드가 없습니다.");
+        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
 
         feedRepository.deleteById(feedId);
     }

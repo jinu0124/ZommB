@@ -6,6 +6,7 @@ import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.service.FeedService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -96,13 +98,15 @@ public class FeedController {
     // 게시물 수정
     @PutMapping("/{feedId}")
     @ApiOperation(value = "피드 수정")
-    public ResponseEntity modifyFeed(@RequestBody String content, @PathVariable Integer feedId) {
+    public ResponseEntity modifyFeed(@RequestBody String content, @PathVariable Integer feedId, HttpServletRequest request) {
 
-        if(content == null) return ResponseEntity.status(400).build();
+        if (content == null) return ResponseEntity.status(400).build();
 
-        // 토큰 만료되면 401 보내기
+        int myUserId = (Integer) request.getAttribute("userId");
+        int UserId = feedService.getUserId(feedId);
 
-        // 권한 없으면 403 보내야함! ← 작성자한테만 수정 버튼 보이도록 front에서 막기
+        if (myUserId != UserId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "게시물 수정 권한 없음"); // 작성자한테만 수정 버튼 보이도록 front에서 막기
 
         feedService.modifyFeed(content, feedId);
 
@@ -112,19 +116,22 @@ public class FeedController {
     // 게시물 삭제
     @DeleteMapping("/{feedId}")
     @ApiOperation(value = "피드 삭제")
-    public ResponseEntity deleteFeed(@PathVariable Integer feedId) {
+    public ResponseEntity deleteFeed(@PathVariable Integer feedId, HttpServletRequest request) {
+
+        int myUserId = (Integer) request.getAttribute("userId");
+        int UserId = feedService.getUserId(feedId);
+
+        if (myUserId != UserId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "게시물 삭제 권한 없음"); // 작성자한테만 삭제 버튼 보이도록 front에서 막기
+
         feedService.deleteFeed(feedId);
-
-        // 토큰 만료되면 401 보내기
-
-        // 권한 없으면 403 보내야함! ← 작성자한테만 삭제 버튼 보이도록 front에서 막기
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
     // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
-    @ApiOperation(value = "게시물 좋아요 누르기")
+    @ApiOperation(value = "피드 좋아요 누르기")
     public ResponseEntity likeFeed(@PathVariable Integer feedId) {
 
         return new ResponseEntity(HttpStatus.valueOf(201));

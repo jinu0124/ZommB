@@ -12,5 +12,6 @@ public interface FeedService {
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request);
     public int getUserFeedCnt(int userId);
     public void modifyFeed(String content, int feedId);
+    public int getUserId(int feedId);
     public void deleteFeed(int feedId);
 }
