@@ -129,6 +129,9 @@ public class SecurityServiceImpl implements SecurityService{
 
         String acUserId = decodeToken(acToken, SECRET_KEY);    // AccessToken을 통해 userId를 추출한다. -> 만료라면 "expire" 반환
         List<Object> userIdAccToken = find(rfToken);         // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
+        System.out.println(acUserId);
+        System.out.println(userIdAccToken.size());
+        System.out.println(userIdAccToken.get(0));
 
         if(userIdAccToken.size() < 2) {
             map.put("msg", "Not Valid Refresh Token");

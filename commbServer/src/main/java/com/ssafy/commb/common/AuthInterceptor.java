@@ -47,11 +47,15 @@ public class AuthInterceptor implements HandlerInterceptor {
         if(request.getAttribute(refreshToken) == null) rfToken = null;
         else rfToken = (String) request.getAttribute(refreshToken);
 
+        System.out.println(accessToken + acToken);
+        System.out.println(refreshToken + rfToken);
+
         if(acToken == null || acToken.length() < 24) {                               // Access 토큰이 없을 때
             map.put("status", 401);
             map.put("msg", "There is no Token");
         }
-        else if(rfToken != null && rfToken.length() >= 24){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
+        else if(rfToken != null){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
+
             map = securityService.validRefreshToken(acToken, rfToken);
             if((int) map.get("status") == 200) {
                 response.setHeader(accessToken, (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
@@ -62,6 +66,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
+                System.out.println("재요청");
                 map.put("status", 401);
             }
             else if(ret.equals("invalid")){
