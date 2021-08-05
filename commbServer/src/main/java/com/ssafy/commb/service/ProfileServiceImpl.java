@@ -111,6 +111,11 @@ public class ProfileServiceImpl implements ProfileService {
         throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 물리 이미지 업로드 실패");
     }
 
+    public void deleteProfile(int userId){
+        Optional<User> user = userRepository.findUserById(userId);
+        s3Client.deleteObject(this.bucket, "profile/" + user.get().getFileUrl());
+    }
+
     @Transactional
     @Override
     public MyDto.Response updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
@@ -118,7 +123,7 @@ public class ProfileServiceImpl implements ProfileService {
         MyDto.Response myRes = new MyDto.Response();
         Collection<Part> parts = request.getParts();
 //        uploadPath = request.getSession().getServletContext().getRealPath("/");               // 빌드 시
-
+        System.out.println(userId);
         Optional<User> user = userRepository.findUserById(userId);
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.GONE, "회원정보 조회 실패");
         MyDto my = MyDto.builder().userFileUrl(user.get().getFileUrl()).nickname(myReq.getNickname()).id(user.get().getId()).build();
