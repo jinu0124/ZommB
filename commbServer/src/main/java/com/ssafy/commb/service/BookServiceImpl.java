@@ -1,5 +1,7 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dao.BookDao;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.GenreDto;
@@ -8,12 +10,22 @@ import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.BookShelves;
 import com.ssafy.commb.model.BookShelvesId;
 import com.ssafy.commb.repository.BookShelvesRepository;
+import com.ssafy.commb.model.Book;
+import com.ssafy.commb.dto.book.KakaoSearchBookResponseDto;
+import com.ssafy.commb.model.QBookShelves;
+import com.ssafy.commb.repository.BookRepository;
+import com.ssafy.commb.util.KakaoSearchAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.io.IOException;
+import java.util.stream.Collectors;
+
 
 @Service
 public class BookServiceImpl implements BookService{
@@ -23,6 +35,15 @@ public class BookServiceImpl implements BookService{
 
     @Autowired
     private BookShelvesRepository bookShelvesRepository;
+
+    @Autowired
+    private BookRepository bookRepository;
+
+    @Autowired
+    KakaoSearchAPI kakaoSearchAPI;
+
+    @PersistenceContext
+    private EntityManager em;
 
     @Override
     public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, HttpServletRequest request) {
@@ -138,4 +159,85 @@ public class BookServiceImpl implements BookService{
 
 
 
+    /**
+     * 
+     * @param bookReq : 검색DTO
+     * @return 책 리스트
+     * @throws IOException
+     */
+    public BookDto.ResponseList findBookList(BookDto.BookSearchRequest bookReq) throws IOException {
+
+        // 카카오 책 검색 API
+        KakaoSearchBookResponseDto kakaoSearchBookResponseDto = kakaoSearchAPI.search(bookReq);
+
+        List<Book> existBooks = new ArrayList<>();
+        Set<Book> saveBooks = kakaoSearchBookResponseDto.getDocuments()
+                .stream()
+                .filter(document -> {
+                    Optional<Book> book =bookRepository.findByIsbn(document.getIsbn13());
+                    // 이미 존재하는 책인 경우
+                    if(book.isPresent()){
+                        existBooks.add(book.get());
+                    }
+                    return !book.isPresent();
+                })
+                .map(KakaoSearchBookResponseDto.Document::convertBook)
+                .collect(Collectors.toSet());
+        
+        // DB 저장
+        List<Book> books = new ArrayList<>(saveBooks);
+        books = bookRepository.saveAllAndFlush(new ArrayList<>(books));
+
+        books.addAll(existBooks);
+
+        // 반환 평점 및 읽은 사람 수 반환
+        return BookDto.ResponseList.builder()
+                .data(books.stream()
+                        .map(book -> {
+                            BookDto bookDto = book.convertBookDto();
+                            // 평점
+                            bookDto.setRate(getBookRate(book));
+                            // 읽은 사람 수
+                            bookDto.setReadCnt(getBookReadCnt(book));
+                            return bookDto;
+                        }).collect(Collectors.toList())
+                )
+                .build();
+    }
+
+    /**
+     * 
+     * @param targetBook : 찾을 대상 책
+     * @return 책의 평균 평점
+     */
+    public Double getBookRate(Book targetBook){
+        QBookShelves qBookShelves = QBookShelves.bookShelves;
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+
+        JPAQuery<Double> query = qf.from(qBookShelves)
+                .groupBy(qBookShelves.book)
+                .where(qBookShelves.book.eq(targetBook))
+                .where(qBookShelves.isRead.eq(1))
+                .select(qBookShelves.rate.avg());
+        if(query.fetchOne() == null) return 0.0;
+        return query.fetchOne();
+    }
+
+    /**
+     * 
+     * @param targetBook : 찾을 대상 책
+     * @return 책을 읽은 사람 수
+     */
+    public Integer getBookReadCnt(Book targetBook){
+        QBookShelves qBookShelves = QBookShelves.bookShelves;
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+
+        JPAQuery<Long> query = qf.from(qBookShelves)
+                .groupBy(qBookShelves.book)
+                .where(qBookShelves.book.eq(targetBook))
+                .where(qBookShelves.isRead.eq(1))
+                .select(qBookShelves.user.count());
+        if(query.fetchOne() == null) return 0;
+        return query.fetchOne().intValue();
+    }
 }
