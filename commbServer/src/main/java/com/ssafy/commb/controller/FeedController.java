@@ -222,6 +222,7 @@ public class FeedController {
 
         int userId = (Integer) request.getAttribute("userId");
 
+        commentService.likeComment(feedId, commentId, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -229,7 +230,11 @@ public class FeedController {
     // 댓글 좋아요 취소
     @DeleteMapping("/{feedId}/comments/{commentId}/comment-like")
     @ApiOperation(value = "댓글 좋아요 취소")
-    public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId) {
+    public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
+
+        int userId = (Integer) request.getAttribute("userId");
+
+        commentService.deleteLikeComment(feedId, commentId, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }

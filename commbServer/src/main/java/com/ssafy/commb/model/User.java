@@ -71,6 +71,9 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<DailyEventParticipate> dailyEventParticipates = new ArrayList<DailyEventParticipate>();
 
+    @OneToMany(mappedBy = "user")
+    private List<CommentThumb> comments = new ArrayList<>();
+
     @OneToOne(mappedBy = "user")
     private ConfirmationToken confirmationToken;
 
