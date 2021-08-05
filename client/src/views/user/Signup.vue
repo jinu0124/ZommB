@@ -168,9 +168,13 @@ export default {
           console.log(res)
         })
         .catch((err) => {
-          this.email = ''
-          this.emailAlert = 2
-          console.log(err)
+          if (err.response.status === 400) {
+            this.email = ''
+            this.emailAlert = 2
+            console.log(err)
+          } else {
+            this.$router.push({ name: 'ServerError '})
+          }
         })
     },
     // 이메일 중복 체크 후 input 변경 시, 다시 중복 체크하도록 변경
