@@ -13,7 +13,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .reply-regist {
   margin: 0 auto;
   display: flex;

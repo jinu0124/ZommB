@@ -14,6 +14,7 @@ import Report from '@/views/feed/Report'
 import WriteArticle from '@/views/feed/WriteArticle'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
+import Challenge from '@/views/challenge/Challenge'
 
 Vue.use(VueRouter)
 
@@ -21,28 +22,29 @@ const routes = [
   {
     path: '/',
     name: 'Index',
-    component: Index
+    component: Index,
   },
   // accounts
   {
     path: '/login',
     name: 'Login',
-    component: Login
+    component: Login,
   },
   {
     path: '/signup',
     name: 'Signup',
-    component: Signup
+    component: Signup,
   },
   {
     path: '/signup/email',
     name: 'SignupEmail',
-    component: SignupEmail
+    component: SignupEmail,
   },
   {
-    path: '/updateinfo/:id',
+    path: '/updateinfo',
     name: 'UpdateInfo',
-    component: UpdateInfo
+    component: UpdateInfo,
+    meta: { requireAuth: true }
   },
   // error
   {
@@ -63,16 +65,19 @@ const routes = [
   {
     path: '/feed',
       name : 'Feed',
-      component : Feed
+      component : Feed,
+      meta: { requireAuth: true }
   },
   {
     path: '/like',
       name : 'Like',
-      component : Like
+      component : Like,
+      meta: { requireAuth: true }
   },
   {
     path: '/reply',
     name: 'Reply',
+<<<<<<< HEAD
     component: Reply
   },
   {
@@ -94,6 +99,17 @@ const routes = [
     path: '/follow',
     name: 'Follow',
     component: Follow
+=======
+    component: Reply,
+    meta: { requireAuth: true }
+  },
+  // challenge
+  {
+    path: '/challenge',
+    name : 'Challenge',
+    component : Challenge,
+    meta: { requireAuth: true }
+>>>>>>> 6c6cbc03e1ddfa77d3eb3ae60a9b70c10098fe94
   },
 ]
 
@@ -101,6 +117,29 @@ const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
   routes
+})
+
+router.beforeEach(function (to, from, next) {
+  if (to.matched.some(function(routeInfo) {
+    return routeInfo.meta.requireAuth
+  })) {
+    if (!JSON.parse(localStorage.getItem('vuex')).user.isLogin) {
+      next('/')
+    } else {
+      next()
+    }
+  } else {
+    if (to.name === 'Login' || to.name === 'Signup' || to.name === 'SignupEmail') {
+      if (JSON.parse(localStorage.getItem('vuex')).user.isLogin) {
+        next('/feed')
+      } else {
+        next()
+      }
+    } else {
+      next()
+    }
+  }
+  
 })
 
 export default router

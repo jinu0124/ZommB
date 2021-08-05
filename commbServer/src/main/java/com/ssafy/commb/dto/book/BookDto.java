@@ -57,6 +57,7 @@ public class BookDto {
     public static class BookShelfSearchRequest{                // 요청
         private String bookName;
         private int userId;
+        private boolean isRead;
     }
 
     @Getter

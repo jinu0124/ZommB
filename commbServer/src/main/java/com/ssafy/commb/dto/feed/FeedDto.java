@@ -56,7 +56,7 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class Response {               // 반환
+    public static class Response {              // 반환
         private FeedDto data;
         private String retMsg;                  // message
     }
@@ -66,7 +66,7 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    public static class ResponseList {               // 반환
+    public static class ResponseList {          // 반환
         private List<FeedDto> data;
         private String retMsg;                  // message
     }

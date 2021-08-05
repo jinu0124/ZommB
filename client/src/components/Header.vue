@@ -78,18 +78,17 @@ export default {
 
 <style scoped>
   .header {
-    background: #7B60F1;
+    /* background: #7B60F1; */
     padding: 12px 20px;
     height: 60px;
+    /* color: #fff; */
   }
   .nav-toggle {
     font-size: 1.5rem;
-    color: #fff;
   }
   .header-logo {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.5rem;
-    color: #fff;
   }
   .btn-write{
     width: 2rem;
