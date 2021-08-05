@@ -57,8 +57,8 @@ security:
     accesstoken: 36000000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
     refreshtoken: 604800000
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
-  accesstoken: "accessToken"
-  refreshtoken: "refreshToken"
+  accesstoken: "accesstoken"
+  refreshtoken: "refreshtoken"
 
 mybatis:
   config-location: classpath:/config/mybatis-config.xml
