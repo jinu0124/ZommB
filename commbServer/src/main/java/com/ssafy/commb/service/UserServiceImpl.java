@@ -148,8 +148,8 @@ public class UserServiceImpl implements UserService {
     }
 
     public void validatePassword( String password){
-         String pattern = "(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}";
-         if(password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
+         String pattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$";
+         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
     }
 
     @Override
@@ -171,6 +171,14 @@ public class UserServiceImpl implements UserService {
         userRes.setData(user);
 
         return userRes;
+    }
+
+    @Override
+    public UserDto.ResponseList followRecommend(HttpServletRequest request) {
+        List<UserDto> users = userDao.getMyFollowerExFollowing( (int) request.getAttribute("userId"));
+        UserDto.ResponseList userResList = new UserDto.ResponseList();
+        userResList.setData(users);
+        return userResList;
     }
 
 }

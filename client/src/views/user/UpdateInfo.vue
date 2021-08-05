@@ -24,13 +24,6 @@
           <ProfileCrop
             @select-croppa="saveNewProfile"
           />
-          <!-- <label for="input-file">프로필 변경</label>
-          <input
-            id="input-file" 
-            type="file"
-            accept="image/*"
-            @change="onFileChange"
-          > -->
           <span class="mx-1">•</span>
           <span
             type="button"
@@ -113,6 +106,8 @@
         </div>
       </div>
     </div>
+    <!-- 서버 테스트용 -->
+    <input type="file" @change="saveImage">
   </div>
 </template>
 
@@ -150,10 +145,31 @@ export default {
       passwordSchema: new PV(),
       updatePassword: false,
       dialog: false,
+      temp: null,
     }
   },
   methods: {
     ...mapActions('user', ['onUpdateInfo', 'onUpdatePassword']),
+    saveImage (event) {
+      console.log(event.target.files[0])
+      var userInfo = new FormData()
+      userInfo.append('userFileUrl', event.target.files[0])
+      userInfo.append('nickname', this.nickname)
+      userInfo.append('flag', 1)
+      // console.log(userInfo)
+      _axios({
+        url: `users/${this.myInfo.id}`,
+        method: 'post',
+        data: userInfo,
+        headers: {
+          'access-token': this.accessToken,
+          'Content-Type': 'multipart/form-data'
+        },
+      })
+        .catch((err) => {
+          console.log(err.response)
+        })
+    },
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -161,6 +177,7 @@ export default {
     saveNewProfile (croppa) {
       this.preview = croppa.generateDataUrl('image/jpeg')
       this.myCroppa = croppa
+      this.profileUpdate = 1
     },
     onFileDelete () {
       this.profileUpdate = 2
@@ -170,20 +187,29 @@ export default {
     },
     // 작성 중
     onUpdate () {
-      this.myCroppa.generateBlob((blob) => {
-        var userInfo = new FormData()
-        userInfo.append('userFileUrl', blob)
-        userInfo.append('nickname', this.nickname)
-        console.log(userInfo)
-        _axios({
-          url: `users/${this.myInfo.id}`,
-          method: 'post',
-          data: userInfo,
-          headers: {
-            'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
-          },
+      // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
+      if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
+        this.myCroppa.generateBlob((blob) => {
+          var userInfo = new FormData()
+          userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
+          userInfo.append('nickname', this.nickname)
+          userInfo.append('flag', this.profileUpdate)
+          console.log(userInfo)
+          _axios({
+            url: `users/${this.myInfo.id}`,
+            method: 'post',
+            data: userInfo,
+            headers: {
+              'access-token': this.accessToken,
+              'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+            },
+          })
+            .catch((err) => {
+              console.log(err.response)
+            })
         })
-      })
+      }
+      // 비밀번호 변경 시에만 요청 보내기
       if (this.updatePassword) {
         const passwordInfo = {
           'newPassword': this.password,
@@ -193,12 +219,11 @@ export default {
       }
     },
     checkForm() {
-      if (
-        this.nickname.length > 10
-      )
-        this.error.nickname = "닉네임은 최대 10자까지 가능합니다.";
-      else this.error.password = false;
-      
+      if (this.nickname.trim().length === 0) {
+        this.error.nickname = "닉네임을 입력해주세요.";
+      } else {
+        this.error.nickname = false;
+      }
       // 기존 비밀번호 형식 검증
       if (
         this.oldPassword.length > 0 &&
@@ -284,7 +309,7 @@ export default {
     },
   },
   computed: {
-    ...mapState('user', ['myInfo']),
+    ...mapState('user', ['myInfo', 'accessToken']),
   }
 }
 </script>

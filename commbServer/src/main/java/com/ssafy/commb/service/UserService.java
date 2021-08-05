@@ -2,6 +2,7 @@ package com.ssafy.commb.service;
 
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
+import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -25,5 +26,7 @@ public interface UserService {
     public void deleteUser(int userId);
 
     public UserDto.Response getUserInfo(int userId, HttpServletRequest request);
+
+    public UserDto.ResponseList followRecommend(HttpServletRequest request);
 
 }
