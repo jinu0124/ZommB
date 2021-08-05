@@ -62,7 +62,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
-                map.put("status", 100);
+                map.put("status", 401);
             }
             else if(ret.equals("invalid")){
                 map.put("msg", "AccessToken is invalid");
