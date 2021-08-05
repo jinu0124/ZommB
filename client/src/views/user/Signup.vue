@@ -222,7 +222,7 @@ export default {
       // 닉네임 입력 확인 (input 태그 maxlength 지정해서 길이 관련 에러 메시지는 제외)
       if (this.nickname.trim().length === 0) {
         this.error.nickname = "닉네임을 입력해주세요."
-      } else if (0 < this.nickname.trim().length < 2) {
+      } else if (this.nickname.trim().length < 2) {
         this.error.nickname = "닉네임은 2자 이상 10자 이하로 작성해주세요."
       } else {
         this.error.nickname = false}
