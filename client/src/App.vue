@@ -23,6 +23,7 @@ export default {
         || this.$route.name === 'Login'
         || this.$route.name === 'Signup'
         || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'PageNotFound'
         || this.$route.name === 'ServerError'
         ) {
@@ -34,6 +35,7 @@ export default {
       if (this.$route.name === 'Login'
         || this.$route.name === 'Signup'
         || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'UpdateInfo') {
         return true
       }

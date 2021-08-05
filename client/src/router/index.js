@@ -6,6 +6,7 @@ import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
 import FindPassword from '@/views/user/FindPassword'
+import ResetPassword from '@/views/user/ResetPassword'
 import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
@@ -46,6 +47,11 @@ const routes = [
     path: '/find-password',
     name: 'FindPassword',
     component: FindPassword,
+  },
+  {
+    path: '/reset-password',
+    name: 'ResetPassword',
+    component: ResetPassword,
   },
   // error
   {

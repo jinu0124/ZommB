@@ -97,6 +97,18 @@ const actions = {
         return Promise.reject(err.response)
       })
   },
+  // async onResetPassword({ dispatch }, userData) {
+    // console.log(userData)
+    // await userApi.resetPassword(userData)
+    //   .then((res) => {
+    //     console.log(res)
+    //     dispatch('moveToLogin')
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response)
+    //     return Promise.reject(err.response)
+    //   })
+  // },
 }
 
 const mutations = {

@@ -47,6 +47,13 @@ export default {
       data: userData
     })
   },
+  resetPassword(userData) {
+    return _axios({
+      url: 'users/reset-password',
+      method: 'post',
+      data: userData
+    })
+  },
   withdrawal() {
     return _axios({
       url: `users/withdraw`,
