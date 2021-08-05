@@ -119,11 +119,11 @@ public class ProfileServiceImpl implements ProfileService {
     @Transactional
     @Override
     public MyDto.Response updateProfile(MyDto.ModifyRequest myReq, MultipartHttpServletRequest request) throws IOException, ServletException {
-        int userId = (int) request.getAttribute("userId");              // jwt 토큰으로 인증된 userId
+        int userId = Integer.parseInt(String.valueOf(request.getAttribute("userId")));              // jwt 토큰으로 인증된 userId
         MyDto.Response myRes = new MyDto.Response();
         Collection<Part> parts = request.getParts();
 //        uploadPath = request.getSession().getServletContext().getRealPath("/");               // 빌드 시
-        System.out.println(userId);
+
         Optional<User> user = userRepository.findUserById(userId);
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.GONE, "회원정보 조회 실패");
         MyDto my = MyDto.builder().userFileUrl(user.get().getFileUrl()).nickname(myReq.getNickname()).id(user.get().getId()).build();

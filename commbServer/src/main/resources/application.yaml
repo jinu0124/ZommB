@@ -44,7 +44,9 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
+  jackson:
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE : false
   servlet:
     multipart:
       enabled: true
@@ -54,7 +56,7 @@ spring:
 
 security:
   expire:
-    accesstoken: 36000000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
+    accesstoken: 30000         # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
     refreshtoken: 604800000
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
   accesstoken: "accesstoken"
@@ -74,5 +76,5 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
-  profile: "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/"
-  feed : "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/"
+  profile: https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/
+  feed : https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/

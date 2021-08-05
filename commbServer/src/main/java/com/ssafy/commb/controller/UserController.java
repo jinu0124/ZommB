@@ -113,16 +113,13 @@ public class UserController {
 
     @GetMapping("/checkEmailComplete")
     @ApiOperation(value = "Email 인증 확인")
-    public void checkEmailComplete(@RequestParam String key, HttpServletResponse httpServletResponse) throws IOException {
-
+    public String checkEmailComplete(@RequestParam String key, HttpServletResponse response) throws IOException {
+//        response.sendRedirect("Http://i5a602.p.ssafy.io:8080");
         if(userService.confirmEmail(key)) {
-//            RedirectUrlBuilder redirectUrl = new RedirectUrlBuilder();
-//            redirectUrl.setContextPath("index.html");
-            // Redirect를 어떻게 시키지.. 그냥 빈페이지에 인증되었다고만 적어두어도 괜찮나..??
-            httpServletResponse.sendRedirect("localhost:8000/");
+            response.sendRedirect("Http://127.0.0.1:8000");
         }
 
-//        return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
+        return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -145,11 +142,13 @@ public class UserController {
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
-        List<String> exposeList = new ArrayList<>();
-        exposeList.add(accessToken);
-        exposeList.add(refreshToken);
-        resHeader.setAccessControlExposeHeaders(exposeList);
+//        List<String> exposeList = new ArrayList<>();
+//        exposeList.add(accessToken);
+//        exposeList.add(refreshToken);
+//        resHeader.setAccessControlExposeHeaders(exposeList);
 
+        System.out.println(resHeader.get(accessToken));
+        System.out.println(resHeader.get(refreshToken));
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
