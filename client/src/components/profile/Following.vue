@@ -65,7 +65,7 @@ export default {
 </script>
 
 <style src="@/assets/style/button.css"></style>
-<style>
+<style scoped>
 div {
   text-align: center;
   align-items: center;

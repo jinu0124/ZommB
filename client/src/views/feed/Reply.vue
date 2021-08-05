@@ -30,7 +30,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .reply {
   margin: 0 auto;
   align-items: center;

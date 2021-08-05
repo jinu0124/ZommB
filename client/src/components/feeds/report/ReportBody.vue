@@ -39,7 +39,7 @@ export default {
     submit(flag) {
       this.reported = flag;
     }
-  }
+  },
 }
 </script>
 
