@@ -29,6 +29,9 @@ const actions = {
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
   },
+  moveToMyProfile() {
+    router.push({ name: 'MyProfile' })
+  },
   // api 요청
   async onSignup ({ dispatch, commit }, userData) {
     console.log(userData)

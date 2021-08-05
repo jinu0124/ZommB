@@ -1,7 +1,7 @@
 <template>
-  <div class="like-list">
+  <div class="following-list">
     <div
-      class="like-list-item"
+      class="following-list-item"
       @mouseover="currentItem(true)"
       @mouseout="currentItem(false)"
       :class="{ 'mouse-over-bgcolor': isColor }"
@@ -17,19 +17,19 @@
       <span class="user-nickname">{{nickname}}</span>
       <span>
         <button 
-          class="follow btn-5 btn-yellow"
-          @click="follow()"
-          v-show="Follow"
-        >팔로우
+          class="follow btn-5 btn-grey"
+          @click="unfollow()"
+          v-show="!isFollow"
+        >팔로우 취소
         </button>
       </span>
       <span>
         <button
-          class="follow btn-5 btn-grey"
+          class="follow btn-5 btn-yellow"
           type="button"
-          @click="unfollow()"
-          v-show="unFollow"
-        >팔로우 취소
+          @click="follow()"
+          v-show="isFollow"
+        >팔로우
         </button>
       </span>
     </div>
@@ -37,45 +37,40 @@
 </template>
 
 <script>
+// import axios from 'axios'
 
 export default {
-  name: 'LikeListItem',
+  name: 'Follower',
   data() {
     return{
       isColor: false,
-      Follow: true,
-      unFollow: false,
+      isFollow: false,
       nickname: 'Nickname',
-    };
-  },
-  props: {
-    like: Object,
+    }
   },
   methods: {
     currentItem(flag) {
       this.isColor = flag;
     },
+    unfollow() {
+      this.isFollow = true;
+      console.log("팔로우 취소")
+    },
     follow() {
-      this.Follow = false;
-      this.unFollow = true;
+      this.isFollow = false;
       console.log("팔로우")
     },
-    unfollow() {
-      this.Follow = true;
-      this.unFollow = false;
-      console.log("팔로우 취소")
-    }
-  },
-};
+  }
+}
 </script>
 
 <style src="@/assets/style/button.css"></style>
-<style scoped>
+<style>
 div {
   text-align: center;
   align-items: center;
 }
-.like-list {
+.following-list {
   width: 100%;
   margin: 20px auto;
 }

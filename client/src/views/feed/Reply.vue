@@ -1,9 +1,9 @@
 <template>
-  <div class="like">
+  <div class="reply">
     <ReplyHeader/>
     <Content/>
     <ReplyList/>
-    <ReplyRegist/>
+    <ReplyRegist class="regist"/>
   </div>
 </template>
 
@@ -31,5 +31,8 @@ export default {
 </script>
 
 <style>
-
+.reply {
+  margin: 0 auto;
+  align-items: center;
+}
 </style>

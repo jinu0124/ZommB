@@ -1,313 +1,255 @@
 <template>
 <div class="feed-list">
-  <div class="feed-list-item">
-    <span class="feed-header">
-      <img
-        alt=""
-        class="feed-user-image"
-        src="https://static.overlay-tech.com/assets/24ce5dd9-5c1f-4d38-bc58-8204b5a30b12.png"
-      />
-      <div class="name-title">
-        <p class="nickname">Nickname</p>
-        <div class="book-title">
+  <center>
+  <div class="feed-header">
+    <img
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    >
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
+      type="button"
+      id="UserProfile"
+    >
+    <span class="feedHeader">
+      <div class="owner">{{nickname}}</div>
+      <div class="mini-title">
+        <span>
           <img
-            alt=""
+            alt="미니북"
             class="minibook"
             src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
           />
-          <p class="title" type="button">미드나잇 라이브러리</p>
-        </div>
+        </span>
+        <span class="bookTitle">{{title}}</span>
       </div>
-      <img
-        alt=""
-        class="feed-menu dropdown-toggle"
-        data-bs-toggle="dropdown"
-        aria-expanded="false"
-        src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
-        type="button"
-        id="FeedMenuDropdown"
-      />
-      <FeedMenu/>
     </span>
     <img
-      alt=""
-      class="feed-image"
-      src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
+    alt="피드 메뉴"
+    class="feed-menu dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
+    type="button"
+    id="FeedMenuDropdown"
     />
-    <span class="like-reply">
+    <FeedMenu/>
+  </div>
+  <img
+    alt="피드 이미지"
+    class="feed-image"
+    src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
+  />
+  <div class="like-reply">
+    <span>
       <img
-        alt=""
-        class="like" type="button" @click="dislike"
+        alt="좋아요버튼안눌림"
+        class="dislike btn-like" type="button" @click="like()"
+        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+        v-show="disLike"
+      />
+      <img
+        alt="좋아요버튼눌림"
+        class="like btn-like" type="button" @click="dislike()"
         src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
+        v-show="Like"
       />
+    </span>
+    <span class="like-num" type="button" @click="moveToLike">{{likeNum}}</span>
+    <span>
       <img
         alt=""
-        class="dislike" type="button" @click="like" display="none"
-        src="https://code.iconify.design/1/1.0.6/iconify.min.js"
-      />
-      <p class="like-num" type="button" @click="moveToLike">00</p>
-      <img
-        alt=""
-        class="reply" type="button" @click="moveToReply"
+        class="btn-reply" type="button" @click="moveToReply"
         src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
       />
-      <p class="reply-num">00</p>
     </span>
-    <div class="content">
-      <p class="feed-user-nickname">Nickname</p>
-      <div class="detail-hashtags">
-        <p class="detail">abcdefghijklmnopqrstuvwxyz</p>
-        <div class="hashtags">
-          <p class="hashtag">#해시태그</p>
-          <p class="hashtag">#해시태그</p>
-          <p class="hashtag">#해시태그</p>
-        </div>
-      </div>
-    </div>
-    <div class="reply">
-      <p class="replier">User1</p>
-      <p class="reply-detail">댓글 어쩌구 저쩌구..</p>
-      <img
-        alt=""
-        class="reply-like"
-        src="https://static.overlay-tech.com/assets/5e69b8d4-e125-4d51-bdb6-0db29ca76628.svg"
-      />
-    </div>
-    <p class="duration">00시간 전</p>
+    <span class="reply-num" type="button" @click="moveToReply">{{replyNum}}</span>
   </div>
+  <div class="feed-owner">{{nickname}}</div>
+  <div class="third">
+    <p class="contentDetail">{{shortenContent}}</p>
+    <p 
+      class="content-more"
+      type="button"
+      @click="showMoreContent(true)"
+      v-show="!moreContent"
+    >더보기</p>
+    <p 
+      class="content-more"
+      type="button"
+      @click="showMoreContent(false)"
+      v-show="moreContent"
+    >접기</p>
+    <div>
+      <span
+        v-for="(tag, idx) in tags"
+        :key="idx"
+        class="feed-tag rounded-pill me-1"
+      >#{{tag}}</span>
+    </div>
+  </div>
+  <ReplyListItem/>
+  <div><span class="reply-more" type="button" @click="moveToReply">더보기</span></div>
+  </center>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState } from "vuex"
 import FeedMenu from './FeedMenu.vue';
+import ReplyListItem from '@/components/feeds/reply/ReplyListItem.vue'
+import _ from 'lodash'
+// import axios from 'axios'
 
 export default {
   name: 'FeedListItem',
   components: {
     FeedMenu,
+    ReplyListItem,
   },
   data() {
     return {
-      
+      content: '피드 게시물 내용입니다. 많으면 짤리게 할까요 이것도...세라누나 코드 좀 가져갈게....누나 너무 잘한다. 많이 배워가. 근데 진짜 긴데도 안짤리네..length 200으로 하고 더보기 누르면 보이게 만들고 싶다. 헐 200으로 했는데 아직도 안짤렸네,,,이제는 ... 무한반복................................................. 이건 왜 안짤려...',
+      tags: [
+        '해시태그',
+        '테스트',
+        '입니다.',
+      ],
+      nickname: 'Nickname',
+      title: '미드나잇 라이브러리',
+      Like: false,
+      likeNum: 0,
+      replyNum: 0,
+      disLike: true,
+      moreContent: false,
+      feeds: [],
     };
   },
-  props: {
-    feed: Object,
-  },
+  // created() {
+  //   axios.get('/feed')
+  //   .then( res => {
+  //     console.log(res);
+  //     this.feeds = res.data;
+  //   })
+  //   .catch( err => {
+  //     console.log(err);
+  //   })
+  // },
   methods: {
-    ...mapActions(['currentFeed']),
     moveToLike() {
       this.$router.push('/like');
     },
     moveToReply() {
       this.$router.push('/reply');
+    },
+    like() {
+      this.Like = true;
+      this.disLike = false;
+      this.likeNum += 1;
+    },
+    dislike() {
+      this.Like = false;
+      this.disLike = true;
+      this.likeNum -= 1;
+    },
+    showMoreContent(flag) {
+      this.moreContent = flag;
     }
-  }
+  },
+  computed: {
+    shortenContent() {
+      if(this.moreContent){
+        return this.content;
+      }else{
+        return _.truncate(this.content, {'length': 150,})
+      }
+    },
+    ...mapState('user', ['myInfo'])
+  },
 }
 </script>
 
 <style lang="scss" scoped>
-.feed-list-item {
-  background-color: rgba(255, 255, 255, 1);
-  border-radius: 15px 0px 0px;
-  padding: 20px 0 82px;
-  display: flex-center;
-  flex-direction: column;
-}
-.feed-header {
-  margin-bottom: 13px;
-  padding: 0 0 0 21px;
+// .feed-list {
+//   align-content: center;
+//   text-align: center;
+// }
+.feed-list{
   display: flex;
-  align-items: center;
+  margin: 0 auto;
+  width: 408px;
 }
-.feed-user-image {
-  width: 16.28%;
-  align-self: stretch;
-  margin-right: 15px;
-  border-radius: 50px;
-  object-fit: cover;
+.feed-header{
+  display: flex;
+  align-items: flex-start;
 }
-.name-title {
-  margin-right: 93px;
+.feed-header span {
+  margin: 5px 3px;
+}
+.user-profile {
+  align-self: center;
+}
+.default-user-image {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+}
+.feedHeader{
+  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
 }
-.nickname {
-  width: 72.45%;
-  height: 57.89%;
-  font-family: "Noto Sans KR";
-  font-size: 15px;
-  font-weight: 400;
-  line-height: normal;
-  color: rgba(33, 33, 33, 1);
-  text-align: center;
-  margin-bottom: 2px;
-  margin-left: 1px;
+.mini-title, .owner{
+  margin: 2px 0 2px 5px;
 }
-.book-title {
-  display: flex;
-  align-items: center;
+.feed-menu{
+  align-self: center;
 }
-.minibook {
-  width: 8.16%;
-  height: 71.43%;
-  margin-right: 4px;
-}
-.title {
-  width: 87.76%;
-  color: rgba(88, 88, 88, 1);
-  align-self: stretch;
-  text-align: center;
-  font-family: noto-sans-kr-10-bold;
-}
-.feed-menu {
-  width: 20.71px;
-  height: 5px;
-}
-.feed-image {
-  width: 320px;
-  height: 192px;
-  margin-bottom: 12px;
+.feed-image{
+  width: 408px;
+  height: 100%;
 }
 .like-reply {
-  margin-bottom: 9px;
-  padding: 0 0 0 21px;
-  display: flex;
-  align-items: center;
-}
-.like {
-  width: 30.89%;
-  align-self: stretch;
-  margin-right: 5.14px;
-  object-fit: cover;
-  transition-duration: 0.3s;
-}
-.like:active{
-  margin-left: 5px;
-  margin-top: 5px;
-}
-.dislike {
-  width: 30.89%;
-  align-self: stretch;
-  margin-right: 5.14px;
-  object-fit: cover;
-  transition-duration: 0.3s;
-}
-.dislike:active{
-  margin-left: 5px;
-  margin-top: 5px;
-}
-.like-num {
-  font-family: "Noto Sans KR";
-  font-size: 12px;
-  font-weight: 400;
-  line-height: normal;
-  color: rgba(0, 0, 0, 1);
-  text-align: center;
-  &:not(:last-of-type) {
-    margin-right: 12px;
-  }
-  transition-duration: 0.3s;
-}
-.like-num:active{
-  margin-left: 5px;
-  margin-top: 5px;
-}
-.reply-num {
-  font-family: "Noto Sans KR";
-  font-size: 12px;
-  font-weight: 400;
-  line-height: normal;
-  color: rgba(0, 0, 0, 1);
-  text-align: center;
-  &:not(:last-of-type) {
-    margin-right: 12px;
-  }
-}
-.reply {
-  width: 27.8%;
-  height: 90%;
-  margin-right: 6.43px;
-  transition-duration: 0.3s;
-}
-.reply:active{
-  margin-left: 5px;
-  margin-top: 5px;
-}
-.content-reply {
-  margin-bottom: 11px;
-  padding: 0 0 0 21px;
   display: flex;
   align-items: flex-start;
 }
-.feed-user-nickname {
-  color: rgba(33, 33, 33, 1);
-  text-align: center;
-  margin-top: 5px;
-  margin-right: 6px;
-  font-family: noto-sans-kr-10-regular;
+.btn-like, .btn-reply {
+  width: 24px;
+  height: 24px;
 }
-.detail-hashtags {
+.btn-like, .btn-reply, .like-num, .reply-num {
+  margin: 5px 0 5px 5px;
+}
+.feed-owner {
+  display: flex;
+}
+.replies{
+  display: flex;
+  align-items: center;
+}
+.reply-like-num, .content-more, .reply-more {
+  color: rgb(139, 139, 139);
+}
+.third {
   background-color: rgba(241, 241, 241, 1);
-  border-radius: 5px;
-  padding: 8px 71px 9px 8px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  border-radius: 10px;
+  text-align: left;
+  padding: 5px;
 }
-.detail {
-  height: 32.56%;
-  color: rgba(33, 33, 33, 1);
-  align-self: stretch;
-  margin-bottom: 15px;
-  font-family: noto-sans-kr-10-bold;
+.like-reply, .feed-owner, .third{
+  max-width: 408px;
 }
-.hashtags {
-  display: flex;
-  align-items: flex-start;
+.feed-tag {
+  color: #585858;
+  background: #FFDC7C;
 }
-.hashtag {
-  width: 31.39%;
-  color: rgba(88, 88, 88, 1);
-  align-self: stretch;
-  font-family: noto-sans-kr-10-bold;
-  &:not(:last-of-type) {
-    margin-right: 4px;
-  }
-}
-.reply {
-  margin-bottom: 4px;
-  padding: 0 0 0 21px;
-  display: flex;
-  align-items: center;
-}
-.replier {
-  width: 10.45%;
-  color: rgba(33, 33, 33, 1);
-  align-self: stretch;
-  text-align: center;
-  margin-right: 28px;
-  font-family: noto-sans-kr-10-regular;
-}
-.reply-detail {
-  width: 32.89%;
-  color: rgba(33, 33, 33, 1);
-  align-self: stretch;
-  margin-right: 128px;
-  font-family: noto-sans-kr-10-bold;
-}
-.reply-like {
-  width: 4.42%;
-  height: 71.43%;
-}
-.duration {
-  max-width: 34px;
-  width: 10.63%;
-  height: 2.96%;
-  color: rgba(164, 164, 164, 1);
-  margin-left: 20px;
-  font-family: noto-sans-kr-8-bold;
-}
+
 </style>

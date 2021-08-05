@@ -26,6 +26,11 @@ export default {
         || this.$route.name === 'ResetPassword'
         || this.$route.name === 'PageNotFound'
         || this.$route.name === 'ServerError'
+        || this.$route.name === 'Like'
+        || this.$route.name === 'Reply'
+        || this.$route.name === 'Report'
+        || this.$route.name === 'WriteArticle'
+        || this.$route.name === 'Follow'
         ) {
         return false
       }

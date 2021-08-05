@@ -15,8 +15,10 @@ export default {
 
 <style>
 .reply-regist {
+  margin: 0 auto;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
+  width: 408px;
 }
 .my-image {
   width: 40px;

@@ -6,11 +6,15 @@ import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import Profile from '@/views/user/Profile'
+import Follow from '@/views/user/Follow'
 import FindPassword from '@/views/user/FindPassword'
 import ResetPassword from '@/views/user/ResetPassword'
 import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
+import Report from '@/views/feed/Report'
+import WriteArticle from '@/views/feed/WriteArticle'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
@@ -95,6 +99,26 @@ const routes = [
     component : Challenge,
     meta: { requireAuth: true }
   },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile
+  },
+  {
+    path: '/report',
+    name: 'Report',
+    component: Report
+  },
+  {
+    path: '/write',
+    name: 'WriteArticle',
+    component: WriteArticle
+  },
+  {
+    path: '/follow',
+    name: 'Follow',
+    component: Follow
+  },
 ]
 
 const router = new VueRouter({
@@ -123,7 +147,7 @@ router.beforeEach(function (to, from, next) {
       next()
     }
   }
-  
+
 })
 
 export default router
