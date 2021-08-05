@@ -47,9 +47,9 @@ export default {
       data: userData
     })
   },
-  withdrawal(userId) {
+  withdrawal() {
     return _axios({
-      url: `users/${userId}`,
+      url: `users/withdraw`,
       method: 'delete',
     })
   }
