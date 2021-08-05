@@ -16,7 +16,7 @@ const _axios = axios.create({
   timeout: 10000,
   // 헤더 정보 자동 추가
   headers: {
-    'access-token': accessToken
+    'accessToken': accessToken
   }
 })
 
