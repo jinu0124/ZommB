@@ -4,20 +4,16 @@ import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.service.BookService;
-import com.ssafy.commb.util.JungboNaruAPI;
-import com.ssafy.commb.util.KakaoSearchAPI;
+//import com.ssafy.commb.util.JungboNaruAPI;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.BasicResponseHandler;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -65,8 +61,8 @@ public class BookController {
         BookDto.Response bookRes = new BookDto.Response();
         bookRes.setData(book);
 
-        JungboNaruAPI api = new JungboNaruAPI();
-        api.searchKeyword("9788998139773");
+//        JungboNaruAPI api = new JungboNaruAPI();
+//        api.searchKeyword("9788998139773");
 
         return new ResponseEntity<BookDto.Response>(bookRes, HttpStatus.OK);
     }
