@@ -77,7 +77,6 @@ const routes = [
   {
     path: '/reply',
     name: 'Reply',
-<<<<<<< HEAD
     component: Reply
   },
   {
@@ -98,9 +97,7 @@ const routes = [
   {
     path: '/follow',
     name: 'Follow',
-    component: Follow
-=======
-    component: Reply,
+    component: Follow,
     meta: { requireAuth: true }
   },
   // challenge
@@ -109,7 +106,6 @@ const routes = [
     name : 'Challenge',
     component : Challenge,
     meta: { requireAuth: true }
->>>>>>> 6c6cbc03e1ddfa77d3eb3ae60a9b70c10098fe94
   },
 ]
 

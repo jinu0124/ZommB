@@ -1,6 +1,6 @@
 <template>
   <div class="select-book">
-    <img class="book-img" src="@/assets/image/test/profileTest.jpg" alt="">
+    <img class="book-img" src="@/assets/image/test/imageTest.jpg" alt="">
     <div class="book-info">
       <div class="user d-flex align-items-center gap-2">{{title}}</div>
       <div class="writerNcomp">{{writer}} | {{company}}</div>
