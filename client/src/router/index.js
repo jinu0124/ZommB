@@ -1,4 +1,5 @@
 import Vue from 'vue'
+import store from '@/store/'
 import VueRouter from 'vue-router'
 import Index from '@/views/Index'
 import Login from '@/views/user/Login'
@@ -106,14 +107,14 @@ router.beforeEach(function (to, from, next) {
   if (to.matched.some(function(routeInfo) {
     return routeInfo.meta.requireAuth
   })) {
-    if (!JSON.parse(localStorage.getItem('vuex')).user.isLogin) {
+    if (!store.state.user.isLogin) {
       next('/')
     } else {
       next()
     }
   } else {
     if (to.name === 'Login' || to.name === 'Signup' || to.name === 'SignupEmail') {
-      if (JSON.parse(localStorage.getItem('vuex')).user.isLogin) {
+      if (store.state.user.isLogin) {
         next('/feed')
       } else {
         next()
