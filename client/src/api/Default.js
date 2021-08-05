@@ -1,13 +1,13 @@
 import axios from 'axios'
 import router from '@/router'
-import user from '@/store/modules/user'
+// import user from '@/store/modules/user'
 
 // 저장된 토큰 불러오기 (1) localStorage
-// let accessToken = JSON.parse(localStorage.getItem('vuex')).user.accessToken
+let accessToken = JSON.parse(localStorage.getItem('vuex')).user.accessToken
 // let refreshToken = JSON.parse(localStorage.getItem('vuex')).user.refreshToken
 
 // 저장된 토큰 불러오기 (2) vuex
-let accessToken = user.state.accessToken
+// let accessToken = user.state.accessToken
 // let refreshToken = user.state.refreshToken
 
 const _axios = axios.create({
@@ -16,7 +16,7 @@ const _axios = axios.create({
   timeout: 10000,
   // 헤더 정보 자동 추가
   headers: {
-    'access-token': accessToken
+    'accessToken': accessToken
   }
 })
 
@@ -29,6 +29,7 @@ const _axios = axios.create({
 */
 _axios.interceptors.request.use(
   function (config) {
+    // config.headers['access-token'] = user.state.accessToken
     return config;
   }, 
   function (error) {
