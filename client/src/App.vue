@@ -22,6 +22,7 @@ export default {
       if (this.$route.name === 'Index' 
         || this.$route.name === 'Login'
         || this.$route.name === 'Signup'
+        || this.$route.name === 'SignupEmail'
         || this.$route.name === 'FindPassword'
         || this.$route.name === 'ResetPassword'
         || this.$route.name === 'PageNotFound'
