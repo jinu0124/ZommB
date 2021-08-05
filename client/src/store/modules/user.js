@@ -81,10 +81,10 @@ const actions = {
   },
   onLogout({ commit, dispatch }) {
     commit('SET_ISLOGIN', false)
-    dispatch('moveToLogin')
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
     commit('RESET_MY_INFO')
+    dispatch('moveToLogin')
   },
   async onUpdatePassword({ state }, userData) {
     await userApi.changePassword(state.myInfo.id, userData)
