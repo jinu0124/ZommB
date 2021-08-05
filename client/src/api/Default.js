@@ -3,8 +3,8 @@ import router from '@/router'
 import store from '@/store/index.js'
 
 const _axios = axios.create({
-  baseURL: 'http://localhost:8080',
-  // baseURL: 'http://i5a602.p.ssafy.io:8080',
+  // baseURL: 'http://localhost:8080',
+  baseURL: 'http://i5a602.p.ssafy.io:8080',
   timeout: 10000,
 })
 
