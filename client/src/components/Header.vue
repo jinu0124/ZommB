@@ -11,7 +11,7 @@
       <span 
         class="header-logo pt-1"
         type="button"
-        @click="$router.push({ name: 'Index' })"
+        @click="moveHome"
       >CommB</span>
       <div class="dropdown">
         <img 
@@ -52,6 +52,15 @@ export default {
   components: {
     HeaderSideNav,
     HeaderUserMenu,
+  },
+  methods: {
+    moveHome () {
+      if (this.myInfo.id) {
+        this.$router.push({ name: 'Feed' })
+      } else {
+        this.$router.push({ name: 'Index' })
+      }
+    }
   },
   computed: {
     ...mapState('user', ['myInfo'])
