@@ -48,7 +48,8 @@ public class User {
 
     /* 유저의 피드 */
     @OneToMany(mappedBy = "user")
-    private List<Feed> feeds = new ArrayList<Feed>();
+//    private List<Feed> feeds = new ArrayList<Feed>();
+    private List<Thumb> feeds = new ArrayList<Thumb>();
 
     /* 유저의 서재/북카트 */
     @OneToMany(mappedBy = "user")
