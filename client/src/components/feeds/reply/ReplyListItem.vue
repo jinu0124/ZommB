@@ -1,26 +1,19 @@
 <template>
   <div class="reply-list-item">
     <div class="replier-image"></div>
-    <div class="reply-content">
-      <p class="replier-nickname">Replier</p>
-      <p class="reply-article">
-        댓글입니다. 댓글이에여. 제 정체는 바로바로 댓글입니다.
-      </p>
-    </div>
-    <img
-      alt=""
-      class="reply-like"
-      type="button"
-      src="https://static.overlay-tech.com/assets/d93b4223-78e0-484c-bee1-1f2c14c625af.svg"
-    />
-    <div class="reply-plus">
-      <p class="reply-duration">0분 전</p>
-      <p class="reply-like-num">좋아요 5개</p>
-      <div class="reply-menu-btn">
-        <div class="ellipse-12-two"></div>
-      </div>
-      <ReplyMenu/>
-    </div>
+    <span>user1</span>
+    <span>
+      <div>댓글 어쩌구 저쩌구...</div>
+      <div class="reply-like-num">좋아요 3개</div>
+    </span>
+    <span>
+      <img
+        alt=""
+        class="reply-like"
+        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+      />
+    </span>
+    <ReplyMenu/>
   </div>
 </template>
 

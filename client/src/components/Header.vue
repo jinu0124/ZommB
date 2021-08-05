@@ -14,6 +14,13 @@
         @click="$router.push({ name: 'Index' })"
       >CommB</span>
       <div class="dropdown">
+        <img
+          class="btn-write"
+          src="@/assets/image/test/btn-write.png"
+          type="button"
+          @click="moveToWrite()"
+          v-show="isFeed"
+        />
         <img 
           v-if="myInfo.userFileUrl"
           class="user-profile dropdown-toggle"
@@ -49,6 +56,16 @@ import { mapState } from "vuex"
 
 export default {
   name: 'Header',
+  data () {
+    return {
+      isFeed: false,
+    }
+  },
+  methods: {
+    moveToWrite() {
+      this.$router.push('/write');
+    }
+  },
   components: {
     HeaderSideNav,
     HeaderUserMenu,
@@ -73,6 +90,11 @@ export default {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.5rem;
     color: #fff;
+  }
+  .btn-write{
+    width: 2rem;
+    height: 2rem;
+    margin: 0 10px 0 0;
   }
   .user-profile {
     width: 2rem;

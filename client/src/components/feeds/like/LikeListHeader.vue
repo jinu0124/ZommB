@@ -27,7 +27,7 @@ export default {
     color: #fff;
   }
   .like-logo {
-    font-family: 'Black Han Sans', sans-serif;
+    font-family: 'Noto Sans KR', sans-serif;
     font-size: 1.5rem;
     margin: 0 auto;
     color: #fff;

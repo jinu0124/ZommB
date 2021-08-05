@@ -1,11 +1,12 @@
 <template>
   <div>
-    <div class="feedlist" v-if="feeds && feeds.length != 0">
+    <FeedListItem/>
+    <!-- <div class="feedlist" v-if="feeds && feeds.length != 0">
       <feed-list-item v-for="(feed, index) in feeds" :key="index" :feed="feed" />
-    </div>
-    <div class="nofeedlist" v-else>
+    </div> -->
+    <!-- <div class="nofeedlist" v-else>
       <h2>팔로우한 회원이 없습니다.</h2>
-    </div>
+    </div> -->
   </div>
 </template>
 

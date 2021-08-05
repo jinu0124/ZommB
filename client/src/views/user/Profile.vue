@@ -11,31 +11,21 @@
       >
     </div>
     <div class="user-info">
-      <span>
-        <b class="user-nickname">Nickname</b>
+      <span class="name-badge">
+        <b class="user-nickname">{{nickname}}</b>
         <button class="weekly-event-badge badge"><img class="badge-image"><!-- 주간이벤트 뱃지 이미지 -->
         GOLD</button>
         <button class="daily-event-badge badge"><img class="badge-image"><!-- 데일리이벤트 뱃지 이미지 -->
         GOLD</button>
       </span>
-      <div>
-        <span class="follow" type="button" @click="moveToFollower()">00 followers</span>
-        <span class="follow" type="button" @click="moveToFollowing()">00 followings</span>
+      <div class="follow" type="button" @click="moveToFollow()">
+        <span class="follower">{{follower}} followers</span>
+        <span class="following">{{following}} followings</span>
       </div>
-      <!-- <div>
-        <span class="alticle-num num">00</span>
-        <span class="library-num num">00</span>
-        <span class="bookcart-num num">00</span>
-      </div>
-      <div>
-        <span class="alticle menu">게시물</span>
-        <span class="library menu">읽은책</span>
-        <span class="bookcart menu">읽을책</span>
-      </div> -->
       <div class="commb-info">
-        <span><div>00</div><div>게시물</div></span>
-        <span><div>00</div><div>읽은책</div></span>
-        <span><div>00</div><div>읽을책</div></span>
+        <span><div>{{feedNum}}</div><div>게시물</div></span>
+        <span><div>{{libraryNum}}</div><div>읽은책</div></span>
+        <span><div>{{bookcartNum}}</div><div>읽을책</div></span>
       </div>
       <button class="btn-primary1 btn-1">
         팔로우
@@ -86,7 +76,13 @@ export default {
   },
   data () {
     return {
+      nickname: 'NickName',
+      follower: 0,
+      following: 0,
       selectedPage: 0,
+      feedNum: 0,
+      libraryNum: 0,
+      bookcartNum: 0,
     }
   },
   methods: {
@@ -123,9 +119,14 @@ export default {
 .user-info {
   margin: 0px auto;
 }
+.name-badge {
+  margin-bottom: 10px;
+}
 .follow {
   margin: 20px 10px 0 10px;
-
+}
+.follower, .following {
+  margin: 0 3px;
 }
 .btn-primary1 {
   margin: 20px 0;
@@ -139,7 +140,7 @@ export default {
   flex: 1;
 }
 .tabs {
-  margin: 50px auto;
+  margin: 20px auto;
   padding-bottom: 40px;
   background-color: #ffffff;
   width: 300px;

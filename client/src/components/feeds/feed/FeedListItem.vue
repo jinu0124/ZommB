@@ -4,13 +4,24 @@
   <div class="first">
     <span>
       <img
-      alt="디폴트 회원 이미지"
-      class="default-user-image"
-      src="https://static.overlay-tech.com/assets/24ce5dd9-5c1f-4d38-bc58-8204b5a30b12.png"
-      />
+        v-if="myInfo.userFileUrl"
+        class="user-profile"
+        type="button"
+        id="UserProfile"
+        :src="myInfo.userFileUrl"
+        alt="user-profile"
+      >
+      <img
+        v-else
+        alt="디폴트 회원 이미지"
+        class="default-user-image"
+        src="@/assets/image/common/profileDefault.svg"
+        type="button"
+        id="UserProfile"
+      >
     </span>
     <span>
-      <div>Nickname</div>
+      <div>{{nickname}}</div>
       <div>
         <span>
           <img
@@ -19,7 +30,7 @@
             src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
           />
         </span>
-        <span>미드나잇 라이브러리</span>
+        <span>{{title}}</span>
       </div>
     </span>
     <span>
@@ -55,7 +66,7 @@
         v-show="Like"
       />
     </span>
-    <span type="button" @click="moveToLike">00</span>
+    <span type="button" @click="moveToLike">{{likeNum}}</span>
     <span>
       <img
         alt=""
@@ -63,13 +74,23 @@
         src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
       />
     </span>
-    <span type="button" @click="moveToReply">00</span>
+    <span type="button" @click="moveToReply">{{replyNum}}</span>
   </div>
-  <div class="feed-owner">Nickname</div>
+  <div class="feed-owner">{{nickname}}</div>
   <div class="third">
-    <p>abcdefghijklmnopqrstuvwxyz</p>
+    <p>{{shortenContent}}</p>
+    <p 
+      class="content-more"
+      type="button"
+      @click="showMoreContent(true)"
+      v-show="!moreContent"
+    >더보기</p>
     <div>
-      <span>#해시태그</span><span>#해시태그</span><span>#해시태그</span>
+      <span
+        v-for="(tag, idx) in tags"
+        :key="idx"
+        class="feed-tag rounded-pill me-1"
+      >{{tag}}</span>
     </div>
   </div>
   <div class="fourth replies">
@@ -100,14 +121,15 @@
       />
     </span>
   </div>
-  <div><span type="button" @click="moveToReply">더보기</span></div>
+  <div><span class="reply-more" type="button" @click="moveToReply">더보기</span></div>
   </center>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex';
+import { mapState } from "vuex"
 import FeedMenu from './FeedMenu.vue';
+import _ from 'lodash'
 import axios from 'axios'
 
 export default {
@@ -117,8 +139,19 @@ export default {
   },
   data() {
     return {
+      content: '피드 게시물 내용입니다. 많으면 짤리게 할까요 이것도...세라누나 코드 좀 가져갈게....누나 너무 잘한다. 많이 배워가. 근데 진짜 긴데도 안짤리네..',
+      tags: [
+        '해시태그',
+        '테스트',
+        '입니다.',
+      ],
+      nickname: 'Nickname',
+      title: '미드나잇 라이브러리',
       Like: false,
+      likeNum: 0,
+      replyNum: 0,
       disLike: true,
+      moreContent: false,
       feeds: [],
     };
   },
@@ -133,7 +166,6 @@ export default {
     })
   },
   methods: {
-    ...mapActions(['currentFeed']),
     moveToLike() {
       this.$router.push('/like');
     },
@@ -143,12 +175,26 @@ export default {
     like() {
       this.Like = true;
       this.disLike = false;
+      this.likeNum += 1;
     },
     dislike() {
       this.Like = false;
       this.disLike = true;
+      this.likeNum -= 1;
+    },
+    showMoreContent(flag) {
+      this.moreContent = flag;
+      this.shortenContent = stop;
     }
-  }
+  },
+  computed: {
+    shortenContent() {
+      return _.truncate(this.content, {
+        'length': 50,
+      })
+    },
+    ...mapState('user', ['myInfo'])
+  },
 }
 </script>
 
@@ -163,6 +209,11 @@ export default {
 .first span {
   margin: 5px 3px;
 }
+.default-user-image {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+}
 .feed-menu {
   align-self: flex-end;
 }
@@ -176,7 +227,7 @@ export default {
   display: flex;
   align-items: center;
 }
-.reply-like-num {
+.reply-like-num, .content-more, .reply-more {
   color: rgb(139, 139, 139);
 }
 .third {
@@ -184,4 +235,9 @@ export default {
   border-radius: 10px;
   text-align: center;
 }
+.feed-tag {
+  color: #585858;
+  background: #FFDC7C;
+}
+
 </style>
