@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? user.get().getFileUrl() : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/" + user.get().getFileUrl() : "");
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
