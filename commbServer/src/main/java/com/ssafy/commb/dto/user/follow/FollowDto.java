@@ -16,4 +16,8 @@ public class FollowDto {
     private Integer follower;
     private boolean isFollow;
 
+    public FollowDto(boolean isFollow){
+        this.isFollow = isFollow;
+    }
+
 }

@@ -11,7 +11,7 @@
       <span 
         class="header-logo pt-1"
         type="button"
-        @click="$router.push({ name: 'Index' })"
+        @click="moveHome"
       >CommB</span>
       <div class="dropdown">
         <img
@@ -64,6 +64,13 @@ export default {
   methods: {
     moveToWrite() {
       this.$router.push('/write');
+    },
+    moveHome () {
+      if (this.myInfo.id) {
+        this.$router.push({ name: 'Feed' })
+      } else {
+        this.$router.push({ name: 'Index' })
+      }
     }
   },
   components: {

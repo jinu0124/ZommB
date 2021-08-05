@@ -70,8 +70,8 @@ const actions = {
       .then((res) => {
         console.log(res)
         commit('SET_ISLOGIN', true)
-        commit('SET_ACCESS_TOKEN', res.headers.accessToken)
-        commit('SET_REFRESH_TOKEN', res.headers.refreshToken)
+        commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
+        commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })
@@ -84,32 +84,34 @@ const actions = {
   },
   onLogout({ commit, dispatch }) {
     commit('SET_ISLOGIN', false)
-    dispatch('moveToLogin')
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
     commit('RESET_MY_INFO')
+    dispatch('moveToLogin')
   },
-  // croppa 처리를 위해 컴포넌트에서 method로 해결 중
-  // async onUpdateInfo({ state, commit }, userData) {
-  //   await userApi.updateInfo(state.myInfo.id, userData)
-  //     .then((res) => {
-  //       commit('SET_MY_INFO', res.data)
-  //       return res
-  //     })
-  //     .catch((err) => {
-  //       console.log(err.response)
-  //       return Promise.reject(err.response)
-  //     })
-  // },
   async onUpdatePassword({ state }, userData) {
     await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
         console.log(res)
+        return res
       })
       .catch((err) => {
         console.log(err.response)
+        return Promise.reject(err.response)
       })
   },
+  // async onResetPassword({ dispatch }, userData) {
+    // console.log(userData)
+    // await userApi.resetPassword(userData)
+    //   .then((res) => {
+    //     console.log(res)
+    //     dispatch('moveToLogin')
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response)
+    //     return Promise.reject(err.response)
+    //   })
+  // },
 }
 
 const mutations = {

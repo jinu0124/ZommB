@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiParam;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
+@Alias("Book")
 public class BookDto {
     private Integer id;
     private String bookName;
@@ -28,7 +30,7 @@ public class BookDto {
 
     private String contents;
 
-    private Boolean isRead;
+    private Integer isRead;
     private Float rate;
 
     private List<KeywordDto> keyword;
@@ -46,8 +48,12 @@ public class BookDto {
     @NoArgsConstructor
     public static class RegisterRequest{                // 요청
         private Integer id;
-        private boolean isRead;
+        private Integer isRead;
         private float rate;
+
+        public int getIsRead() {
+            return isRead;
+        }
     }
 
     @Getter
@@ -56,8 +62,13 @@ public class BookDto {
     @NoArgsConstructor
     public static class BookShelfSearchRequest{                // 요청
         private String bookName;
-        private int userId;
-        private boolean isRead;
+        private Integer userId;
+        private Integer isRead;
+
+        public int getIsRead() {
+            return isRead;
+        }
+
     }
 
     @Getter

@@ -55,11 +55,24 @@ spring:
 security:
   expire:
     accesstoken: 36000000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
-    refreshtoken: 300000
+    refreshtoken: 604800000
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
-  accesstoken: "access-token"
-  refreshtoken: "refresh-token"
+  accesstoken: "accesstoken"
+  refreshtoken: "refreshtoken"
 
 mybatis:
   config-location: classpath:/config/mybatis-config.xml
 
+cloud:
+  aws:
+    credentials:
+      accessKey : AKIAW4VCONM6ZDUGJRPK
+      secretKey : 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
+    s3:
+      bucket : ssafy.commb
+    region:
+      static: ap-northeast-2
+    stack:
+      auto: false
+  profile: "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/"
+  feed : "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/"

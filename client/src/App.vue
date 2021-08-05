@@ -22,6 +22,8 @@ export default {
       if (this.$route.name === 'Index' 
         || this.$route.name === 'Login'
         || this.$route.name === 'Signup'
+        || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'PageNotFound'
         || this.$route.name === 'ServerError'
         || this.$route.name === 'Like'
@@ -37,6 +39,8 @@ export default {
     isAccounts() {
       if (this.$route.name === 'Login'
         || this.$route.name === 'Signup'
+        || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'UpdateInfo') {
         return true
       }

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.KeywordDao">
+
+    <select id="getKeywordRecommend" parameterType="Integer" resultType="Keyword">
+        SELECT k.id, k.keyword, uk.cnt
+        FROM user_keyword uk, keyword k
+        WHERE uk.user_id = #{userId} AND uk.keyword_id = k.id
+        ORDER BY uk.cnt DESC
+        LIMIT 5;
+    </select>
+
+</mapper>

@@ -12,6 +12,24 @@
         WHERE id = #{userId};
     </select>
 
+    <select id="getMyFollowerExFollowing" parameterType="Integer" resultMap="userInformation">
+        SELECT u.id, NAME, nickname, file_url AS userFileUrl, 0 AS isFollow, bookmark, pencil, 5 as cnt
+        FROM follow f2, user u
+        WHERE u.id = f2.follower and f2.following = #{userId} AND f2.follower NOT IN (
+            SELECT f1.following
+            FROM follow f1
+            WHERE f1.follower = #{userId})
+        UNION
+        SELECT u.id, NAME, nickname, file_url AS userFileUrl, 0 AS isFollow, bookmark, pencil, COUNT(f2.following) AS cnt
+        FROM follow f1, follow f2, user u
+        WHERE f1.following = f2.follower AND f1.follower = #{userId} AND f2.following != #{userId} AND u.id = f2.following AND f2.following NOT IN (
+            SELECT f3.following
+            FROM follow f3
+            WHERE f3.follower = #{userId})
+        GROUP BY f2.following
+        ORDER BY cnt DESC, nickname;
+    </select>
+
     <resultMap type="User" id="userInformation">
         <result column="id" property="id"/>
         <result column="email" property="email"/>
@@ -22,9 +40,9 @@
         <result column="pencilOn" property="level.pencilOn"/>
         <result column="bookmark" property="level.bookmark"/>
         <result column="bookmarkOn" property="level.bookmarkOn"/>
+        <result column="isFollow" property="follow.isFollow"/>
         <result column="following" property="follow.following"/>
         <result column="follower" property="follow.follower"/>
-        <result column="isFollow" property="follow.isFollow"/>
     </resultMap>
 
 <!--        <insert id="register" parameterType="Member" useGeneratedKeys="true" keyColumn="code" keyProperty="keyId">-->

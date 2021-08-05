@@ -2,6 +2,7 @@ package com.ssafy.commb.dto.bookshelf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -11,9 +12,10 @@ import org.springframework.stereotype.Component;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Alias("BookShelfCnt")
 public class BookShelfCntDto {
-    private Integer libraryCnt;
-    private Integer bookcartCnt;
+    private int libraryCnt;
+    private int bookcartCnt;
 
     @Getter
     @Setter

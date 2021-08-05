@@ -27,6 +27,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${security.accesstoken}")
     private String accessToken;
 
+    @Value("${security.refreshtoken}")
+    private String refreshToken;
+
     // Authorization : Bearer <TOKEN>
     // 로그인 Authorization
     @Override
@@ -39,11 +42,10 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 //        String acToken = request.getParameter("acToken");      //  테스트용
 //        String rfToken = request.getParameter("rfToken");
-
-        String acToken = request.getHeader("access-token");       // Header를 통해 Token 받기
+        String acToken = request.getHeader(accessToken);       // Header를 통해 Token 받기
         String rfToken;
-        if(request.getAttribute("refresh-token") == null) rfToken = null;
-        else rfToken = (String) request.getAttribute("refresh-token");
+        if(request.getAttribute(refreshToken) == null) rfToken = null;
+        else rfToken = (String) request.getAttribute(refreshToken);
 
         if(acToken == null || acToken.length() < 24) {                               // Access 토큰이 없을 때
             map.put("status", 401);
@@ -60,7 +62,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
-                map.put("status", 100);
+                map.put("status", 401);
             }
             else if(ret.equals("invalid")){
                 map.put("msg", "AccessToken is invalid");
@@ -76,6 +78,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         response.setStatus((int) map.get("status"));
         if((int) map.get("status") == 200) {
+            System.out.println("200!");
             return true;
         }
 
