@@ -60,6 +60,9 @@ public class ProfileServiceImpl implements ProfileService {
     @Value("${cloud.aws.region.static}")
     private String region;
 
+    @Value("${cloud.profile}")
+    private String awsProfileUrl;
+
     @Autowired
     private UserRepository userRepository;
 
@@ -133,7 +136,7 @@ public class ProfileServiceImpl implements ProfileService {
 
         if(myReq.getFlag() == 0) {                                          // 프로필 이미지 유지
             updateDb(user, user.get().getFileUrl(), myReq.getNickname());
-            if(my.getUserFileUrl() != null) my.setUserFileUrl("https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/" + user.get().getFileUrl());
+            if(my.getUserFileUrl() != null) my.setUserFileUrl(awsProfileUrl + user.get().getFileUrl());
             else my.setUserFileUrl(null);
         }
         else if(myReq.getFlag() == 1) {                                      // 프로필 이미지 수정
@@ -142,7 +145,7 @@ public class ProfileServiceImpl implements ProfileService {
             String fileName = upload(part);
 
             updateDb(user, fileName, myReq.getNickname());
-            my.setUserFileUrl("https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/" + fileName);
+            my.setUserFileUrl(awsProfileUrl + fileName);
         }
         else{                                                               // 프로필 이미지 삭제 -> DB userFileUrl -> null
             updateDb(user, null, myReq.getNickname());

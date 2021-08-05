@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
 import java.util.HashMap;
@@ -113,21 +114,23 @@ public class UserController {
 
     @GetMapping("/checkEmailComplete")
     @ApiOperation(value = "Email 인증 확인")
-    public String checkEmailComplete(@RequestParam String key, RedirectAttributes redirect){
+    public void checkEmailComplete(@RequestParam String key, HttpServletResponse httpServletResponse) throws IOException {
+
         if(userService.confirmEmail(key)) {
 //            RedirectUrlBuilder redirectUrl = new RedirectUrlBuilder();
 //            redirectUrl.setContextPath("index.html");
             // Redirect를 어떻게 시키지.. 그냥 빈페이지에 인증되었다고만 적어두어도 괜찮나..??
-            return "인증이 완료되었습니다. 감사합니다.";
+            httpServletResponse.sendRedirect("localhost:8000/");
         }
 
-        return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
+//        return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
     @GetMapping("/social/kakao")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> kakaoLogin() {
+
 
 
         return new ResponseEntity<MyDto.Response>((MyDto.Response) null, HttpStatus.valueOf(201));
@@ -203,11 +206,11 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 회원 탈퇴
-    @DeleteMapping("")
+    @DeleteMapping("/withdraw")
     @ApiOperation(value = "회원탈퇴")
     public ResponseEntity deleteUser(HttpServletRequest request) {
         userService.deleteUser((int) request.getAttribute("userId"));
-
+        System.out.println("탈퇴");
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 

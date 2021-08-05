@@ -74,3 +74,5 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+  profile: "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/"
+  feed : "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/"

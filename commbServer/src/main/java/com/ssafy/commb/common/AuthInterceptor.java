@@ -42,8 +42,9 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 //        String acToken = request.getParameter("acToken");      //  테스트용
 //        String rfToken = request.getParameter("rfToken");
-
+        System.out.println(accessToken);
         String acToken = request.getHeader(accessToken);       // Header를 통해 Token 받기
+        System.out.println(acToken);
         String rfToken;
         if(request.getAttribute(refreshToken) == null) rfToken = null;
         else rfToken = (String) request.getAttribute(refreshToken);

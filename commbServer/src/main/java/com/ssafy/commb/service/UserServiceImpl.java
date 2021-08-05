@@ -1,21 +1,18 @@
 package com.ssafy.commb.service;
 
-import ch.qos.logback.core.CoreConstants;
 import com.ssafy.commb.dao.UserDao;
-import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
-import com.ssafy.commb.model.Feed;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +42,9 @@ public class UserServiceImpl implements UserService {
             + File.separator + "main"
             + File.separator + "resources"
             + File.separator + "static";
+
+    @Value("${cloud.profile}")
+    private String awsProfileUrl;
 
     @Autowired
     UserRepository userRepository;
@@ -91,12 +91,12 @@ public class UserServiceImpl implements UserService {
     public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
 
-        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "프로필 물리 이미지 업로드 실패");
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 필패");
 
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? "https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/" + user.get().getFileUrl() : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? awsProfileUrl + user.get().getFileUrl() : "");
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -156,9 +156,9 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(int userId) {
         Optional<User> user = userRepository.findUserById(userId);
         if(!user.isPresent()) return;
-
+        System.out.println("서비스");
         userRepository.deleteById(userId);
-
+        System.out.println("서비스2");
         // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
         File file = new File(uploadPath + File.separator + user.get().getFileUrl());
         if(file.exists()) file.delete();
