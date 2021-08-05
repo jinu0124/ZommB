@@ -37,7 +37,7 @@ const routes = [
     component: SignupEmail,
   },
   {
-    path: '/updateinfo/:id',
+    path: '/updateinfo',
     name: 'UpdateInfo',
     component: UpdateInfo,
     meta: { requireAuth: true }
