@@ -48,15 +48,21 @@ _axios.interceptors.response.use(
   async function (error) {
     // 1. 토큰 만료 시, 토큰 refresh (jwt 정리되면 추가)
     if (error.response.status === 401 && error.response.data.msg === 'AccessToken has been expired') {
+      // store.commit('user/SET_ISRESISTER', 'test')
       console.log(error.response)
-      console.log('토큰 만료')
+      // console.log('토큰 만료')
       const originalRequest = error.config
       originalRequest.headers.refreshtoken = refreshToken
       await _axios(originalRequest)
         .then((res) => {
+          console.log(res)
           store.commit('user/SET_ACCESS_TOKEN', res.headers.accesstoken)
           store.commit('user/SET_REFRESH_TOKEN', res.headers.refreshtoken)
           return res
+        })
+        .catch((err) => {
+          console.log(err.response)
+          return
         })
     } else if (error.response.status >= 500) {
       router.push({ name: 'ServerError'})
