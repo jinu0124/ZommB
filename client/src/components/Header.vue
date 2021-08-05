@@ -64,13 +64,7 @@ export default {
   methods: {
     moveToWrite() {
       this.$router.push('/write');
-    }
-  },
-  components: {
-    HeaderSideNav,
-    HeaderUserMenu,
-  },
-  methods: {
+    },
     moveHome () {
       if (this.myInfo.id) {
         this.$router.push({ name: 'Feed' })
@@ -78,6 +72,10 @@ export default {
         this.$router.push({ name: 'Index' })
       }
     }
+  },
+  components: {
+    HeaderSideNav,
+    HeaderUserMenu,
   },
   computed: {
     ...mapState('user', ['myInfo'])

@@ -4,7 +4,7 @@
     <img
       id="myImage"
       class="profile-image"
-      src="@/assets/image/test/profileTest.jpg"
+      src="@/assets/image/test/imageTest.jpg"
       alt="profileImage"
     >
     <div class="user-info">

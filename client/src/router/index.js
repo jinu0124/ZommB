@@ -89,15 +89,7 @@ const routes = [
   {
     path: '/reply',
     name: 'Reply',
-    component: Reply,
-    meta: { requireAuth: true }
-  },
-  // challenge
-  {
-    path: '/challenge',
-    name : 'Challenge',
-    component : Challenge,
-    meta: { requireAuth: true }
+    component: Reply
   },
   {
     path: '/profile',
@@ -117,7 +109,15 @@ const routes = [
   {
     path: '/follow',
     name: 'Follow',
-    component: Follow
+    component: Follow,
+    meta: { requireAuth: true }
+  },
+  // challenge
+  {
+    path: '/challenge',
+    name : 'Challenge',
+    component : Challenge,
+    meta: { requireAuth: true }
   },
 ]
 
@@ -147,7 +147,7 @@ router.beforeEach(function (to, from, next) {
       next()
     }
   }
-
+  
 })
 
 export default router

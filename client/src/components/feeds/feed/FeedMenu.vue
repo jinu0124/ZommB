@@ -1,14 +1,19 @@
 <template>
   <ul class="dropdown-menu" aria-labelledby="FeedMenuDropdown">
-    <li><a class="dropdown-item" href="#">수정하기</a></li>
-    <li><a class="dropdown-item" href="#">삭제하기</a></li>
-    <li><a class="dropdown-item" href="#">신고하기</a></li>
+    <li><a class="dropdown-item">수정하기</a></li>
+    <li><a class="dropdown-item">삭제하기</a></li>
+    <li><a class="dropdown-item" @click="moveToReport()">신고하기</a></li>
   </ul>
 </template>
 
 <script>
 export default {
   name: 'FeedMenu',
+  methods: {
+    moveToReport() {
+      this.$router.push('/report');
+    }
+  }
 }
 </script>
 

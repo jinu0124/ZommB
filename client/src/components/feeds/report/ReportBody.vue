@@ -39,12 +39,12 @@ export default {
     submit(flag) {
       this.reported = flag;
     }
-  }
+  },
 }
 </script>
 
 <style src="@/assets/style/button.css"></style>
-<style>
+<style scoped>
 .report {
   text-align: center;
 }

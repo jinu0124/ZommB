@@ -7,13 +7,11 @@
       <input id="following-tab" type="radio" name="tab-item">
       <label class="tab-item" for="following-tab" @click=changePage(1)>{{following}} 팔로잉</label>
       <div class="tab-content" id="follower-content">
-        <!-- 게시물이 그리드 형식으로 한 줄에 3개씩 들어오게 됨 -->
         <Follower
           v-if="selectedPage === 0"
         />
       </div>
       <div class="tab-content" id="following-content">
-        <!-- 서재 표현 -->
         <Following
           v-if="selectedPage === 1"
         />
@@ -49,7 +47,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .tabs {
   margin: 0 auto;
   padding-bottom: 40px;

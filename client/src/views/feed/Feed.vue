@@ -29,7 +29,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .feed{
   display: flex;
   flex-flow: column;

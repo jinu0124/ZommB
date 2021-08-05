@@ -24,7 +24,7 @@ export default {
   },
 }
 </script>
-<style>
+<style scoped>
 .reply-list{
   margin: 0 auto;
   display: flex;

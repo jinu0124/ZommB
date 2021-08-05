@@ -2,12 +2,6 @@
   <div class="report-header">
     <div class="d-flex justify-content-between align-items-center">
       <span class="report-logo">게시물 신고 완료</span>
-      <img
-        class="exit"
-        src="@/assets/image/test/exit.png"
-        type="button"
-        @click="deleteResult(false)"
-      />
     </div>
     <div>{{complete}}</div>
     <div>{{message}}</div>
@@ -17,7 +11,7 @@
     />
     <div>신고 이유</div>
     <button class="btn-2 btn-grey btn-reason">{{reason}}</button>
-    <button class="btn-2 btn-primary1" type="button" @click="moveToFeed">NewsFeed로 돌아가기</button>
+    <button class="btn-2 btn-primary1" type="button" @click="moveToFeed()">NewsFeed로 돌아가기</button>
   </div>
 </template>
 
@@ -26,15 +20,13 @@ export default {
   name: 'ReportSuccess',
   data() {
     return {
+      isReported: false,
       complete: "신고 접수가 완료되었습니다.",
       message: "신고된 게시물 검토 후, 적절한 조치를 취할 수 있도록 하겠습니다.",
       reason: "",
     }
   },
   methods: {
-    deleteResult(flag) {
-      this.reported = flag;
-    },
     moveToFeed() {
       this.$router.push('/feed');
     },
@@ -43,7 +35,7 @@ export default {
 </script>
 
 <style src="@/assets/style/button.css"></style>
-<style>
+<style scoped>
 .report-header {
     background: #7B60F1;
     padding: 12px 20px;

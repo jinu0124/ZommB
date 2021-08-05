@@ -35,7 +35,7 @@ export default {
 }
 </script>
 
-<style>
+<style scoped>
 .content-part {
   margin: 0 auto;
   display: flex;
