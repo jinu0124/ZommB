@@ -15,6 +15,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(value = ApplicationException.class)
     public ResponseEntity handleApplicationException(ApplicationException e){
+        e.printStackTrace();
         if(e.getObj() != null) {
             Map<String, Object> map = new HashMap<>();
             map.put("message", e.getMessage());
@@ -27,11 +28,13 @@ public class GlobalExceptionHandler {
     // https://withseungryu.tistory.com/95
     @ExceptionHandler(value = DataAccessException.class)
     public ResponseEntity handleDataAccessException(DataAccessException e){
+        e.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage() + "\n" + Arrays.toString(e.getStackTrace()));
     }
 
     @ExceptionHandler(value = Exception.class)
     public String handleException(Exception e){
+        e.printStackTrace();
         return e.getMessage();
     }
 }
