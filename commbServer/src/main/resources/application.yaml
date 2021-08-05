@@ -44,7 +44,9 @@ spring:
             token-uri: https://kauth.kakao.com/oauth/token
             user-info-uri: https://kapi.kakao.com/v2/user/me
             user-name-attribute: id
-
+  jackson:
+    deserialization:
+      ADJUST_DATES_TO_CONTEXT_TIME_ZONE : false
   servlet:
     multipart:
       enabled: true
