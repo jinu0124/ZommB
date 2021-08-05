@@ -13,13 +13,11 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.UserRepository;
-import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.annotation.PostConstruct;
@@ -29,9 +27,7 @@ import javax.transaction.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
-import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -43,14 +39,14 @@ public class ProfileServiceImpl implements ProfileService {
 //    static String uploadPath;
 
     /* for eclipse development before build code */
-    static String uploadPath = "C:" + File.separator + "Users" + File.separator + "jinwoo"
-            + File.separator + "IdeaProjects"
-            + File.separator + "SUBPJT1"
-            + File.separator + "commbServer"
-            + File.separator + "src"
-            + File.separator + "main"
-            + File.separator + "resources"
-            + File.separator + "static";
+//    static String uploadPath = "C:" + File.separator + "Users" + File.separator + "jinwoo"
+//            + File.separator + "IdeaProjects"
+//            + File.separator + "SUBPJT1"
+//            + File.separator + "commbServer"
+//            + File.separator + "src"
+//            + File.separator + "main"
+//            + File.separator + "resources"
+//            + File.separator + "static";
 
     @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
@@ -128,8 +124,8 @@ public class ProfileServiceImpl implements ProfileService {
         if(myReq.getFlag() > 2) throw new ApplicationException(HttpStatus.BAD_REQUEST, "잘못된 요청입니다.");
         else if(myReq.getFlag() != 0){
             // Project 내 파일 삭제
-            File file = new File(uploadPath + File.separator + uploadFolder + File.separator + user.get().getFileUrl());
-            if(file.exists()) if(!file.delete()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 파일 삭제 실패");
+//            File file = new File(uploadPath + File.separator + uploadFolder + File.separator + user.get().getFileUrl());
+//            if(file.exists()) if(!file.delete()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 파일 삭제 실패");
 
             // S3 파일 삭제
             if(my.getUserFileUrl() != null) s3Client.deleteObject(this.bucket, "profile/" + my.getUserFileUrl());
@@ -144,7 +140,7 @@ public class ProfileServiceImpl implements ProfileService {
             Part part = extractFile(parts);
             String fileName = upload(part);
 
-            my.setUserFileUrl(fileUpload(uploadPath, part, fileName));
+            my.setUserFileUrl(fileName);        // fileUpload(uploadPath, part, fileName)
             updateDb(user, my.getUserFileUrl(), myReq.getNickname());
         }
         else{                                                               // 프로필 이미지 삭제 -> DB userFileUrl -> null

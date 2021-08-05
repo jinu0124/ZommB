@@ -67,7 +67,7 @@ cloud:
   aws:
     credentials:
       accessKey : AKIAW4VCONM6ZDUGJRPK
-      secretKey : [secretKey 란]
+      secretKey : NAVnqyPx/G07xlmop9YPs8G2jjEhGnUF0yL7g3su
     s3:
       bucket : ssafy.commb
     region:
