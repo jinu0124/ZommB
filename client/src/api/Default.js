@@ -2,30 +2,16 @@ import axios from 'axios'
 import router from '@/router'
 import store from '@/store/'
 
-// 저장된 토큰 불러오기 
-let accessToken = store.state.user.accessToken
-let refreshToken = store.state.user.refreshToken
-
 const _axios = axios.create({
   baseURL: 'http://localhost:8080',
   // baseURL: 'http://i5a602.p.ssafy.io:8080',
   timeout: 10000,
-  // 헤더 정보 자동 추가
-  headers: {
-    'accesstoken': accessToken
-  }
 })
 
-/*
-  1. 요청 인터셉터를 작성합니다.
-  2개의 콜백 함수를 받습니다.
-
-  1) 요청 바로 직전 - 인자값: axios config
-  2) 요청 에러 - 인자값: error
-*/
 _axios.interceptors.request.use(
   function (config) {
-    // config.headers['access-token'] = user.state.accessToken
+    // 헤더 정보 추가
+    config.headers['accesstoken'] = store.state.user.accessToken
     return config;
   }, 
   function (error) {
@@ -33,13 +19,6 @@ _axios.interceptors.request.use(
   }
 )
 
-/*
-  2. 응답 인터셉터를 작성합니다.
-  2개의 콜백 함수를 받습니다.
-
-  1) 응답 정성 - 인자값: http response
-  2) 응답 에러 - 인자값: http error
-*/
 _axios.interceptors.response.use(
   function (response) {
     return response
@@ -52,7 +31,7 @@ _axios.interceptors.response.use(
       console.log(error.response)
       // console.log('토큰 만료')
       const originalRequest = error.config
-      originalRequest.headers.refreshtoken = refreshToken
+      originalRequest.headers.refreshtoken = store.state.user.refreshToken
       await _axios(originalRequest)
         .then((res) => {
           console.log(res)
@@ -71,5 +50,4 @@ _axios.interceptors.response.use(
   }
 );
 
-// 생성한 인스턴스를 익스포트 합니다.
 export default _axios;
