@@ -29,9 +29,8 @@ public class BookDto {
     private Integer readCnt;
 
     private String contents;
-
     private Integer isRead;
-    private Float rate;
+    private Double rate;
 
     private List<KeywordDto> keyword;
 
@@ -41,6 +40,7 @@ public class BookDto {
     public static class BookSearchRequest{                // 요청
         private String searchType;
         private String searchWord;
+        private Integer page;
     }
 
     @Getter
@@ -49,11 +49,7 @@ public class BookDto {
     public static class RegisterRequest{                // 요청
         private Integer id;
         private Integer isRead;
-        private float rate;
-
-        public int getIsRead() {
-            return isRead;
-        }
+        private Double rate;
     }
 
     @Getter
@@ -93,6 +89,7 @@ public class BookDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Builder
     public static class ResponseList{               // 반환
         private List<BookDto> data;
         private String retMsg;

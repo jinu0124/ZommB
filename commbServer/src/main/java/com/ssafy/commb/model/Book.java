@@ -1,27 +1,33 @@
 package com.ssafy.commb.model;
 
-import lombok.Getter;
-import lombok.Setter;
+import com.ssafy.commb.dto.book.BookDto;
+import com.ssafy.commb.model.follow.Follow;
+import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name="Book")
 @Getter
 @Setter
-public class Book {
+@AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
+@NoArgsConstructor                          // 기본 생성자
+@Builder                                    // Builder 패턴 사용
+public class Book implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     private String bookName;
 
     private String author;
 
-    private int year;
+    private Integer year;
 
     private String isbn;
 
@@ -47,4 +53,42 @@ public class Book {
     @JoinTable(name="Book_Keyword", joinColumns = @JoinColumn(name="book_id")
             , inverseJoinColumns = @JoinColumn(name="keyword_id"))
     private List<Keyword> keywords = new ArrayList<Keyword>();
+
+    public BookDto convertBookDto(){
+        return BookDto.builder()
+                .id(this.id)
+                .bookName(this.bookName)
+                .bookFileUrl(this.fileUrl)
+                .author(this.author)
+                .contents(this.description)
+                .isbn(this.isbn)
+                .publisher(this.publisher)
+                .year(this.year)
+                .build();
+
+    }
+
+    @Override
+    public boolean equals(Object o){
+        if(this == o){
+            return true;
+        }
+        if(o==null || getClass() != o.getClass()){
+            return false;
+        }
+
+        Book book = (Book) o;
+
+        return Objects.equals(this.isbn, book.getIsbn());
+    }
+
+    @Override
+    public int hashCode(){
+        return this.isbn.hashCode();
+    }
+
+    @Override
+    public String toString(){
+        return this.isbn;
+    }
 }

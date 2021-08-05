@@ -1,6 +1,7 @@
 package com.ssafy.commb.dto.bookshelf;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.ssafy.commb.dto.book.BookDto;
 import lombok.*;
 import org.springframework.stereotype.Component;
 
@@ -16,7 +17,7 @@ import java.util.List;
 public class BookShelfDto {
     private String bestGenre;
 
-    private List<BookShelfDto> books;
+    private List<BookDto> books;
 
     @Getter
     @AllArgsConstructor
