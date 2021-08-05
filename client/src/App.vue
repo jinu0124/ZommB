@@ -25,6 +25,7 @@ export default {
         || this.$route.name === 'Reply'
         || this.$route.name === 'Report'
         || this.$route.name === 'WriteArticle'
+        || this.$route.name === 'Follow'
         ) {
         return false
       }

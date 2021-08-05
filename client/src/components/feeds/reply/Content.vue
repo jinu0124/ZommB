@@ -3,22 +3,19 @@
     <img
       alt=""
       class="content-writer-image"
-      src="https://static.overlay-tech.com/assets/f7d182ec-a020-4c3a-b892-187659722f02.png"
+      src="@/assets/image/common/profileDefault.svg"
     />
     <div class="content">
-      <p class="content-writer">Nickname</p>
-      <p class="article">
-        밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두번째 기회를 드립니다.
-      </p>
-      <div class="hasgtags">
-        <button class="hashtag">#해시태그</button>
-        <button class="hashtag">#해시태그</button>
-        <button class="hashtag">#해시태그</button>
+      <p class="content-writer">{{nickname}}</p>
+      <p class="article">{{content}}</p>
+      <div>
+        <span
+          v-for="(tag, idx) in tags"
+          :key="idx"
+          class="content-tag rounded-pill me-1"
+        >#{{tag}}</span>
       </div>
-      <div class="content-menu">
-        <div class="ellipse-12"></div>
-      </div>
-      <p class="content-duration">00시간 전</p>
+      <p class="content-duration">{{duration}}시간 전</p>
     </div>
   </div>
 </template>
@@ -26,14 +23,24 @@
 <script>
 export default {
   name: 'Content',
+  data(){
+    return {
+      nickname: 'Nickname',
+      content: '밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.',
+      tags: [
+        '해시태그','테스트','입니다.'
+      ],
+    }
+  }
 }
 </script>
 
 <style>
 .content-part {
-  margin-bottom: 2px;
+  margin: 0 auto;
   display: flex;
   align-items: flex-start;
+  width: 408px;
 }
 .content-writer-image {
   width: 40px;
@@ -43,9 +50,11 @@ export default {
   border-radius: 203px;
 }
 .content {
+  width: 100%;
   margin-right: 10px;
   display: flex;
   flex-direction: column;
+  text-align: left;
   align-items: flex-start;
 }
 .content-writer {
@@ -55,15 +64,12 @@ export default {
   font-family: noto-sans-kr-10-bold;
 }
 .article {
-  max-width: 194px;
+  max-width: 400px;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
   font-family: noto-sans-kr-10-regular;
 }
-.hashtags {
-  display: flex;
-  align-items: flex-start;
-}
+
 .hashtag {
   height: 12px;
   width: 35px;
@@ -74,16 +80,9 @@ export default {
 .content-menu {
   margin-top: 27px;
   padding: 0 2.45px;
-  display: flex;
   align-items: flex-start;
   border-left: 4px solid rgba(155, 154, 154, 1);
   border-right: 4px solid rgba(155, 154, 154, 1);
-}
-.ellipse-12 {
-  width: 4.1px;
-  height: 4px;
-  background-color: rgba(155, 154, 154, 1);
-  border-radius: 50%;
 }
 .content-duration {
   width: 13.6%;
@@ -95,5 +94,9 @@ export default {
   color: rgba(164, 164, 164, 1);
   margin-bottom: 25px;
   margin-left: 53px;
+}
+.content-tag {
+  color: #585858;
+  background: #FFDC7C;
 }
 </style>

@@ -1,31 +1,28 @@
 <template>
   <div class="my-profile">
     <ProfileHeader/>
-    <div class="user-image">
-      <!-- user image 위에 뱃지 포함한 div 작성 -->
-      <img
-        id="myImage"
-        class="profile-image"
-        src="@/assets/image/test/profileTest.jpg"
-        alt="profileImage"
-      >
-    </div>
+    <img
+      id="myImage"
+      class="profile-image"
+      src="@/assets/image/test/profileTest.jpg"
+      alt="profileImage"
+    >
     <div class="user-info">
-      <span class="name-badge">
-        <b class="user-nickname">{{nickname}}</b>
+      <span>
+        <b class="user-nickname">Nickname</b>
         <button class="weekly-event-badge badge"><img class="badge-image"><!-- 주간이벤트 뱃지 이미지 -->
         GOLD</button>
         <button class="daily-event-badge badge"><img class="badge-image"><!-- 데일리이벤트 뱃지 이미지 -->
         GOLD</button>
       </span>
-      <div class="follow" type="button" @click="moveToFollow()">
-        <span class="follower">{{follower}} followers</span>
-        <span class="following">{{following}} followings</span>
+      <div class="follow-btn" type="button" @click="moveToFollow()">
+        <span class="follow">00 followers</span>
+        <span class="follow">00 followings</span>
       </div>
       <div class="commb-info">
-        <span><div>{{feedNum}}</div><div>게시물</div></span>
-        <span><div>{{libraryNum}}</div><div>읽은책</div></span>
-        <span><div>{{bookcartNum}}</div><div>읽을책</div></span>
+        <span><div>00</div><div>게시물</div></span>
+        <span><div>00</div><div>읽은책</div></span>
+        <span><div>00</div><div>읽을책</div></span>
       </div>
       <button class="btn-primary1 btn-1">
         팔로우
@@ -76,9 +73,6 @@ export default {
   },
   data () {
     return {
-      nickname: 'NickName',
-      follower: 0,
-      following: 0,
       selectedPage: 0,
       feedNum: 0,
       libraryNum: 0,
@@ -104,13 +98,6 @@ export default {
   padding: 60px 0 0 0;
   text-align: center;
 }
-.user-image {
-  margin-bottom: 20px;
-}
-#myImage {
-  display: block;
-  margin: 0px auto;
-}
 .profile-image {
   width: 200px;
   height: 200px;
@@ -119,14 +106,11 @@ export default {
 .user-info {
   margin: 0px auto;
 }
-.name-badge {
-  margin-bottom: 10px;
-}
 .follow {
   margin: 20px 10px 0 10px;
 }
-.follower, .following {
-  margin: 0 3px;
+.follow-btn {
+  margin-top: 20px;
 }
 .btn-primary1 {
   margin: 20px 0;

@@ -16,7 +16,7 @@ export default {
   .dropdown-menu {
     border: none;
     background: rgba(0, 0, 0, 0.7);
-    border-radius: 0px 10px 10px 10px;
+    border-radius: 10px 10px 10px 10px;
     min-width: 3rem;
   }
   .dropdown-item {

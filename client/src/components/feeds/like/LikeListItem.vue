@@ -14,7 +14,7 @@
           type="button" 
         >
       </span>
-      <span class="user-nickname">nickname</span>
+      <span class="user-nickname">{{nickname}}</span>
       <span>
         <button 
           class="follow btn-5 btn-yellow"
@@ -39,13 +39,13 @@
 <script>
 
 export default {
-  components: { },
   name: 'LikeListItem',
   data() {
     return{
       isColor: false,
       Follow: true,
       unFollow: false,
+      nickname: 'Nickname',
     };
   },
   props: {

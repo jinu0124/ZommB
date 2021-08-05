@@ -8,16 +8,12 @@
 <script>
 import Header from '@/components/Header.vue';
 import FeedList from '@/components/feeds/feed/FeedList.vue';
-// import FeedMenu from '@/components/feeds/feed/FeedMenu.vue';
-// import WriteFeed from '@/components/feeds/write/WriteFeed.vue';
 
 export default {
   name: 'Feed',
   components: {
     FeedList,
     Header,
-    // FeedMenu,
-    // WriteFeed,
   },
   data: () => {
     return {
@@ -35,7 +31,9 @@ export default {
 
 <style>
 .feed{
-  padding: 60px 0 0 0;
+  display: flex;
   flex-flow: column;
+  margin: 60px auto 0;
+  align-items: center;
 }
 </style>

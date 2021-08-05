@@ -1,28 +1,26 @@
 <template>
 <div class="feed-list">
   <center>
-  <div class="first">
-    <span>
-      <img
-        v-if="myInfo.userFileUrl"
-        class="user-profile"
-        type="button"
-        id="UserProfile"
-        :src="myInfo.userFileUrl"
-        alt="user-profile"
-      >
-      <img
-        v-else
-        alt="디폴트 회원 이미지"
-        class="default-user-image"
-        src="@/assets/image/common/profileDefault.svg"
-        type="button"
-        id="UserProfile"
-      >
-    </span>
-    <span>
-      <div>{{nickname}}</div>
-      <div>
+  <div class="feed-header">
+    <img
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    >
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
+      type="button"
+      id="UserProfile"
+    >
+    <span class="feedHeader">
+      <div class="owner">{{nickname}}</div>
+      <div class="mini-title">
         <span>
           <img
             alt="미니북"
@@ -30,28 +28,26 @@
             src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
           />
         </span>
-        <span>{{title}}</span>
+        <span class="bookTitle">{{title}}</span>
       </div>
     </span>
-    <span>
-      <img
-      alt="피드 메뉴"
-      class="feed-menu dropdown-toggle"
-      data-bs-toggle="dropdown"
-      aria-expanded="false"
-      src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
-      type="button"
-      id="FeedMenuDropdown"
-      />
-      <FeedMenu/>
-    </span>
+    <img
+    alt="피드 메뉴"
+    class="feed-menu dropdown-toggle"
+    data-bs-toggle="dropdown"
+    aria-expanded="false"
+    src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
+    type="button"
+    id="FeedMenuDropdown"
+    />
+    <FeedMenu/>
   </div>
   <img
     alt="피드 이미지"
     class="feed-image"
     src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
   />
-  <div class="second">
+  <div class="like-reply">
     <span>
       <img
         alt="좋아요버튼안눌림"
@@ -66,61 +62,40 @@
         v-show="Like"
       />
     </span>
-    <span type="button" @click="moveToLike">{{likeNum}}</span>
+    <span class="like-num" type="button" @click="moveToLike">{{likeNum}}</span>
     <span>
       <img
         alt=""
-        class="reply" type="button" @click="moveToReply"
+        class="btn-reply" type="button" @click="moveToReply"
         src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
       />
     </span>
-    <span type="button" @click="moveToReply">{{replyNum}}</span>
+    <span class="reply-num" type="button" @click="moveToReply">{{replyNum}}</span>
   </div>
   <div class="feed-owner">{{nickname}}</div>
   <div class="third">
-    <p>{{shortenContent}}</p>
+    <p class="contentDetail">{{shortenContent}}</p>
     <p 
       class="content-more"
       type="button"
       @click="showMoreContent(true)"
       v-show="!moreContent"
     >더보기</p>
+    <p 
+      class="content-more"
+      type="button"
+      @click="showMoreContent(false)"
+      v-show="moreContent"
+    >접기</p>
     <div>
       <span
         v-for="(tag, idx) in tags"
         :key="idx"
         class="feed-tag rounded-pill me-1"
-      >{{tag}}</span>
+      >#{{tag}}</span>
     </div>
   </div>
-  <div class="fourth replies">
-    <span>user1</span>
-    <span>
-      <div>댓글 어쩌구 저쩌구...</div>
-      <div class="reply-like-num">좋아요 3개</div>
-    </span>
-    <span>
-      <img
-        alt=""
-        class="reply-like"
-        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
-      />
-    </span>
-  </div>
-  <div class="fifth replies">
-    <span type="button">user2</span>
-    <span>
-      <div>댓글 어쩌구 저쩌구...</div>
-      <div class="reply-like-num">좋아요 3개</div>
-    </span>
-    <span>
-      <img
-        alt=""
-        class="reply-like"
-        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
-      />
-    </span>
-  </div>
+  <ReplyListItem/>
   <div><span class="reply-more" type="button" @click="moveToReply">더보기</span></div>
   </center>
   </div>
@@ -129,17 +104,19 @@
 <script>
 import { mapState } from "vuex"
 import FeedMenu from './FeedMenu.vue';
+import ReplyListItem from '@/components/feeds/reply/ReplyListItem.vue'
 import _ from 'lodash'
-import axios from 'axios'
+// import axios from 'axios'
 
 export default {
   name: 'FeedListItem',
   components: {
     FeedMenu,
+    ReplyListItem,
   },
   data() {
     return {
-      content: '피드 게시물 내용입니다. 많으면 짤리게 할까요 이것도...세라누나 코드 좀 가져갈게....누나 너무 잘한다. 많이 배워가. 근데 진짜 긴데도 안짤리네..',
+      content: '피드 게시물 내용입니다. 많으면 짤리게 할까요 이것도...세라누나 코드 좀 가져갈게....누나 너무 잘한다. 많이 배워가. 근데 진짜 긴데도 안짤리네..length 200으로 하고 더보기 누르면 보이게 만들고 싶다. 헐 200으로 했는데 아직도 안짤렸네,,,이제는 ... 무한반복................................................. 이건 왜 안짤려...',
       tags: [
         '해시태그',
         '테스트',
@@ -155,16 +132,16 @@ export default {
       feeds: [],
     };
   },
-  created() {
-    axios.get('/feed')
-    .then( res => {
-      console.log(res);
-      this.feeds = res.data;
-    })
-    .catch( err => {
-      console.log(err);
-    })
-  },
+  // created() {
+  //   axios.get('/feed')
+  //   .then( res => {
+  //     console.log(res);
+  //     this.feeds = res.data;
+  //   })
+  //   .catch( err => {
+  //     console.log(err);
+  //   })
+  // },
   methods: {
     moveToLike() {
       this.$router.push('/like');
@@ -184,14 +161,15 @@ export default {
     },
     showMoreContent(flag) {
       this.moreContent = flag;
-      this.shortenContent = stop;
     }
   },
   computed: {
     shortenContent() {
-      return _.truncate(this.content, {
-        'length': 50,
-      })
+      if(this.moreContent){
+        return this.content;
+      }else{
+        return _.truncate(this.content, {'length': 150,})
+      }
     },
     ...mapState('user', ['myInfo'])
   },
@@ -203,25 +181,55 @@ export default {
 //   align-content: center;
 //   text-align: center;
 // }
-.first{
+.feed-list{
   display: flex;
+  margin: 0 auto;
+  width: 408px;
 }
-.first span {
+.feed-header{
+  display: flex;
+  align-items: flex-start;
+}
+.feed-header span {
   margin: 5px 3px;
+}
+.user-profile {
+  align-self: center;
 }
 .default-user-image {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
 }
-.feed-menu {
-  align-self: flex-end;
+.feedHeader{
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 }
-.second span {
-  margin: 5px 2px;
+.mini-title, .owner{
+  margin: 2px 0 2px 5px;
+}
+.feed-menu{
+  align-self: center;
+}
+.feed-image{
+  width: 408px;
+  height: 100%;
+}
+.like-reply {
+  display: flex;
+  align-items: flex-start;
+}
+.btn-like, .btn-reply {
+  width: 24px;
+  height: 24px;
+}
+.btn-like, .btn-reply, .like-num, .reply-num {
+  margin: 5px 0 5px 5px;
 }
 .feed-owner {
-  align-items: left;
+  display: flex;
 }
 .replies{
   display: flex;
@@ -233,7 +241,11 @@ export default {
 .third {
   background-color: rgba(241, 241, 241, 1);
   border-radius: 10px;
-  text-align: center;
+  text-align: left;
+  padding: 5px;
+}
+.like-reply, .feed-owner, .third{
+  max-width: 408px;
 }
 .feed-tag {
   color: #585858;
