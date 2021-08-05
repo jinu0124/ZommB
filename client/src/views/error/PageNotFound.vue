@@ -10,17 +10,30 @@
       <div class="error-msg">Page Not Found</div>
       <div class="error-msg-kr">요청하신 페이지를 찾을 수 없습니다.</div>
       <button
+        v-if="isLogin"
+        @click="$router.push({ name: 'Feed' })"
         class="btn-2 btn-yellow mt-3 btn-text"
       >
         NewsFeed로 돌아가기
+      </button>
+      <button
+        v-else
+        @click="$router.push({ name: 'Index' })"
+        class="btn-2 btn-yellow mt-3 btn-text"
+      >
+        Home으로 돌아가기
       </button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-
+  name: 'PageNotFound',
+  computed: {
+    ...mapState('user', ['isLogin'])
+  }
 }
 </script>
 
