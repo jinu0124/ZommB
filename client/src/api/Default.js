@@ -1,14 +1,10 @@
 import axios from 'axios'
 import router from '@/router'
-// import user from '@/store/modules/user'
+import store from '@/store/'
 
-// 저장된 토큰 불러오기 (1) localStorage
-let accessToken = JSON.parse(localStorage.getItem('vuex')).user.accessToken
-// let refreshToken = JSON.parse(localStorage.getItem('vuex')).user.refreshToken
-
-// 저장된 토큰 불러오기 (2) vuex
-// let accessToken = user.state.accessToken
-// let refreshToken = user.state.refreshToken
+// 저장된 토큰 불러오기 
+let accessToken = store.state.user.accessToken
+let refreshToken = store.state.user.refreshToken
 
 const _axios = axios.create({
   baseURL: 'http://localhost:8080',
@@ -49,12 +45,18 @@ _axios.interceptors.response.use(
     return response
   },
 
-  function (error) {
+  async function (error) {
     // 1. 토큰 만료 시, 토큰 refresh (jwt 정리되면 추가)
-    // 100 > 액세스 토큰 만료
-    // 액세스 + 리프레쉬 보내면 > 액세스 새로 줌
-    // 2. 서버 에러 처리
-    if (error.response.status >= 500) {
+    if (error.response.status === 100 && error.response.data.msg === 'AccessToken has been expired') {
+      const originalRequest = error.config
+      originalRequest.headers.refreshtoken = refreshToken
+      await _axios(originalRequest)
+        .then((res) => {
+          store.commit('user/SET_ACCESS_TOKEN', res.headers.accesstoken)
+          store.commit('user/SET_REFRESH_TOKEN', res.headers.refreshtoken)
+          return res
+        })
+    } else if (error.response.status >= 500) {
       router.push({ name: 'ServerError'})
     }
     return Promise.reject(error);
