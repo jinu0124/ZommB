@@ -183,7 +183,7 @@ public class UserController {
 
         MyDto.Response myRes = profileService.updateProfile(myReq, request);
         if( myRes == null ) return new ResponseEntity("알 수 없는 에러라서 백엔드에 다시 요청!", HttpStatus.valueOf(401));
-        myRes.getData().setUserFileUrl("https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/" + myRes.getData().getUserFileUrl());
+
         return ResponseEntity.ok().body(myRes);
     }
 
