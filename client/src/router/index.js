@@ -5,6 +5,7 @@ import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import FindPassword from '@/views/user/FindPassword'
 import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
@@ -40,7 +41,11 @@ const routes = [
     path: '/updateinfo',
     name: 'UpdateInfo',
     component: UpdateInfo,
-    meta: { requireAuth: true }
+  },
+  {
+    path: '/find-password',
+    name: 'FindPassword',
+    component: FindPassword,
   },
   // error
   {
