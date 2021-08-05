@@ -26,8 +26,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping(value = "/users")
@@ -141,12 +140,15 @@ public class UserController {
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
         MyDto.Response myRes = userService.login(myReq);
-
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
+        List<String> exposeList = new ArrayList<>();
+        exposeList.add(accessToken);
+        exposeList.add(refreshToken);
+        resHeader.setAccessControlExposeHeaders(exposeList);
 
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
@@ -209,8 +211,10 @@ public class UserController {
     @DeleteMapping("/withdraw")
     @ApiOperation(value = "회원탈퇴")
     public ResponseEntity deleteUser(HttpServletRequest request) {
-        userService.deleteUser((int) request.getAttribute("userId"));
-        System.out.println("탈퇴");
+        int userId = (int) request.getAttribute("userId");
+        profileService.deleteProfile(userId);
+        userService.deleteUser(userId);
+
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 

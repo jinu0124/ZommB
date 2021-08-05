@@ -90,13 +90,13 @@ public class UserServiceImpl implements UserService {
 
     public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
-        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 필패");
-
+        System.out.println(awsProfileUrl);
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? awsProfileUrl + user.get().getFileUrl() : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : "");
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -156,9 +156,9 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(int userId) {
         Optional<User> user = userRepository.findUserById(userId);
         if(!user.isPresent()) return;
-        System.out.println("서비스");
+
         userRepository.deleteById(userId);
-        System.out.println("서비스2");
+
         // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
         File file = new File(uploadPath + File.separator + user.get().getFileUrl());
         if(file.exists()) file.delete();

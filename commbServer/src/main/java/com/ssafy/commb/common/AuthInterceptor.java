@@ -42,9 +42,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 //        String acToken = request.getParameter("acToken");      //  테스트용
 //        String rfToken = request.getParameter("rfToken");
-        System.out.println(accessToken);
         String acToken = request.getHeader(accessToken);       // Header를 통해 Token 받기
-        System.out.println(acToken);
         String rfToken;
         if(request.getAttribute(refreshToken) == null) rfToken = null;
         else rfToken = (String) request.getAttribute(refreshToken);
@@ -64,7 +62,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
-                map.put("status", 100);
+                map.put("status", 401);
             }
             else if(ret.equals("invalid")){
                 map.put("msg", "AccessToken is invalid");
@@ -80,6 +78,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 
         response.setStatus((int) map.get("status"));
         if((int) map.get("status") == 200) {
+            System.out.println("200!");
             return true;
         }
 
