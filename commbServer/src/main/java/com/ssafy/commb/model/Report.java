@@ -10,16 +10,18 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class Report {
-    @EmbeddedId
-    private ReportId id;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
 
     private String reason;
 
     @ManyToOne
-    @JoinColumn(name="feed_id", insertable=false, updatable=false )
+    @JoinColumn(name="feed_id")
     private Feed feed;
 
     @ManyToOne
-    @JoinColumn(name="user_id", insertable=false, updatable=false)
+    @JoinColumn(name="user_id")
     private User user;
 }

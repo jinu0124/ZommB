@@ -6,8 +6,11 @@ import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.Book;
 import com.ssafy.commb.model.Feed;
+import com.ssafy.commb.model.Report;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.FeedRepository;
+import com.ssafy.commb.repository.ReportRepository;
+import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +35,12 @@ public class FeedServiceImpl implements FeedService {
 
     @Autowired
     private FeedRepository feedRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private ReportRepository reportRepository;
 
     @Autowired
     private FeedDao feedDao;
@@ -152,6 +161,21 @@ public class FeedServiceImpl implements FeedService {
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
 
         feedRepository.deleteById(feedId);
+    }
+
+    public void reportFeed(int feedId, String reason, int userId){
+        Report report = new Report();
+
+        Optional<Feed> feed = feedRepository.findById(feedId);
+        Optional<User> user = userRepository.findById(userId);
+
+        if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "신고할 피드가 없습니다.");
+
+        report.setFeed(feed.get());
+        report.setUser(user.get());
+        report.setReason(reason);
+
+        reportRepository.save(report);
     }
 
 }

@@ -269,7 +269,11 @@ public class FeedController {
     // 피드 신고
     @PostMapping("/{feedId}/reports")
     @ApiOperation(value = "피드 신고")
-    public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody String reason) {
+    public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody String reason, HttpServletRequest request) {
+
+        int userId = (Integer) request.getAttribute("userId");
+
+        feedService.reportFeed(feedId, reason, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }

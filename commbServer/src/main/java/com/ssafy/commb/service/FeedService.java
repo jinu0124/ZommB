@@ -19,4 +19,6 @@ public interface FeedService {
     public int getUserId(int feedId);
 
     public void deleteFeed(int feedId);
+
+    public void reportFeed(int feedId, String reason, int userId);
 }
