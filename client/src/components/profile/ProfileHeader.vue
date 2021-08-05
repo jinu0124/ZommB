@@ -1,6 +1,6 @@
 <template>
   <div class="header fixed-top">
-    <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
       <i 
         class="nav-toggle fas fa-water"
         type="button" 
@@ -8,24 +8,17 @@
         data-bs-target="#offcanvasWithBothOptions" 
         aria-controls="offcanvasWithBothOptions"
       ></i>
-      <span 
-        class="header-logo pt-1"
+      <span
+        class="header-logo"
         type="button"
-        @click="moveHome"
+        @click="$router.push({ name: 'Index' })"
       >CommB</span>
       <div class="dropdown">
         <img
-          class="btn-write"
-          src="@/assets/image/test/btn-write.png"
-          type="button"
-          @click="moveToWrite()"
-          v-show="isFeed"
-        />
-        <img 
           v-if="myInfo.userFileUrl"
           class="user-profile dropdown-toggle"
-          type="button" 
-          id="UserMenuDropdown"
+          type="button"
+          id="UserMenuDropDown"
           data-bs-toggle="dropdown" 
           aria-expanded="false"
           :src="myInfo.userFileUrl" 
@@ -50,29 +43,12 @@
 </template>
 
 <script>
-import HeaderSideNav from "./HeaderSideNav.vue"
-import HeaderUserMenu from "./HeaderUserMenu.vue"
+import HeaderSideNav from "@/components/HeaderSideNav.vue"
+import HeaderUserMenu from "@/components/HeaderUserMenu.vue"
 import { mapState } from "vuex"
 
 export default {
-  name: 'Header',
-  data () {
-    return {
-      isFeed: false,
-    }
-  },
-  methods: {
-    moveToWrite() {
-      this.$router.push('/write');
-    },
-    moveHome () {
-      if (this.myInfo.id) {
-        this.$router.push({ name: 'Feed' })
-      } else {
-        this.$router.push({ name: 'Index' })
-      }
-    }
-  },
+  name: 'ProfileHeader',
   components: {
     HeaderSideNav,
     HeaderUserMenu,
@@ -85,27 +61,23 @@ export default {
 
 <style scoped>
   .header {
-    /* background: #7B60F1; */
+    background: #F1F1F1;
     padding: 12px 20px;
     height: 60px;
-    /* color: #fff; */
   }
   .nav-toggle {
     font-size: 1.5rem;
+    color: #7540EE;
   }
   .header-logo {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.5rem;
-  }
-  .btn-write{
-    width: 2rem;
-    height: 2rem;
-    margin: 0 10px 0 0;
+    margin: 0 auto;
+    color: #7540EE;
   }
   .user-profile {
     width: 2rem;
     height: 2rem;
     border-radius: 100%;
   }
-  
 </style>
