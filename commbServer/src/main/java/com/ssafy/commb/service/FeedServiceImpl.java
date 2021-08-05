@@ -71,7 +71,7 @@ public class FeedServiceImpl implements FeedService {
 
         FeedDto myfeed = FeedDto.builder().user(userDto).book(bookDto).content(feedReq.getContent()).build();
 
-        System.out.println("myfeed.getId : "+ myfeed.getId());
+        System.out.println("myfeed.getId : " + myfeed.getId());
 
         return myfeed;
 
@@ -87,15 +87,16 @@ public class FeedServiceImpl implements FeedService {
 
     private String fileUpload(String uploadPath, Collection<Part> parts) throws IOException {
         // 파일 업로드 작업
-        File uploadDir = new File(uploadPath + File.separator +  uploadFolder);   // File upload Path
-        if(!uploadDir.exists()) if(!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
+        File uploadDir = new File(uploadPath + File.separator + uploadFolder);   // File upload Path
+        if (!uploadDir.exists())
+            if (!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
 
         String savingFileName;
         SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
-        for(Part part : parts){
+        for (Part part : parts) {
             String fileName = getFileName(part);
 
-            if("".equals(fileName)) continue;           // filename 이 추출되지 않았다면 continue -> 다음 part 탐색 -> file이름 찾기
+            if ("".equals(fileName)) continue;           // filename 이 추출되지 않았다면 continue -> 다음 part 탐색 -> file이름 찾기
 
             UUID uuid = UUID.randomUUID();
             String extension = FilenameUtils.getExtension(fileName);
@@ -115,7 +116,7 @@ public class FeedServiceImpl implements FeedService {
 
         List<FeedDto> feeds = feedDao.userFeed(userId, (Integer) request.getAttribute("userId"));
 
-        for(FeedDto feed : feeds){
+        for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), (Integer) request.getAttribute("userId")));
         }
@@ -133,22 +134,22 @@ public class FeedServiceImpl implements FeedService {
 
     public void modifyFeed(String content, int feedId) {
         Optional<Feed> feed = feedRepository.findById(feedId);
-        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
+        if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
 
-        feed.ifPresent(feedSelect ->{
+        feed.ifPresent(feedSelect -> {
             feedSelect.setContent(content);
             feedRepository.save(feedSelect);
         });
     }
 
-    public int getUserId(int feedId){
+    public int getUserId(int feedId) {
         Optional<Feed> feed = feedRepository.findById(feedId);
         return feed.get().getUser().getId();
     }
 
-    public void deleteFeed(int feedId){
+    public void deleteFeed(int feedId) {
         Optional<Feed> feed = feedRepository.findById(feedId);
-        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
+        if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
 
         feedRepository.deleteById(feedId);
     }

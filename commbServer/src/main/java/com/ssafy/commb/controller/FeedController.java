@@ -7,7 +7,9 @@ import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
+import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
+import com.ssafy.commb.service.ThumbService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,12 @@ public class FeedController {
 
     @Autowired
     private FeedService feedService;
+
+    @Autowired
+    private ThumbService thumbService;
+
+    @Autowired
+    private CommentService commentService;
 
     // /feeds?searchWord="abc"
     // 게시물 리스트 검색
@@ -103,9 +111,9 @@ public class FeedController {
         if (content == null) return ResponseEntity.status(400).build();
 
         int myUserId = (Integer) request.getAttribute("userId");
-        int UserId = feedService.getUserId(feedId);
+        int userId = feedService.getUserId(feedId);
 
-        if (myUserId != UserId)
+        if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "게시물 수정 권한 없음"); // 작성자한테만 수정 버튼 보이도록 front에서 막기
 
         feedService.modifyFeed(content, feedId);
@@ -119,9 +127,9 @@ public class FeedController {
     public ResponseEntity deleteFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
-        int UserId = feedService.getUserId(feedId);
+        int userId = feedService.getUserId(feedId);
 
-        if (myUserId != UserId)
+        if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "게시물 삭제 권한 없음"); // 작성자한테만 삭제 버튼 보이도록 front에서 막기
 
         feedService.deleteFeed(feedId);
@@ -132,15 +140,24 @@ public class FeedController {
     // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
     @ApiOperation(value = "피드 좋아요 누르기")
-    public ResponseEntity likeFeed(@PathVariable Integer feedId) {
+    public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
+
+        int userId = (int) request.getAttribute("userId");
+
+        thumbService.likeFeed(feedId, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+
     // 게시물 좋아요 취소
     @DeleteMapping("/{feedId}/feed-like")
     @ApiOperation(value = "피드 좋아요 취소")
-    public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId) {
+    public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
+
+        int userId = (int) request.getAttribute("userId");
+
+        thumbService.deleteLikeFeed(feedId, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -160,7 +177,11 @@ public class FeedController {
     // 댓글 작성
     @PostMapping("/{feedId}/comments")
     @ApiOperation(value = "댓글 작성")
-    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content) {
+    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
+
+        int userId = (int) request.getAttribute("userId");
+
+        commentService.uploadComment(feedId, userId, content);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -169,7 +190,15 @@ public class FeedController {
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")
     @ApiOperation(value = "댓글 수정")
-    public ResponseEntity modifyComment(@PathVariable Integer commentId, @PathVariable Integer feedId, @RequestBody String content) {
+    public ResponseEntity modifyComment(@PathVariable Integer commentId, @PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
+
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = commentService.getUserId(commentId);
+
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 수정 권한 없음"); // 작성자한테만 수정 버튼 보이도록 front에서 막기
+
+        commentService.modifyComment(commentId, content, feedId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -177,19 +206,27 @@ public class FeedController {
     // 댓글 삭제
     @DeleteMapping("/{feedId}/comments/{commentId}")
     @ApiOperation(value = "댓글 삭제")
-    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer feedId) {
+    public ResponseEntity deleteComment(@PathVariable Integer commentId, @PathVariable Integer feedId, HttpServletRequest request) {
+
+        int userId = (Integer) request.getAttribute("userId");
+
+        commentService.deleteComment(commentId, feedId, userId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
-    // 댓글 좋아요 or 취소
+    // 댓글 좋아요
     @PostMapping("/{feedId}/comments/{commentId}/comment-like")
     @ApiOperation(value = "댓글 좋아요 누르기")
-    public ResponseEntity likeComment(@PathVariable Integer feedId, @PathVariable Integer commentId) {
+    public ResponseEntity likeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
+
+        int userId = (Integer) request.getAttribute("userId");
+
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    // 댓글 좋아요 취소
     @DeleteMapping("/{feedId}/comments/{commentId}/comment-like")
     @ApiOperation(value = "댓글 좋아요 취소")
     public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId) {
