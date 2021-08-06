@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
+import java.util.List;
 
 @Component
 @Getter                                     // Getter 생성
@@ -72,6 +73,17 @@ public class MyDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class Response {               // 반환
         private MyDto data;
+        private String retMsg;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Builder
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    public static class ResponseList {               // 반환
+        private List<MyDto> data;
         private String retMsg;
     }
 

@@ -69,6 +69,7 @@
         <span
           class="btn-text-s"
           type="button"
+          @click="$router.push({ name: 'FindPassword'})"
         >비밀번호 찾기</span>
       </div>
 

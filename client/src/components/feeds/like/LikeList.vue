@@ -1,10 +1,13 @@
 <template>
-  <div class="likelist" v-if="likes && likes.length != 0">
+  <div>
+    <LikeListItem/>
+  </div>
+  <!-- <div class="likelist" v-if="likes && likes.length != 0">
     <like-list-item v-for="(like, index) in likes" :key="index" :like="like" />
   </div>
   <div class="no-like-list" v-else>
     <h2>좋아요를 표현한 회원이 없습니다.</h2>
-  </div>
+  </div> -->
 </template>
 
 <script>
