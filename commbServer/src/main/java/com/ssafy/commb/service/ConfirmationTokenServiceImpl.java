@@ -38,7 +38,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
 
         String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId();
         mailMessage.setSubject("회원가입 이메일 인증");
-        mailMessage.setText("링크를 클릭하시면 로그인 페이지로 이동합니다!\n"+"http://localhost:8080/users" + query);
+        mailMessage.setText("링크를 클릭하시면 로그인 페이지로 이동합니다!\n"+"http://i5a602.p.ssafy.io:8080/users" + query);
         emailSenderService.sendEmail(mailMessage);          // 메일 발송
 
         return emailConfirmationToken.getId();
