@@ -47,10 +47,17 @@ export default {
       data: userData
     })
   },
+  findPassword(userData) {
+    return _axios({
+      url: 'users/find-password',
+      method: 'get',
+      params: { email: userData }
+    })
+  },
   resetPassword(userData) {
     return _axios({
-      url: 'users/reset-password',
-      method: 'post',
+      url: 'users/update-password',
+      method: 'patch',
       data: userData
     })
   },

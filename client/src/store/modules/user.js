@@ -1,4 +1,3 @@
-// import userApi from '@/api/user'
 import router from '@/router'
 import userApi from '@/api/user'
 
@@ -25,6 +24,9 @@ const actions = {
   },
   moveToSignupEmail () {
     router.push({ name: 'SignupEmail' })
+  },
+  moveToFindPassword () {
+    router.push({ name: 'FindPassword' })
   },
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
@@ -68,10 +70,8 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_ISLOGIN', true)
-        commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
-        commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })
@@ -92,26 +92,32 @@ const actions = {
   async onUpdatePassword({ state }, userData) {
     await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         return res
       })
       .catch((err) => {
-        console.log(err.response)
+        // console.log(err.response)
         return Promise.reject(err.response)
       })
   },
-  // async onResetPassword({ dispatch }, userData) {
+  async onResetPassword({ dispatch }, userData) {
     // console.log(userData)
-    // await userApi.resetPassword(userData)
-    //   .then((res) => {
-    //     console.log(res)
-    //     dispatch('moveToLogin')
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response)
-    //     return Promise.reject(err.response)
-    //   })
-  // },
+    await userApi.resetPassword(userData)
+      .then((res) => {
+        console.log(res)
+        dispatch('moveToLogin')
+      })
+      .catch((err) => {
+        // 400 or 401
+        if (err.response.status === 400) {
+          return '비밀번호는 영문, 숫자 포함 8자 이상이어야 합니다.'
+        } else if (ErrorEvent.response.status === 401) {
+          return '잘못된 접근입니다.'
+        } else {
+          router.push({ name: 'ServerError' })
+        }
+      })
+  },
 }
 
 const mutations = {

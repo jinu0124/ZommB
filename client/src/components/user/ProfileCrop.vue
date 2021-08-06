@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-crop modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="profile-crop modal fade" id="profileCropModal" tabindex="-1" aria-labelledby="profileCropModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-fullscreen-sm-down">
       <div class="modal-content">
         <div class="modal-header d-flex align-items-center">
@@ -8,7 +8,7 @@
             type="button"
             data-bs-dismiss="modal"
           ></i>
-          <span class="modal-title" id="exampleModalLabel">프로필 변경</span>
+          <span class="modal-title" id="profileCropModalLabel">프로필 변경</span>
         </div>
         <div class="modal-body d-flex flex-column align-items-center">
           <croppa 
@@ -43,14 +43,6 @@
           >선택 완료
           </button>
         </div>
-        <!-- <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
-          <button
-            type="button"
-            class="btn btn-primary"
-            data-bs-dismiss="modal"
-          >저장</button>
-        </div> -->
       </div>
     </div>
   </div>
@@ -92,6 +84,9 @@ export default {
 <style scoped>
   .croppa-img {
     margin: 0 auto 20px;
+  }
+  .modal.show {
+    transition: none !important;
   }
   .modal-content {
     border: none;

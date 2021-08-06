@@ -54,8 +54,9 @@ export default {
 }
 </script>
 
-<style src="@/assets/style/button.css"></style>
 <style src="@/assets/style/accounts.css"></style>
+<style src="@/assets/style/button.css"></style>
+<style src="@/assets/style/common.css"></style>
 <style>
 #app {
   font-family: 'Noto Sans KR', sans-serif;
