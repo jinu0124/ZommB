@@ -5,8 +5,16 @@
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
     <div class="account-form p-5 d-flex flex-column align-items-center">
-      <div :class="[ fail.password ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
-        기존 비밀번호가 일치하지 않습니다.
+      <div class="d-flex flex-column alerts">
+        <div :class="[ fail.profile ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+          프로필 사진 업로드에 실패했습니다.
+        </div>
+        <div :class="[ fail.nickname ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+          잘못된 닉네임 입력 정보입니다.
+        </div>
+        <div :class="[ fail.password ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+          기존 비밀번호가 일치하지 않습니다.
+        </div>
       </div>
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
       <div class="d-flex flex-column align-items-center">
@@ -39,7 +47,8 @@
           <input
             id="nickname"
             class="account-input"
-            v-model="nickname"
+            :value="nickname"
+            @input="insertNickname"
             type="text"
             autocapitalize="off"
             maxlength="10"
@@ -145,7 +154,8 @@ export default {
       passwordSchema: new PV(),
       updatePassword: false,
       fail: {
-        userInfo: false,
+        nickname: false,
+        profile: false,
         password: false
       },
       isSuccessInfo: false,
@@ -154,6 +164,9 @@ export default {
   },
   methods: {
     ...mapActions('user', ['onUpdatePassword']),
+    insertNickname(event) {
+      this.nickname = event.target.value
+    },
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -187,7 +200,19 @@ export default {
                 this.isSuccessInfo = true
               })
               .catch((err) => {
-                console.log(err.response)
+                if (err.response === 400) {
+                  this.fail.nickname = true
+                  setTimeout(() => {
+                    this.fail.nickname = false
+                  }, 2000)
+                } else if (err.response === 401) {
+                  this.fail.profile = true
+                  setTimeout(() => {
+                    this.fail.profile = false
+                  }, 2000)
+                } else {
+                  this.$router.push({ name: 'ServerError' })
+                }
 
               })
           })
@@ -205,7 +230,14 @@ export default {
               this.$store.commit('user/SET_MY_INFO', res.data.data)
             })
             .catch((err) => {
-              console.log(err.response)
+              if (err.response === 400) {
+                this.fail.nickname = true
+                setTimeout(() => {
+                  this.fail.nickname = false
+                }, 2000)
+              } else {
+                this.$router.push({ name: 'ServerError' })
+              }
             })
         }
       } else {
@@ -369,6 +401,13 @@ export default {
     height: 80px;
     border-radius: 100%;
   }
+  .alerts {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+  }
   .fail-alert {
     width: 80vw;
     height: 35px;
@@ -381,11 +420,6 @@ export default {
     background: rgba(255, 119, 119, 0.95);
     border: 1px solid #FF7777;
     color: #fff;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1060;
   }
   .show {
     opacity: 1;
