@@ -26,6 +26,9 @@ const actions = {
   moveToSignupEmail () {
     router.push({ name: 'SignupEmail' })
   },
+  moveToFindPassword () {
+    router.push({ name: 'FindPassword' })
+  },
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
   },
@@ -96,7 +99,7 @@ const actions = {
         return res
       })
       .catch((err) => {
-        console.log(err.response)
+        // console.log(err.response)
         return Promise.reject(err.response)
       })
   },
