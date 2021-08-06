@@ -53,6 +53,7 @@ public class CommentServiceImpl implements CommentService {
 
         comment.ifPresent(comments -> {
             comments.setContent(content);
+            comments.setIsMod(1); // 댓글 수정
             commentRepository.save(comments);
         });
 
