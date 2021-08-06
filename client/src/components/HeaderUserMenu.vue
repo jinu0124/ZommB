@@ -36,6 +36,10 @@ export default {
     border-radius: 10px 0px 10px 10px;
     min-width: 3rem;
   }
+  .dropdown-menu.show {
+    transition: none !important;
+    margin: 2px -10px 0 !important;
+  }
   .dropdown-item {
     color: #fff;
     font-size: 0.9rem;
