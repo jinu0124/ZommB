@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
     // 토큰 생성 & 메일 발송 & Redis query 저장
-    public String TokenGeneration(int userId, String receiverEmail){
-        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail);        // 유저 ID, 이메일로 토큰 발행 및 이메일 발송 / DB에 토큰 정보 저장
+    public String TokenGeneration(int userId, String receiverEmail, String url){
+        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail, url);        // 유저 ID, 이메일로 토큰 발행 및 이메일 발송 / DB에 토큰 정보 저장
     }
 
     // 이메일 인증
@@ -131,7 +131,17 @@ public class UserServiceImpl implements UserService {
             confirmationTokenRepository.delete(select);
         });
 
+        Optional<ConfirmationToken> findExpToken = confirmationTokenRepository.findById(key);
+        findExpToken.ifPresent(confirmationTokenRepository::delete);
+
         return ret.get();
+    }
+
+    @Override
+    public boolean confirmEmailForPassword(String key) {
+        Optional<ConfirmationToken> findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(key); // token
+
+        return findConfirmationToken.isPresent();
     }
 
     @Override
@@ -147,9 +157,20 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    @Override
+    public void updatePassword(int userId, String password, int tmp) {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보를 찾을 수 없습니다.");
+
+        user.ifPresent(selectUser -> {
+            selectUser.setPassword(password);
+            userRepository.save(selectUser);
+        });
+    }
+
     public void validatePassword( String password){
          String pattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$";
-         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
+         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(400), "비밀번호 형식 오류");
     }
 
     @Override
@@ -179,6 +200,13 @@ public class UserServiceImpl implements UserService {
         UserDto.ResponseList userResList = new UserDto.ResponseList();
         userResList.setData(users);
         return userResList;
+    }
+
+    @Override
+    public int getUserInfoByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent()) return user.get().getId();
+        throw new ApplicationException(HttpStatus.valueOf(401), "존재하지 않는 이메일 입니다.");
     }
 
 }

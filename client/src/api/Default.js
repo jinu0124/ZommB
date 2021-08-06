@@ -11,9 +11,10 @@ const _axios = axios.create({
   // baseURL: 'http://i5a602.p.ssafy.io:8080',
   timeout: 10000,
   // 헤더 정보 자동 추가
-  headers: {
-    'accesstoken': "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDAwMDA0MCIsImlhdCI6MTYyODE1NTEwNiwiZXhwIjoxNjI4MTU1NDA2fQ.HTChOxGQRiWUK0G75wF17Gl7on60UJfa1xb-moSyAM4" // store.state.user.accessToken
-  }
+  // headers: {
+  //   'accesstoken': "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMDAwMDA0MCIsImlhdCI6MTYyODE1NTEwNiwiZXhwIjoxNjI4MTU1NDA2fQ.HTChOxGQRiWUK0G75wF17Gl7on60UJfa1xb-moSyAM4",
+  //   'refreshtoken' : "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YWxpZCIsImlhdCI6MTYyODE1NDU5MywiZXhwIjoxNjI4NzU5MzkzfQ.rxA05HE3vEjJ-lwqd7sgZUt4lOKJzFXVnybq0yZ0mxE"
+  // }
 })
 
 /*
@@ -26,6 +27,7 @@ const _axios = axios.create({
 _axios.interceptors.request.use(
   function (config) {
     // config.headers['access-token'] = user.state.accessToken
+    config.headers['accesstoken'] = store.state.user.accessToken
     return config;
   }, 
   function (error) {
@@ -53,6 +55,7 @@ _axios.interceptors.response.use(
       // console.log('토큰 만료')
       const originalRequest = error.config
       originalRequest.headers.refreshtoken = store.state.user.refreshToken
+      // originalRequest.headers['refreshtoken'] = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ2YWxpZCIsImlhdCI6MTYyODE1NDU5MywiZXhwIjoxNjI4NzU5MzkzfQ.rxA05HE3vEjJ-lwqd7sgZUt4lOKJzFXVnybq0yZ0mxE"
       await _axios(originalRequest)
         .then((res) => {
           console.log(res)
