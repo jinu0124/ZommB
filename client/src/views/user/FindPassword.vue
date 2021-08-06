@@ -1,7 +1,7 @@
 <template>
-  <div class="find-password">
+  <div class="account-page">
     <UnauthorizedHeader/>
-    <div class="fp-header">
+    <div class="account-header">
       <div class="title">Reset<br>Password</div>
     </div>
     <div class="account-form d-flex flex-column align-items-center">
@@ -76,23 +76,6 @@ export default {
 </script>
 
 <style scoped>
-  .find-password {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .fp-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .fp-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    line-height: 3rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
   .account-form .description {
     color: #212121;
     font-size: 11px;
