@@ -6,12 +6,12 @@
     </div>
     <div class="account-form d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      <div class="description">
-        회원 가입 시, 등록한 이메일 계정을 알려주세요! <br>
-        이메일을 통해 본인 인증을 진행한 뒤, <br>
-        비밀번호를 재설정할 수 있습니다. 
-      </div>
       <div class="account-inputs">
+        <div class="description">
+          회원 가입 시, 등록한 이메일 계정을 알려주세요! <br>
+          이메일을 통해 본인 인증을 진행한 뒤, <br>
+          비밀번호를 재설정할 수 있습니다. 
+        </div>
         <!-- 이메일 input -->
         <div class="account-input-box">
           <input
@@ -96,6 +96,6 @@ export default {
   .account-form .description {
     color: #212121;
     font-size: 11px;
-    margin: 60px 0 15px;
+    margin: 60px 10px 15px;
   }
 </style>

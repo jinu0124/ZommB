@@ -6,11 +6,11 @@
     </div>
     <div class="account-form d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      <div class="description">
-        메일 인증이 완료되었습니다!<br>
-        새로운 비밀번호를 입력해주세요.
-      </div>
       <div class="account-inputs">
+        <div class="description">
+          이메일 인증이 완료되었습니다!<br>
+          새로운 비밀번호를 입력해주세요.
+        </div>
         <!-- 새 비밀번호 input -->
         <div class="account-input-box">
           <input
@@ -157,6 +157,6 @@ export default {
   .account-form .description {
     color: #212121;
     font-size: 11px;
-    margin: 60px 0 15px;
+    margin: 60px 10px 15px;
   }
 </style>
