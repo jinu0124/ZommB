@@ -78,13 +78,13 @@ const routes = [
     path: '/feed',
       name : 'Feed',
       component : Feed,
-      meta: { requireAuth: true }
+      // meta: { requireAuth: true }
   },
   {
     path: '/like',
       name : 'Like',
       component : Like,
-      meta: { requireAuth: true }
+      // meta: { requireAuth: true }
   },
   {
     path: '/reply',
@@ -110,14 +110,14 @@ const routes = [
     path: '/follow',
     name: 'Follow',
     component: Follow,
-    meta: { requireAuth: true }
+    // meta: { requireAuth: true }
   },
   // challenge
   {
     path: '/challenge',
     name : 'Challenge',
     component : Challenge,
-    meta: { requireAuth: true }
+    // meta: { requireAuth: true }
   },
 ]
 
