@@ -48,17 +48,6 @@ public class ProfileServiceImpl implements ProfileService {
 //            + File.separator + "resources"
 //            + File.separator + "static";
 
-    @Value("${cloud.aws.credentials.accessKey}")
-    private String accessKey;
-
-    @Value("${cloud.aws.credentials.secretKey}")
-    private String secretKey;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    @Value("${cloud.aws.region.static}")
-    private String region;
 
     @Value("${cloud.profile}")
     private String awsProfileUrl;
@@ -66,55 +55,10 @@ public class ProfileServiceImpl implements ProfileService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private S3Service s3Service;
+
     private static final String uploadFolder = "upload";
-
-    private AmazonS3 s3Client;
-
-    // S3 키를 통한 인증
-    @PostConstruct
-    public void setS3Client(){
-        AWSCredentials credentials = new BasicAWSCredentials(this.accessKey, this.secretKey);
-
-        s3Client = AmazonS3ClientBuilder.standard()
-                .withCredentials(new AWSStaticCredentialsProvider(credentials))
-                .withRegion(this.region)
-                .build();
-    }
-
-    // AWS S3 파일 업로드
-    public String upload(Part file) throws IOException {
-        UUID uuid = UUID.randomUUID();
-        String fileName = uuid + getFileName(file);
-
-        ObjectMetadata objectMetadata = new ObjectMetadata();
-        objectMetadata.setContentType(Mimetypes.getInstance().getMimetype(fileName));
-
-        byte[] bytes = IOUtils.toByteArray(file.getInputStream());
-        objectMetadata.setContentLength(bytes.length);
-        ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(bytes);
-
-        s3Client.putObject(new PutObjectRequest(bucket, "profile/" + fileName, byteArrayIs, objectMetadata)
-                .withCannedAcl(CannedAccessControlList.PublicRead));        // public read 권한 주기
-
-        // s3Client.getUrl(bucket, fileName).toString()
-        return fileName;
-    }
-
-    private Part extractFile(Collection<Part> parts) throws IOException {
-        for(Part part : parts){
-            String fileName = getFileName(part);
-
-            if("".equals(fileName)) continue;           // filename 이 추출되지 않았다면 continue -> 다음 part 탐색 -> file이름 찾기
-
-            return part;
-        }
-        throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 물리 이미지 업로드 실패");
-    }
-
-    public void deleteProfile(int userId){
-        Optional<User> user = userRepository.findUserById(userId);
-        s3Client.deleteObject(this.bucket, "profile/" + user.get().getFileUrl());
-    }
 
     @Transactional
     @Override
@@ -136,7 +80,10 @@ public class ProfileServiceImpl implements ProfileService {
 //            if(file.exists()) if(!file.delete()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "디렉토리 파일 삭제 실패");
 
             // S3 파일 삭제
-            if(my.getUserFileUrl() != null) s3Client.deleteObject(this.bucket, "profile/" + my.getUserFileUrl());
+            if(my.getUserFileUrl() != null) {
+                s3Service.deleteS3(my.getUserFileUrl(), "profile");
+//                s3Client.deleteObject(this.bucket, "profile/" + my.getUserFileUrl());
+            }
         }
 
         if(myReq.getFlag() == 0) {                                          // 프로필 이미지 유지
@@ -146,8 +93,8 @@ public class ProfileServiceImpl implements ProfileService {
         }
         else if(myReq.getFlag() == 1) {                                      // 프로필 이미지 수정
             // S3 파일 업로드 및 저장 경로 가져오기
-            Part part = extractFile(parts);
-            String fileName = upload(part);
+            Part part = s3Service.extractFile(parts);
+            String fileName = s3Service.uploadS3(part, "profile");
 
             updateDb(user, fileName, myReq.getNickname());
             my.setUserFileUrl(awsProfileUrl + fileName);
@@ -169,13 +116,7 @@ public class ProfileServiceImpl implements ProfileService {
         });
     }
 
-    private String getFileName(Part part) {
-        for (String content : part.getHeader("content-disposition").split(";")) {
-            if (content.trim().startsWith("filename"))
-                return content.substring(content.indexOf("=") + 2, content.length() - 1);
-        }
-        return "";
-    }
+
 
     private String fileUpload(String uploadPath, Part part, String fileName) throws IOException {
         // 파일 업로드 작업

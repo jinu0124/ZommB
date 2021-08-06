@@ -8,6 +8,7 @@ import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.jwt.SecurityService;
+import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -49,6 +50,12 @@ public class UserController {
 
     @Autowired
     private KeywordService keywordService;
+
+    @Autowired
+    private S3Service s3Service;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -114,9 +121,10 @@ public class UserController {
     @GetMapping("/checkEmailComplete")
     @ApiOperation(value = "Email 인증 확인")
     public String checkEmailComplete(@RequestParam String key, HttpServletResponse response) throws IOException {
-//        response.sendRedirect("Http://i5a602.p.ssafy.io:8080");
+
         if(userService.confirmEmail(key)) {
-            response.sendRedirect("Http://127.0.0.1:8000");
+            response.sendRedirect("Http://i5a602.p.ssafy.io:8080");
+//            response.sendRedirect("Http://127.0.0.1:8000");
         }
 
         return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
@@ -211,7 +219,7 @@ public class UserController {
     @ApiOperation(value = "회원탈퇴")
     public ResponseEntity deleteUser(HttpServletRequest request) {
         int userId = (int) request.getAttribute("userId");
-        profileService.deleteProfile(userId);
+        s3Service.deleteS3(userRepository.findUserById(userId).get().getFileUrl(), "profile");
         userService.deleteUser(userId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
