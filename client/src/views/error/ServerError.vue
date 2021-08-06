@@ -10,7 +10,7 @@
     </div>
     <div class="error-box">
       <div class="error-content d-flex flex-column align-items-center">
-        <div class="error-msg">Page Not Found</div>
+        <div class="error-msg">Server Error</div>
         <div class="error-msg-kr text-center">
           서버에 알 수 없는 오류가 발생했습니다.<br/>
           잠시후에 다시 시도해주세요.
