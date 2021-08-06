@@ -5,8 +5,10 @@
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
     <div class="account-form p-5 d-flex flex-column align-items-center">
+      <div :class="[ fail.password ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+        기존 비밀번호가 일치하지 않습니다.
+      </div>
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      
       <div class="d-flex flex-column align-items-center">
         <!-- 사진 수정하면 preview -->
         <img v-if="preview" class="profile" :src="preview" alt="">
@@ -24,13 +26,6 @@
           <ProfileCrop
             @select-croppa="saveNewProfile"
           />
-          <!-- <label for="input-file">프로필 변경</label>
-          <input
-            id="input-file" 
-            type="file"
-            accept="image/*"
-            @change="onFileChange"
-          > -->
           <span class="mx-1">•</span>
           <span
             type="button"
@@ -120,7 +115,7 @@
 import PV from "password-validator"
 import ProfileCrop from '@/components/user/ProfileCrop'
 import { mapState, mapActions } from "vuex"
-import _axios from "@/api/Default"
+import userApi from '@/api/user'
 
 export default {
   name: 'UpdateInfo',
@@ -149,11 +144,16 @@ export default {
       isSubmit: false,
       passwordSchema: new PV(),
       updatePassword: false,
-      dialog: false,
+      fail: {
+        userInfo: false,
+        password: false
+      },
+      isSuccessInfo: false,
+      isSuccessPassword: false
     }
   },
   methods: {
-    ...mapActions('user', ['onUpdateInfo', 'onUpdatePassword']),
+    ...mapActions('user', ['onUpdatePassword']),
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -161,6 +161,7 @@ export default {
     saveNewProfile (croppa) {
       this.preview = croppa.generateDataUrl('image/jpeg')
       this.myCroppa = croppa
+      this.profileUpdate = 1
     },
     onFileDelete () {
       this.profileUpdate = 2
@@ -168,37 +169,81 @@ export default {
       this.profilePath = null
       this.myCroppa = null
     },
-    // 작성 중
     onUpdate () {
-      this.myCroppa.generateBlob((blob) => {
-        var userInfo = new FormData()
-        userInfo.append('userFileUrl', blob)
-        userInfo.append('nickname', this.nickname)
-        console.log(userInfo)
-        _axios({
-          url: `users/${this.myInfo.id}`,
-          method: 'post',
-          data: userInfo,
-          headers: {
-            'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
-          },
-        })
-      })
+      // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
+      if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
+        // 프로필 사진 수정 시, blob 생성
+        if (this.profileUpdate === 1) {
+          this.myCroppa.generateBlob((blob) => {
+            var userInfo = new FormData()
+            userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
+            userInfo.append('nickname', this.nickname)
+            userInfo.append('flag', this.profileUpdate)
+  
+            userApi.updateInfo(this.myInfo.id, userInfo)
+              .then((res) => {
+                console.log(res.data)
+                this.$store.commit('user/SET_MY_INFO', res.data.data)
+                this.isSuccessInfo = true
+              })
+              .catch((err) => {
+                console.log(err.response)
+
+              })
+          })
+        } else {
+          // 프로필 사진 유지/삭제할 경우
+          var userInfo = new FormData()
+            // userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
+            userInfo.append('nickname', this.nickname)
+            userInfo.append('flag', this.profileUpdate)
+
+          userApi.updateInfo(this.myInfo.id, userInfo)
+            .then((res) => {
+              console.log(res.data)
+              this.isSuccessInfo = true
+              this.$store.commit('user/SET_MY_INFO', res.data.data)
+            })
+            .catch((err) => {
+              console.log(err.response)
+            })
+        }
+      } else {
+        this.isSuccessInfo = true
+      }
+      // 비밀번호 변경 시에만 요청 보내기
       if (this.updatePassword) {
         const passwordInfo = {
           'newPassword': this.password,
           'oldPassword': this.oldPassword
         }
         this.onUpdatePassword(passwordInfo)
+          .then(() => {
+            this.isSuccessPassword = true
+          })
+          .catch(() => {
+            this.fail.password = true
+            setTimeout(() => {
+              this.fail.password = false
+            }, 2000)
+          })
+      } else {
+        this.isSuccessPassword = true
+      }
+    },
+    completeUpdate() {
+      if (this.isSuccessInfo && this.isSuccessPassword) {
+        this.$router.go(-1)
       }
     },
     checkForm() {
-      if (
-        this.nickname.length > 10
-      )
-        this.error.nickname = "닉네임은 최대 10자까지 가능합니다.";
-      else this.error.password = false;
-      
+      if (this.nickname.trim().length === 0) {
+        this.error.nickname = "닉네임을 입력해주세요.";
+      } else if (this.nickname.trim().length < 2) {
+        this.error.nickname = "닉네임은 2자 이상 10자 이하로 작성해주세요."
+      } else {
+        this.error.nickname = false;
+      }
       // 기존 비밀번호 형식 검증
       if (
         this.oldPassword.length > 0 &&
@@ -277,14 +322,21 @@ export default {
       this.checkForm()
     },
     password: function() {
-      this.checkForm();
+      this.checkForm()
     },
     passwordConfirm: function() {
-      this.checkForm();
+      this.checkForm()
     },
+    isSuccessInfo: function () {
+      this.completeUpdate()
+    },
+    isSuccessPassword: function () {
+      this.completeUpdate()
+    }
+
   },
   computed: {
-    ...mapState('user', ['myInfo']),
+    ...mapState('user', ['myInfo', 'accessToken']),
   }
 }
 </script>
@@ -317,8 +369,31 @@ export default {
     height: 80px;
     border-radius: 100%;
   }
-
-  #input-file {
+  .fail-alert {
+    width: 80vw;
+    height: 35px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 119, 119, 0.95);
+    border: 1px solid #FF7777;
+    color: #fff;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1060;
+  }
+  .show {
+    opacity: 1;
+    transition: all 0.2s;
+  }
+  .hide {
+    opacity: 0;
     display: none;
+    transition: all 0.2s;
   }
 </style>

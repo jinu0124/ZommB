@@ -29,6 +29,9 @@ const actions = {
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
   },
+  moveToMyProfile() {
+    router.push({ name: 'MyProfile' })
+  },
   // api 요청
   async onSignup ({ dispatch, commit }, userData) {
     console.log(userData)
@@ -67,40 +70,48 @@ const actions = {
       .then((res) => {
         console.log(res)
         commit('SET_ISLOGIN', true)
-        commit('SET_ACCESS_TOKEN', res.headers['access-token'])
-        commit('SET_REFRESH_TOKEN', res.headers['refresh-token'])
+        commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
+        commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })
       .catch((err) => {
-        console.log(err.response)
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
+        }
+        return Promise.reject(err.response)
       })
   },
   onLogout({ commit, dispatch }) {
-    dispatch('moveToLogin')
+    commit('SET_ISLOGIN', false)
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
-    commit('SET_ISLOGIN', false)
     commit('RESET_MY_INFO')
+    dispatch('moveToLogin')
   },
-  async onUpdateInfo({ commit }, userData) {
-    await userApi.updateInfo(userData)
+  async onUpdatePassword({ state }, userData) {
+    await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
-        commit('SET_MY_INFO', res.data)
+        console.log(res)
+        return res
       })
       .catch((err) => {
         console.log(err.response)
+        return Promise.reject(err.response)
       })
   },
-  async onUpdatePassword({ commit }, userData) {
-    await userApi.updatePassword(userData)
-      .then((res) => {
-        commit('SET_MY_INFO', res.data)
-      })
-      .catch((err) => {
-        console.log(err.response)
-      })
-  },
+  // async onResetPassword({ dispatch }, userData) {
+    // console.log(userData)
+    // await userApi.resetPassword(userData)
+    //   .then((res) => {
+    //     console.log(res)
+    //     dispatch('moveToLogin')
+    //   })
+    //   .catch((err) => {
+    //     console.log(err.response)
+    //     return Promise.reject(err.response)
+    //   })
+  // },
 }
 
 const mutations = {

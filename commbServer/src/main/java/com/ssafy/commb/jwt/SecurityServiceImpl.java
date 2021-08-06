@@ -141,7 +141,7 @@ public class SecurityServiceImpl implements SecurityService{
         }
         // RefreshToken 유효 & AccessToken 유효한 값이지만 만료 => 재발급
         else {
-            map.put("token", createAccessToken((String) userIdAccToken.get(0), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
+            map.put("token", createAccessToken(String.valueOf(userIdAccToken.get(0)), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
             map.put("status", 200);
             map.put("msg", "Access Token Updated Complete");
             map.put("userId", userIdAccToken.get(0));

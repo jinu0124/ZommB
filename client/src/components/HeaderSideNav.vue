@@ -5,10 +5,12 @@
     </div>
     <div class="offcanvas-body ms-4 d-flex flex-column gap-3">
       <div><router-link :to="{ name: 'Feed' }" class="menu-item" data-bs-dismiss="offcanvas">NewsFeed</router-link></div>
+      <div><router-link :to="{ name: 'Challenge' }" class="menu-item" data-bs-dismiss="offcanvas">Challenge</router-link></div>
       <!-- <p class="menu-item">NewsFeed</p> -->
-      <a class="menu-item">Challenge</a>
+      <!-- <a class="menu-item">Challenge</a> -->
       <a class="menu-item">Search</a>
-      <a class="menu-item">MyProfile</a>
+      <div><router-link :to="{ name: 'Profile' }" class="menu-item" data-bs-dismiss="offcanvas">MyProfile</router-link></div>
+      <!-- <a class="menu-item">MyProfile</a> -->
     </div>
     <img class="offcanvas-deco" src="@/assets/image/camel/camelRotate.svg" alt="">
     <div class="footer mx-4">

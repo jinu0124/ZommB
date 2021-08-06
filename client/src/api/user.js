@@ -35,6 +35,9 @@ export default {
       url: `users/${userId}`,
       method: 'post',
       data: userData,
+      headers: {
+        'Content-Type': 'multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW'
+      },
     })
   },
   changePassword(userId, userData) {
@@ -44,9 +47,16 @@ export default {
       data: userData
     })
   },
-  withdrawal(userId) {
+  resetPassword(userData) {
     return _axios({
-      url: `users/${userId}`,
+      url: 'users/reset-password',
+      method: 'post',
+      data: userData
+    })
+  },
+  withdrawal() {
+    return _axios({
+      url: `users/withdraw`,
       method: 'delete',
     })
   }

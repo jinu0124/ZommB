@@ -1,13 +1,29 @@
 <template>
   <div class="login">
     <UnauthorizedHeader/>
+    <!-- 알림창 -->
+    <div
+      v-if="needEmailConfirm"
+      class="backdrop"
+    ></div>
+    <EmailReConfirmAlert
+      v-if="needEmailConfirm"
+      class="email-alert"
+      data-bs-backdrop="static"
+      tabindex="-1"
+      aria-hidden="true"
+      :email="email"
+      @ok="closeAlert"
+    />
     <div class="login-header">
+      <div :class="[ wrongInput ? 'show' : 'hide', 'wrong-input']" role="alert">
+        잘못된 이메일 혹은 비밀번호입니다.
+      </div>
       <div class="title">Login</div>
       <div class="description">반가워요! 로그인 후 CommB의 새로운 소식을 만나보세요!</div>
     </div>
     <div class="account-form p-5 d-flex flex-column justify-content-center align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      
       <div class="account-inputs">
         <!-- 이메일 input -->
         <div class="account-input-box">
@@ -16,7 +32,7 @@
             class="account-input"
             v-model="email"
             type="text"
-            @keyup.enter="onLogin"
+            @keyup.enter="login"
             autocapitalize="off"
             required
           />
@@ -30,7 +46,7 @@
             class="account-input"
             v-model="password"
             type="password"
-            @keyup.enter="onLogin"
+            @keyup.enter="login"
             required
           />
             <label>비밀번호</label>
@@ -39,7 +55,7 @@
         <!-- 로그인 버튼 -->
         <button
           :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-2', 'mt-4']"
-          @click="onLogin(userData)"
+          @click="login"
         >로그인</button>
       </div>
 
@@ -53,6 +69,7 @@
         <span
           class="btn-text-s"
           type="button"
+          @click="$router.push({ name: 'FindPassword'})"
         >비밀번호 찾기</span>
       </div>
 
@@ -76,11 +93,13 @@ import PV from "password-validator"
 import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
+import EmailReConfirmAlert from '@/components/user/EmailReConfirmAlert'
 
 export default {
   name: 'Login',
   components: {
-    UnauthorizedHeader
+    UnauthorizedHeader,
+    EmailReConfirmAlert
   },
   data: () => {
     return {
@@ -92,10 +111,30 @@ export default {
         passowrd: false
       },
       isSubmit: false,
+      needEmailConfirm: false,
+      wrongInput: false
     }
   },
   methods: {
     ...mapActions('user', ['moveToSignup', 'onLogin']),
+    closeAlert () {
+      this.needEmailConfirm = false
+    },
+    async login () {
+      await this.onLogin(this.userData)
+        .catch ((err) => {
+          console.log(err)
+          if (err.status === 403) {
+            this.needEmailConfirm = true
+            this.hasAlert = true
+          } else if (err.status === 401) {
+            this.wrongInput = true
+            setTimeout(() => {
+              this.wrongInput = false
+            }, 2000)
+          }
+        })
+    },
     checkForm() {
       // 이메일 형식 검증
       if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
@@ -201,4 +240,47 @@ export default {
     height: auto;
   }
 
+  .email-check {
+    position: absolute;
+    bottom: 7px;
+    right: 10px;
+  }
+  .email-alert {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 1060;
+    transform: translate(-50%, -50%);
+  }
+  .backdrop {
+    position: fixed;
+    width: 100%;
+    height: 100vh;
+    z-index: 1040;
+    background-color: rgba(0, 0, 0, 0.3);
+  }
+  .wrong-input {
+    width: 80vw;
+    height: 35px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 119, 119, 0.95);
+    border: 1px solid #FF7777;
+    color: #fff;
+    position: fixed;
+    left: 50%;
+    transform: translate(-50%);
+  }
+  .show {
+    opacity: 1;
+    transition: all 0.2s;
+  }
+  .hide {
+    opacity: 0;
+    transition: all 0.2s;
+  }
 </style>

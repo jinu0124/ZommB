@@ -20,7 +20,7 @@ public class BookShelves {
 
     private int isRead;
 
-    private int rate;
+    private double rate;
 
     @ManyToOne
     @JoinColumn(name = "book_id", insertable=false, updatable=false)

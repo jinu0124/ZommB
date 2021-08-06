@@ -3,19 +3,66 @@
 
 <mapper namespace="com.ssafy.commb.dao.BookDao">
 
+    <select id="getBooksByName" parameterType="Map" resultMap="bookInformation">
+        SELECT T.id, T.book_name, T.author, T.publisher, T.year, T.isbn, T.file_url AS bookFileUrl, T.rate, COUNT(bs.book_id) AS readCnt
+        FROM
+            (SELECT B.ID AS id, BOOK_NAME, AUTHOR, PUBLISHER, YEAR, ISBN, FILE_URL, AVG(RATE) AS rate
+             FROM BOOK B, BOOK_SHELVES BS
+             WHERE B.ID = BS.BOOK_ID AND IS_READ = #{isRead} AND BOOK_NAME LIKE '${bookName}%'
+             GROUP BY B.ID) AS T,
+            (SELECT bs.book_id
+             FROM book_shelves bs
+             WHERE bs.user_id = #{userId} AND bs.is_read = #{isRead}) AS T2,
+            book_shelves bs
+        WHERE T.id = bs.book_id AND bs.is_read = #{isRead} AND T.id = T2.book_id
+        GROUP BY bs.book_id
+    </select>
 
-<!--    <resultMap type="Feed" id="feedInformation">-->
-<!--        <result column="fid" property="id"/>-->
-<!--        <result column="create_at" property="createAt"/>-->
-<!--        <result column="content" property="content"/>-->
-<!--        <result column="f_file_url" property="feedFileUrl"/>-->
-<!--        <result column="is_thumb" property="isThumb"/>-->
-<!--        <result column="thumb_cnt" property="thumbCnt"/>-->
-<!--        <result column="uid" property="user.id"/>-->
-<!--        <result column="nickname" property="user.nickname"/>-->
-<!--        <result column="u_file_url" property="user.userFileUrl"/>-->
-<!--        <result column="bid" property="book.id"/>-->
-<!--        <result column="book_name" property="book.bookName"/>-->
-<!--    </resultMap>-->
+    <select id="getUserReadCnt" parameterType="Integer" resultType="HashMap">
+        SELECT COUNT(bs.is_read) AS cnt, is_read AS isRead
+        FROM book_shelves bs
+        WHERE bs.user_id = #{userId}
+        GROUP BY bs.is_read
+        ORDER BY bs.is_read DESC;
+    </select>
+
+    <select id="getTopBooks" parameterType="Integer" resultType="Book">
+        SELECT b.id AS id, file_url AS bookFileUrl
+        FROM top_book t, book b
+        WHERE user_id = #{userId} AND t.book_id = b.id;
+    </select>
+
+    <select id="getBookByUserIdAndBookId" parameterType="Integer" resultType="Integer">
+        select count(*)
+        from book_shelves
+        where book_id = #{bookId} AND user_id = #{userId} AND is_read = 1
+    </select>
+
+    <insert id="addBookTop" parameterType="Integer">
+        INSERT INTO top_book
+        VALUES(#{userId}, #{bookId})
+    </insert>
+
+    <delete id="deleteAllBookTop" parameterType="Integer">
+        delete from top_book
+        where user_id = #{userId}
+    </delete>
+
+    <delete id="deleteBookTop" parameterType="Integer">
+        delete from top_book
+        where user_id = #{userId} and book_id = #{bookId}
+    </delete>
+
+    <resultMap type="Book" id="bookInformation">
+        <result column="id" property="id"/>
+        <result column="book_name" property="bookName"/>
+        <result column="author" property="author"/>
+        <result column="publisher" property="publisher"/>
+        <result column="year" property="year"/>
+        <result column="isbn" property="isbn"/>
+        <result column="bookFileUrl" property="bookFileUrl"/>
+        <result column="rate" property="rate"/>
+        <result column="readCnt" property="readCnt"/>
+    </resultMap>
 
 </mapper>

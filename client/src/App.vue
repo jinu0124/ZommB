@@ -1,6 +1,9 @@
 <template>
-  <div id="app" :class="{accounts: isAccountsPage}">
-    <Header v-if="needHeader"/>
+  <div id="app" :class="{accounts: isAccounts, challenge: isChallenge}">
+    <Header 
+      v-if="needHeader"
+      :class="{accounts: isAccounts, challenge: isChallenge}"
+    />
     <router-view/>
   </div>
 </template>
@@ -19,20 +22,32 @@ export default {
       if (this.$route.name === 'Index' 
         || this.$route.name === 'Login'
         || this.$route.name === 'Signup'
+        || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'PageNotFound'
         || this.$route.name === 'ServerError'
+        || this.$route.name === 'Like'
+        || this.$route.name === 'Reply'
+        || this.$route.name === 'Report'
+        || this.$route.name === 'WriteArticle'
+        || this.$route.name === 'Follow'
         ) {
         return false
       }
       return true
     },
-    isAccountsPage() {
+    isAccounts() {
       if (this.$route.name === 'Login'
         || this.$route.name === 'Signup'
+        || this.$route.name === 'FindPassword'
+        || this.$route.name === 'ResetPassword'
         || this.$route.name === 'UpdateInfo') {
         return true
       }
       return false
+    },
+    isChallenge() {
+      return this.$route.name === 'Challenge'
     }
   }
 }
@@ -51,6 +66,10 @@ export default {
 
 .accounts {
   background-color: #7B60F1;
-  
+  color: #fff;
+}
+.challenge {
+  background-color: #fff;
+  color: #683EC9;
 }
 </style>
