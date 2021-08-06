@@ -16,7 +16,7 @@
       @ok="closeAlert"
     />
     <div class="account-header">
-      <div :class="[ wrongInput ? 'show' : 'hide', 'warning-alert']" role="alert">
+      <div :class="[ wrongInput ? 'show' : 'hide', 'warning-alert', 'alert-top-30']" role="alert">
         잘못된 이메일 혹은 비밀번호입니다.
       </div>
       <div class="title">Login</div>

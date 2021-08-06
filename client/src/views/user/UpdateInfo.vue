@@ -1,18 +1,18 @@
 <template>
-  <div class="update-info">
-    <div class="info-header">
+  <div class="account-page">
+    <div class="account-header">
       <div class="title">My Info</div>
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
     <div class="account-form p-5 d-flex flex-column align-items-center">
-      <div class="d-flex flex-column alerts">
-        <div :class="[ fail.profile ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+      <div class="d-flex flex-column alert-center">
+        <div :class="[ fail.profile ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
           프로필 사진 업로드에 실패했습니다.
         </div>
-        <div :class="[ fail.nickname ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+        <div :class="[ fail.nickname ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
           잘못된 닉네임 입력 정보입니다.
         </div>
-        <div :class="[ fail.password ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
+        <div :class="[ fail.password ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
           기존 비밀번호가 일치하지 않습니다.
         </div>
       </div>
@@ -374,60 +374,9 @@ export default {
 </script>
 
 <style scoped>
-  .update-info {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .info-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .info-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
-  .info-header .description {
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.7rem;
-  }
-
   .profile {
     width: 80px;
     height: 80px;
     border-radius: 100%;
-  }
-  .alerts {
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1060;
-  }
-  .fail-alert {
-    width: 80vw;
-    height: 35px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 119, 119, 0.95);
-    border: 1px solid #FF7777;
-    color: #fff;
-  }
-  .show {
-    opacity: 1;
-    transition: all 0.2s;
-  }
-  .hide {
-    opacity: 0;
-    display: none;
-    transition: all 0.2s;
   }
 </style>

@@ -71,7 +71,7 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
         commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)

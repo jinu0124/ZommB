@@ -25,6 +25,8 @@
   background: rgba(255, 119, 119, 0.95);
   border: 1px solid #FF7777;
   color: #fff;
+}
+.alert-top-30 {
   position: fixed;
   top: 30%;
   left: 50%;
