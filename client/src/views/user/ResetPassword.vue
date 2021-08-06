@@ -65,10 +65,15 @@ export default {
       },
       isSubmit: false,
       passwordSchema: new PV(),
+      alert: '',
     }
   },
   methods: {
     ...mapActions('user', ['onResetPassword']),
+    resetPassword() {
+      const errMsg = this.onResetPassword(this.userInfo)
+      this.alert = errMsg
+    },
     checkForm() {
       // 새로운 비밀번호 형식 검증
       if (

@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import userApi from '@/api/user'
 import * as EmailValidator from "email-validator"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
 
@@ -53,6 +54,15 @@ export default {
     }
   },
   methods: {
+    async onFindPassword() {
+      await userApi.findPassword(this.email)
+        .then((res) => {
+          return res
+        })
+        .catch((err) => {
+          return Promise.reject(err.response)
+        })
+    },
     checkForm() {
       // 이메일 형식 검증
             if (this.email.length > 0 && !EmailValidator.validate(this.email)) {
