@@ -8,7 +8,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 public interface FeedService {
-    public FeedDto uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException;
+    public void uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException;
 
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request);
 
@@ -21,4 +21,8 @@ public interface FeedService {
     public void deleteFeed(int feedId);
 
     public void reportFeed(int feedId, String reason, int userId);
+
+    public FeedDto.ResponseList getFollowingFeeds(int userId);
+
+
 }

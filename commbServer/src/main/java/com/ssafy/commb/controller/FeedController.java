@@ -91,16 +91,11 @@ public class FeedController {
     @PostMapping("")
     @ApiOperation(value = "피드 작성")
     // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 → formData 형식에서는 사용 X → swagger에서 MultipartHttpServletRequest 사용 X
-    // swagger feedReq에 직접 { "bookId": (Integer), "content": "(String)" } 넣어서 확인!
-    // public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
-    public ResponseEntity<FeedDto> uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq) throws IOException, ServletException {
-        MultipartHttpServletRequest request = null;
+     public ResponseEntity uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
-        FeedDto feed = feedService.uploadFeed(feedReq, request);
+        feedService.uploadFeed(feedReq, request);
 
-        if (feed == null) return new ResponseEntity(HttpStatus.valueOf(400));
-
-        return ResponseEntity.ok().body(feed);
+        return ResponseEntity.ok().build();
     }
 
     // 게시물 수정
@@ -243,26 +238,13 @@ public class FeedController {
     // 내가 팔로잉하는 사람들의 피드 목록
     @GetMapping("/{userId}/following/feeds")
     @ApiOperation(value = "내가 팔로잉 하는 사람들의 피드 리스트", response = FeedDto.Response.class)
-    public ResponseEntity<List<FeedDto.Response>> getFollowingFeeds(@PathVariable Integer userId) throws ParseException {
-        UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
-        BookDto book = BookDto.builder().id(id).bookName("책이름").build();
+    public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId, HttpServletRequest request) throws ParseException {
 
-        List<HashTagDto> hashTags = new ArrayList<>();
-        hashTags.add(HashTagDto.builder().tag(tag).build());
+        int myUserId = (Integer) request.getAttribute("userId");
 
-        List<CommentDto> comments = new ArrayList<>();
-        comments.add(CommentDto.builder().id(id).content(content).userId(id).nickname(nickname).thumbCnt(cnt).createAt(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-07-31 12:10:00")).isThumb(bool).isMod(bool).build());
+        FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(myUserId);
 
-        FeedDto feed = FeedDto.builder().id(id).createAt(new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").parse("2021-07-31 10:12:15")).content(content).isThumb(bool)
-                .thumbCnt(cnt).feedFileUrl(url).user(user).book(book).hashTags(hashTags).comments(comments).build();
-
-        FeedDto.Response feedRes = new FeedDto.Response();
-        feedRes.setData(feed);
-
-        List<FeedDto.Response> feedResList = new ArrayList<>();
-        feedResList.add(feedRes);
-
-        return new ResponseEntity<List<FeedDto.Response>>(feedResList, HttpStatus.OK);
+        return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
 
 

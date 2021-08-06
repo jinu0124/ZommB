@@ -4,10 +4,7 @@ import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
-import com.ssafy.commb.model.Book;
-import com.ssafy.commb.model.Feed;
-import com.ssafy.commb.model.Report;
-import com.ssafy.commb.model.User;
+import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.FeedRepository;
 import com.ssafy.commb.repository.ReportRepository;
 import com.ssafy.commb.repository.UserRepository;
@@ -45,79 +42,26 @@ public class FeedServiceImpl implements FeedService {
     @Autowired
     private FeedDao feedDao;
 
-    private static final String uploadFolder = "upload";
+    @Autowired
+    private S3Service S3service;
 
-    static String uploadPath = "C:" + File.separator + "SSAFY"
-            + File.separator + "S05P12A602"
-            + File.separator + "commbServer"
-            + File.separator + "src"
-            + File.separator + "main"
-            + File.separator + "resources"
-            + File.separator + "static";
-
-    public FeedDto uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
+    public void uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
         User user = new User();
         Book book = new Book();
         Feed feed = new Feed();
 
-        user.setId(10000005); // 테스트용
-//        user.setId((Integer) request.getAttribute("userId"));
+        user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
         feed.setContent(feedReq.getContent());
-//        String fileUrl = fileUpload(uploadPath, request.getParts());
-//        feed.setFileUrl(fileUrl);
+
+        Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
+        String fileUrl =  S3service.uploadS3(part, "feed");
+        feed.setFileUrl(fileUrl);
 
         feedRepository.save(feed);
-
-        UserDto userDto = new UserDto();
-//        userDto.setId((Integer) request.getAttribute("userId"));
-
-        BookDto bookDto = new BookDto();
-        bookDto.setId(feedReq.getBookId());
-
-        FeedDto myfeed = FeedDto.builder().user(userDto).book(bookDto).content(feedReq.getContent()).build();
-
-        System.out.println("myfeed.getId : " + myfeed.getId());
-
-        return myfeed;
-
-    }
-
-    private String getFileName(Part part) {
-        for (String content : part.getHeader("content-disposition").split(";")) {
-            if (content.trim().startsWith("filename"))
-                return content.substring(content.indexOf("=") + 2, content.length() - 1);
-        }
-        return "";
-    }
-
-    private String fileUpload(String uploadPath, Collection<Part> parts) throws IOException {
-        // 파일 업로드 작업
-        File uploadDir = new File(uploadPath + File.separator + uploadFolder);   // File upload Path
-        if (!uploadDir.exists())
-            if (!uploadDir.mkdir()) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "새 디렉토리 생성 실패");
-
-        String savingFileName;
-        SimpleDateFormat sDate = new SimpleDateFormat("yyyy-MM-dd");
-        for (Part part : parts) {
-            String fileName = getFileName(part);
-
-            if ("".equals(fileName)) continue;           // filename 이 추출되지 않았다면 continue -> 다음 part 탐색 -> file이름 찾기
-
-            UUID uuid = UUID.randomUUID();
-            String extension = FilenameUtils.getExtension(fileName);
-            String date = sDate.format(new Date());
-
-            // 물리 파일 쓰기 작업
-            savingFileName = uuid + date + "." + extension;
-
-            part.write(uploadPath + File.separator + uploadFolder + File.separator + savingFileName);
-            return savingFileName;
-        }
-        throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "프로필 물리 이미지 업로드 실패");
     }
 
     @Override
@@ -160,6 +104,9 @@ public class FeedServiceImpl implements FeedService {
         Optional<Feed> feed = feedRepository.findById(feedId);
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
 
+        String url = feed.get().getFileUrl();
+        S3service.deleteS3(url, "feed");
+
         feedRepository.deleteById(feedId);
     }
 
@@ -177,5 +124,21 @@ public class FeedServiceImpl implements FeedService {
 
         reportRepository.save(report);
     }
+
+    public FeedDto.ResponseList getFollowingFeeds(int userId){
+
+        List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
+
+        for (FeedDto feed : feeds) {
+            feed.setHashTags(feedDao.getHashTags(feed.getId()));
+            feed.setComments(feedDao.getComments(feed.getId(), userId));
+        }
+
+        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
+        feedResList.setData(feeds);
+
+        return feedResList;
+    }
+
 
 }
