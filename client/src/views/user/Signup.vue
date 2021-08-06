@@ -67,7 +67,8 @@
           <input
             id="name"
             class="account-input"
-            v-model="name"
+            :value="name"
+            @input="insertName"
             type="text"
             @keyup.enter="onSignup"
             required
@@ -80,7 +81,8 @@
           <input
             id="nickname"
             class="account-input"
-            v-model="nickname"
+            :value="nickname"
+            @input="insertNickname"
             type="text"
             maxlength="10"
             @keyup.enter="onSignup"
@@ -159,6 +161,12 @@ export default {
   },
   methods: {
     ...mapActions('user', ['onSignup']),
+    insertNickname (event) {
+      this.nickname = event.target.value
+    },
+    insertName (event) {
+      this.name = event.target.value
+    },
     // 이메일 중복 확인 요청
     async checkEmail () {
       await userApi.checkEmail(this.email)
