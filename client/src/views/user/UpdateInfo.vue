@@ -5,7 +5,10 @@
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
     <div class="account-form p-5 d-flex flex-column align-items-center">
-      <div class="d-flex flex-column alert-center">
+      <div class="d-flex flex-column alert-top-30">
+        <div :class="[ isSuccessInfo && isSuccessPassword ? 'show' : 'hide', 'success-alert', 'my-1']" role="alert">
+          회원 정보 수정이 완료되었습니다.
+        </div>
         <div :class="[ fail.profile ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
           프로필 사진 업로드에 실패했습니다.
         </div>
@@ -29,7 +32,7 @@
           <span
             type="button" 
             data-bs-toggle="modal" 
-            data-bs-target="#exampleModal"
+            data-bs-target="#profileCropModal"
           >프로필 변경</span>
           <ProfileCrop
             @select-croppa="saveNewProfile"
@@ -107,10 +110,12 @@
         <!-- 수정 완료 / 취소 버튼 -->
         <div class="submit-btns d-flex justify-content-center gap-3">
           <button
+            type="button"
             class="btn-5 btn-grey mt-4"
             @click="$router.go(-1)"
           >취소</button>
           <button
+            type="button"
             :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-5', 'mt-4']"
             @click="onUpdate"
           >수정 완료</button>
@@ -159,7 +164,8 @@ export default {
         password: false
       },
       isSuccessInfo: false,
-      isSuccessPassword: false
+      isSuccessPassword: false,
+      userFD: null,
     }
   },
   methods: {
@@ -182,82 +188,65 @@ export default {
       this.profilePath = null
       this.myCroppa = null
     },
-    onUpdate () {
+    makeFormData () {
+      if (this.profileUpdate === 1) {
+        this.myCroppa.generateBlob((blob) => {
+          var userInfo = new FormData()
+          userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
+          userInfo.append('nickname', this.nickname)
+          userInfo.append('flag', this.profileUpdate)
+          this.userFD = userInfo
+        })
+      } else {
+        var userInfo = new FormData()
+        userInfo.append('nickname', this.nickname)
+        userInfo.append('flag', this.profileUpdate)
+        this.userFD = userInfo
+      }
+    },
+    async onUpdate () {
       // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
       if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
-        // 프로필 사진 수정 시, blob 생성
-        if (this.profileUpdate === 1) {
-          this.myCroppa.generateBlob((blob) => {
-            var userInfo = new FormData()
-            userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
-            userInfo.append('nickname', this.nickname)
-            userInfo.append('flag', this.profileUpdate)
-  
-            userApi.updateInfo(this.myInfo.id, userInfo)
-              .then((res) => {
-                console.log(res.data)
-                this.$store.commit('user/SET_MY_INFO', res.data.data)
-                this.isSuccessInfo = true
-              })
-              .catch((err) => {
-                if (err.response === 400) {
-                  this.fail.nickname = true
-                  setTimeout(() => {
-                    this.fail.nickname = false
-                  }, 2000)
-                } else if (err.response === 401) {
-                  this.fail.profile = true
-                  setTimeout(() => {
-                    this.fail.profile = false
-                  }, 2000)
-                } else {
-                  this.$router.push({ name: 'ServerError' })
-                }
-
-              })
+        await userApi.updateInfo(this.myInfo.id, this.userFD)
+          .then((res) => {
+            // console.log(res)
+            this.$store.commit('user/SET_MY_INFO', res.data.data)
+            this.isSuccessInfo = true
           })
-        } else {
-          // 프로필 사진 유지/삭제할 경우
-          var userInfo = new FormData()
-            // userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
-            userInfo.append('nickname', this.nickname)
-            userInfo.append('flag', this.profileUpdate)
-
-          userApi.updateInfo(this.myInfo.id, userInfo)
-            .then((res) => {
-              console.log(res.data)
-              this.isSuccessInfo = true
-              this.$store.commit('user/SET_MY_INFO', res.data.data)
-            })
-            .catch((err) => {
+          .catch((err) => {
+            if (err.response.data.msg != 'AccessToken has been expired') {
+              // console.log(err.response)
               if (err.response === 400) {
                 this.fail.nickname = true
                 setTimeout(() => {
                   this.fail.nickname = false
                 }, 2000)
+              } else if (err.response === 401 ) {
+                this.fail.profile = true
+                setTimeout(() => {
+                  this.fail.profile = false
+                }, 2000)
               } else {
                 this.$router.push({ name: 'ServerError' })
               }
-            })
-        }
+            }
+          })
       } else {
         this.isSuccessInfo = true
       }
       // 비밀번호 변경 시에만 요청 보내기
       if (this.updatePassword) {
-        const passwordInfo = {
-          'newPassword': this.password,
-          'oldPassword': this.oldPassword
-        }
-        this.onUpdatePassword(passwordInfo)
+        await this.onUpdatePassword(this.passwordInfo)
           .then(() => {
             this.isSuccessPassword = true
           })
-          .catch(() => {
-            this.fail.password = true
-            setTimeout(() => {
-              this.fail.password = false
-            }, 2000)
+          .catch((err) => {
+            if (err.response.data.msg != 'AccessToken has been expired' ){
+              this.fail.password = true
+              setTimeout(() => {
+                this.fail.password = false
+              }, 2000)
+            }
           })
       } else {
         this.isSuccessPassword = true
@@ -265,7 +254,9 @@ export default {
     },
     completeUpdate() {
       if (this.isSuccessInfo && this.isSuccessPassword) {
-        this.$router.go(-1)
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 1000)
       }
     },
     checkForm() {
@@ -347,8 +338,12 @@ export default {
     this.nickname = this.myInfo.nickname
   },
   watch: {
+    myCroppa: function () {
+      this.makeFormData()
+    },
     nickname: function() {
       this.checkForm()
+      this.makeFormData()
     },
     oldPassword: function() {
       this.checkForm()
@@ -369,6 +364,12 @@ export default {
   },
   computed: {
     ...mapState('user', ['myInfo', 'accessToken']),
+    passwordInfo () {
+      return {
+        'newPassword': this.password,
+        'oldPassword': this.oldPassword
+      }
+    }
   }
 }
 </script>
