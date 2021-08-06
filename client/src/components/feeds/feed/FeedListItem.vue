@@ -1,103 +1,101 @@
 <template>
-<div class="feed-list">
-  <center>
-  <div class="feed-header">
-    <img
-      v-if="myInfo.userFileUrl"
-      class="user-profile"
-      type="button"
-      id="UserProfile"
-      :src="myInfo.userFileUrl"
-      alt="user-profile"
-    >
-    <img
-      v-else
-      alt="디폴트 회원 이미지"
-      class="default-user-image user-profile"
-      src="@/assets/image/common/profileDefault.svg"
-      type="button"
-      id="UserProfile"
-    >
-    <span class="feedHeader">
-      <div class="owner">{{nickname}}</div>
-      <div class="mini-title">
-        <span>
-          <img
-            alt="미니북"
-            class="minibook"
-            src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
-          />
-        </span>
-        <span class="bookTitle">{{title}}</span>
-      </div>
-    </span>
-    <img
-    alt="피드 메뉴"
-    class="feed-menu dropdown-toggle"
-    data-bs-toggle="dropdown"
-    aria-expanded="false"
-    src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
-    type="button"
-    id="FeedMenuDropdown"
-    />
-    <FeedMenu/>
-  </div>
-  <img
-    alt="피드 이미지"
-    class="feed-image"
-    src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
-  />
-  <div class="like-reply">
-    <span>
+  <div class="feed-list-item">
+    <div class="feed-header">
       <img
-        alt="좋아요버튼안눌림"
-        class="dislike btn-like" type="button" @click="like()"
-        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
-        v-show="disLike"
-      />
+        v-if="myInfo.userFileUrl"
+        class="user-profile"
+        type="button"
+        id="UserProfile"
+        :src="myInfo.userFileUrl"
+        alt="user-profile"
+      >
       <img
-        alt="좋아요버튼눌림"
-        class="like btn-like" type="button" @click="dislike()"
-        src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
-        v-show="Like"
-      />
-    </span>
-    <span class="like-num" type="button" @click="moveToLike">{{likeNum}}</span>
-    <span>
+        v-else
+        alt="디폴트 회원 이미지"
+        class="default-user-image user-profile"
+        src="@/assets/image/common/profileDefault.svg"
+        type="button"
+        id="UserProfile"
+      >
+      <span class="feedHeader">
+        <div class="owner">{{nickname}}</div>
+        <div class="mini-title">
+          <span>
+            <img
+              alt="미니북"
+              class="minibook"
+              src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
+            />
+          </span>
+          <span class="bookTitle">{{title}}</span>
+        </div>
+      </span>
       <img
-        alt=""
-        class="btn-reply" type="button" @click="moveToReply"
-        src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
+        alt="피드 메뉴"
+        class="feed-menu dropdown-toggle"
+        data-bs-toggle="dropdown"
+        aria-expanded="false"
+        src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
+        type="button"
+        id="FeedMenuDropdown"
       />
-    </span>
-    <span class="reply-num" type="button" @click="moveToReply">{{replyNum}}</span>
-  </div>
-  <div class="feed-owner">{{nickname}}</div>
-  <div class="third">
-    <p class="contentDetail">{{shortenContent}}</p>
-    <p 
-      class="content-more"
-      type="button"
-      @click="showMoreContent(true)"
-      v-show="!moreContent"
-    >더보기</p>
-    <p 
-      class="content-more"
-      type="button"
-      @click="showMoreContent(false)"
-      v-show="moreContent"
-    >접기</p>
-    <div>
-      <span
-        v-for="(tag, idx) in tags"
-        :key="idx"
-        class="feed-tag rounded-pill me-1"
-      >#{{tag}}</span>
+      <FeedMenu/>
     </div>
-  </div>
-  <ReplyListItem/>
-  <div><span class="reply-more" type="button" @click="moveToReply">더보기</span></div>
-  </center>
+    <img
+      alt="피드 이미지"
+      class="feed-image"
+      src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
+    />
+    <div class="like-reply">
+      <span>
+        <img
+          alt="좋아요버튼안눌림"
+          class="dislike btn-like" type="button" @click="like()"
+          src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+          v-show="disLike"
+        />
+        <img
+          alt="좋아요버튼눌림"
+          class="like btn-like" type="button" @click="dislike()"
+          src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
+          v-show="Like"
+        />
+      </span>
+      <span class="like-num" type="button" @click="moveToLike">{{likeNum}}</span>
+      <span>
+        <img
+          alt=""
+          class="btn-reply" type="button" @click="moveToReply"
+          src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
+        />
+      </span>
+      <span class="reply-num" type="button" @click="moveToReply">{{replyNum}}</span>
+    </div>
+    <div class="feed-owner">{{nickname}}</div>
+    <div class="third">
+      <p class="contentDetail">{{shortenContent}}</p>
+      <p 
+        class="content-more"
+        type="button"
+        @click="showMoreContent(true)"
+        v-show="!moreContent"
+      >더보기</p>
+      <p 
+        class="content-more"
+        type="button"
+        @click="showMoreContent(false)"
+        v-show="moreContent"
+      >접기</p>
+      <div>
+        <span
+          v-for="(tag, idx) in tags"
+          :key="idx"
+          class="feed-tag rounded-pill me-1"
+        >#{{tag}}</span>
+      </div>
+    </div>
+    <ReplyListItem/>
+    <div><span class="reply-more" type="button" @click="moveToReply">더보기</span></div>
   </div>
 </template>
 
@@ -181,17 +179,19 @@ export default {
 //   align-content: center;
 //   text-align: center;
 // }
-.feed-list{
+.feed-list-item{
   display: flex;
+  flex-direction: column;
   margin: 0 auto;
+  padding: 60px 0 0 0;
   width: 408px;
 }
 .feed-header{
   display: flex;
   align-items: flex-start;
 }
-.feed-header span {
-  margin: 5px 3px;
+.feed-image{
+  width: 408px;
 }
 .user-profile {
   align-self: center;
@@ -212,10 +212,6 @@ export default {
 }
 .feed-menu{
   align-self: center;
-}
-.feed-image{
-  width: 408px;
-  height: 100%;
 }
 .like-reply {
   display: flex;

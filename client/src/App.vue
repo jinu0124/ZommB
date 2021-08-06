@@ -2,7 +2,11 @@
   <div id="app" :class="{accounts: isAccounts, challenge: isChallenge}">
     <Header 
       v-if="needHeader"
-      :class="{accounts: isAccounts, challenge: isChallenge}"
+      :class="{accounts: isAccounts, challenge: isChallenge, feedlist: isFeedList, profile: isProfile}"
+    />
+    <Header2
+      v-if="needHeader2"
+      :class="{like: isLike, reply: isReply, report: isReport, write: isWrite, follow: isFollow}"
     />
     <router-view/>
   </div>
@@ -10,11 +14,13 @@
 
 <script>
 import Header from '@/components/Header'
+import Header2 from '@/components/Header2'
 
 export default {
   name: 'App',
   components: {
     Header,
+    Header2,
   },
   computed: {
     // Header 표시 여부 계산
@@ -37,6 +43,18 @@ export default {
       }
       return true
     },
+    // Header
+    needHeader2() {
+      if (this.$route.name === 'Like'
+        || this.$route.name === 'Reply'
+        || this.$route.name === 'Report'
+        || this.$route.name === 'WriteArticle'
+        || this.$route.name === 'Follow'
+        ) {
+        return true
+      }
+      return false
+    },
     isAccounts() {
       if (this.$route.name === 'Login'
         || this.$route.name === 'Signup'
@@ -49,6 +67,12 @@ export default {
     },
     isChallenge() {
       return this.$route.name === 'Challenge'
+    },
+    isFeedList() {
+      return this.$route.name === 'Feed'
+    },
+    isProfile() {
+      return this.$route.name === 'Profile'
     }
   }
 }
@@ -71,6 +95,14 @@ export default {
   color: #fff;
 }
 .challenge {
+  background-color: #fff;
+  color: #683EC9;
+}
+.feedlist {
+  background-color: #7B60F1;
+  color: #fff;
+}
+.profile {
   background-color: #fff;
   color: #683EC9;
 }
