@@ -214,21 +214,18 @@ export default {
             this.isSuccessInfo = true
           })
           .catch((err) => {
-            if (err.response.data.msg != 'AccessToken has been expired') {
-              // console.log(err.response)
-              if (err.response === 400) {
-                this.fail.nickname = true
-                setTimeout(() => {
-                  this.fail.nickname = false
-                }, 2000)
-              } else if (err.response === 401 ) {
-                this.fail.profile = true
-                setTimeout(() => {
-                  this.fail.profile = false
-                }, 2000)
-              } else {
-                this.$router.push({ name: 'ServerError' })
-              }
+            if (err.response === 400) {
+              this.fail.nickname = true
+              setTimeout(() => {
+                this.fail.nickname = false
+              }, 2000)
+            } else if (err.response === 401 ) {
+              this.fail.profile = true
+              setTimeout(() => {
+                this.fail.profile = false
+              }, 2000)
+            } else {
+              this.$router.push({ name: 'ServerError' })
             }
           })
       } else {
@@ -240,13 +237,11 @@ export default {
           .then(() => {
             this.isSuccessPassword = true
           })
-          .catch((err) => {
-            if (err.response.data.msg != 'AccessToken has been expired' ){
-              this.fail.password = true
-              setTimeout(() => {
-                this.fail.password = false
-              }, 2000)
-            }
+          .catch(() => {
+            this.fail.password = true
+            setTimeout(() => {
+              this.fail.password = false
+            }, 2000)
           })
       } else {
         this.isSuccessPassword = true
