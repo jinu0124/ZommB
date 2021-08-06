@@ -73,8 +73,6 @@ const actions = {
       .then((res) => {
         // console.log(res)
         commit('SET_ISLOGIN', true)
-        commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
-        commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })

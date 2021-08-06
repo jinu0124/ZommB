@@ -26,6 +26,19 @@
   border: 1px solid #FF7777;
   color: #fff;
 }
+.success-alert {
+  width: 80vw;
+  height: 35px;
+  border-radius: 10px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(151, 223, 252, 0.95);
+  border: 1px solid #97DFFC;
+  color: #fff;
+}
 .alert-top-30 {
   position: fixed;
   top: 30%;
@@ -39,5 +52,6 @@
 }
 .hide {
   opacity: 0;
+  display: none;
   transition: all 0.2s;
 }
