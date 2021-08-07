@@ -1,15 +1,13 @@
 package com.ssafy.commb.service;
 
-import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
-import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.FeedRepository;
 import com.ssafy.commb.repository.ReportRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -17,10 +15,9 @@ import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.Part;
-import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.ssafy.commb.dao.FeedDao;
 
@@ -58,7 +55,7 @@ public class FeedServiceImpl implements FeedService {
         feed.setContent(feedReq.getContent());
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
-        String fileUrl =  S3service.uploadS3(part, "feed");
+        String fileUrl = S3service.uploadS3(part, "feed");
         feed.setFileUrl(fileUrl);
 
         feedRepository.save(feed);
@@ -110,7 +107,7 @@ public class FeedServiceImpl implements FeedService {
         feedRepository.deleteById(feedId);
     }
 
-    public void reportFeed(int feedId, String reason, int userId){
+    public void reportFeed(int feedId, String reason, int userId) {
         Report report = new Report();
 
         Optional<Feed> feed = feedRepository.findById(feedId);
@@ -125,7 +122,7 @@ public class FeedServiceImpl implements FeedService {
         reportRepository.save(report);
     }
 
-    public FeedDto.ResponseList getFollowingFeeds(int userId){
+    public FeedDto.ResponseList getFollowingFeeds(int userId) {
 
         List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
 
@@ -138,6 +135,35 @@ public class FeedServiceImpl implements FeedService {
         feedResList.setData(feeds);
 
         return feedResList;
+    }
+
+    public MyDto.ResponseList likeFeeds(int feedId, int userId) {
+
+        Optional<Feed> feed = feedRepository.findById(feedId);
+
+        // 피드에 좋아요를 누른 유저 목록
+        List<Thumb> thumbsUser = feed.get().getThumbsUser();
+
+        List<User> users = new ArrayList<>();
+        for (Thumb thumb : thumbsUser) {
+            users.add(thumb.getUser());
+        }
+
+        List<MyDto> myDtoList = users
+                .stream()
+                .map(user -> {
+                    User u = userRepository.findUserById(user.getId()).get();
+
+                    return MyDto.builder()
+                            .id(u.getId())
+                            .nickname(u.getNickname())
+                            .userFileUrl(u.getFileUrl())
+                            .build();
+                }).collect(Collectors.toList());
+
+        MyDto.ResponseList myResList = MyDto.ResponseList.builder().data(myDtoList).build();
+
+        return myResList;
     }
 
 

@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
     private String awsProfileUrl;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     @Override
     public UserDto.ResponseList getUsers(String nickname) {

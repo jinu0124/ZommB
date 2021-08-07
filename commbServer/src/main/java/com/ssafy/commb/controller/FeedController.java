@@ -137,7 +137,7 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 누르기")
     public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         thumbService.likeFeed(feedId, userId);
 
@@ -150,7 +150,7 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 취소")
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         thumbService.deleteLikeFeed(feedId, userId);
 
@@ -161,12 +161,13 @@ public class FeedController {
     // 게시물 좋아요 목록
     @GetMapping("/{feedId}/feed-likes")
     @ApiOperation(value = "피드 좋아요 리스트", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> likeFeeds(@PathVariable Integer feedId) {
-        MyDto.Response myRes = new MyDto.Response();
-        MyDto my = MyDto.builder().id(id).nickname(nickname).userFileUrl(url).isFollow(bool).build();
+    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        myRes.setData(my);
-        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
+        int userId = (Integer) request.getAttribute("userId");
+
+        MyDto.ResponseList myResList = feedService.likeFeeds(feedId, userId);
+
+        return new ResponseEntity<MyDto.ResponseList>(myResList, HttpStatus.OK);
     }
 
     // 댓글 작성
@@ -174,7 +175,7 @@ public class FeedController {
     @ApiOperation(value = "댓글 작성")
     public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         commentService.uploadComment(feedId, userId, content);
 
@@ -242,6 +243,7 @@ public class FeedController {
 
         int myUserId = (Integer) request.getAttribute("userId");
 
+        // 팔로우 된 사람 - 이름 순으로 정렬 기준 처리 해야함!!!!!
         FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(myUserId);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);

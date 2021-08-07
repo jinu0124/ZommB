@@ -1,6 +1,7 @@
 package com.ssafy.commb.service;
 
 import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.user.MyDto;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
@@ -24,5 +25,6 @@ public interface FeedService {
 
     public FeedDto.ResponseList getFollowingFeeds(int userId);
 
+    public MyDto.ResponseList likeFeeds(int feedId, int userId);
 
 }
