@@ -1,26 +1,22 @@
 <template>
   <div class="like">
-    <LikeList/>
+    <LikeListItem />
   </div>
 </template>
 
 <script>
-import LikeList from '@/components/feeds/like/LikeList.vue'
+import LikeListItem from "@/components/feeds/like/LikeListItem.vue";
 
 export default {
-  name: 'Like',
+  name: "Like",
   components: {
-    LikeList
+    LikeListItem,
   },
   data() {
     return {};
   },
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 
-<style scoped>
-
-</style>
+<style scoped></style>

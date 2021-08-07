@@ -7,7 +7,7 @@
       id="UserProfile"
       :src="myInfo.userFileUrl"
       alt="user-profile"
-    >
+    />
     <img
       v-else
       alt="디폴트 회원 이미지"
@@ -15,50 +15,48 @@
       src="@/assets/image/common/profileDefault.svg"
       type="button"
       id="UserProfile"
-    >
+    />
     <div class="reply-content">
-      <p class="replier">{{replier}}</p>
-      <p class="reply">{{reply}}</p>
-      <div class="reply-like-num">좋아요 {{replyLikeNum}}개</div>
+      <p class="replier">{{ replier }}</p>
+      <p class="reply">{{ reply }}</p>
+      <div class="reply-like-num">좋아요 {{ replyLikeNum }}개</div>
     </div>
     <!-- <ReplyMenu/> -->
     <img
-        alt=""
-        class="reply-like"
-        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+      alt=""
+      class="reply-like"
+      src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
     />
   </div>
 </template>
 
 <script>
 // import ReplyMenu from '@/components/feeds/reply/ReplyMenu.vue';
-import { mapState } from "vuex"
+import { mapState } from "vuex";
 
 export default {
-  name: 'ReplyListItem',
+  name: "ReplyListItem",
   components: {
     // ReplyMenu,
   },
   data() {
     return {
-      replier: 'User1',
-      reply: '댓글입니다. 댓글이에여',
+      replier: "User1",
+      reply: "댓글입니다. 댓글이에여",
       replyLikeNum: 0,
-    }
+    };
   },
   computed: {
-    ...mapState('user', ['myInfo'])
-  }
-}
+    ...mapState("user", ["myInfo"]),
+  },
+};
 </script>
 
 <style scoped>
 .reply-list-item {
   margin-top: 20px;
   display: flex;
-  align-items: flex-start;
-  width: 408px;
-  text-align: center;
+  width: 320px;
 }
 .user-profile {
   align-self: center;
@@ -75,7 +73,7 @@ export default {
   font-family: "Noto Sans KR";
   margin-left: 10px;
 }
-.replier{
+.replier {
   display: flex;
   width: 200px;
   color: rgba(33, 33, 33, 1);

@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import BookListItem from "@/components/BookListItem.vue";
+import BookListItem from "@/components/book/BookListItem.vue";
 
 export default {
   name: "ProfileLibrary",
