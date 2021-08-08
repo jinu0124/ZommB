@@ -29,7 +29,7 @@ export default {
   border-radius: 100%;
 }
 .reply-regist {
-  margin-top: 100px;
+  margin: 30px auto 0px;
   display: flex;
   align-content: center;
   width: 320px;

@@ -1,81 +1,75 @@
 <template>
-  <div id="app" :class="{accounts: isAccounts, challenge: isChallenge}">
-    <Header 
+  <div id="app" :class="{ accounts: isAccounts, challenge: isChallenge }">
+    <Header
       v-if="needHeader"
-      :class="{accounts: isAccounts, challenge: isChallenge, feedlist: isFeedList, profile: isProfile}"
+      :class="{
+        accounts: isAccounts,
+        challenge: isChallenge,
+        feedlist: isFeedList,
+        profile: isProfile,
+      }"
     />
-    <Header2
-      v-if="needHeader2"
-      :class="{like: isLike, reply: isReply, report: isReport, write: isWrite, follow: isFollow}"
-    />
-    <router-view/>
+    <router-view />
   </div>
 </template>
 
 <script>
-import Header from '@/components/Header'
-import Header2 from '@/components/Header2'
+import Header from "@/components/Header";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
     Header,
-    Header2,
   },
   computed: {
     // Header 표시 여부 계산
     needHeader() {
-      if (this.$route.name === 'Index' 
-        || this.$route.name === 'Login'
-        || this.$route.name === 'Signup'
-        || this.$route.name === 'SignupEmail'
-        || this.$route.name === 'FindPassword'
-        || this.$route.name === 'ResetPassword'
-        || this.$route.name === 'PageNotFound'
-        || this.$route.name === 'ServerError'
-        || this.$route.name === 'Like'
-        || this.$route.name === 'Reply'
-        || this.$route.name === 'Report'
-        || this.$route.name === 'WriteArticle'
-        || this.$route.name === 'Follow'
-        ) {
-        return false
+      if (
+        this.$route.name === "Index" ||
+        this.$route.name === "Login" ||
+        this.$route.name === "Signup" ||
+        this.$route.name === "SignupEmail" ||
+        this.$route.name === "FindPassword" ||
+        this.$route.name === "ResetPassword" ||
+        this.$route.name === "PageNotFound" ||
+        this.$route.name === "ServerError" ||
+        this.$route.name === "Like" ||
+        this.$route.name === "Reply" ||
+        this.$route.name === "Report" ||
+        this.$route.name === "Write" ||
+        this.$route.name === "SelectBook" ||
+        this.$route.name === "AddBookcart" ||
+        this.$route.name === "AddLibrary" ||
+        this.$route.name === "AddCollection" ||
+        this.$route.name === "Follow"
+      ) {
+        return false;
       }
-      return true
-    },
-    // Header
-    needHeader2() {
-      if (this.$route.name === 'Like'
-        || this.$route.name === 'Reply'
-        || this.$route.name === 'Report'
-        || this.$route.name === 'WriteArticle'
-        || this.$route.name === 'Follow'
-        ) {
-        return true
-      }
-      return false
+      return true;
     },
     isAccounts() {
-      if (this.$route.name === 'Login'
-        || this.$route.name === 'Signup'
-        || this.$route.name === 'FindPassword'
-        || this.$route.name === 'ResetPassword'
-        || this.$route.name === 'UpdateInfo') {
-        return true
+      if (
+        this.$route.name === "Login" ||
+        this.$route.name === "Signup" ||
+        this.$route.name === "FindPassword" ||
+        this.$route.name === "ResetPassword" ||
+        this.$route.name === "UpdateInfo"
+      ) {
+        return true;
       }
-      return false
+      return false;
     },
     isChallenge() {
-      return this.$route.name === 'Challenge'
+      return this.$route.name === "Challenge";
     },
     isFeedList() {
-      return this.$route.name === 'Feed'
+      return this.$route.name === "Feed";
     },
     isProfile() {
-      return this.$route.name === 'Profile'
-    }
-  }
-}
+      return this.$route.name === "Profile";
+    },
+  },
+};
 </script>
 
 <style src="@/assets/style/accounts.css"></style>
@@ -83,7 +77,7 @@ export default {
 <style src="@/assets/style/common.css"></style>
 <style>
 #app {
-  font-family: 'Noto Sans KR', sans-serif;
+  font-family: "Noto Sans KR", sans-serif;
   height: 100%;
   min-height: 100vh;
   -webkit-font-smoothing: antialiased;
@@ -91,19 +85,19 @@ export default {
 }
 
 .accounts {
-  background-color: #7B60F1;
+  background-color: #7b60f1;
   color: #fff;
 }
 .challenge {
   background-color: #fff;
-  color: #683EC9;
+  color: #683ec9;
 }
 .feedlist {
-  background-color: #7B60F1;
+  background-color: #7b60f1;
   color: #fff;
 }
 .profile {
   background-color: #fff;
-  color: #683EC9;
+  color: #683ec9;
 }
 </style>

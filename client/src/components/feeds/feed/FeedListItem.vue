@@ -182,6 +182,7 @@ export default {
 }
 .feed-header {
   display: flex;
+  height: 60px;
 }
 .feed-image {
   width: 320px;

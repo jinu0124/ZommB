@@ -9,7 +9,7 @@
         </div>
       </div>
       <span class="book-btn">
-        <button class="btn-5 btn-yellow feed-write-btn">피드 작성</button>
+        <button class="btn-5 btn-yellow feed-write-btn" @click="moveToWrite()">피드 작성</button>
         <button class="btn-5 btn-grey delete-btn">삭제</button>
       </span>
     </div>
@@ -26,6 +26,11 @@ export default {
       comp: "창비",
     };
   },
+  methods: {
+    moveToWrite() {
+      this.$router.push("/write");
+    },
+  },
 };
 </script>
 
@@ -34,10 +39,16 @@ export default {
 .book-list-item {
   display: flex;
   margin: auto 10px;
-  width: 400px;
+  width: 310px;
 }
 .book-btn {
-  margin: auto 10px;
+  margin: auto 0px;
+  width: 30px;
+}
+.feed-write-btn,
+.delete-btn {
+  width: 80px;
+  margin: 2px 0px;
 }
 .book-info {
   width: 100px;
@@ -51,13 +62,6 @@ export default {
   display: flex;
   margin: 0 5px;
 }
-.title {
-  font-size: 20px;
-}
-.delete-btn,
-.feed-write-btn {
-  margin: 5px 0;
-}
 .book {
   height: 150px;
   width: 100px;
@@ -69,7 +73,7 @@ export default {
   margin: auto 0;
   background: #f1f1f1;
   height: 120px;
-  width: 280px;
+  width: 200px;
   border-radius: 0 10px 10px 0;
 }
 </style>

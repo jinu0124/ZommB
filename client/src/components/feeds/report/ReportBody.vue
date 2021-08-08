@@ -1,29 +1,35 @@
 <template>
-  <div class="report">
+  <div class="report-body">
     <h1 class="title1">이 게시물을 신고하는 이유</h1>
-    <h4 class="title2">회원님의 신고는 익명으로 처리됩니다.<br>해당 게시물을 신고하는 이유를 선택해주세요.</h4>
+    <h4 class="title2">
+      회원님의 신고는 익명으로 처리됩니다.<br />해당 게시물을 신고하는 이유를 선택해주세요.
+    </h4>
     <div class="reasons">
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{lie}}</button></div>
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{spam}}</button></div>
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{abusive}}</button></div>
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{aversion}}</button></div>
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{property}}</button></div>
-      <div><button class="btn-2 btn-grey" @click="submit(true)">{{badimage}}</button></div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ lie }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ spam }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ abusive }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ aversion }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ property }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-grey" @click="submit(true)">{{ badimage }}</button>
+      </div>
     </div>
-    <!-- <ReportSuccess
-      v-show="reported"
-    /> 고민 더 해보기 -->
   </div>
 </template>
 
 <script>
-// import ReportSuccess from '@/components/feeds/report/ReportSuccess.vue'
-
 export default {
-  name: 'ReportBody',
-  components: {
-    // ReportSuccess,
-  },
+  name: "ReportBody",
   data() {
     return {
       lie: "거짓 정보",
@@ -33,25 +39,22 @@ export default {
       property: "지적 재산권 침해",
       badimage: "나체 이미지 또는 성적 행위",
       reported: false,
-    }
+    };
   },
   methods: {
     submit(flag) {
       this.reported = flag;
-    }
+    },
   },
-}
+};
 </script>
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.report {
-  text-align: center;
+.titel1 .title2 {
+  font-family: "Noto Sans KR", sans-serif;
 }
-.titel1 .title2{
-  font-family: 'Noto Sans KR', sans-serif;
-}
-.reasons {
+.report-body {
   text-align: center;
 }
 .btn-2 {

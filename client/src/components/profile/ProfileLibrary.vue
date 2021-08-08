@@ -3,7 +3,7 @@
     <div class="collection-title">
       <b
         >{{ nickname }}'s Collection
-        <button class="btn-5 btn-primary1">컬렉션 추가</button>
+        <button class="btn-5 btn-primary1" @click="moveToCollect()">컬렉션 추가</button>
       </b>
     </div>
     <div class="collection-body">
@@ -23,8 +23,8 @@
       </ul>
     </div>
     <span class="library-title">
-      <b>{{ nickname }}님이 가장 많이 읽은 장르는 {{ genre }} 입니다!! </b>
-      <button class="btn-5 btn-primary1">읽은책 추가</button>
+      <b>{{ nickname }}님이 가장 많이 읽은 장르는 <br />{{ genre }} 입니다!!</b>
+      <button class="btn-5 btn-primary1" @click="moveToAdd()">읽은책 추가</button>
     </span>
     <div>
       <input
@@ -51,7 +51,14 @@ export default {
       genre: "소설",
     };
   },
-  methods: {},
+  methods: {
+    moveToAdd() {
+      this.$router.push("/addLibrary");
+    },
+    moveToCollect() {
+      this.$router.push("/addCollection");
+    },
+  },
 };
 </script>
 
@@ -61,7 +68,7 @@ export default {
   margin: 5px 0;
 }
 ul {
-  width: 408px;
+  width: 320px;
   overflow-x: scroll;
   white-space: nowrap;
 }
@@ -74,9 +81,10 @@ ul {
 }
 .library-title {
   display: flex;
+  font-size: 13px;
 }
 .book-search-input {
-  width: 350px;
+  width: 300px;
   height: 35px;
   margin-top: 10px;
   background-color: #f1f1f1;
