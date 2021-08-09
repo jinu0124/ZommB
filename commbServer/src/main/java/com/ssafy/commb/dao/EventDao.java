@@ -1,5 +1,6 @@
 package com.ssafy.commb.dao;
 
+import com.ssafy.commb.dto.event.DailyEventDto;
 import com.ssafy.commb.dto.event.MyEventDto;
 import com.ssafy.commb.dto.event.WeeklyEventDto;
 import com.ssafy.commb.dto.feed.FeedDto;
@@ -13,6 +14,7 @@ public interface EventDao {
     public MyEventDto getBookmark(int userId);
     public List<WeeklyEventDto> getWeekly(int userId, int year, int month);
 
+
     public WeeklyEventDto bookRecommend(int year, int month, int day);
 
     public List<FeedDto> weeklyFeeds(int weeklyId, int userId);
@@ -21,5 +23,11 @@ public interface EventDao {
 
     public List<MyDto> getWeeklyParticipants(int weeklyId, int userId);
 
+
+    public DailyEventDto keywordRecommend(String param);
+
+    public List<FeedDto> dailyFeeds(int dailyId, int userId);
+
+    public List<MyDto> getDailyParticipants(int dailyId, int userId);
 
 }

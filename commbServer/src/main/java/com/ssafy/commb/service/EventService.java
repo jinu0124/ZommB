@@ -1,5 +1,7 @@
 package com.ssafy.commb.service;
 
+import com.amazonaws.services.xray.model.Http;
+import com.ssafy.commb.dto.event.DailyEventDto;
 import com.ssafy.commb.dto.event.MyEventDto;
 import com.ssafy.commb.dto.event.WeeklyEventDto;
 import com.ssafy.commb.dto.feed.FeedDto;
@@ -19,5 +21,10 @@ public interface EventService {
 
     public MyDto.ResponseList getWeeklyParticipants(int weeklyId, HttpServletRequest request);
 
+    public DailyEventDto.Response keywordRecommend(LocalDate today);
+
+    public FeedDto.ResponseList dailyFeeds(int keywordId, HttpServletRequest request);
+
+    public MyDto.ResponseList getDailyParticipants(int dailyId, int userId);
 
 }

@@ -2,6 +2,7 @@ package com.ssafy.commb.service;
 
 import com.ssafy.commb.dao.EventDao;
 import com.ssafy.commb.dao.FeedDao;
+import com.ssafy.commb.dto.event.DailyEventDto;
 import com.ssafy.commb.dto.event.MyEventDto;
 import com.ssafy.commb.dto.event.WeeklyEventDto;
 import com.ssafy.commb.dto.feed.FeedDto;
@@ -69,15 +70,10 @@ public class EventServiceImpl implements EventService {
     public FeedDto.ResponseList weeklyFeeds(int weeklyId, HttpServletRequest request) {
         List<FeedDto> feeds = eventDao.weeklyFeeds(weeklyId, (int) request.getAttribute("userId"));
 
-        for (FeedDto feed : feeds) {
-            feed.setHashTags(feedDao.getHashTags(feed.getId()));
-            feed.setComments(feedDao.getComments(feed.getId(), (Integer) request.getAttribute("userId")));
-        }
+        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
+        feedResList.setData(getHashAndComments(feeds, (int) request.getAttribute("userId")));
 
-        FeedDto.ResponseList feedRes = new FeedDto.ResponseList();
-
-        feedRes.setData(feeds);
-        return feedRes;
+        return feedResList;
     }
 
     @Override
@@ -96,5 +92,48 @@ public class EventServiceImpl implements EventService {
         return myResList;
     }
 
+    @Override
+    public DailyEventDto.Response keywordRecommend(LocalDate today) {
+        String year = String.valueOf(today.getYear());
+        String month = today.getMonthValue() < 10 ? "0" + today.getMonthValue() : String.valueOf(today.getMonthValue());
+        String day = today.getDayOfMonth() < 10 ? "0" + today.getDayOfMonth() : String.valueOf(today.getDayOfMonth());
+        String param = year + "-" + month + "-" + day ;
+
+        DailyEventDto daily = eventDao.keywordRecommend(param);
+
+        DailyEventDto.Response dailyRes = new DailyEventDto.Response();
+        dailyRes.setData(daily);
+
+        return dailyRes;
+    }
+
+    @Override
+    public FeedDto.ResponseList dailyFeeds(int dailyId, HttpServletRequest request) {
+        List<FeedDto> feeds = eventDao.dailyFeeds(dailyId, (int) request.getAttribute("userId"));
+
+        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
+        feedResList.setData(getHashAndComments(feeds, (int) request.getAttribute("userId")));
+
+        return feedResList;
+    }
+
+    @Override
+    public MyDto.ResponseList getDailyParticipants(int dailyId, int userId) {
+        List<MyDto> mys = eventDao.getDailyParticipants(dailyId, userId);
+        System.out.println(mys.size());
+        MyDto.ResponseList myResList = new MyDto.ResponseList();
+        myResList.setData(mys);
+
+        return myResList;
+    }
+
+
+    private List<FeedDto> getHashAndComments(List<FeedDto> feeds, int userId){
+        for (FeedDto feed : feeds) {
+            feed.setHashTags(feedDao.getHashTags(feed.getId()));
+            feed.setComments(feedDao.getComments(feed.getId(), userId));
+        }
+        return feeds;
+    }
 
 }
