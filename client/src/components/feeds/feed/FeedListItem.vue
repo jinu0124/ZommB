@@ -35,7 +35,7 @@
         class="feed-menu dropdown-toggle"
         data-bs-toggle="dropdown"
         aria-expanded="false"
-        src="https://static.overlay-tech.com/assets/5260b2a9-6a42-4840-8f61-6951b5a5bf12.png"
+        src="@/assets/image/deco/feedMenu.svg"
         type="button"
         id="FeedMenuDropdown"
       />
@@ -53,7 +53,7 @@
           class="dislike btn-like"
           type="button"
           @click="like()"
-          src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+          src="@/assets/image/deco/heartEmpty.svg"
           v-show="disLike"
         />
         <img
@@ -61,11 +61,11 @@
           class="like btn-like"
           type="button"
           @click="dislike()"
-          src="https://static.overlay-tech.com/assets/1a8070a1-61e9-4392-8df4-c7378df78e1c.svg"
+          src="@/assets/image/deco/heartFill.svg"
           v-show="Like"
         />
       </span>
-      <span class="like-num" type="button" @click="moveToLike">{{ likeNum }}</span>
+      <span class="like-num" type="button" @click="moveToLike">{{ this.likeNum }}</span>
       <span>
         <img
           alt=""
@@ -75,9 +75,8 @@
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span class="reply-num" type="button" @click="moveToReply">{{ replyNum }}</span>
+      <span class="reply-num" type="button" @click="moveToReply">{{ this.replyNum }}</span>
     </div>
-    <div class="feed-owner">{{ nickname }}</div>
     <div class="third">
       <p class="contentDetail">{{ shortenContent }}</p>
       <p class="content-more" type="button" @click="showMoreContent(true)" v-show="!moreContent">
@@ -91,6 +90,7 @@
           >#{{ tag }}</span
         >
       </div>
+      <hr />
     </div>
     <ReplyListItem />
     <div class="reply-more"><span type="button" @click="moveToReply">더보기</span></div>
@@ -102,7 +102,6 @@ import { mapState } from "vuex";
 import FeedMenu from "@/components/feeds/feed/FeedMenu.vue";
 import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
 import _ from "lodash";
-// import axios from 'axios'
 
 export default {
   name: "FeedListItem",
@@ -117,12 +116,11 @@ export default {
       tags: ["해시태그", "테스트", "입니다."],
       nickname: "Nickname",
       title: "미드나잇 라이브러리",
-      Like: false,
       likeNum: 0,
       replyNum: 0,
+      Like: false,
       disLike: true,
       moreContent: false,
-      feeds: [],
     };
   },
   // created() {
@@ -161,7 +159,7 @@ export default {
       if (this.moreContent) {
         return this.content;
       } else {
-        return _.truncate(this.content, { length: 150 });
+        return _.truncate(this.content, { length: 80 });
       }
     },
     ...mapState("user", ["myInfo"]),
@@ -170,37 +168,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// .feed-list {
-//   align-content: center;
-//   text-align: center;
-// }
-.feed-list-item {
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  width: 320px;
-}
 .feed-header {
   display: flex;
   height: 60px;
-}
-.feed-image {
-  width: 320px;
-}
-.user-profile {
-  align-self: center;
 }
 .default-user-image,
 .user-profile {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
+  margin: auto;
 }
 .feedHeader {
   width: 100%;
-  display: flex;
   flex-direction: column;
-  align-items: flex-start;
 }
 .mini-title,
 .owner {
@@ -224,9 +205,6 @@ export default {
 .reply-num {
   margin: 5px 0 5px 5px;
 }
-.feed-owner {
-  display: flex;
-}
 .replies {
   display: flex;
   align-items: center;
@@ -237,19 +215,14 @@ export default {
   color: rgb(139, 139, 139);
 }
 .third {
-  background-color: rgba(241, 241, 241, 1);
   border-radius: 10px;
   text-align: left;
   padding: 5px;
 }
-.like-reply,
-.feed-owner,
-.third {
-  max-width: 320px;
-}
 .feed-tag {
   color: #585858;
   background: #ffdc7c;
+  padding: 5px;
 }
 .reply-more {
   margin: 0px auto;

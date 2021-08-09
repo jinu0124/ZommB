@@ -7,6 +7,7 @@
         challenge: isChallenge,
         feedlist: isFeedList,
         profile: isProfile,
+        search: isSearch,
       }"
     />
     <router-view />
@@ -68,6 +69,9 @@ export default {
     isProfile() {
       return this.$route.name === "Profile";
     },
+    isSearch() {
+      return this.$route.name === "Search";
+    },
   },
 };
 </script>
@@ -95,6 +99,10 @@ export default {
   color: #fff;
 }
 .profile {
+  background-color: #fff;
+  color: #683ec9;
+}
+.search {
   background-color: #fff;
   color: #683ec9;
 }

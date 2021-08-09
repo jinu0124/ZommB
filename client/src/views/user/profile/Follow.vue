@@ -68,7 +68,7 @@ export default {
   margin: auto;
 }
 .tabs {
-  margin: 0 auto;
+  margin: 20px auto;
   padding-bottom: 40px;
   background-color: #ffffff;
   width: 320px;
@@ -77,6 +77,7 @@ export default {
   width: calc(100% / 2);
   height: 50px;
   background-color: #f8f8f8;
+  border-radius: 20px 20px 0px 0px;
   line-height: 50px;
   font-size: 16px;
   text-align: center;
@@ -106,5 +107,6 @@ input[name="tab-item"] {
 .tabs input:checked + .tab-item {
   background-color: #ffdc7c;
   color: #7540ee;
+  border-radius: 20px 20px 0px 0px;
 }
 </style>

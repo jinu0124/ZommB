@@ -7,7 +7,8 @@ import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
 import Profile from '@/views/user/profile/Profile'
-import Follow from '@/views/user/Follow'
+import Follow from '@/views/user/profile/Follow'
+import Search from '@/views/search/Search'
 import FindPassword from '@/views/user/FindPassword'
 import ResetPassword from '@/views/user/ResetPassword'
 import Feed from '@/views/feed/Feed'
@@ -143,6 +144,11 @@ const routes = [
     name: 'AddCollection',
     component: AddCollection
   },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search
+  }
 ]
 
 const router = new VueRouter({

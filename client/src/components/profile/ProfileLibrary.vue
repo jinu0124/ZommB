@@ -1,10 +1,8 @@
 <template>
   <div>
     <div class="collection-title">
-      <b
-        >{{ nickname }}'s Collection
-        <button class="btn-5 btn-primary1" @click="moveToCollect()">컬렉션 추가</button>
-      </b>
+      <b>{{ this.nickname }}'s Collection</b>
+      <button class="addbtn btn-5 btn-primary1" @click="moveToCollect()">컬렉션 추가</button>
     </div>
     <div class="collection-body">
       <ul class="collection-list">
@@ -23,8 +21,8 @@
       </ul>
     </div>
     <span class="library-title">
-      <b>{{ nickname }}님이 가장 많이 읽은 장르는 <br />{{ genre }} 입니다!!</b>
-      <button class="btn-5 btn-primary1" @click="moveToAdd()">읽은책 추가</button>
+      <b>{{ this.nickname }}님이 가장 많이 읽은 장르는 <br />{{ this.genre }} 입니다!!</b>
+      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽은책 추가</button>
     </span>
     <div>
       <input
@@ -64,11 +62,11 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.collection-title {
+.collection-title,
+.library-title {
   margin: 5px 0;
 }
 ul {
-  width: 320px;
   overflow-x: scroll;
   white-space: nowrap;
 }
@@ -82,6 +80,7 @@ ul {
 .library-title {
   display: flex;
   font-size: 13px;
+  margin-left: 5px;
 }
 .book-search-input {
   width: 300px;
@@ -97,5 +96,10 @@ ul {
   font-size: 0.875rem;
   border-radius: 20px;
   transition: none;
+}
+.addbtn {
+  width: 85px;
+  height: 30px;
+  margin-left: 10px;
 }
 </style>
