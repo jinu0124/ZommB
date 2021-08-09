@@ -18,7 +18,7 @@
           class="btn-write"
           src="@/assets/image/test/btn-write.png"
           type="button"
-          @click="moveToWrite()"
+          @click="moveToWrite"
           v-show="isFeed"
         />
         <img 
@@ -41,7 +41,6 @@
           data-bs-toggle="dropdown" 
           aria-expanded="false"
         >
-
         <HeaderUserMenu/>
       </div>
     </div>
@@ -78,8 +77,15 @@ export default {
     HeaderUserMenu,
   },
   computed: {
-    ...mapState('user', ['myInfo'])
-  }
+    ...mapState('user', ['myInfo']),
+  },
+  // created() {
+  //   if(this.$route.name == 'Feed'){
+  //     this.isFeed = true
+  //   }else {
+  //     this.isFeed = false
+  //   }
+  // }
 }
 </script>
 
@@ -100,7 +106,7 @@ export default {
   .btn-write{
     width: 2rem;
     height: 2rem;
-    margin: 0 10px 0 0;
+    margin: 0 10px 0 -42px;
   }
   .user-profile {
     width: 2rem;

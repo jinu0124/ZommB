@@ -1,39 +1,40 @@
 <template>
-  <div class="feed">
-    <Header/>
-    <FeedList/>
+  <div class="feed-body">
+    <div class="feed">
+      <FeedListItem />
+    </div>
   </div>
 </template>
 
 <script>
-import Header from '@/components/Header.vue';
-import FeedList from '@/components/feeds/feed/FeedList.vue';
+import FeedListItem from "@/components/feeds/feed/FeedListItem.vue";
 
 export default {
-  name: 'Feed',
+  name: "Feed",
   components: {
-    FeedList,
-    Header,
+    FeedListItem,
   },
   data: () => {
     return {
-      id: '',
-      nickname: '',
-      userFileUrl: '',
-      isFollow: '',
-    }
+      id: "",
+      nickname: "",
+      userFileUrl: "",
+      isFollow: "",
+    };
   },
-  methods: {
-
-  },
+  methods: {},
 };
 </script>
 
 <style scoped>
-.feed{
-  display: flex;
-  flex-flow: column;
-  margin: 60px auto 0;
-  align-items: center;
+.feed-body {
+  background: #7b60f1;
+}
+.feed {
+  background-color: #ffffff;
+  border-radius: 30px 0px 0px 0px;
+  height: 100vh;
+  margin-top: 60px;
+  overflow: scroll;
 }
 </style>

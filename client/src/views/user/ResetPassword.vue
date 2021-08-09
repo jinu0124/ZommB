@@ -1,16 +1,22 @@
 <template>
-  <div class="find-password">
+  <div class="account-page">
     <UnauthorizedHeader/>
-    <div class="fp-header">
+    <div class="account-header">
       <div class="title">Reset<br>Password</div>
+      <div :class="[ failAlert ? 'show' : 'hide', 'warning-alert', 'alert-top-30']" role="alert">
+        {{ failAlert }}
+      </div>
+      <div :class="[ successAlert ? 'show' : 'hide', 'success-alert', 'alert-top-30']" role="alert">
+        {{ successAlert }}
+      </div>
     </div>
     <div class="account-form d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      <div class="description">
-        메일 인증이 완료되었습니다!<br>
-        새로운 비밀번호를 입력해주세요.
-      </div>
       <div class="account-inputs">
+        <div class="description">
+          이메일 인증이 완료되었습니다!<br>
+          새로운 비밀번호를 입력해주세요.
+        </div>
         <!-- 새 비밀번호 input -->
         <div class="account-input-box">
           <input
@@ -37,7 +43,7 @@
         </div>
         <button
           :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-2', 'mt-4']"
-          @click="onResetPassword(userInfo)"
+          @click="onResetPassword"
         >비밀번호 재설정</button>
       </div>
     </div>
@@ -45,8 +51,8 @@
 </template>
 
 <script>
+import userApi from '@/api/user'
 import PV from "password-validator"
-import { mapActions } from 'vuex'
 
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
 export default {
@@ -65,10 +71,37 @@ export default {
       },
       isSubmit: false,
       passwordSchema: new PV(),
+      failAlert: '',
+      successAlert: ''
     }
   },
   methods: {
-    ...mapActions('user', ['onResetPassword']),
+    async onResetPassword() {
+      await userApi.resetPassword(this.userInfo)
+      .then((res) => {
+        console.log(res)
+        this.successAlert = '비밀번호가 성공적으로 변경되었습니다.'
+        setTimeout(() => {
+          this.$router.push({ name: 'Login' })
+        }, 2000)
+      })
+      .catch((err) => {
+        // 400 or 401
+        console.log(err.response)
+        if (err.response.status === 400) {
+          this.failAlert = '사용할 수 없는 비밀번호입니다.'
+        } else if (err.response.status === 401) {
+          this.failAlert = '잘못된 접근입니다.'
+        } else {
+          this.$router.push({ name: 'ServerError' })
+        }
+        this.password = ''
+        this.passwordConfirm = ''
+        setTimeout(() => {
+          this.failAlert = ''
+        }, 2000)
+      })
+    },
     checkForm() {
       // 새로운 비밀번호 형식 검증
       if (
@@ -137,26 +170,9 @@ export default {
 </script>
 
 <style scoped>
-  .find-password {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .fp-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .fp-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    line-height: 3rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
   .account-form .description {
     color: #212121;
     font-size: 11px;
-    margin: 60px 0 15px;
+    margin: 60px 10px 15px;
   }
 </style>
