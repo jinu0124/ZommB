@@ -50,4 +50,7 @@ public class DailyEventController {
 
         return new ResponseEntity<DailyEventDto.Response>((DailyEventDto.Response) null, HttpStatus.OK);
     }
+
+
+    // 이벤트 참여자 목록 보여주기는 시간나면
 }

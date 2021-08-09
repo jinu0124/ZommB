@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.EventDao">
+
+    <select id="getBookmark" parameterType="Integer" resultType="MyEvent">
+        SELECT bookmark, pencil AS dailyParticipate
+        FROM user
+        WHERE id = #{userId}
+    </select>
+
+    <select id="getWeekly" parameterType="Integer" resultType="WeeklyEvent">
+        SELECT distinct b.id AS bid, CASE
+                                WHEN DATE_FORMAT(start_date, '%d') = '01' THEN 1
+                                WHEN DATE_FORMAT(start_date, '%d') = '08' THEN 2
+                                WHEN DATE_FORMAT(start_date, '%d') = '15' THEN 3
+                                WHEN DATE_FORMAT(start_date, '%d') = '22' THEN 4
+                            END AS WEEK, b.file_url AS bookFileUrl, true AS weeklyParticipate
+        FROM feed f INNER JOIN book b inner join weekly_event w
+        ON DATE(w.start_date) between DATE(CONCAT(#{year}, '-', #{month}, '-01')) and DATE(LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01'))) and f.user_id = #{userId} AND b.id = f.book_id AND b.id = w.book_id
+        AND DATE(create_at) between DATE(start_date) AND DATE(end_date)
+    </select>
+
+
+    <select id="bookRecommend" parameterType="Integer" resultMap="WeeklyEventInfo">
+        SELECT b.id bid, b.file_url, w.id wid
+        FROM weekly_event w, book b
+        WHERE DATE(CONCAT(#{year}, '-', #{month}, '-', #{day})) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND b.id = w.book_id
+        LIMIT 1
+    </select>
+
+    <select id="weeklyFeeds" parameterType="Integer" resultMap="feedInformation">
+        SELECT T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+            (SELECT u.id AS uid, f.id fid, create_at, content, f.file_url AS f_file_url, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                    COUNT(t.user_id) AS thumb_cnt
+            FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN weekly_event w
+            on f.user_id = u.id AND f.book_id = b.id AND b.id = w.book_id AND w.id = #{weeklyId} AND Date(f.create_at) BETWEEN DATE(w.start_date) AND DATE(w.end_date) AND f.blocked = 0
+            left outer join thumb t
+            on t.feed_id = f.id
+            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+            ON T1.fid = t.feed_id AND #{userId} = t.user_id
+        ORDER BY T1.create_at DESC
+    </select>
+
+    <select id="getWeeklyParticipantsCnt" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(distinct user_id)
+        FROM weekly_event w, book b, feed f
+        WHERE w.id = 10000001 AND w.book_id = b.id AND b.id = f.book_id AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1
+    </select>
+
+    <select id="getWeeklyParticipants" parameterType="Integer" resultType="My">
+        SELECT distinct T.id, T.nickname, T.file_url, IF(NULLIF(following, 0), 1, 0) AS isFollow
+        FROM
+            (SELECT u.id, u.nickname, u.file_url, f.create_at
+             FROM weekly_event w, book b, feed f, user u
+             WHERE w.id = #{weeklyId} AND w.book_id = b.id AND b.id = f.book_id AND f.user_id = u.id
+               AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND u.id != 10000001) AS T LEFT OUTER JOIN follow fo
+        ON T.id = fo.following AND fo.follower = #{userId}
+        ORDER BY isFollow DESC
+    </select>
+
+
+    <resultMap id="WeeklyEventInfo" type="WeeklyEvent">
+        <result column="bid" property="book.id"/>
+        <result column="file_url" property="bookFileUrl"/>
+        <result column="wid" property="weekly.id"/>
+    </resultMap>
+
+
+    <resultMap type="Feed" id="feedInformation">
+        <result column="fid" property="id"/>
+        <result column="create_at" property="createAt"/>
+        <result column="content" property="content"/>
+        <result column="f_file_url" property="feedFileUrl"/>
+        <result column="is_thumb" property="isThumb"/>
+        <result column="thumb_cnt" property="thumbCnt"/>
+        <result column="uid" property="user.id"/>
+        <result column="nickname" property="user.nickname"/>
+        <result column="u_file_url" property="user.userFileUrl"/>
+        <result column="bid" property="book.id"/>
+        <result column="book_name" property="book.bookName"/>
+    </resultMap>
+
+
+</mapper>

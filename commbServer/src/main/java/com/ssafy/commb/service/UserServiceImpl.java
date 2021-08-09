@@ -166,6 +166,12 @@ public class UserServiceImpl implements UserService {
             selectUser.setPassword(password);
             userRepository.save(selectUser);
         });
+
+        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUserId(userId);
+
+        confirmation.ifPresent(select -> {
+            userRepository.delete(select.getUser());
+        });
     }
 
     public void validatePassword( String password){

@@ -72,7 +72,7 @@ public class S3ServiceImpl implements S3Service{
         objectMetadata.setContentLength(bytes.length);
         ByteArrayInputStream byteArrayIs = new ByteArrayInputStream(bytes);
 
-        s3Client.putObject(new PutObjectRequest(bucket,  dir+ "/" + fileName, byteArrayIs, objectMetadata)
+        s3Client.putObject(new PutObjectRequest(bucket,  dir + "/" + fileName, byteArrayIs, objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));        // public read 권한 주기
 
         // s3Client.getUrl(bucket, fileName).toString()
