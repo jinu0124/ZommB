@@ -63,6 +63,9 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    RedisService redisService;
+
     @Value("${security.accesstoken}")
     private String accessToken;
 
@@ -143,13 +146,26 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 소셜 회원가입
-    @GetMapping("/social/kakao")
+    @GetMapping("/social/login")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> kakaoLogin() {
+    public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code) {
 
+        String userId = redisService.getStringValue(code);
 
+        if(userId == null) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
-        return new ResponseEntity<MyDto.Response>((MyDto.Response) null, HttpStatus.valueOf(201));
+        Integer id = Integer.parseInt(userId);
+
+        MyDto.Response myRes = userService.socialLogin(id);
+        Map<String, Object> map = securityService.createToken(id);
+
+        HttpHeaders resHeader = new HttpHeaders();
+        resHeader.set(accessToken, (String) map.get("acToken"));
+        resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        System.out.println(resHeader.get(accessToken));
+        System.out.println(resHeader.get(refreshToken));
+        return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
     // 회원가입/로그인 - 자체 로그인

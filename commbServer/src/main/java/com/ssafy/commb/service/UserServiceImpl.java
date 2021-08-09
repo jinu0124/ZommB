@@ -105,6 +105,23 @@ public class UserServiceImpl implements UserService {
         return myRes;
     }
 
+    public MyDto.Response socialLogin(int userId){
+        Optional<User> user = userRepository.findById(userId);
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
+
+        System.out.println(awsProfileUrl);
+        MyDto my = new MyDto();
+        my.setId(user.get().getId());
+        my.setNickname(user.get().getNickname());
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (user.get().getFileUrl()) : "");
+
+        MyDto.Response myRes = new MyDto.Response();
+        myRes.setData(my);
+        if(user.get().getRole() == null) throw new ApplicationException(HttpStatus.valueOf(403), "이메일 인증 필요", my);
+
+        return myRes;
+    }
+
     private final ConfirmationTokenService confirmationTokenService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
