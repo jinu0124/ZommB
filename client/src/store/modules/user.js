@@ -100,24 +100,6 @@ const actions = {
         return Promise.reject(err.response)
       })
   },
-  async onResetPassword({ dispatch }, userData) {
-    // console.log(userData)
-    await userApi.resetPassword(userData)
-      .then((res) => {
-        console.log(res)
-        dispatch('moveToLogin')
-      })
-      .catch((err) => {
-        // 400 or 401
-        if (err.response.status === 400) {
-          return '비밀번호는 영문, 숫자 포함 8자 이상이어야 합니다.'
-        } else if (ErrorEvent.response.status === 401) {
-          return '잘못된 접근입니다.'
-        } else {
-          router.push({ name: 'ServerError' })
-        }
-      })
-  },
 }
 
 const mutations = {
