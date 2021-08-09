@@ -14,7 +14,7 @@
           </span>
         </div>
         <div class="write-part">
-          <input class="write-content" />
+          <input class="write-content" placeholder="게시물 내용을 입력하세요." />
         </div>
       </div>
       <div class="btn-part">
@@ -86,6 +86,7 @@ export default {
   margin-top: 5px;
 }
 .write-content {
+  width: 100%;
   height: 200px;
   border-color: #f1f1f1;
   margin-top: 10px;

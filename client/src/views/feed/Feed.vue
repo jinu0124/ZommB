@@ -1,6 +1,7 @@
 <template>
   <div class="feed-body">
     <div class="feed">
+      <!-- <div class="title">NewsFeed</div> -->
       <FeedListItem />
     </div>
   </div>
@@ -37,4 +38,9 @@ export default {
   margin-top: 60px;
   overflow: scroll;
 }
+/* .title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin: 0 auto;
+} */
 </style>

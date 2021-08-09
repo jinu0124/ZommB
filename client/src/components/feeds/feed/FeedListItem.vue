@@ -190,7 +190,8 @@ export default {
 .user-profile {
   align-self: center;
 }
-.default-user-image {
+.default-user-image,
+.user-profile {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
