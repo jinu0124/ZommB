@@ -18,6 +18,7 @@ import WriteArticle from '@/views/feed/WriteArticle'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
+import OAuthRedirect from '@/views/user/OAuthRedirect'
 
 Vue.use(VueRouter)
 
@@ -118,6 +119,12 @@ const routes = [
     name : 'Challenge',
     component : Challenge,
     // meta: { requireAuth: true }
+  },
+  // social login
+  {
+    path: '/oauth/redirect',
+    name : 'OAuth',
+    component : OAuthRedirect
   },
 ]
 
