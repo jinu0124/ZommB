@@ -118,6 +118,21 @@ const actions = {
         }
       })
   },
+  async onSocialLogin ({ commit }, userData) {
+    await userApi.socialLogin(userData)
+      .then((res) => {
+        // console.log(res)
+        commit('SET_ISLOGIN', true)
+        commit('SET_MY_INFO', res.data.data)
+        router.push({ name: 'Feed' })
+      })
+      .catch((err) => {
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
+        }
+        return Promise.reject(err.response)
+      })
+  },
 }
 
 const mutations = {
