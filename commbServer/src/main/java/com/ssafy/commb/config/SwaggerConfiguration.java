@@ -1,5 +1,6 @@
 package com.ssafy.commb.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,6 +29,9 @@ public class SwaggerConfiguration {
 
     private String version = "V1";
     private String title = "CommB API " + version;
+
+    @Value("${security.accesstoken}")
+    private String accessToken;
 
     @Bean
     public Docket api() {
@@ -71,7 +75,7 @@ public class SwaggerConfiguration {
     }
 
     private ApiKey apiKey() {
-        return new ApiKey("JWT", "access-token", "header");
+        return new ApiKey("JWT", accessToken, "header");
     }
 
     private SecurityContext securityContext() {
