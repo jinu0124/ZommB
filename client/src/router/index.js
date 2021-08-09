@@ -10,6 +10,7 @@ import Profile from '@/views/user/profile/Profile'
 import Follow from '@/views/user/Follow'
 import FindPassword from '@/views/user/FindPassword'
 import ResetPassword from '@/views/user/ResetPassword'
+import BookInfo from '@/views/book/BookInfo'
 import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
@@ -76,6 +77,12 @@ const routes = [
     path: '/500',
     name : 'ServerError',
     component : ServerError
+  },
+  // book
+  {
+    path: '/book',
+    name : 'BookInfo',
+    component : BookInfo
   },
   //feed
   {

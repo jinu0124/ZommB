@@ -1,5 +1,12 @@
 <template>
-  <div id="app" :class="{ accounts: isAccounts, challenge: isChallenge }">
+  <div 
+    id="app" 
+    :class="{ 
+      accounts: isAccounts, 
+      challenge: isChallenge,
+      search: isSearch
+    }"
+  >
     <Header
       v-if="needHeader"
       :class="{
@@ -33,6 +40,7 @@ export default {
         this.$route.name === "ResetPassword" ||
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
+        this.$route.name === "BookInfo" ||
         this.$route.name === "Like" ||
         this.$route.name === "Reply" ||
         this.$route.name === "Report" ||
@@ -68,6 +76,14 @@ export default {
     isProfile() {
       return this.$route.name === "Profile";
     },
+    isSearch() {
+      if (
+        this.$route.name === "BookInfo" 
+      ) {
+        return true;
+      }
+      return false;
+    },
   },
 };
 </script>
@@ -76,26 +92,30 @@ export default {
 <style src="@/assets/style/button.css"></style>
 <style src="@/assets/style/common.css"></style>
 <style>
-#app {
-  font-family: "Noto Sans KR", sans-serif;
-  height: 100%;
-  min-height: 100vh;
-}
+  #app {
+    font-family: "Noto Sans KR", sans-serif;
+    height: 100%;
+    min-height: 100vh;
+  }
 
-.accounts {
-  background-color: #7b60f1;
-  color: #fff;
-}
-.challenge {
-  background-color: #fff;
-  color: #683ec9;
-}
-.feedlist {
-  background-color: #7b60f1;
-  color: #fff;
-}
-.profile {
-  background-color: #fff;
-  color: #683ec9;
-}
+  .accounts {
+    background-color: #7b60f1;
+    color: #fff;
+  }
+  .challenge {
+    background-color: #fff;
+    color: #683ec9;
+  }
+  .search {
+    background-color: #F1F1F1;
+    color: #683EC9;
+  }
+  .feedlist {
+    background-color: #7b60f1;
+    color: #fff;
+  }
+  .profile {
+    background-color: #fff;
+    color: #683ec9;
+  }
 </style>
