@@ -10,12 +10,11 @@ const _axios = axios.create({
 
 _axios.interceptors.request.use(
   function (config) {
-    // 헤더 정보 추가
     config.headers['accesstoken'] = store.state.user.accessToken
     return config;
   }, 
   function (error) {
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
 )
 
@@ -42,8 +41,8 @@ _axios.interceptors.response.use(
     } else if (error.response.status >= 500) {
       router.push({ name: 'ServerError'})
     }
-    return Promise.reject(error);
+    return Promise.reject(error)
   }
-);
+)
 
 export default _axios;
