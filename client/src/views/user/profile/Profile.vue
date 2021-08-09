@@ -1,9 +1,16 @@
 <template>
   <div class="my-profile">
     <img
-      id="myImage"
-      class="profile-image"
-      src="@/assets/image/test/imageTest.jpg"
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
       alt="profileImage"
     />
     <div class="user-info">
@@ -58,6 +65,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ProfileFeeds from "@/components/profile/ProfileFeeds";
 import ProfileLibrary from "@/components/profile/ProfileLibrary";
 import ProfileBookcart from "@/components/profile/ProfileBookcart";
@@ -85,6 +93,9 @@ export default {
       this.$router.push("/follow");
     },
   },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
 };
 </script>
 
@@ -98,7 +109,8 @@ export default {
   flex-flow: column;
   text-align: center;
 }
-.profile-image {
+.default-user-image,
+.user-profile {
   border-radius: 30px;
   width: 200px;
   height: 200px;

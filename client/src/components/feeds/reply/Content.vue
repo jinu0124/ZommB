@@ -1,6 +1,21 @@
 <template>
   <div class="content-part">
-    <img alt="" class="content-writer-image" src="@/assets/image/common/profileDefault.svg" />
+    <img
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
+      type="button"
+      id="UserProfile"
+    />
     <div class="content">
       <p class="content-writer">{{ nickname }}</p>
       <p class="article">{{ content }}</p>
@@ -15,6 +30,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "Content",
   data() {
@@ -24,6 +41,9 @@ export default {
       tags: ["해시태그", "테스트", "입니다."],
       duration: "3",
     };
+  },
+  computed: {
+    ...mapState("user", ["myInfo"]),
   },
 };
 </script>
@@ -35,7 +55,8 @@ export default {
   align-items: flex-start;
   width: 320px;
 }
-.content-writer-image {
+.user-profile,
+.default-user-image {
   width: 40px;
   height: 40px;
   margin-top: 11px;

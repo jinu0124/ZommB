@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="bookcart-title">
-      <b>{{ nickname }}님이 최근 가장 관심을 갖는 장르는 {{ genre }} 입니다!! </b>
+      <b>{{ nickname }}님이 최근 가장 관심을 갖는 장르는 {{ this.genre }} 입니다!! </b>
       <button class="btn-4 btn-primary1" @click="moveToAdd()">읽을책 추가</button>
     </div>
     <input

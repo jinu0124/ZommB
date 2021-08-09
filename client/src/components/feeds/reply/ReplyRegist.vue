@@ -1,6 +1,15 @@
 <template>
   <div class="reply-regist">
     <img
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
       alt="디폴트 회원 이미지"
       class="default-user-image user-profile"
       src="@/assets/image/common/profileDefault.svg"
@@ -13,8 +22,13 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "ReplyRegist",
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
 };
 </script>
 
@@ -23,7 +37,8 @@ export default {
 .user-profile {
   align-self: center;
 }
-.default-user-image {
+.default-user-image,
+.user-profile {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;

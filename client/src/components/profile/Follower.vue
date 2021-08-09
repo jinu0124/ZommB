@@ -3,9 +3,18 @@
     <div class="follower-list-item">
       <span class="user-images">
         <img
+          v-if="myInfo.userFileUrl"
+          class="user-profile"
+          type="button"
+          id="UserProfile"
+          :src="myInfo.userFileUrl"
+          alt="user-profile"
+        />
+        <img
+          v-else
           src="@/assets/image/common/profileDefault.svg"
           alt="defalut-profile"
-          class="user-image"
+          class="default-user-image user-profile"
           type="button"
         />
       </span>
@@ -23,6 +32,8 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
   name: "Follower",
   data() {
@@ -41,6 +52,9 @@ export default {
       console.log("팔로우 취소");
     },
   },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
 };
 </script>
 
@@ -54,7 +68,11 @@ div {
   display: flex;
   margin: auto;
 }
-.user-image {
+.user-profile {
+  align-self: center;
+}
+.default-user-image,
+.user-profile {
   width: 40px;
   height: 40px;
   border-radius: 50%;
