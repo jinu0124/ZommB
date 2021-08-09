@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/daily-events")
+@RequestMapping(value="/api/daily-events")
 public class DailyEventController {
 
     @GetMapping("")

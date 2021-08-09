@@ -50,7 +50,7 @@
     </select>
 
     <select id="getWeeklyParticipants" parameterType="Integer" resultType="My">
-        SELECT distinct T.id, T.nickname, T.file_url, IF(NULLIF(following, 0), 1, 0) AS isFollow
+        SELECT distinct T.id, T.nickname, T.file_url, IF(NULLIF(following, 0) = 0, 0, 1) AS isFollow
         FROM
             (SELECT u.id, u.nickname, u.file_url, f.create_at
              FROM weekly_event w, book b, feed f, user u

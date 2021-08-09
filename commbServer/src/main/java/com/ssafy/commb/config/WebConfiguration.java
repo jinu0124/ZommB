@@ -29,12 +29,10 @@ public class WebConfiguration implements WebMvcConfigurer {
 
     public void addInterceptors(InterceptorRegistry registry){
         registry.addInterceptor(authInterceptor)
-                .addPathPatterns("/security/**", "/books/**",
-                        "/daily-events/**", "/weekly-events/**", "/my-events/**",
-                        "/feeds/**", "/follows/**", "/users/**")
-                .excludePathPatterns("/security/create/**", "/users/login"
-                , "/users", "/users/email", "/users/confirm-email", "/users/checkEmailComplete",
-                        "/users/social/kakao", "/users/find-password", "/users/update-password");
+                .addPathPatterns("api/**")
+                .excludePathPatterns("/api/users/login"
+                , "/api/users", "/api/users/email", "/api/users/confirm-email", "/api/users/checkEmailComplete",
+                        "/api/users/social/kakao", "/api/users/find-password", "/api/users/update-password");
         //
     }
 }

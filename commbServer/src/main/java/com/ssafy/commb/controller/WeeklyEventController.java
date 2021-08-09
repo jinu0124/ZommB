@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping(value="/weekly-events")
+@RequestMapping(value="/api/weekly-events")
 public class WeeklyEventController {
 
     @Autowired

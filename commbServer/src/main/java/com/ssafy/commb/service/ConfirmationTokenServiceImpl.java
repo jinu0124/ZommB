@@ -5,6 +5,7 @@ import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
 
     @Autowired
     private RedisService redisService;
+
+    @Value("${dynamic.path}")
+    private String dynamicPath;
 
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSenderServiceImpl emailSenderService;
@@ -39,8 +43,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
 
         String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId() + "&url=" + url;
         mailMessage.setSubject("이메일 인증");
-//        mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+"http://i5a602.p.ssafy.io:8080/users" + query);
-        mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+"http://localhost:8080/users" + query);
+        mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+ dynamicPath + "api/users" + query);
         emailSenderService.sendEmail(mailMessage);          // 메일 발송
 
         return emailConfirmationToken.getId();
