@@ -1,17 +1,17 @@
 <template>
-  <div class="find-password">
+  <div class="account-page">
     <UnauthorizedHeader/>
-    <div class="fp-header">
+    <div class="account-header">
       <div class="title">Reset<br>Password</div>
     </div>
     <div class="account-form d-flex flex-column align-items-center">
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
-      <div class="description">
-        회원 가입 시, 등록한 이메일 계정을 알려주세요! <br>
-        이메일을 통해 본인 인증을 진행한 뒤, <br>
-        비밀번호를 재설정할 수 있습니다. 
-      </div>
       <div class="account-inputs">
+        <div class="description">
+          회원 가입 시, 등록한 이메일 계정을 알려주세요! <br>
+          이메일을 통해 본인 인증을 진행한 뒤, <br>
+          비밀번호를 재설정할 수 있습니다. 
+        </div>
         <!-- 이메일 input -->
         <div class="account-input-box">
           <input
@@ -35,6 +35,7 @@
 </template>
 
 <script>
+import userApi from '@/api/user'
 import * as EmailValidator from "email-validator"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
 
@@ -53,6 +54,15 @@ export default {
     }
   },
   methods: {
+    async onFindPassword() {
+      await userApi.findPassword(this.email)
+        .then((res) => {
+          return res
+        })
+        .catch((err) => {
+          return Promise.reject(err.response)
+        })
+    },
     checkForm() {
       // 이메일 형식 검증
             if (this.email.length > 0 && !EmailValidator.validate(this.email)) {
@@ -76,26 +86,9 @@ export default {
 </script>
 
 <style scoped>
-  .find-password {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .fp-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .fp-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    line-height: 3rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
   .account-form .description {
     color: #212121;
     font-size: 11px;
-    margin: 60px 0 15px;
+    margin: 60px 10px 15px;
   }
 </style>

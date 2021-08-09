@@ -1,6 +1,5 @@
 <template>
   <div>
-    <FollowHeader/>
     <div class="tabs">
       <input id="follower-tab" type="radio" name="tab-item" checked>
       <label class="tab-item" for="follower-tab" @click=changePage(0)>{{follower}} 팔로워</label>
@@ -21,14 +20,12 @@
 </template>
 
 <script>
-import FollowHeader from '@/components/profile/FollowHeader'
 import Follower from '@/components/profile/Follower'
 import Following from '@/components/profile/Following'
 
 export default {
   name: 'Follow',
   components: {
-    FollowHeader,
     Follower,
     Following,
   },

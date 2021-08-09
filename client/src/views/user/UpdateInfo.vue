@@ -1,12 +1,23 @@
 <template>
-  <div class="update-info">
-    <div class="info-header">
+  <div class="account-page">
+    <div class="account-header">
       <div class="title">My Info</div>
       <div class="description">프로필 사진과 닉네임, 비밀번호를 변경할 수 있어요.</div>
     </div>
     <div class="account-form p-5 d-flex flex-column align-items-center">
-      <div :class="[ fail.password ? 'show' : 'hide', 'fail-alert', 'my-1']" role="alert">
-        기존 비밀번호가 일치하지 않습니다.
+      <div class="d-flex flex-column alert-top-30">
+        <div :class="[ isSuccessInfo && isSuccessPassword ? 'show' : 'hide', 'success-alert', 'my-1']" role="alert">
+          회원 정보 수정이 완료되었습니다.
+        </div>
+        <div :class="[ fail.profile ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
+          프로필 사진 업로드에 실패했습니다.
+        </div>
+        <div :class="[ fail.nickname ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
+          잘못된 닉네임 입력 정보입니다.
+        </div>
+        <div :class="[ fail.password ? 'show' : 'hide', 'warning-alert', 'my-1']" role="alert">
+          기존 비밀번호가 일치하지 않습니다.
+        </div>
       </div>
       <img class="account-deco" src="@/assets/image/deco/accountDeco.svg" alt="accountDeco">
       <div class="d-flex flex-column align-items-center">
@@ -21,7 +32,7 @@
           <span
             type="button" 
             data-bs-toggle="modal" 
-            data-bs-target="#exampleModal"
+            data-bs-target="#profileCropModal"
           >프로필 변경</span>
           <ProfileCrop
             @select-croppa="saveNewProfile"
@@ -39,7 +50,8 @@
           <input
             id="nickname"
             class="account-input"
-            v-model="nickname"
+            :value="nickname"
+            @input="insertNickname"
             type="text"
             autocapitalize="off"
             maxlength="10"
@@ -98,10 +110,12 @@
         <!-- 수정 완료 / 취소 버튼 -->
         <div class="submit-btns d-flex justify-content-center gap-3">
           <button
+            type="button"
             class="btn-5 btn-grey mt-4"
             @click="$router.go(-1)"
           >취소</button>
           <button
+            type="button"
             :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-5', 'mt-4']"
             @click="onUpdate"
           >수정 완료</button>
@@ -145,15 +159,20 @@ export default {
       passwordSchema: new PV(),
       updatePassword: false,
       fail: {
-        userInfo: false,
+        nickname: false,
+        profile: false,
         password: false
       },
       isSuccessInfo: false,
-      isSuccessPassword: false
+      isSuccessPassword: false,
+      userFD: null,
     }
   },
   methods: {
     ...mapActions('user', ['onUpdatePassword']),
+    insertNickname(event) {
+      this.nickname = event.target.value
+    },
     passwordToggle() {
       this.updatePassword = !this.updatePassword
       this.checkForm()
@@ -169,55 +188,52 @@ export default {
       this.profilePath = null
       this.myCroppa = null
     },
-    onUpdate () {
+    makeFormData () {
+      if (this.profileUpdate === 1) {
+        this.myCroppa.generateBlob((blob) => {
+          var userInfo = new FormData()
+          userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
+          userInfo.append('nickname', this.nickname)
+          userInfo.append('flag', this.profileUpdate)
+          this.userFD = userInfo
+        })
+      } else {
+        var userInfo = new FormData()
+        userInfo.append('nickname', this.nickname)
+        userInfo.append('flag', this.profileUpdate)
+        this.userFD = userInfo
+      }
+    },
+    async onUpdate () {
       // 프로필이나 닉네임이 수정될 때만 회원 정보 수정 보내기
       if (this.profileUpdate != 0 || this.nickname != this.myInfo.nickname) {
-        // 프로필 사진 수정 시, blob 생성
-        if (this.profileUpdate === 1) {
-          this.myCroppa.generateBlob((blob) => {
-            var userInfo = new FormData()
-            userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
-            userInfo.append('nickname', this.nickname)
-            userInfo.append('flag', this.profileUpdate)
-  
-            userApi.updateInfo(this.myInfo.id, userInfo)
-              .then((res) => {
-                console.log(res.data)
-                this.$store.commit('user/SET_MY_INFO', res.data.data)
-                this.isSuccessInfo = true
-              })
-              .catch((err) => {
-                console.log(err.response)
-
-              })
+        await userApi.updateInfo(this.myInfo.id, this.userFD)
+          .then((res) => {
+            // console.log(res)
+            this.$store.commit('user/SET_MY_INFO', res.data.data)
+            this.isSuccessInfo = true
           })
-        } else {
-          // 프로필 사진 유지/삭제할 경우
-          var userInfo = new FormData()
-            // userInfo.append('userFileUrl', blob, `${this.myInfo.id}.png`)
-            userInfo.append('nickname', this.nickname)
-            userInfo.append('flag', this.profileUpdate)
-
-          userApi.updateInfo(this.myInfo.id, userInfo)
-            .then((res) => {
-              console.log(res.data)
-              this.isSuccessInfo = true
-              this.$store.commit('user/SET_MY_INFO', res.data.data)
-            })
-            .catch((err) => {
-              console.log(err.response)
-            })
-        }
+          .catch((err) => {
+            if (err.response === 400) {
+              this.fail.nickname = true
+              setTimeout(() => {
+                this.fail.nickname = false
+              }, 2000)
+            } else if (err.response === 401 ) {
+              this.fail.profile = true
+              setTimeout(() => {
+                this.fail.profile = false
+              }, 2000)
+            } else {
+              this.$router.push({ name: 'ServerError' })
+            }
+          })
       } else {
         this.isSuccessInfo = true
       }
       // 비밀번호 변경 시에만 요청 보내기
       if (this.updatePassword) {
-        const passwordInfo = {
-          'newPassword': this.password,
-          'oldPassword': this.oldPassword
-        }
-        this.onUpdatePassword(passwordInfo)
+        await this.onUpdatePassword(this.passwordInfo)
           .then(() => {
             this.isSuccessPassword = true
           })
@@ -233,7 +249,9 @@ export default {
     },
     completeUpdate() {
       if (this.isSuccessInfo && this.isSuccessPassword) {
-        this.$router.go(-1)
+        setTimeout(() => {
+          this.$router.go(-1)
+        }, 1000)
       }
     },
     checkForm() {
@@ -315,8 +333,12 @@ export default {
     this.nickname = this.myInfo.nickname
   },
   watch: {
+    myCroppa: function () {
+      this.makeFormData()
+    },
     nickname: function() {
       this.checkForm()
+      this.makeFormData()
     },
     oldPassword: function() {
       this.checkForm()
@@ -337,63 +359,20 @@ export default {
   },
   computed: {
     ...mapState('user', ['myInfo', 'accessToken']),
+    passwordInfo () {
+      return {
+        'newPassword': this.password,
+        'oldPassword': this.oldPassword
+      }
+    }
   }
 }
 </script>
 
 <style scoped>
-  .update-info {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .info-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .info-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
-  .info-header .description {
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.7rem;
-  }
-
   .profile {
     width: 80px;
     height: 80px;
     border-radius: 100%;
-  }
-  .fail-alert {
-    width: 80vw;
-    height: 35px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 119, 119, 0.95);
-    border: 1px solid #FF7777;
-    color: #fff;
-    position: fixed;
-    left: 50%;
-    top: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 1060;
-  }
-  .show {
-    opacity: 1;
-    transition: all 0.2s;
-  }
-  .hide {
-    opacity: 0;
-    display: none;
-    transition: all 0.2s;
   }
 </style>

@@ -1,7 +1,7 @@
 <template>
-  <div class="signup">
+  <div class="account-page">
     <UnauthorizedHeader/>
-    <div class="signup-header">
+    <div class="account-header">
       <div class="title">Signup</div>
       <div class="description">회원가입 후 CommB의 다양한 서비스를 이용해보세요!</div>
     </div>
@@ -67,7 +67,8 @@
           <input
             id="name"
             class="account-input"
-            v-model="name"
+            :value="name"
+            @input="insertName"
             type="text"
             @keyup.enter="onSignup"
             required
@@ -80,7 +81,8 @@
           <input
             id="nickname"
             class="account-input"
-            v-model="nickname"
+            :value="nickname"
+            @input="insertNickname"
             type="text"
             maxlength="10"
             @keyup.enter="onSignup"
@@ -104,7 +106,7 @@
     ></div>
     <SignupEmailConfirmAlert
       v-if="emailAlert === 1"
-      class="email-alert"
+      class="alert-center"
       data-bs-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
@@ -112,7 +114,7 @@
     />
     <SignupEmailRejectAlert
       v-if="emailAlert === 2"
-      class="email-alert"
+      class="alert-center"
       data-bs-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
@@ -159,6 +161,12 @@ export default {
   },
   methods: {
     ...mapActions('user', ['onSignup']),
+    insertNickname (event) {
+      this.nickname = event.target.value
+    },
+    insertName (event) {
+      this.name = event.target.value
+    },
     // 이메일 중복 확인 요청
     async checkEmail () {
       await userApi.checkEmail(this.email)
@@ -168,9 +176,13 @@ export default {
           console.log(res)
         })
         .catch((err) => {
-          this.email = ''
-          this.emailAlert = 2
-          console.log(err)
+          if (err.response.status === 400) {
+            this.email = ''
+            this.emailAlert = 2
+            console.log(err)
+          } else {
+            this.$router.push({ name: 'ServerError '})
+          }
         })
     },
     // 이메일 중복 체크 후 input 변경 시, 다시 중복 체크하도록 변경
@@ -277,34 +289,6 @@ export default {
 </script>
 
 <style scoped>
-  .signup {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .backdrop {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    z-index: 1040;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  .signup-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .signup-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
-  .signup-header .description {
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.7rem;
-  }
   .input-with-button {
     position: relative;
   }
@@ -312,12 +296,5 @@ export default {
     position: absolute;
     bottom: 7px;
     right: 10px;
-  }
-  .email-alert {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1060;
-    transform: translate(-50%, -50%);
   }
 </style>
