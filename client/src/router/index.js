@@ -14,10 +14,14 @@ import Feed from '@/views/feed/Feed'
 import Like from '@/views/feed/Like'
 import Reply from '@/views/feed/Reply'
 import Report from '@/views/feed/Report'
-import WriteArticle from '@/views/feed/WriteArticle'
+import SelectBook from '@/views/feed/write/SelectBook'
+import Write from '@/views/feed/write/Write'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
+import AddBookcart from '@/components/profile/AddBookcart'
+import AddLibrary from '@/components/profile/AddLibrary'
+import AddCollection from '@/components/profile/AddCollection'
 
 Vue.use(VueRouter)
 
@@ -102,9 +106,14 @@ const routes = [
     component: Report
   },
   {
+    path: '/select',
+    name: 'SelectBook',
+    component: SelectBook
+  },
+  {
     path: '/write',
-    name: 'WriteArticle',
-    component: WriteArticle
+    name: 'Write',
+    component: Write
   },
   {
     path: '/follow',
@@ -118,6 +127,21 @@ const routes = [
     name : 'Challenge',
     component : Challenge,
     // meta: { requireAuth: true }
+  },
+  {
+    path: '/addBookcart',
+    name: 'AddBookcart',
+    component: AddBookcart
+  },
+  {
+    path: '/addLibrary',
+    name: 'AddLibrary',
+    component: AddLibrary
+  },
+  {
+    path: '/addCollection',
+    name: 'AddCollection',
+    component: AddCollection
   },
 ]
 

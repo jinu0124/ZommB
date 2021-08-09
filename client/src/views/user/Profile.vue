@@ -91,7 +91,7 @@ export default {
 <style src="@/assets/style/button.css"></style>
 <style scoped>
 .my-profile {
-  width: 408px;
+  width: 320px;
   display: flex;
   margin: 60px auto 0;
   align-self: center;
@@ -133,7 +133,7 @@ export default {
   margin: 20px auto;
   padding-bottom: 40px;
   background-color: #ffffff;
-  width: 408px;
+  width: 320px;
 }
 .tab-item {
   width: calc(100% / 3);
@@ -156,7 +156,7 @@ input[name="tab-item"] {
   display: none;
 }
 .tab-content {
-  width: 408px;
+  width: 320px;
   clear: both;
   overflow: hidden;
 }
