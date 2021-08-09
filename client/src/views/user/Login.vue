@@ -76,7 +76,7 @@
       <div class="social-login">
         <img class="img-fluid my-3" src="@/assets/image/deco/or.svg" alt="">
         <div class="d-flex gap-3 justify-content-center">
-          <button class="kakao-btn">
+          <button class="kakao-btn" @click="kakaoLogin">
             <img src="@/assets/image/deco/kakao.png" alt="">
           </button>
           <button class="google-btn">
@@ -159,6 +159,9 @@ export default {
       });
       this.isSubmit = isSubmit;
     },
+    kakaoLogin() {
+      window.location.href="http://localhost:8080/oauth2/authorization/kakao";
+    }
   },
   created() {
     this.passwordSchema
