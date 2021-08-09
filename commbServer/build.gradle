@@ -119,6 +119,7 @@ jib {
 }
 
 
+
 //querydsl
 def querydslSrcDir = "$buildDir/generated/querydsl"
 querydsl {
@@ -141,4 +142,3 @@ sourceSets {
     }
 }
 //querydsl
-

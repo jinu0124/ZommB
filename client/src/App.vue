@@ -80,8 +80,6 @@ export default {
   font-family: "Noto Sans KR", sans-serif;
   height: 100%;
   min-height: 100vh;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .accounts {
