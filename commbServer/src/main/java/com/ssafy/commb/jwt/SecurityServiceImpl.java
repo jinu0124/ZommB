@@ -131,7 +131,7 @@ public class SecurityServiceImpl implements SecurityService{
         List<Object> userIdAccToken = find(rfToken);         // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
 
         if(userIdAccToken.size() < 2) {
-            map.put("msg", "Not Valid Refresh Token");
+            map.put("msg", "RefreshToken has been expired");
             map.put("status", 401);
         }
         // RefreshToken 인증은 성공했지만 AccessToken이 만료되지 않은 경우 = AccessToken이 살아있는데 재발급 받으려는 경우 : 발급 불가 반환

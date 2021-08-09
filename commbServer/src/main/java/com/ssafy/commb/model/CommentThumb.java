@@ -6,22 +6,20 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name="Report")
+@Table(name = "Comment_Thumb")
 @Getter
 @Setter
-public class Report {
+public class CommentThumb {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    private String reason;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "comment_id")
+    private Comment comment;
 
-    @ManyToOne
-    @JoinColumn(name="feed_id")
-    private Feed feed;
-
-    @ManyToOne
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     private User user;
 }

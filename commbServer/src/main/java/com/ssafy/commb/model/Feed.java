@@ -1,8 +1,6 @@
 package com.ssafy.commb.model;
 
-
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -39,14 +37,19 @@ public class Feed {
     private Book book;
 
     /* 피드에 좋아요를 누른 유저 */
-    @ManyToMany
-    @JoinTable(name="Thumb", joinColumns = @JoinColumn(name="feed_id")
-            , inverseJoinColumns = @JoinColumn(name="user_id"))
-    private List<User> thumbsUsers = new ArrayList<User>();
+//    @ManyToMany
+//    @JoinTable(name="Thumb", joinColumns = @JoinColumn(name="feed_id")
+//            , inverseJoinColumns = @JoinColumn(name="user_id"))
+//    private List<User> thumbsUsers = new ArrayList<User>();
+
+    // User 쓰면 Failed to initialize JPA EntityManagerFactory mappedBy reference an unknown target entity property
+    // Feed Entity 안에 User Entity가 있어서 error 나는 것 같음 -> Thumb로 변경
+    @OneToMany(mappedBy = "feed")
+    private List<Thumb> thumbsUser = new ArrayList<>();
 
     /* 피드에 달린 댓글 */
     @OneToMany(mappedBy = "feed")
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<Comment> comments = new ArrayList<>();
 
     /* 피드에 달린 해시태그 */
     @OneToMany(mappedBy = "feed")

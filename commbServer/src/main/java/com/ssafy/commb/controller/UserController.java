@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.amazonaws.services.xray.model.Http;
 import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
@@ -7,7 +8,9 @@ import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
+import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.jwt.SecurityService;
+import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
@@ -53,6 +56,9 @@ public class UserController {
 
     @Autowired
     private S3Service s3Service;
+
+    @Autowired
+    private ConfirmationTokenService confirmationTokenService;
 
     @Autowired
     private UserRepository userRepository;
@@ -113,21 +119,27 @@ public class UserController {
     @ApiOperation(value = "Email 인증")
     public ResponseEntity viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
 
-        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
+        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail(), "");
 
         return ResponseEntity.ok().build();
     }
 
     @GetMapping("/checkEmailComplete")
     @ApiOperation(value = "Email 인증 확인")
-    public String checkEmailComplete(@RequestParam String key, HttpServletResponse response) throws IOException {
+    public String checkEmailComplete(@RequestParam String key, String url, HttpServletResponse response) throws IOException {
 
-        if(userService.confirmEmail(key)) {
-            response.sendRedirect("Http://i5a602.p.ssafy.io:8080");
-//            response.sendRedirect("Http://127.0.0.1:8000");
+//       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url);
+//       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url + "?key=" + key);
+        switch(url){
+            case "" :
+                if(userService.confirmEmail(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url);
+                break;
+            case "reset-password" :
+                if(userService.confirmEmailForPassword(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url + "?key=" + key);
+                break;
+            default: return "유효하지 않은 url 입니다.";
         }
-
-        return "메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.";
+        return "<h4>메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.</h4>";
     }
 
     // 회원가입/로그인 - 소셜 회원가입
@@ -150,10 +162,6 @@ public class UserController {
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
-//        List<String> exposeList = new ArrayList<>();
-//        exposeList.add(accessToken);
-//        exposeList.add(refreshToken);
-//        resHeader.setAccessControlExposeHeaders(exposeList);
 
         System.out.println(resHeader.get(accessToken));
         System.out.println(resHeader.get(refreshToken));
@@ -170,16 +178,29 @@ public class UserController {
 
 
     // 회원가입/로그인 - 비밀번호 찾기
-//    @GetMapping("/{userId}")
-//    @ApiOperation(value = "비밀번호 찾기 (미정)")
-//    public Object findUser(@PathVariable("userId") Integer userId, HttpServletRequest request) {
-//        request.setAttribute("userId", userId);                 // 테스트용
-//
-////        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail());
-//
-//
-//        return null;
-//    }
+    @GetMapping("/find-password")
+    @ApiOperation(value = "비밀번호 찾기 요청")
+    public ResponseEntity findUser(@RequestParam String email) {
+        int userId = userService.getUserInfoByEmail(email);
+        userService.TokenGeneration(userId, email, "reset-password");
+
+        return ResponseEntity.ok().build();
+    }
+
+    //
+    @PatchMapping("/update-password")
+    @ApiOperation(value = "비밀번호 찾기를 통한 Password 변경 요청")
+    public ResponseEntity updatePassword(@RequestBody Map<String, Object> map) {
+        String key = (String) map.get("key");
+        String password = (String) map.get("password");
+
+        userService.validatePassword(password);
+
+        int userId = confirmationTokenService.findById(key);
+        userService.updatePassword(userId, password, 0);
+
+        return ResponseEntity.ok().build();
+    }
 
     // 회원가입/로그인 - 프로필 수정        // flag : 0:유지 , 1:수정, 2:삭제
     // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 -> formData 형식에서는 사용치 않아야한다.
