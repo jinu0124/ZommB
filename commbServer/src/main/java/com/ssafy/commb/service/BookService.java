@@ -26,4 +26,6 @@ public interface BookService {
     public void deleteBookTop(int bookId, HttpServletRequest request);
 
     public BookDto.ResponseList findBookList(BookDto.BookSearchRequest bookReq) throws IOException;
+
+    public BookDto.Response findBook(int bookId);
 }
