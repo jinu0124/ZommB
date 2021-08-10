@@ -44,10 +44,7 @@ export default {
   border-radius: 100%;
 }
 .reply-regist {
-  margin: 30px auto 0px;
   display: flex;
-  align-content: center;
-  width: 320px;
 }
 .my-image {
   width: 40px;
