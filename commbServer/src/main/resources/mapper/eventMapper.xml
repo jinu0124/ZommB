@@ -106,9 +106,9 @@
 
 
     <resultMap id="WeeklyEventInfo" type="WeeklyEvent">
-        <result column="bid" property="book.id"/>
+        <result column="bid" property="bookId"/>
         <result column="file_url" property="bookFileUrl"/>
-        <result column="wid" property="weekly.id"/>
+        <result column="wid" property="weeklyId"/>
     </resultMap>
 
 
@@ -128,9 +128,9 @@
 
 
     <resultMap id="DailyEventInfo" type="DailyEvent">
-        <result column="did" property="daily.id"/>
+        <result column="did" property="dailyId"/>
         <result column="keyword" property="word"/>
-        <result column="kid" property="keyword.id"/>
+        <result column="kid" property="keywordId"/>
     </resultMap>
 
 </mapper>

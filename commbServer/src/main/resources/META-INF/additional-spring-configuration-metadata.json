@@ -59,5 +59,10 @@
       "name": "dynamic.path",
       "type": "java.lang.String",
       "description": "Description for dynamic.path."
+    },
+    {
+      "name": "dynamic.front.path",
+      "type": "java.lang.String",
+      "description": "Description for dynamic.front.path."
     }
   ] }
