@@ -9,6 +9,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 
 public interface FeedService {
+
     public void uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException;
 
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request);
@@ -26,5 +27,7 @@ public interface FeedService {
     public FeedDto.ResponseList getFollowingFeeds(int userId);
 
     public MyDto.ResponseList likeFeeds(int feedId, int userId);
+
+    public FeedDto.ResponseList getFeeds(String searchWord, int userId);
 
 }

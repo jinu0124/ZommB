@@ -32,7 +32,7 @@
              left outer join comment_thumb ct
              ON ct.comment_id = c.id
              GROUP BY c.id) AS T1 LEFT OUTER JOIN comment_thumb ct
-        ON T1.uid = #{userId} AND T1.cid = ct.comment_id;
+        ON T1.uid = #{userId} AND T1.cid = ct.comment_id
         ORDER BY T1.create_at DESC
     </select>
 
@@ -54,6 +54,10 @@
             GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
         ON T1.fid = t.feed_id AND #{userId} = t.user_id
         ORDER BY T1.create_at DESC
+    </select>
+
+    <select id="getFeeds" parameterType="Integer" resultMap="feedInformation">
+
     </select>
 
 

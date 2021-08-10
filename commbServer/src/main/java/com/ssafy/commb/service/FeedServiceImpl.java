@@ -4,10 +4,7 @@ import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.*;
-import com.ssafy.commb.repository.FeedRepository;
-import com.ssafy.commb.repository.HashTagRepository;
-import com.ssafy.commb.repository.ReportRepository;
-import com.ssafy.commb.repository.UserRepository;
+import com.ssafy.commb.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -41,13 +38,16 @@ public class FeedServiceImpl implements FeedService {
     private ReportRepository reportRepository;
 
     @Autowired
+    private HashTagRepository hashTagRepository;
+
+    @Autowired
     private FeedDao feedDao;
 
     @Autowired
     private S3Service S3service;
 
     @Autowired
-    private HashTagRepository hashTagRepository;
+    private FollowService followService;
 
     public void uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
@@ -55,7 +55,6 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
-//        user.setId(10000005); // 테스트용
         user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
@@ -82,6 +81,8 @@ public class FeedServiceImpl implements FeedService {
 
             hashTagRepository.save(hashTag);
         }
+
+        // Daily Event
     }
 
     @Override
@@ -113,14 +114,13 @@ public class FeedServiceImpl implements FeedService {
 
             List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
 
+            // 변경 전 content로 등록한 hashTag 삭제
             for (HashTag hashTag : hashTags) {
                 hashTagRepository.delete(hashTag);
             }
 
             feedSelect.setContent(content.replace("#", ""));
             feedRepository.save(feedSelect);
-
-//            Optional<HashTag> hashTags = hashTagRepository.deleteAll(feedId);
 
             List<String> Tags = extractHashTag(content);
 
@@ -202,6 +202,7 @@ public class FeedServiceImpl implements FeedService {
                             .id(u.getId())
                             .nickname(u.getNickname())
                             .userFileUrl(u.getFileUrl())
+                            .isFollow(followService.isFollow(userRepository.findUserById(userId).get(), u))
                             .build();
                 }).collect(Collectors.toList());
 
@@ -210,11 +211,12 @@ public class FeedServiceImpl implements FeedService {
         return myResList;
     }
 
-    public FeedDto.ResponseList getFeeds(String searchWord, int userId) {
+    public FeedDto.ResponseList getFeeds(String searchWord, int userId){
 
+        // 해시태그로 검색
         List<FeedDto> feeds = feedDao.getFeeds(searchWord);
 
-        for (FeedDto feed : feeds) {
+        for (FeedDto feed : feeds){
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), userId));
         }
