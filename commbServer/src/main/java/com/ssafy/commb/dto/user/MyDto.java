@@ -25,6 +25,7 @@ public class MyDto {
     private Boolean isFollow;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {                // 요청

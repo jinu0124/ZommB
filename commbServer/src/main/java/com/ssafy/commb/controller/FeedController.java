@@ -28,7 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 @RestController
-@RequestMapping(value = "/feeds")
+@RequestMapping(value = "/api/feeds")
 @Api("Feed Controller API V1")
 public class FeedController {
 
