@@ -10,15 +10,24 @@
     </div>
     <div class="error-box">
       <div class="error-content d-flex flex-column align-items-center">
-        <div class="error-msg">Page Not Found</div>
+        <div class="error-msg">Server Error</div>
         <div class="error-msg-kr text-center">
           서버에 알 수 없는 오류가 발생했습니다.<br/>
           잠시후에 다시 시도해주세요.
         </div>
         <button
+          v-if="isLogin"
+          @click="$router.push({ name: 'Feed' })"
           class="btn-2 btn-yellow mt-3 btn-text"
         >
           NewsFeed로 돌아가기
+        </button>
+        <button
+          v-else
+          @click="$router.push({ name: 'Index' })"
+          class="btn-2 btn-yellow mt-3 btn-text"
+        >
+          Home으로 돌아가기
         </button>
       </div>
     </div>
@@ -26,8 +35,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
-
+  name: 'ServerError',
+  computed: {
+    ...mapState('user', ['isLogin'])
+  }
 }
 </script>
 

@@ -34,7 +34,7 @@ public class WebConfiguration implements WebMvcConfigurer {
                         "/feeds/**", "/follows/**", "/users/**")
                 .excludePathPatterns("/security/create/**", "/users/login"
                 , "/users", "/users/email", "/users/confirm-email", "/users/checkEmailComplete",
-                        "/users/social/kakao");
+                        "/users/social/kakao", "/users/find-password", "/users/update-password");
         //
     }
 }

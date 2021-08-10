@@ -1,21 +1,18 @@
 package com.ssafy.commb.service;
 
-import ch.qos.logback.core.CoreConstants;
 import com.ssafy.commb.dao.UserDao;
-import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
-import com.ssafy.commb.model.Feed;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +42,9 @@ public class UserServiceImpl implements UserService {
             + File.separator + "main"
             + File.separator + "resources"
             + File.separator + "static";
+
+    @Value("${cloud.profile}")
+    private String awsProfileUrl;
 
     @Autowired
     UserRepository userRepository;
@@ -90,13 +90,13 @@ public class UserServiceImpl implements UserService {
 
     public MyDto.Response login(MyDto.LoginRequest myReq) {
         Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
-        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "프로필 물리 이미지 업로드 실패");
-
+        System.out.println(awsProfileUrl);
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? user.get().getFileUrl() : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : "");
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -109,8 +109,8 @@ public class UserServiceImpl implements UserService {
     private final ConfirmationTokenRepository confirmationTokenRepository;
 
     // 토큰 생성 & 메일 발송 & Redis query 저장
-    public String TokenGeneration(int userId, String receiverEmail){
-        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail);        // 유저 ID, 이메일로 토큰 발행 및 이메일 발송 / DB에 토큰 정보 저장
+    public String TokenGeneration(int userId, String receiverEmail, String url){
+        return confirmationTokenService.createEmailConfirmationToken(userId, receiverEmail, url);        // 유저 ID, 이메일로 토큰 발행 및 이메일 발송 / DB에 토큰 정보 저장
     }
 
     // 이메일 인증
@@ -131,7 +131,17 @@ public class UserServiceImpl implements UserService {
             confirmationTokenRepository.delete(select);
         });
 
+        Optional<ConfirmationToken> findExpToken = confirmationTokenRepository.findById(key);
+        findExpToken.ifPresent(confirmationTokenRepository::delete);
+
         return ret.get();
+    }
+
+    @Override
+    public boolean confirmEmailForPassword(String key) {
+        Optional<ConfirmationToken> findConfirmationToken = confirmationTokenService.findByIdAndExpirationDateAfterAndExpired(key); // token
+
+        return findConfirmationToken.isPresent();
     }
 
     @Override
@@ -147,9 +157,20 @@ public class UserServiceImpl implements UserService {
         });
     }
 
+    @Override
+    public void updatePassword(int userId, String password, int tmp) {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보를 찾을 수 없습니다.");
+
+        user.ifPresent(selectUser -> {
+            selectUser.setPassword(password);
+            userRepository.save(selectUser);
+        });
+    }
+
     public void validatePassword( String password){
          String pattern = "^(?=.*[A-Za-z])(?=.*\\d)[A-Za-z\\d$@$!%*#?&]{8,}$";
-         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(409), "비밀번호 형식 오류");
+         if(!password.matches(pattern)) throw new ApplicationException(HttpStatus.valueOf(400), "비밀번호 형식 오류");
     }
 
     @Override
@@ -179,6 +200,13 @@ public class UserServiceImpl implements UserService {
         UserDto.ResponseList userResList = new UserDto.ResponseList();
         userResList.setData(users);
         return userResList;
+    }
+
+    @Override
+    public int getUserInfoByEmail(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if(user.isPresent()) return user.get().getId();
+        throw new ApplicationException(HttpStatus.valueOf(401), "존재하지 않는 이메일 입니다.");
     }
 
 }

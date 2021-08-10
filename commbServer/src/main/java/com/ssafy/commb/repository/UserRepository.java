@@ -22,5 +22,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     Optional<List<User>> findByNicknameStartsWith(String nickname);
 
-
 }

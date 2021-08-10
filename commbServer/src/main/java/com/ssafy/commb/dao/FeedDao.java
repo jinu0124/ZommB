@@ -15,4 +15,6 @@ public interface FeedDao {
     public List<CommentDto> getComments(int feedId, int userId);
 
     public int userFeedCnt(int userId);
+
+    public List<FeedDto> getFollowingFeeds(int userId);
 }
