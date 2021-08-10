@@ -1,7 +1,12 @@
 <template>
   <div class="weekly-book">
     <div v-if="weeklyBook" class="d-flex flex-column align-items-center">
-      <img class="book mt-3" :src="weeklyBook.bookFileUrl" alt="">
+      <img 
+        class="book mt-3" 
+        :src="weeklyBook.bookFileUrl" 
+        alt="weeklyBookCover"
+        @click="$router.push({ name: 'BookInfo', params: {id: weeklyBook.id} })"
+      >
       <div class="title my-2">{{ weeklyBook.bookName }}</div>
       <div class="info d-flex">
         <div>{{ author }}</div>
