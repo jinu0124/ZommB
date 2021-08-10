@@ -10,15 +10,18 @@
     </select>
 
     <select id="getWeekly" parameterType="Integer" resultType="WeeklyEvent">
-        SELECT distinct b.id AS bid, CASE
-                                WHEN DATE_FORMAT(start_date, '%d') = '01' THEN 1
-                                WHEN DATE_FORMAT(start_date, '%d') = '08' THEN 2
-                                WHEN DATE_FORMAT(start_date, '%d') = '15' THEN 3
-                                WHEN DATE_FORMAT(start_date, '%d') = '22' THEN 4
-                            END AS WEEK, b.file_url AS bookFileUrl, true AS weeklyParticipate
-        FROM feed f INNER JOIN book b inner join weekly_event w
-        ON DATE(w.start_date) between DATE(CONCAT(#{year}, '-', #{month}, '-01')) and DATE(LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01'))) and f.user_id = #{userId} AND b.id = f.book_id AND b.id = w.book_id
-        AND DATE(create_at) between DATE(start_date) AND DATE(end_date)
+        SELECT distinct T.week, T.bookFileUrl, IF(IFNULL(f.id, 0) = 0, 0, 1) as weeklyParticipate
+        FROM
+            (SELECT distinct b.id AS bid, CASE
+                                              WHEN DATE_FORMAT(start_date, '%d') = '01' THEN 1
+                                              WHEN DATE_FORMAT(start_date, '%d') = '08' THEN 2
+                                              WHEN DATE_FORMAT(start_date, '%d') = '15' THEN 3
+                                              WHEN DATE_FORMAT(start_date, '%d') = '22' THEN 4
+                                        END AS WEEK, b.file_url AS bookFileUrl, TRUE AS weeklyParticipate, w.start_date, w.end_date
+            FROM book b inner JOIN weekly_event w
+            ON DATE(w.start_date) between DATE(CONCAT(#{year}, '-', #{month}, '-01')) and DATE(LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01'))) AND b.id = w.book_id)
+            AS T LEFT outer join feed f
+        ON DATE(f.create_at) between DATE(T.start_date) AND DATE(T.end_date) and f.user_id = #{userId} AND T.bid = f.book_id
     </select>
 
 
@@ -52,7 +55,7 @@
     <select id="getWeeklyParticipants" parameterType="Integer" resultType="My">
         SELECT T.id, T.nickname, T.file_url, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
         FROM
-            (SELECT u.id, u.nickname, u.file_url, f.create_at
+            (SELECT distinct u.id, u.nickname, u.file_url, f.create_at
              FROM weekly_event w, book b, feed f, user u
              WHERE w.id = #{weeklyId} AND w.book_id = b.id AND b.id = f.book_id AND f.user_id = u.id
                AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND u.id != #{userId}) AS T LEFT OUTER JOIN follow fo
@@ -92,6 +95,13 @@
              WHERE dep.daily_id = #{dailyId} AND u.id = dep.user_id AND d.id = dep.daily_id AND DATE(dep.create_at) = DATE(d.create_at)) AS T LEFT OUTER JOIN follow f
         ON T.id = f.following AND f.follower = #{userId}
         ORDER BY T.create_at DESC
+    </select>
+
+
+    <select id="getDailyParticipantsCnt" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(distinct user_id) AS cnt
+        FROM daily_event d, book b, feed f, book_keyword bk
+        WHERE d.id = #{dailyId} AND bk.book_id = b.id AND b.id = f.book_id AND bk.keyword_id = d.keyword_id AND DATE(f.create_at) = DATE(d.create_at);
     </select>
 
 

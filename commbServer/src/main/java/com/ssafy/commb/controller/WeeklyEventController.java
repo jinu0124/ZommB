@@ -27,7 +27,7 @@ public class WeeklyEventController {
     // 책 추천
     @GetMapping("")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    public ResponseEntity<WeeklyEventDto.Response> findWeeklyEventList(@RequestParam LocalDate today){
+    public ResponseEntity<WeeklyEventDto.Response> findWeeklyEventList(@RequestParam String today){
 //        LocalDate localDate = LocalDate.now(ZoneId.of("+9"));
         WeeklyEventDto.Response weeklyEvent = eventService.bookRecommend(today);
 

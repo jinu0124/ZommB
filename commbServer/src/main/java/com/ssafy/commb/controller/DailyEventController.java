@@ -15,7 +15,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value="/api/daily-events")
@@ -26,9 +28,8 @@ public class DailyEventController {
 
     @GetMapping("")
     @DateTimeFormat(pattern = "yyyyMMdd")
-    public ResponseEntity<DailyEventDto.Response> findDailyEventList(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate today){
-        LocalDate localDate = LocalDate.now(ZoneId.of("+9"));
-
+    public ResponseEntity<DailyEventDto.Response> findDailyEventList(@RequestParam String today){
+//        LocalDate localDate = LocalDate.now(ZoneId.of("+9"));
         DailyEventDto.Response dailyRes = eventService.keywordRecommend(today);
 
         return new ResponseEntity<DailyEventDto.Response>(dailyRes, HttpStatus.OK);
@@ -55,10 +56,12 @@ public class DailyEventController {
     }
 
     @GetMapping("/{dailyId}/users/cnt")
-    public Object findDailyEventUserCnt(@PathVariable("dailyId") Integer dailyId)
+    public ResponseEntity<Map<String, Integer>> findDailyEventUserCnt(@PathVariable("dailyId") Integer dailyId)
     {
-        // 이것만남음
-        return new ResponseEntity<DailyEventDto.Response>((DailyEventDto.Response) null, HttpStatus.OK);
+        int cnt = eventService.getDailyParticipantsCnt(dailyId);
+        Map<String, Integer> map = new HashMap<>();
+        map.put("participants", cnt);
+        return ResponseEntity.ok().body(map);
     }
 
 }
