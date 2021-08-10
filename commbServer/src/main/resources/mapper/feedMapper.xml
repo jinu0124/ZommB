@@ -56,8 +56,24 @@
         ORDER BY T1.create_at DESC
     </select>
 
-    <select id="getFeeds" parameterType="Integer" resultMap="feedInformation">
-
+    <select id="getFeeds" parameterType="String" resultMap="feedInformation">
+        SELECT T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+            (SELECT u.id AS uid, f.id fid, create_at, content, f.file_url AS f_file_url, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                    COUNT(t.user_id) AS thumb_cnt
+            FROM feed f INNER JOIN user u INNER JOIN book b
+            on f.user_id = u.id AND f.book_id = b.id AND f.blocked = 0 AND f.id IN (SELECT feed_id
+                                                                                      FROM hashtag h
+                                                                                      WHERE ${dynamicQuery}
+                                                                                      GROUP BY feed_id
+            <![CDATA[
+                                                                                    HAVING COUNT(feed_id) >= #{wordCnt})
+                ]]>
+            left outer join thumb t
+            on t.feed_id = f.id
+            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+            ON T1.fid = t.feed_id AND #{userId} = t.user_id
+        ORDER BY T1.create_at DESC;
     </select>
 
 
