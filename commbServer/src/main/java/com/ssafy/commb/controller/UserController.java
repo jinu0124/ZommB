@@ -1,6 +1,5 @@
 package com.ssafy.commb.controller;
 
-import com.amazonaws.services.xray.model.Http;
 import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
@@ -10,7 +9,6 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.jwt.SecurityService;
-import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
@@ -23,15 +21,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/users")
@@ -115,6 +112,8 @@ public class UserController {
 
         if (userService.isExistEmail(myReq.getEmail()))
             return ResponseEntity.status(409).build();
+
+        userService.validatePassword(myReq.getPassword());
 
         Map<String, Integer> map = new HashMap<>();
         map.put("id", userService.joinUser(myReq));

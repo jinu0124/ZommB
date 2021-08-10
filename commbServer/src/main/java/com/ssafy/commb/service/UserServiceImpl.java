@@ -1,6 +1,7 @@
 package com.ssafy.commb.service;
 
 import com.ssafy.commb.dao.UserDao;
+import com.ssafy.commb.dto.encode.Encoder;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
@@ -14,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
@@ -34,10 +35,13 @@ public class UserServiceImpl implements UserService {
     private String awsProfileUrl;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
+
+    //  Bcrypt는 패스워드를 해싱할 때 내부적으로 랜덤한 솔트를 생성하기 때문에 같은 문자열에 대해서 다른 인코드된 결과를 반환
+    private final String ENCODE_ID = "bcrypt";
 
     @Override
     public UserDto.ResponseList getUsers(String nickname) {
@@ -64,7 +68,13 @@ public class UserServiceImpl implements UserService {
     }
 
     public int joinUser(MyDto.Request myReq) {
-        User user = new User(myReq.getEmail(), myReq.getPassword(), myReq.getName(), myReq.getNickname());
+        Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
+
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+        String encPassword = passwordEncoder.encode(myReq.getPassword());
+        if(!passwordEncoder.matches(myReq.getPassword(), encPassword)) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호 암호화 중 불일치 오류");
+
+        User user = new User(myReq.getEmail(), encPassword, myReq.getName(), myReq.getNickname());
 
         return userRepository.save(user).getId();
     }
@@ -76,8 +86,12 @@ public class UserServiceImpl implements UserService {
     }
 
     public MyDto.Response login(MyDto.LoginRequest myReq) {
-        Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
-        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
+        Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+
+        Optional<User> user = userRepository.findByEmail(myReq.getEmail());
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "일치하는 회원 정보가 없습니다.");
+        if(!passwordEncoder.matches(myReq.getPassword(), user.get().getPassword())) throw new ApplicationException(HttpStatus.valueOf(401), "일치하는 회원 정보가 없습니다.");
 
         System.out.println(awsProfileUrl);
         MyDto my = new MyDto();
@@ -216,3 +230,17 @@ public class UserServiceImpl implements UserService {
     }
 
 }
+
+
+
+/*
+다중 word 검색
+
+Set<Feeds> feeds <= HashTag 들
+for(HashTag)
+  feeds
+
+
+
+
+ */

@@ -72,7 +72,7 @@ public class CommentServiceImpl implements CommentService {
         if (comment.get().getUser().getId() == userId || comment.get().getFeed().getUser().getId() == userId)
             commentRepository.deleteById(commentId);
         else
-            throw new ApplicationException(HttpStatus.valueOf(400), "댓글 삭제 권한 없음");
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 삭제 권한 없음");
     }
 
     public void likeComment(int feedId, int commentId, int userId){
