@@ -1,28 +1,28 @@
 <template>
   <div class="search-book">
-    <div class="search-tab tabs gap-2 mt-2">
+    <div class="tabss mt-2">
       <span
         type="button"
         @click="changePage(0)"
-        :class="[selectedPage === 0 ? 'current' : 'rest', 'badge']"
+        :class="[selectedPage === 0 ? 'currentt' : 'restt', 'badgee']"
         >전체</span
       >
       <span
         type="button"
         @click="changePage(1)"
-        :class="[selectedPage === 1 ? 'current' : 'rest', 'badge']"
+        :class="[selectedPage === 1 ? 'currentt' : 'restt', 'badgee']"
         >제목</span
       >
       <span
         type="button"
         @click="changePage(2)"
-        :class="[selectedPage === 2 ? 'current' : 'rest', 'badge']"
+        :class="[selectedPage === 2 ? 'currentt' : 'restt', 'badgee']"
         >작가</span
       >
       <span
         type="button"
         @click="changePage(3)"
-        :class="[selectedPage === 3 ? 'current' : 'rest', 'badge']"
+        :class="[selectedPage === 3 ? 'currentt' : 'restt', 'badgee']"
         >키워드</span
       >
     </div>
@@ -46,30 +46,24 @@ export default {
 </script>
 
 <style scoped>
-.ch-header .title {
-  font-size: 1.5rem;
-  font-weight: 700;
+.search-book {
+  text-align: center;
 }
-.search-tab {
-  display: flex;
-}
-.tabs .badge {
+.tabss .badgee {
   font-size: 0.8rem;
   font-weight: 500;
   padding: 5px 12px;
   vertical-align: middle;
   border-radius: 0.5rem;
+  margin: 0px 2px;
 }
-.tabs .current {
+.tabss .currentt {
   background: #97dffc;
   color: #683ec9;
   pointer-events: none;
 }
-.tabs .rest {
+.tabss .restt {
   background: #7b60f1;
   color: #fff;
-}
-.book-list-item {
-  width: 200px;
 }
 </style>

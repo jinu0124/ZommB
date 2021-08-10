@@ -55,14 +55,17 @@ export default {
 </script>
 
 <style scoped>
+.search-feed {
+  text-align: center;
+}
 .default-feed-image {
   width: 80px;
   height: 80px;
-  margin: 0 3px 5px;
+  margin: 0 4px 5px;
+  background: #ffffff;
 }
 .image-back {
-  width: 100px;
-  height: 100px;
-  background: #ffffff;
+  width: 80px;
+  height: 80px;
 }
 </style>

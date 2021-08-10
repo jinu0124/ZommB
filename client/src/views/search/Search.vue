@@ -1,7 +1,7 @@
 <template>
   <div class="search">
     <div class="sc-header d-flex flex-column">
-      <div class="title" type="button" @click="changePage(3)">Search</div>
+      <div class="title">Search</div>
       <div class="add-body align-self-center">
         <input
           id="search"
@@ -31,10 +31,12 @@
         >
       </div>
     </div>
-    <SearchDefault v-if="selectedPage === 3" />
-    <SearchUser v-if="selectedPage === 0" />
-    <SearchBook v-if="selectedPage === 1" />
-    <SearchFeed v-if="selectedPage === 2" />
+    <div class="align-self-center">
+      <SearchDefault v-if="selectPage === 0 && this.isDefault == true" />
+      <SearchUser v-if="selectedPage === 0" />
+      <SearchBook v-if="selectedPage === 1" />
+      <SearchFeed v-if="selectedPage === 2" />
+    </div>
     <div class="test">
       Scroll Test 입니다. <br />
       Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
@@ -62,7 +64,8 @@ export default {
   },
   data() {
     return {
-      selectedPage: 3,
+      selectedPage: 0,
+      isDefault: true,
     };
   },
   methods: {
