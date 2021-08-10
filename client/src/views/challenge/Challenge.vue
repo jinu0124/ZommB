@@ -2,7 +2,13 @@
   <div class="challenge d-flex flex-column align-items-center">
     <div style="max-width: 450px;">
       <div class="ch-header d-flex flex-column">
-        <div class="title">Challenge</div>
+        <div class="title">
+          Challenge
+          <span 
+            v-if="selectedPage === 2"
+            class="month"
+          >in {{ month }}</span>
+        </div>
         <div class="tabs d-flex gap-2 mt-2">
           <span 
             type="button"
@@ -22,12 +28,15 @@
         </div>
       </div>
       <ChallengeWeekly
+        id="weekly"
         v-if="selectedPage === 0"
       />
       <ChallengeDaily
+        id="daily"
         v-if="selectedPage === 1"
       />
       <ChallengeMy
+        id="my"
         v-if="selectedPage === 2"
       />
     </div>
@@ -35,6 +44,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import ChallengeWeekly from '@/components/challenge/ChallengeWeekly'
 import ChallengeDaily from '@/components/challenge/ChallengeDaily'
 import ChallengeMy from '@/components/challenge/ChallengeMy'
@@ -54,6 +64,11 @@ export default {
   methods: {
     changePage (val) {
       this.selectedPage = val
+    }
+  },
+  computed: {
+    month () {
+      return moment().format('MMMM')
     }
   }
 }
@@ -77,6 +92,11 @@ export default {
   .ch-header .title {
     font-size: 1.5rem;
     font-weight: 700;
+  }
+  .ch-header .month {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: #f1f1f1;
   }
   .tabs .badge {
     font-size: 0.8rem;
