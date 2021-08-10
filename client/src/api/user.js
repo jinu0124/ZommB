@@ -66,5 +66,12 @@ export default {
       url: `users/withdraw`,
       method: 'delete',
     })
+  },
+  socialLogin(userData) {
+    return _axios({
+      url: '/users/social/login',
+      method: 'get',
+      params: userData
+    })
   }
 }

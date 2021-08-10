@@ -24,6 +24,7 @@ import Challenge from '@/views/challenge/Challenge'
 import AddBookcart from '@/views/user/profile/AddBookcart'
 import AddLibrary from '@/views/user/profile/AddLibrary'
 import AddCollection from '@/views/user/profile/AddCollection'
+import OAuthRedirect from '@/views/user/OAuthRedirect'
 
 Vue.use(VueRouter)
 
@@ -155,7 +156,13 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: Search
-  }
+  },
+  // social login
+  {
+    path: '/oauth/redirect',
+    name : 'OAuth',
+    component : OAuthRedirect
+  },
 ]
 
 const router = new VueRouter({

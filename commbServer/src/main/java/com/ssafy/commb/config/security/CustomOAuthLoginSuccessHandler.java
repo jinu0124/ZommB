@@ -4,6 +4,7 @@ import com.ssafy.commb.model.OauthProvider;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.repository.OauthProviderRepository;
 import com.ssafy.commb.repository.UserRepository;
+import com.ssafy.commb.service.RedisService;
 import com.ssafy.commb.service.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -20,7 +21,7 @@ import java.util.UUID;
 public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
 
     @Autowired
-    RedisServiceImpl redisService;
+    RedisService redisService;
 
     @Autowired
     OauthProviderRepository oauthProviderRepository;
@@ -50,7 +51,8 @@ public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticat
             user.setEmail((String) account.get("email"));
             user.setName((String) profile.get("nickname"));
             user.setNickname((String) profile.get("nickname"));
-            user.setFileUrl((String) profile.get("profile_image"));
+            user.setFileUrl((String) profile.get("profile_image_url"));
+            user.setRole("USR");
             // 유저권한 정하기
 
             // user 저장 및 flush
@@ -75,6 +77,6 @@ public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticat
         long expire = 60000;
         redisService.setStringValue(code, Integer.toString(user.getId()), expire);
 
-        getRedirectStrategy().sendRedirect(request, response, "http://localhost:3000/oauth/redirect?code="+code);
+        getRedirectStrategy().sendRedirect(request, response, "/oauth/redirect?code="+code);
     }
 }
