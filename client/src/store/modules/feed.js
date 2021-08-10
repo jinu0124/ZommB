@@ -1,7 +1,8 @@
 import router from '@/router'
+// import feedApi from '@/api/feed'
 
 const state = {
-
+  
 }
 const actions = {
   moveToFeed() {
@@ -12,7 +13,9 @@ const actions = {
   },
   moveToReply() {
     router.push({ name: 'Reply' })
-  }
+  },
+  //api 요청
+  // async 
 }
 const mutations = {
 

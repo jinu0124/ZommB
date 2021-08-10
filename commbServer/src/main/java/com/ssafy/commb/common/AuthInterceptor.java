@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.ssafy.commb.jwt.SecurityService;
 import io.swagger.annotations.Api;
+import org.apache.http.Header;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -27,6 +29,9 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${security.accesstoken}")
     private String accessToken;
 
+    @Value("${security.refreshtoken}")
+    private String refreshToken;
+
     // Authorization : Bearer <TOKEN>
     // 로그인 Authorization
     @Override
@@ -39,19 +44,19 @@ public class AuthInterceptor implements HandlerInterceptor {
 
 //        String acToken = request.getParameter("acToken");      //  테스트용
 //        String rfToken = request.getParameter("rfToken");
-
-        String acToken = request.getHeader("access-token");       // Header를 통해 Token 받기
+        String acToken = request.getHeader(accessToken);       // Header를 통해 Token 받기
         String rfToken;
-        if(request.getAttribute("refresh-token") == null) rfToken = null;
-        else rfToken = (String) request.getAttribute("refresh-token");
+        if(request.getHeader(refreshToken) == null) rfToken = null;
+        else rfToken = (String) request.getHeader(refreshToken);
 
         if(acToken == null || acToken.length() < 24) {                               // Access 토큰이 없을 때
             map.put("status", 401);
             map.put("msg", "There is no Token");
         }
-        else if(rfToken != null && rfToken.length() >= 24){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
+        else if(rfToken != null){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
             map = securityService.validRefreshToken(acToken, rfToken);
             if((int) map.get("status") == 200) {
+                response.setHeader(refreshToken, rfToken);
                 response.setHeader(accessToken, (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
                 request.setAttribute("userId", map.get("userId"));
             }
@@ -60,7 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
-                map.put("status", 100);
+                map.put("status", 401);
             }
             else if(ret.equals("invalid")){
                 map.put("msg", "AccessToken is invalid");

@@ -5,6 +5,8 @@ spring:
     url : jdbc:mysql://i5a602.p.ssafy.io/CommBTest
     username : root
     password : 1234
+    hikari:
+      maximum-pool-size: 8
   mail:
     host: smtp.gmail.com
     port: 587
@@ -56,11 +58,11 @@ spring:
 
 security:
   expire:
-    accesstoken: 36000000          # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
+    accesstoken: 1200000         # 60초 : 60000, # 60분 : 3600000, # 1일 : 86400000, # 7일 : 604800000
     refreshtoken: 604800000
   secretkey: jeignrwlgnreiu5ngd2fdgdqgblwef2epfkwefbedkbvdfk9jk32fdmhgfg
-  accesstoken: "accessToken"
-  refreshtoken: "refreshToken"
+  accesstoken: "accesstoken"
+  refreshtoken: "refreshtoken"
 
 mybatis:
   config-location: classpath:/config/mybatis-config.xml
@@ -76,3 +78,5 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+  profile: https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/
+  feed : https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/

@@ -7,19 +7,27 @@
     </div>
     <div class="btn--group mt-5 d-flex flex-column justify-content-center align-items-center">
       <button
+        v-if="!isLogin"
         class="btn-1 btn-yellow"
         @click="moveToLogin"
       >로그인</button>
       <button
+        v-if="!isLogin"
         class="btn-1 btn-grey mt-2"
         @click="moveToSignup"
       >회원가입</button>
+      <button
+        v-if="isLogin"
+        class="btn-1 btn-yellow"
+        @click="$router.push({ name: 'Feed' })"
+      >NewFeed 가기</button>
+
     </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex"
+import { mapState, mapActions } from "vuex"
 
 
 export default {
@@ -27,6 +35,9 @@ export default {
   methods: {
     ...mapActions('user', ['moveToLogin', 'moveToSignup', 'moveToUpdateInfo'])
   },
+  computed: {
+    ...mapState('user', ['isLogin'])
+  }
 }
 </script>
 
