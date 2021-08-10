@@ -40,7 +40,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(receiverEmail);
         String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId() + "&url=" + url;
-        mailMessage.setSubject("이메일 인증");
+        mailMessage.setSubject("CommB 이메일 인증");
         mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+ dynamicPath + "api/users" + query);
         System.out.println("메일 발송 전");
         emailSenderService.sendEmail(mailMessage);          // 메일 발송
