@@ -3,6 +3,7 @@ package com.ssafy.commb.dto.event;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.commb.dto.book.BookDto;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -12,15 +13,19 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
+@Alias("WeeklyEvent")
 public class WeeklyEventDto {
     private Weekly weekly;
     private BookDto book;
 
     private String bookFileUrl;
     private Boolean weeklyParticipate;
+    private Integer week;
 
-    static class Weekly{
-        Integer id;
+    @Setter
+    @Getter
+    public static class Weekly{
+        private Integer id;
     }
 
     @Getter

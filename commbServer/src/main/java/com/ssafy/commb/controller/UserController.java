@@ -33,7 +33,7 @@ import java.io.IOException;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 @Api("User Controller API V1")
 public class UserController {
     @Autowired
@@ -72,6 +72,9 @@ public class UserController {
     @Value("${security.refreshtoken}")
     private String refreshToken;
 
+    @Value("${dynamic.path}")
+    private String dynamicPath;
+
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
@@ -81,6 +84,10 @@ public class UserController {
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
+
+    // 일반 회원 검색 만들기
+    
+
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제
 //    @GetMapping("")
@@ -135,10 +142,10 @@ public class UserController {
 //       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url + "?key=" + key);
         switch(url){
             case "" :
-                if(userService.confirmEmail(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url);
+                if(userService.confirmEmail(key)) response.sendRedirect(dynamicPath + url);
                 break;
             case "reset-password" :
-                if(userService.confirmEmailForPassword(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url + "?key=" + key);
+                if(userService.confirmEmailForPassword(key)) response.sendRedirect(dynamicPath + url + "?key=" + key);
                 break;
             default: return "유효하지 않은 url 입니다.";
         }

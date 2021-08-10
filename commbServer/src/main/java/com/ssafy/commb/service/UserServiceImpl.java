@@ -30,19 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    /* for production after build code */
-//    static String uploadPath = request.getSession().getServletContext().getRealPath("/");
-
-    /* for eclipse development before build code */
-    static String uploadPath = "C:" + File.separator + "Users" + File.separator + "jinwoo"
-            + File.separator + "IdeaProjects"
-            + File.separator + "SUBPJT1"
-            + File.separator + "commbServer"
-            + File.separator + "src"
-            + File.separator + "main"
-            + File.separator + "resources"
-            + File.separator + "static";
-
     @Value("${cloud.profile}")
     private String awsProfileUrl;
 
@@ -96,7 +83,7 @@ public class UserServiceImpl implements UserService {
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : null);
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -183,6 +170,12 @@ public class UserServiceImpl implements UserService {
             selectUser.setPassword(password);
             userRepository.save(selectUser);
         });
+
+        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUserId(userId);
+
+        confirmation.ifPresent(select -> {
+            userRepository.delete(select.getUser());
+        });
     }
 
     public void validatePassword( String password){
@@ -196,10 +189,6 @@ public class UserServiceImpl implements UserService {
         if(!user.isPresent()) return;
 
         userRepository.deleteById(userId);
-
-        // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
-        File file = new File(uploadPath + File.separator + user.get().getFileUrl());
-        if(file.exists()) file.delete();
     }
 
     @Override
