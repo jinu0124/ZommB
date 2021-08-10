@@ -15,8 +15,24 @@
 </template>
 
 <script>
+// import moment from 'moment'
+import { mapActions } from 'vuex'
+
 export default {
-  name: 'ChallengeWeeklyBook'
+  name: 'ChallengeWeeklyBook',
+  data () {
+    return {
+      today: null,
+    }
+  },
+  methods: {
+    ...mapActions('challenge', ['getWeeklyBook'])
+  },
+  // created () {
+  //   this.today = moment().format('YYYY-MM-DD')
+  //   this.getWeeklyBook(this.today)
+  // },
+
 }
 </script>
 

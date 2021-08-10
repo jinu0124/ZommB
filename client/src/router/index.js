@@ -65,6 +65,12 @@ const routes = [
     name: 'ResetPassword',
     component: ResetPassword,
   },
+  // social login
+  {
+    path: '/oauth/redirect',
+    name : 'OAuth',
+    component : OAuthRedirect
+  },
   // error
   {
     path : '*',
@@ -156,12 +162,6 @@ const routes = [
     path: '/search',
     name: 'Search',
     component: Search
-  },
-  // social login
-  {
-    path: '/oauth/redirect',
-    name : 'OAuth',
-    component : OAuthRedirect
   },
 ]
 

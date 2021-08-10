@@ -6,7 +6,7 @@
       <strong>{{ bookmarkLevel }}</strong> 입니다!
     </div>
     <ChallengeMyWeekly/>
-    <div class="level">
+    <div class="level mt-3">
       {{ month }}월, <br>
       <strong>{{ myInfo.nickname }}</strong> 님의 펜 레벨은<br>
       <strong>{{ penLevel }}</strong> 입니다!
@@ -38,6 +38,9 @@ export default {
     month () {
       return moment().format('MM')
     }
+  },
+  created () {
+    this.$store.dispatch('challenge/getMyChallenge', this.myInfo.id)
   }
   
 }
