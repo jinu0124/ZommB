@@ -163,18 +163,18 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(int userId, String password, int tmp) {
+        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUserId(userId);
+
+        confirmation.ifPresent(select -> {
+            userRepository.delete(select.getUser());
+        });
+
         Optional<User> user = userRepository.findById(userId);
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보를 찾을 수 없습니다.");
 
         user.ifPresent(selectUser -> {
             selectUser.setPassword(password);
             userRepository.save(selectUser);
-        });
-
-        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUserId(userId);
-
-        confirmation.ifPresent(select -> {
-            userRepository.delete(select.getUser());
         });
     }
 

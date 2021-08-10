@@ -82,7 +82,11 @@ cloud:
   feed : https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/
 
 dynamic:
-  path: Http://127.0.0.1:8080/
+  path: http://127.0.0.1:8080/
+  front:
+    path: http://127.0.0.1:8000/
 
-# Http://127.0.0.1:8080/
-# i5a602.p.ssafy.io/
+# Backend Local : http://127.0.0.1:8080/
+# Frontend Local : http://127.0.0.1:8000/
+# Backend Server : i5a602.p.ssafy.io:8080/
+# Frontend Server : i5a602.p.ssafy.io:8000/
