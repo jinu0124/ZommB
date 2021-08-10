@@ -1,5 +1,6 @@
 package com.ssafy.commb.service;
 
+import com.amazonaws.services.dynamodbv2.xspec.M;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
@@ -34,5 +35,7 @@ public interface UserService {
     public UserDto.ResponseList followRecommend(HttpServletRequest request);
 
     public int getUserInfoByEmail(String email);
+
+    public MyDto.Response socialLogin(int userId);
 
 }

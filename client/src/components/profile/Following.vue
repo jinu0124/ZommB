@@ -1,35 +1,32 @@
 <template>
   <div class="following-list">
-    <div
-      class="following-list-item"
-      @mouseover="currentItem(true)"
-      @mouseout="currentItem(false)"
-      :class="{ 'mouse-over-bgcolor': isColor }"
-      >
+    <div class="following-list-item">
       <span class="user-images">
         <img
+          v-if="myInfo.userFileUrl"
+          class="user-profile"
+          type="button"
+          id="UserProfile"
+          :src="myInfo.userFileUrl"
+          alt="user-profile"
+        />
+        <img
+          v-else
           src="@/assets/image/common/profileDefault.svg"
           alt="defalut-profile"
-          class="user-image"
-          type="button" 
-        >
+          class="default-user-image user-profile"
+          type="button"
+        />
       </span>
-      <span class="user-nickname">{{nickname}}</span>
+      <span class="user-nickname">{{ nickname }}</span>
       <span>
-        <button 
-          class="follow btn-5 btn-grey"
-          @click="unfollow()"
-          v-show="!isFollow"
-        >팔로우 취소
+        <button class="follow btn-5 btn-grey" @click="unfollow()" v-show="!isFollow">
+          팔로우 취소
         </button>
       </span>
       <span>
-        <button
-          class="follow btn-5 btn-yellow"
-          type="button"
-          @click="follow()"
-          v-show="isFollow"
-        >팔로우
+        <button class="follow btn-5 btn-yellow" type="button" @click="follow()" v-show="isFollow">
+          팔로우
         </button>
       </span>
     </div>
@@ -37,16 +34,16 @@
 </template>
 
 <script>
-// import axios from 'axios'
+import { mapState } from "vuex";
 
 export default {
-  name: 'Follower',
+  name: "Follower",
   data() {
-    return{
+    return {
       isColor: false,
       isFollow: false,
-      nickname: 'Nickname',
-    }
+      nickname: "Nickname",
+    };
   },
   methods: {
     currentItem(flag) {
@@ -54,14 +51,17 @@ export default {
     },
     unfollow() {
       this.isFollow = true;
-      console.log("팔로우 취소")
+      console.log("팔로우 취소");
     },
     follow() {
       this.isFollow = false;
-      console.log("팔로우")
+      console.log("팔로우");
     },
-  }
-}
+  },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
+};
 </script>
 
 <style src="@/assets/style/button.css"></style>
@@ -70,19 +70,20 @@ div {
   text-align: center;
   align-items: center;
 }
-.following-list {
-  width: 100%;
-  margin: 20px auto;
+.following-list-item {
+  display: flex;
+  margin: auto;
 }
-.user-image {
+.user-profile {
+  align-self: center;
+}
+.default-user-image,
+.user-profile {
   width: 40px;
   height: 40px;
   border-radius: 50%;
 }
-.follow {
-  align-self: right;
-}
 .user-nickname {
-  margin: 0 50px 0 3px; 
+  margin: 0 20px 0 3px;
 }
 </style>

@@ -30,10 +30,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @RestController
-@RequestMapping(value = "/users")
+@RequestMapping(value = "/api/users")
 @Api("User Controller API V1")
 public class UserController {
     @Autowired
@@ -63,11 +64,23 @@ public class UserController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    RedisService redisService;
+
     @Value("${security.accesstoken}")
     private String accessToken;
 
     @Value("${security.refreshtoken}")
     private String refreshToken;
+
+    @Value("${dynamic.path}")
+    private String dynamicPath;
+
+    @Value("${dynamic.front.path}")
+    private String dynamicFrontPath;
+
+    @Value("${cloud.profile}")
+    private String awsProfilePath;
 
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
@@ -78,6 +91,10 @@ public class UserController {
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
+
+    // 일반 회원 검색 만들기
+    
+
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제
 //    @GetMapping("")
@@ -132,10 +149,10 @@ public class UserController {
 //       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url + "?key=" + key);
         switch(url){
             case "" :
-                if(userService.confirmEmail(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url);
+                if(userService.confirmEmail(key)) response.sendRedirect(dynamicFrontPath + url);
                 break;
             case "reset-password" :
-                if(userService.confirmEmailForPassword(key)) response.sendRedirect("Http://127.0.0.1:8000/" + url + "?key=" + key);
+                if(userService.confirmEmailForPassword(key)) response.sendRedirect(dynamicFrontPath + url + "?key=" + key);
                 break;
             default: return "유효하지 않은 url 입니다.";
         }
@@ -143,13 +160,26 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 소셜 회원가입
-    @GetMapping("/social/kakao")
+    @GetMapping("/social/login")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> kakaoLogin() {
+    public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code) {
 
+        String userId = redisService.getStringValue(code);
 
+        if(userId == null) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
-        return new ResponseEntity<MyDto.Response>((MyDto.Response) null, HttpStatus.valueOf(201));
+        Integer id = Integer.parseInt(userId);
+
+        MyDto.Response myRes = userService.socialLogin(id);
+        Map<String, Object> map = securityService.createToken(id);
+
+        HttpHeaders resHeader = new HttpHeaders();
+        resHeader.set(accessToken, (String) map.get("acToken"));
+        resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        System.out.println(resHeader.get(accessToken));
+        System.out.println(resHeader.get(refreshToken));
+        return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
     // 회원가입/로그인 - 자체 로그인
@@ -172,7 +202,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
         UserDto.Response userRes = userService.getUserInfo(userId, request);
-
+        userRes.getData().setUserFileUrl(awsProfilePath + userRes.getData().getUserFileUrl());
         return ResponseEntity.ok().body(userRes);
     }
 
@@ -182,13 +212,14 @@ public class UserController {
     @ApiOperation(value = "비밀번호 찾기 요청")
     public ResponseEntity findUser(@RequestParam String email) {
         int userId = userService.getUserInfoByEmail(email);
+        System.out.println(email);
         userService.TokenGeneration(userId, email, "reset-password");
 
         return ResponseEntity.ok().build();
     }
 
     //
-    @PatchMapping("/update-password")
+    @PutMapping("/update-password")
     @ApiOperation(value = "비밀번호 찾기를 통한 Password 변경 요청")
     public ResponseEntity updatePassword(@RequestBody Map<String, Object> map) {
         String key = (String) map.get("key");
@@ -221,7 +252,7 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 비밀번호 변경
-    @PatchMapping("/{userId}")
+    @PutMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq,

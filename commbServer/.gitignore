@@ -38,3 +38,6 @@ out/
 
 ### QueryDSL Q Class
 **/generated/querydsl/
+
+### indexl.html
+**/src/main/resources/static/

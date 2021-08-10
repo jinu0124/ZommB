@@ -1,72 +1,73 @@
 <template>
   <div class="reply-list-item">
-    <img
-      v-if="myInfo.userFileUrl"
-      class="user-profile"
-      type="button"
-      id="UserProfile"
-      :src="myInfo.userFileUrl"
-      alt="user-profile"
-    >
-    <img
-      v-else
-      alt="디폴트 회원 이미지"
-      class="default-user-image user-profile"
-      src="@/assets/image/common/profileDefault.svg"
-      type="button"
-      id="UserProfile"
-    >
+    <p class="replier">{{ this.replier }}</p>
     <div class="reply-content">
-      <p class="replier">{{replier}}</p>
-      <p class="reply">{{reply}}</p>
-      <div class="reply-like-num">좋아요 {{replyLikeNum}}개</div>
+      <p class="reply">{{ shortenContent }}</p>
+      <div class="reply-like-num">좋아요 {{ this.replyLikeNum }}개</div>
     </div>
     <!-- <ReplyMenu/> -->
     <img
-        alt=""
-        class="reply-like"
-        src="https://static.overlay-tech.com/assets/701fe450-b80b-4620-966e-0e08fbe9daa2.svg"
+      alt="좋아요버튼안눌림"
+      class="dislike btn-like"
+      type="button"
+      @click="like()"
+      src="@/assets/image/deco/heartEmpty.svg"
+      v-show="disLike"
+    />
+    <img
+      alt="좋아요버튼눌림"
+      class="like btn-like"
+      type="button"
+      @click="dislike()"
+      src="@/assets/image/deco/heartFill.svg"
+      v-show="Like"
     />
   </div>
 </template>
 
 <script>
-// import ReplyMenu from '@/components/feeds/reply/ReplyMenu.vue';
-import { mapState } from "vuex"
+import _ from "lodash";
 
 export default {
-  name: 'ReplyListItem',
+  name: "ReplyListItem",
   components: {
     // ReplyMenu,
   },
   data() {
     return {
-      replier: 'User1',
-      reply: '댓글입니다. 댓글이에여',
+      replier: "User1",
+      reply:
+        "댓글입니다. 댓글이에여. 이것도 길게 써볼게요 한번 근데 무슨 말을 써야 할 지 모르겠네여 하 하 하...CSS 넘나 어렵고 힘든것...계속써볼까여...어떻게 ㅎㄹ까여",
       replyLikeNum: 0,
-    }
+      Like: false,
+      disLike: true,
+      moreReply: true,
+    };
+  },
+  methods: {
+    like() {
+      this.Like = true;
+      this.disLike = false;
+      this.replyLikeNum += 1;
+    },
+    dislike() {
+      this.Like = false;
+      this.disLike = true;
+      this.replyLikeNum -= 1;
+    },
   },
   computed: {
-    ...mapState('user', ['myInfo'])
-  }
-}
+    shortenContent() {
+      return _.truncate(this.reply, { length: 50 });
+    },
+  },
+};
 </script>
 
 <style scoped>
 .reply-list-item {
   margin-top: 20px;
   display: flex;
-  align-items: flex-start;
-  width: 408px;
-  text-align: center;
-}
-.user-profile {
-  align-self: center;
-}
-.default-user-image {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 100%;
 }
 .reply-content {
   width: 100%;
@@ -75,11 +76,8 @@ export default {
   font-family: "Noto Sans KR";
   margin-left: 10px;
 }
-.replier{
-  display: flex;
-  width: 200px;
-  color: rgba(33, 33, 33, 1);
-  margin-bottom: 2px;
+.replier {
+  width: 80px;
   font-family: noto-sans-kr-10-bold;
 }
 .reply-like-num {
@@ -93,7 +91,7 @@ export default {
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
 }
-.reply-like {
+.btn-like {
   align-self: center;
 }
 </style>

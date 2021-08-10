@@ -56,7 +56,7 @@ public class BookServiceImpl implements BookService{
         BookDto.ResponseList bookResList = new BookDto.ResponseList();
         GenreDto genre = new GenreDto();
         for(BookDto book : books){
-            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 13)));
+            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 12)));
         }
 
         bookResList.setData(books);

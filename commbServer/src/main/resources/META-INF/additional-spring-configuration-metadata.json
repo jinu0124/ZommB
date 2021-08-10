@@ -54,5 +54,15 @@
       "name": "cloud.aws.region.static",
       "type": "java.lang.String",
       "description": "Description for cloud.aws.region.static."
+    },
+    {
+      "name": "dynamic.path",
+      "type": "java.lang.String",
+      "description": "Description for dynamic.path."
+    },
+    {
+      "name": "dynamic.front.path",
+      "type": "java.lang.String",
+      "description": "Description for dynamic.front.path."
     }
   ] }

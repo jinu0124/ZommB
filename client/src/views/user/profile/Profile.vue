@@ -1,9 +1,16 @@
 <template>
   <div class="my-profile">
     <img
-      id="myImage"
-      class="profile-image"
-      src="@/assets/image/test/imageTest.jpg"
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
       alt="profileImage"
     />
     <div class="user-info">
@@ -13,20 +20,20 @@
         <img src="@/assets/image/bookmark/4.svg" class="badge-bookmark" />
       </span>
       <div class="follow-btn" type="button" @click="moveToFollow()">
-        <span class="follow">00 followers</span>
-        <span class="follow">00 followings</span>
+        <span class="follow">{{ this.followerNum }} followers</span>
+        <span class="follow">{{ this.followingNum }} followings</span>
       </div>
       <div class="commb-info">
         <span
-          ><div>00</div>
+          ><div>{{ this.feedNum }}</div>
           <div>게시물</div></span
         >
         <span
-          ><div>00</div>
+          ><div>{{ this.libraryNum }}</div>
           <div>읽은책</div></span
         >
         <span
-          ><div>00</div>
+          ><div>{{ this.bookcartNum }}</div>
           <div>읽을책</div></span
         >
       </div>
@@ -58,6 +65,7 @@
 </template>
 
 <script>
+import { mapState } from "vuex";
 import ProfileFeeds from "@/components/profile/ProfileFeeds";
 import ProfileLibrary from "@/components/profile/ProfileLibrary";
 import ProfileBookcart from "@/components/profile/ProfileBookcart";
@@ -72,6 +80,8 @@ export default {
   data() {
     return {
       selectedPage: 0,
+      followerNum: 0,
+      followingNum: 0,
       feedNum: 0,
       libraryNum: 0,
       bookcartNum: 0,
@@ -85,23 +95,27 @@ export default {
       this.$router.push("/follow");
     },
   },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
 };
 </script>
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
 .my-profile {
-  width: 408px;
+  width: 320px;
   display: flex;
   margin: 60px auto 0;
   align-self: center;
   flex-flow: column;
   text-align: center;
 }
-.profile-image {
-  border-radius: 30px;
-  width: 200px;
-  height: 200px;
+.default-user-image,
+.user-profile {
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
   margin: 0 auto 20px;
 }
 .user-info {
@@ -133,7 +147,7 @@ export default {
   margin: 20px auto;
   padding-bottom: 40px;
   background-color: #ffffff;
-  width: 408px;
+  width: 320px;
 }
 .tab-item {
   width: calc(100% / 3);
@@ -156,7 +170,7 @@ input[name="tab-item"] {
   display: none;
 }
 .tab-content {
-  width: 408px;
+  width: 320px;
   clear: both;
   overflow: hidden;
 }
@@ -170,6 +184,7 @@ input[name="tab-item"] {
 }
 .tabs input:checked + .tab-item {
   background-color: #7540ee;
+  border-radius: 20px 20px 0px 0px;
   color: #fff;
 }
 </style>
