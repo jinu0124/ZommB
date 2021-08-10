@@ -1,7 +1,9 @@
 package com.ssafy.commb.model;
 
+import com.ssafy.commb.dto.book.KeywordDto;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 @Table(name="Keyword")
 @Getter
 @Setter
+@ToString
 public class Keyword {
 
     @Id
@@ -25,4 +28,11 @@ public class Keyword {
 
     @OneToMany(mappedBy = "keyword")
     private List<DailyEvent> dailyEvents = new ArrayList<DailyEvent>();
+
+    public KeywordDto convertKeywordDto(){
+        return KeywordDto.builder()
+                .id(this.id)
+                .keyword(this.keyword)
+                .build();
+    }
 }
