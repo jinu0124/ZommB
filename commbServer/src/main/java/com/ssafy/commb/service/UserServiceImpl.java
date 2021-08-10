@@ -42,6 +42,7 @@ public class UserServiceImpl implements UserService {
 
     //  Bcrypt는 패스워드를 해싱할 때 내부적으로 랜덤한 솔트를 생성하기 때문에 같은 문자열에 대해서 다른 인코드된 결과를 반환
     private final String ENCODE_ID = "bcrypt";
+    private static final Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
 
     @Override
     public UserDto.ResponseList getUsers(String nickname) {
@@ -68,8 +69,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public int joinUser(MyDto.Request myReq) {
-        Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
-
         PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
         String encPassword = passwordEncoder.encode(myReq.getPassword());
         if(!passwordEncoder.matches(myReq.getPassword(), encPassword)) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호 암호화 중 불일치 오류");
@@ -86,7 +85,6 @@ public class UserServiceImpl implements UserService {
     }
 
     public MyDto.Response login(MyDto.LoginRequest myReq) {
-        Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
         PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
 
         Optional<User> user = userRepository.findByEmail(myReq.getEmail());
@@ -164,13 +162,15 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(UserDto.ModifyPwRequest userReq, HttpServletRequest request) {
-        Optional<User> user = userRepository.findByIdAndPassword((int) request.getAttribute("userId"), userReq.getOldPassword());
-        System.out.println(userReq.getNewPassword());
+        Optional<User> user = userRepository.findById((int) request.getAttribute("userId"));
 
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보가 없습니다.");
 
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+        if(!passwordEncoder.matches(userReq.getOldPassword(), user.get().getPassword())) throw new ApplicationException(HttpStatus.valueOf(401), "비밀번호 불일치");
+
         user.ifPresent(userSelect -> {
-            userSelect.setPassword(userReq.getNewPassword());
+            userSelect.setPassword(passwordEncoder.encode(userReq.getNewPassword()));
             userRepository.save(userSelect);
         });
     }
@@ -186,8 +186,9 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(userId);
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보를 찾을 수 없습니다.");
 
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
         user.ifPresent(selectUser -> {
-            selectUser.setPassword(password);
+            selectUser.setPassword(passwordEncoder.encode(password));
             userRepository.save(selectUser);
         });
     }
