@@ -1,5 +1,5 @@
 <template>
-  <div class="my-weekly-challenge my-2">
+  <div v-if="myChallenge" class="my-weekly-challenge my-2">
     <div class="my-weekly-header">
       <div class="title d-flex align-items-center">  
         <span>Weekly Books</span>
