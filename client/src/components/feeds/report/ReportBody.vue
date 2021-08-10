@@ -32,14 +32,20 @@
       </div>
     </div>
     <div class="after-report" v-else>
-      <div>{{ this.complete }}</div>
-      <div>{{ this.message }}</div>
-      <img class="camel" src="@/assets/image/camel/camelReportSuccess.png" />
+      <h1 class="title1">신고 접수가 완료되었습니다.</h1>
+      <h4 class="title2">
+        신고된 게시물 검토 후, 적절한 조치를 취할 수 있도록 하겠습니다.
+      </h4>
+      <img class="camel" src="@/assets/image/camel/camelReport.svg" />
       <div>신고 이유</div>
-      <button class="btn-2 btn-grey btn-reason">{{ this.reason }}</button>
-      <button class="btn-2 btn-primary1" type="button" @click="moveToFeed()">
-        NewsFeed로 돌아가기
-      </button>
+      <div>
+        <button class="btn-2 btn-grey btn-reason">{{ this.reason }}</button>
+      </div>
+      <div>
+        <button class="btn-2 btn-primary1" type="button" @click="moveToFeed()">
+          NewsFeed로 돌아가기
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -55,8 +61,6 @@ export default {
       aversion: "혐오 발언 또는 상징",
       property: "지적 재산권 침해",
       badimage: "나체 이미지 또는 성적 행위",
-      complete: "신고 접수가 완료되었습니다.",
-      message: "신고된 게시물 검토 후, 적절한 조치를 취할 수 있도록 하겠습니다.",
       isReported: false,
       num: 0,
       reason: "",
@@ -105,7 +109,7 @@ export default {
 }
 .before-report,
 .after-report {
-  margin-top: 60px;
+  margin-top: 30px;
 }
 .title1 {
   font-family: "Noto Sans KR", sans-serif;
@@ -116,8 +120,8 @@ export default {
   font-size: 15px;
 }
 .camel {
-  height: 200px;
-  width: 200px;
+  height: 250px;
+  width: 250px;
 }
 .report-body {
   text-align: center;

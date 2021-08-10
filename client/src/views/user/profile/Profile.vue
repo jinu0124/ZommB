@@ -20,20 +20,20 @@
         <img src="@/assets/image/bookmark/4.svg" class="badge-bookmark" />
       </span>
       <div class="follow-btn" type="button" @click="moveToFollow()">
-        <span class="follow">00 followers</span>
-        <span class="follow">00 followings</span>
+        <span class="follow">{{ this.followerNum }} followers</span>
+        <span class="follow">{{ this.followingNum }} followings</span>
       </div>
       <div class="commb-info">
         <span
-          ><div>00</div>
+          ><div>{{ this.feedNum }}</div>
           <div>게시물</div></span
         >
         <span
-          ><div>00</div>
+          ><div>{{ this.libraryNum }}</div>
           <div>읽은책</div></span
         >
         <span
-          ><div>00</div>
+          ><div>{{ this.bookcartNum }}</div>
           <div>읽을책</div></span
         >
       </div>
@@ -80,6 +80,8 @@ export default {
   data() {
     return {
       selectedPage: 0,
+      followerNum: 0,
+      followingNum: 0,
       feedNum: 0,
       libraryNum: 0,
       bookcartNum: 0,
@@ -111,9 +113,9 @@ export default {
 }
 .default-user-image,
 .user-profile {
-  border-radius: 30px;
-  width: 200px;
-  height: 200px;
+  border-radius: 50%;
+  width: 150px;
+  height: 150px;
   margin: 0 auto 20px;
 }
 .user-info {
@@ -182,6 +184,7 @@ input[name="tab-item"] {
 }
 .tabs input:checked + .tab-item {
   background-color: #7540ee;
+  border-radius: 20px 20px 0px 0px;
   color: #fff;
 }
 </style>

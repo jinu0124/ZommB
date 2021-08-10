@@ -16,7 +16,22 @@
         <div class="write-part">
           <input class="write-content" placeholder="게시물 내용을 입력하세요." />
         </div>
+        <!-- 사진 수정하면 preview -->
+        <img v-if="preview" class="profile" :src="preview" alt="" />
+        <!-- 아니면 기존 이미지 -->
+        <img v-else-if="profilePath" class="profile" :src="profilePath" alt="" />
+        <!-- 둘 다 없으면 기본 이미지 -->
+        <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="" />
+        <img
+          src="@/assets/image/deco/addPicture.svg"
+          class="addPicture"
+          type="button"
+          data-bs-toggle="modal"
+          data-bs-target="#feedImageCropModal"
+        />
+        <FeedImageCrop @select-croppa="saveNewFeedImage" />
       </div>
+
       <div class="btn-part">
         <button class="btn-5 btn-grey" @click="$router.go(-1)">취소</button>
         <button class="btn-5 btn-yellow">완료</button>
@@ -26,15 +41,69 @@
 </template>
 
 <script>
+import FeedImageCrop from "@/components/feeds/feed/FeedImageCrop";
+import { mapState } from "vuex";
+
 export default {
   name: "Write",
+  components: {
+    FeedImageCrop,
+  },
   data() {
     return {
       Logo: "글쓰기",
       title: "아몬드",
       writer: "손원평",
       comp: "창비",
+      myCroppa: null,
+      // feed 사진 업데이트
+      feedPath: null,
+      preview: null,
+      feedUpdate: 0,
+      isSubmit: false,
+      fail: {
+        profile: false,
+      },
+      isSuccessInfo: false,
+      userFD: null,
     };
+  },
+  methods: {
+    saveNewProfile(croppa) {
+      this.preview = croppa.generateDataUrl("image/jpeg");
+      this.myCroppa = croppa;
+      this.feedUpdate = 1;
+    },
+    onFileDelete() {
+      this.feedUpdate = 2;
+      this.preview = null;
+      this.feedPath = null;
+      this.myCroppa = null;
+    },
+  },
+  makeFormData() {
+    if (this.feedUpdate === 1) {
+      this.myCroppa.generateBlob((blob) => {
+        var userInfo = new FormData();
+        userInfo.append("userFileUrl", blob, `${this.myInfo.id}.png`);
+        userInfo.append("nickname", this.nickname);
+        userInfo.append("flag", this.profileUpdate);
+        this.userFD = userInfo;
+      });
+    } else {
+      var userInfo = new FormData();
+      userInfo.append("nickname", this.nickname);
+      userInfo.append("flag", this.profileUpdate);
+      this.userFD = userInfo;
+    }
+  },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
+  watch: {
+    myCroppa: function() {
+      this.makeFormData();
+    },
   },
 };
 </script>
@@ -98,5 +167,11 @@ export default {
 }
 .btn-5 {
   margin: 10px 5px;
+}
+.profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  margin-right: 20px;
 }
 </style>

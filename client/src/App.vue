@@ -14,6 +14,7 @@
         challenge: isChallenge,
         feedlist: isFeedList,
         profile: isProfile,
+        search: isSearch,
       }"
     />
     <router-view />
@@ -78,7 +79,8 @@ export default {
     },
     isSearch() {
       if (
-        this.$route.name === "BookInfo" 
+        this.$route.name === "BookInfo" ||
+        this.$route.name === "Search"
       ) {
         return true;
       }
@@ -91,7 +93,7 @@ export default {
 <style src="@/assets/style/accounts.css"></style>
 <style src="@/assets/style/button.css"></style>
 <style src="@/assets/style/common.css"></style>
-<style>
+<style scoped>
   #app {
     font-family: "Noto Sans KR", sans-serif;
     height: 100%;

@@ -47,7 +47,8 @@ export default {
 }
 .feed-write-btn,
 .delete-btn {
-  width: 80px;
+  width: 75px;
+  height: 30px;
   margin: 2px 0px;
 }
 .book-info {

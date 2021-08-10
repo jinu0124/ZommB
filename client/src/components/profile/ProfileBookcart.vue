@@ -1,8 +1,8 @@
 <template>
   <div>
     <div class="bookcart-title">
-      <b>{{ nickname }}님이 최근 가장 관심을 갖는 장르는 {{ this.genre }} 입니다!! </b>
-      <button class="btn-4 btn-primary1" @click="moveToAdd()">읽을책 추가</button>
+      <b>{{ this.nickname }}님의 최대 관심 장르는 <br />{{ this.genre }} 입니다!! </b>
+      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽을책 추가</button>
     </div>
     <input
       class="book-search-input"
@@ -52,5 +52,10 @@ export default {
   padding-left: 20px;
   font-size: 0.875rem;
   border-radius: 20px;
+}
+.addbtn {
+  width: 85px;
+  height: 30px;
+  margin-left: 5px;
 }
 </style>
