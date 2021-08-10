@@ -17,4 +17,6 @@ public interface FeedDao {
     public int userFeedCnt(int userId);
 
     public List<FeedDto> getFollowingFeeds(int userId);
+
+    public List<FeedDto> getFeeds(String searchWord);
 }

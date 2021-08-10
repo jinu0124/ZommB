@@ -35,10 +35,10 @@ public class UserServiceImpl implements UserService {
     private String awsProfileUrl;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
 
     //  Bcrypt는 패스워드를 해싱할 때 내부적으로 랜덤한 솔트를 생성하기 때문에 같은 문자열에 대해서 다른 인코드된 결과를 반환
     private final String ENCODE_ID = "bcrypt";

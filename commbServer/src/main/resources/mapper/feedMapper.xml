@@ -56,6 +56,10 @@
         ORDER BY T1.create_at DESC
     </select>
 
+    <select id="getFeeds" parameterType="Integer" resultMap="feedInformation">
+
+    </select>
+
 
 
     <resultMap type="Feed" id="feedInformation">

@@ -1,11 +1,7 @@
 package com.ssafy.commb.controller;
 
-import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.feed.CommentDto;
 import com.ssafy.commb.dto.feed.FeedDto;
-import com.ssafy.commb.dto.feed.HashTagDto;
 import com.ssafy.commb.dto.user.MyDto;
-import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
@@ -23,9 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/feeds")
@@ -64,34 +58,20 @@ public class FeedController {
     // 게시물 리스트 검색
     @GetMapping("")
     @ApiOperation(value = "피드 리스트 검색", response = FeedDto.Response.class)
-    public ResponseEntity<List<FeedDto.Response>> getFeeds(@RequestParam String searchWord) throws ParseException {
-        UserDto user = UserDto.builder().id(id).nickname(nickname).userFileUrl(url).build();
-        BookDto book = BookDto.builder().id(id).bookName("책이름").build();
+    public ResponseEntity<FeedDto.ResponseList> getFeeds(@RequestParam String searchWord, HttpServletRequest request) {
 
-        List<HashTagDto> hashTags = new ArrayList<>();
-        hashTags.add(HashTagDto.builder().tag(tag).build());
+        int userId = (Integer) request.getAttribute("userId");
 
-        List<CommentDto> comments = new ArrayList<>();
-        comments.add(CommentDto.builder().id(id).content(content).userId(id).nickname(nickname).thumbCnt(cnt).createAt(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse("2021-07-31 12:10:00")).isThumb(bool).isMod(bool).build());
+        FeedDto.ResponseList feedResList = feedService.getFeeds(searchWord, userId);
 
-
-        FeedDto feed = FeedDto.builder().id(id).createAt(date).content(content).isThumb(bool)
-                .thumbCnt(cnt).feedFileUrl(url).user(user).book(book).hashTags(hashTags).comments(comments).build();
-
-        FeedDto.Response feedRes = new FeedDto.Response();
-        feedRes.setData(feed);
-
-        List<FeedDto.Response> feedResList = new ArrayList<>();
-        feedResList.add(feedRes);
-
-        return new ResponseEntity<List<FeedDto.Response>>(feedResList, HttpStatus.OK);
+        return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
 
     // 게시물 작성
     @PostMapping("")
     @ApiOperation(value = "피드 작성")
     // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 → formData 형식에서는 사용 X → swagger에서 MultipartHttpServletRequest 사용 X
-     public ResponseEntity uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
+    public ResponseEntity uploadFeed(@RequestBody FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
         feedService.uploadFeed(feedReq, request);
 
@@ -137,7 +117,7 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 누르기")
     public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         thumbService.likeFeed(feedId, userId);
 
@@ -150,7 +130,7 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 취소")
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         thumbService.deleteLikeFeed(feedId, userId);
 
@@ -161,12 +141,14 @@ public class FeedController {
     // 게시물 좋아요 목록
     @GetMapping("/{feedId}/feed-likes")
     @ApiOperation(value = "피드 좋아요 리스트", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> likeFeeds(@PathVariable Integer feedId) {
-        MyDto.Response myRes = new MyDto.Response();
-        MyDto my = MyDto.builder().id(id).nickname(nickname).userFileUrl(url).isFollow(bool).build();
+    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        myRes.setData(my);
-        return new ResponseEntity<MyDto.Response>(myRes, HttpStatus.OK);
+        int userId = (Integer) request.getAttribute("userId");
+
+        // 팔로우 된 사람 - 이름 순으로 정렬 기준 처리 해야함!!!!!
+        MyDto.ResponseList myResList = feedService.likeFeeds(feedId, userId);
+
+        return new ResponseEntity<MyDto.ResponseList>(myResList, HttpStatus.OK);
     }
 
     // 댓글 작성
@@ -174,7 +156,7 @@ public class FeedController {
     @ApiOperation(value = "댓글 작성")
     public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
 
-        int userId = (int) request.getAttribute("userId");
+        int userId = (Integer) request.getAttribute("userId");
 
         commentService.uploadComment(feedId, userId, content);
 
@@ -238,7 +220,7 @@ public class FeedController {
     // 내가 팔로잉하는 사람들의 피드 목록
     @GetMapping("/{userId}/following/feeds")
     @ApiOperation(value = "내가 팔로잉 하는 사람들의 피드 리스트", response = FeedDto.Response.class)
-    public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId, HttpServletRequest request) throws ParseException {
+    public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId, HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
 
