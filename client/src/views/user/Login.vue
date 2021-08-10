@@ -1,5 +1,5 @@
 <template>
-  <div class="login">
+  <div class="account-page">
     <UnauthorizedHeader/>
     <!-- 알림창 -->
     <div
@@ -8,15 +8,15 @@
     ></div>
     <EmailReConfirmAlert
       v-if="needEmailConfirm"
-      class="email-alert"
+      class="alert-center"
       data-bs-backdrop="static"
       tabindex="-1"
       aria-hidden="true"
       :email="email"
       @ok="closeAlert"
     />
-    <div class="login-header">
-      <div :class="[ wrongInput ? 'show' : 'hide', 'wrong-input']" role="alert">
+    <div class="account-header">
+      <div :class="[ wrongInput ? 'show' : 'hide', 'warning-alert', 'alert-top-30']" role="alert">
         잘못된 이메일 혹은 비밀번호입니다.
       </div>
       <div class="title">Login</div>
@@ -69,14 +69,14 @@
         <span
           class="btn-text-s"
           type="button"
-          @click="$router.push({ name: 'FindPassword'})"
+          @click="moveToFindPassword"
         >비밀번호 찾기</span>
       </div>
 
       <div class="social-login">
         <img class="img-fluid my-3" src="@/assets/image/deco/or.svg" alt="">
         <div class="d-flex gap-3 justify-content-center">
-          <button class="kakao-btn">
+          <button class="kakao-btn" @click="kakaoLogin">
             <img src="@/assets/image/deco/kakao.png" alt="">
           </button>
           <button class="google-btn">
@@ -116,7 +116,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['moveToSignup', 'onLogin']),
+    ...mapActions('user', ['moveToSignup', 'moveToFindPassword', 'onLogin']),
     closeAlert () {
       this.needEmailConfirm = false
     },
@@ -159,6 +159,9 @@ export default {
       });
       this.isSubmit = isSubmit;
     },
+    kakaoLogin() {
+      window.location.href="http://localhost:8080/oauth2/authorization/kakao";
+    }
   },
   created() {
     this.passwordSchema
@@ -191,28 +194,6 @@ export default {
 </script>
 
 <style scoped>
-  .login {
-    display: flex;
-    flex-flow: column;
-    height: 100%;
-    min-height: 100vh;
-  }
-  .login-header {
-    margin: 65px 20px 20px;
-    flex: 0;
-  }
-  .login-header .title {
-    font-family: 'Black Han Sans', sans-serif;
-    font-size: 2.5rem;
-    color: #fff;
-    text-shadow: 2px 2px #683EC9;
-  }
-  .login-header .description {
-    color: #fff;
-    font-weight: 300;
-    font-size: 0.7rem;
-  }
-
   .social-login {
     width: 210px;
   }
@@ -238,49 +219,5 @@ export default {
   .social-login button img {
     max-width: 70%;
     height: auto;
-  }
-
-  .email-check {
-    position: absolute;
-    bottom: 7px;
-    right: 10px;
-  }
-  .email-alert {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    z-index: 1060;
-    transform: translate(-50%, -50%);
-  }
-  .backdrop {
-    position: fixed;
-    width: 100%;
-    height: 100vh;
-    z-index: 1040;
-    background-color: rgba(0, 0, 0, 0.3);
-  }
-  .wrong-input {
-    width: 80vw;
-    height: 35px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: 500;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: rgba(255, 119, 119, 0.95);
-    border: 1px solid #FF7777;
-    color: #fff;
-    position: fixed;
-    left: 50%;
-    transform: translate(-50%);
-  }
-  .show {
-    opacity: 1;
-    transition: all 0.2s;
-  }
-  .hide {
-    opacity: 0;
-    transition: all 0.2s;
   }
 </style>

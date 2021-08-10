@@ -43,14 +43,21 @@ export default {
   changePassword(userId, userData) {
     return _axios({
       url: `users/${userId}`,
-      method: 'patch',
+      method: 'put',
       data: userData
+    })
+  },
+  findPassword(userData) {
+    return _axios({
+      url: 'users/find-password',
+      method: 'get',
+      params: { email: userData }
     })
   },
   resetPassword(userData) {
     return _axios({
-      url: 'users/reset-password',
-      method: 'post',
+      url: 'users/update-password',
+      method: 'put',
       data: userData
     })
   },
@@ -58,6 +65,13 @@ export default {
     return _axios({
       url: `users/withdraw`,
       method: 'delete',
+    })
+  },
+  socialLogin(userData) {
+    return _axios({
+      url: '/users/social/login',
+      method: 'get',
+      params: userData
     })
   }
 }

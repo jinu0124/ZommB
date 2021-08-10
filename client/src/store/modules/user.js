@@ -1,4 +1,3 @@
-// import userApi from '@/api/user'
 import router from '@/router'
 import userApi from '@/api/user'
 
@@ -25,6 +24,9 @@ const actions = {
   },
   moveToSignupEmail () {
     router.push({ name: 'SignupEmail' })
+  },
+  moveToFindPassword () {
+    router.push({ name: 'FindPassword' })
   },
   moveToUpdateInfo () {
     router.push({ name: 'UpdateInfo' })
@@ -68,10 +70,8 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_ISLOGIN', true)
-        commit('SET_ACCESS_TOKEN', res.headers.accesstoken)
-        commit('SET_REFRESH_TOKEN', res.headers.refreshtoken)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
       })
@@ -92,26 +92,29 @@ const actions = {
   async onUpdatePassword({ state }, userData) {
     await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         return res
       })
       .catch((err) => {
-        console.log(err.response)
+        // console.log(err.response)
         return Promise.reject(err.response)
       })
   },
-  // async onResetPassword({ dispatch }, userData) {
-    // console.log(userData)
-    // await userApi.resetPassword(userData)
-    //   .then((res) => {
-    //     console.log(res)
-    //     dispatch('moveToLogin')
-    //   })
-    //   .catch((err) => {
-    //     console.log(err.response)
-    //     return Promise.reject(err.response)
-    //   })
-  // },
+  async onSocialLogin ({ commit }, userData) {
+    await userApi.socialLogin(userData)
+      .then((res) => {
+        // console.log(res)
+        commit('SET_ISLOGIN', true)
+        commit('SET_MY_INFO', res.data.data)
+        router.push({ name: 'Feed' })
+      })
+      .catch((err) => {
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
+        }
+        return Promise.reject(err.response)
+      })
+  },
 }
 
 const mutations = {

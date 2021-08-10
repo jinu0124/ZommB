@@ -1,38 +1,51 @@
 <template>
   <div class="content-part">
     <img
-      alt=""
-      class="content-writer-image"
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
       src="@/assets/image/common/profileDefault.svg"
+      type="button"
+      id="UserProfile"
     />
     <div class="content">
-      <p class="content-writer">{{nickname}}</p>
-      <p class="article">{{content}}</p>
+      <p class="content-writer">{{ nickname }}</p>
+      <p class="article">{{ content }}</p>
       <div>
-        <span
-          v-for="(tag, idx) in tags"
-          :key="idx"
-          class="content-tag rounded-pill me-1"
-        >#{{tag}}</span>
+        <span v-for="(tag, idx) in tags" :key="idx" class="content-tag rounded-pill me-1"
+          >#{{ tag }}</span
+        >
       </div>
-      <p class="content-duration">{{duration}}시간 전</p>
+      <p class="content-duration">{{ duration }}시간 전</p>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
-  name: 'Content',
-  data(){
+  name: "Content",
+  data() {
     return {
-      nickname: 'Nickname',
-      content: '밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.',
-      tags: [
-        '해시태그','테스트','입니다.'
-      ],
-    }
-  }
-}
+      nickname: "Nickname",
+      content: "밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.",
+      tags: ["해시태그", "테스트", "입니다."],
+      duration: "3",
+    };
+  },
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
+};
 </script>
 
 <style scoped>
@@ -40,9 +53,10 @@ export default {
   margin: 0 auto;
   display: flex;
   align-items: flex-start;
-  width: 408px;
+  width: 320px;
 }
-.content-writer-image {
+.user-profile,
+.default-user-image {
   width: 40px;
   height: 40px;
   margin-top: 11px;
@@ -64,7 +78,7 @@ export default {
   font-family: noto-sans-kr-10-bold;
 }
 .article {
-  max-width: 400px;
+  max-width: 300px;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
   font-family: noto-sans-kr-10-regular;
@@ -85,18 +99,16 @@ export default {
   border-right: 4px solid rgba(155, 154, 154, 1);
 }
 .content-duration {
-  width: 13.6%;
+  width: 20%;
   height: 2.86%;
   font-family: "Noto Sans KR";
   font-size: 9px;
   font-weight: 400;
   line-height: normal;
   color: rgba(164, 164, 164, 1);
-  margin-bottom: 25px;
-  margin-left: 53px;
 }
 .content-tag {
   color: #585858;
-  background: #FFDC7C;
+  background: #ffdc7c;
 }
 </style>

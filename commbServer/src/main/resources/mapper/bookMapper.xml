@@ -27,7 +27,7 @@
     </select>
 
     <select id="getTopBooks" parameterType="Integer" resultType="Book">
-        SELECT b.id AS id, file_url AS bookFileUrl
+        SELECT distinct b.id AS id, file_url AS bookFileUrl
         FROM top_book t, book b
         WHERE user_id = #{userId} AND t.book_id = b.id;
     </select>

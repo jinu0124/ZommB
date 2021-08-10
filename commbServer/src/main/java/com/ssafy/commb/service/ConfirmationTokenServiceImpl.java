@@ -1,9 +1,12 @@
 package com.ssafy.commb.service;
 
+import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -19,12 +22,14 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
     @Autowired
     private RedisService redisService;
 
+    @Value("${dynamic.path}")
+    private String dynamicPath;
+
     private final ConfirmationTokenRepository confirmationTokenRepository;
     private final EmailSenderServiceImpl emailSenderService;
 
     // 이메일 인증 토큰 생성
-    public String createEmailConfirmationToken(int userId, String receiverEmail) {
-
+    public String createEmailConfirmationToken(int userId, String receiverEmail, String url) {
         Assert.hasText(String.valueOf(userId), "userId는 필수 입니다.");
         Assert.hasText(receiverEmail, "receiver Email은 필수 입니다.");
 
@@ -32,21 +37,33 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         Optional<ConfirmationToken> confirmationToken = confirmationTokenRepository.findByUserId(userId);
         confirmationToken.ifPresent(confirmationTokenRepository::delete);
         confirmationTokenRepository.save(emailConfirmationToken);
-
         SimpleMailMessage mailMessage = new SimpleMailMessage();
         mailMessage.setTo(receiverEmail);
-
-        String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId();
-        mailMessage.setSubject("회원가입 이메일 인증");
-        mailMessage.setText("링크를 클릭하시면 로그인 페이지로 이동합니다!\n"+"http://i5a602.p.ssafy.io:8080/users" + query);
+        String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId() + "&url=" + url;
+        mailMessage.setSubject("이메일 인증");
+        mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+ dynamicPath + "api/users" + query);
+        System.out.println("메일 발송 전");
         emailSenderService.sendEmail(mailMessage);          // 메일 발송
-
+        System.out.println("메일 발송 완료");
         return emailConfirmationToken.getId();
     }
 
     // 유효한 토큰 가져오기
     public Optional<ConfirmationToken> findByIdAndExpirationDateAfterAndExpired(String confirmationTokenId) {
         return confirmationTokenRepository.findByIdAndExpirationDateAfterAndExpired(confirmationTokenId, LocalDateTime.now(), false);
-    };
+    }
+
+    @Override
+    public int findById(String key) {
+        Optional<ConfirmationToken> confirmationToken = confirmationTokenRepository.findById(key);
+        if(confirmationToken.isPresent()) {
+            int token = confirmationToken.get().getUserId();
+            confirmationTokenRepository.delete(confirmationToken.get());
+            return token;
+        }
+
+        throw new ApplicationException(HttpStatus.valueOf(401), "유효한 회원 인증 토큰을 찾을 수 없습니다. 서버에 문의");
+    }
+
 
 }

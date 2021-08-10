@@ -1,6 +1,6 @@
 <template>
   <ul v-if="isLogin" class="dropdown-menu" aria-labelledby="UserMenuDropdown">
-    <li><a class="dropdown-item" href="#">내 프로필</a></li>
+    <li><router-link class="dropdown-item" :to="{ name: 'Profile' }">내 프로필</router-link></li>
     <li><router-link class="dropdown-item" :to="{ name: 'UpdateInfo' }">계정 관리</router-link></li>
     <li class="dropdown-item" type="button" @click="onLogout">로그아웃</li>
     <li class="dropdown-item" type="button" @click="withdrawal">회원 탈퇴</li>
@@ -35,6 +35,10 @@ export default {
     background: rgba(0, 0, 0, 0.7);
     border-radius: 10px 0px 10px 10px;
     min-width: 3rem;
+  }
+  .dropdown-menu.show {
+    transition: none !important;
+    margin: 2px -10px 0 !important;
   }
   .dropdown-item {
     color: #fff;

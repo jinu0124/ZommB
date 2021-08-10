@@ -29,7 +29,7 @@ public class SecurityServiceImpl implements SecurityService{
     // 로그인 후 토큰 발행
     @Transactional
     public Map<String, Object> createToken(int userId){
-        String accessToken = createAccessToken(String.valueOf(userId), ACCESS_TOKEN_EXP_TIME, SECRET_KEY);  // Redis에 저장 & 클라이언트에 제공
+        String accessToken = createAccessToken(String.valueOf(userId), ACCESS_TOKEN_EXP_TIME, SECRET_KEY);  // 클라이언트에 제공
         String refreshToken = createRefreshToken(REFRESH_TOKEN_EXP_TIME, accessToken);                      // Redis에 저장 & 클라이언트에 제공
 
         List<String> userIdAccToken = new ArrayList<>();
@@ -128,10 +128,10 @@ public class SecurityServiceImpl implements SecurityService{
         Map<String, Object> map = new HashMap<>();
 
         String acUserId = decodeToken(acToken, SECRET_KEY);    // AccessToken을 통해 userId를 추출한다. -> 만료라면 "expire" 반환
-        List<Object> userIdAccToken = find(rfToken);         // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
+        List<Object> userIdAccToken = find(rfToken);           // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
 
         if(userIdAccToken.size() < 2) {
-            map.put("msg", "Not Valid Refresh Token");
+            map.put("msg", "RefreshToken has been expired");
             map.put("status", 401);
         }
         // RefreshToken 인증은 성공했지만 AccessToken이 만료되지 않은 경우 = AccessToken이 살아있는데 재발급 받으려는 경우 : 발급 불가 반환
@@ -140,11 +140,15 @@ public class SecurityServiceImpl implements SecurityService{
             map.put("status", 403);    // 발급 불가
         }
         // RefreshToken 유효 & AccessToken 유효한 값이지만 만료 => 재발급
-        else {
+        else if(acUserId.equals("expire")) {
             map.put("token", createAccessToken(String.valueOf(userIdAccToken.get(0)), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
             map.put("status", 200);
             map.put("msg", "Access Token Updated Complete");
             map.put("userId", userIdAccToken.get(0));
+        }
+        else {
+            map.put("msg", "AccessToken Not Valid.");
+            map.put("status", 403);    // 발급 불가
         }
 
         return map;

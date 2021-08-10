@@ -169,12 +169,12 @@ public class FeedServiceImpl implements FeedService {
     public FeedDto.ResponseList getFollowingFeeds(int userId) {
 
         List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
-
+        System.out.println("fewfwegwewge");
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), userId));
         }
-
+        System.out.println(feeds.get(0).getComments());
         FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
         feedResList.setData(feeds);
 

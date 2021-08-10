@@ -22,7 +22,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 @RestController
-@RequestMapping(value = "/feeds")
+@RequestMapping(value = "/api/feeds")
 @Api("Feed Controller API V1")
 public class FeedController {
 
