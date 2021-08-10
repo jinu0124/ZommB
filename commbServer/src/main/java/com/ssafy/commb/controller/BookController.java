@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/books")
+@RequestMapping(value="/api/books")
 @Api("Book Controller API V1")
 public class BookController {
     static final String url = "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F484319%3Ftimestamp%3D20201124225204";
@@ -50,20 +50,7 @@ public class BookController {
     // 도서 상세 조회
     @GetMapping("/{bookId}")
     @ApiOperation(value="책 상세 정보 조회", response=BookDto.Response.class)
-    public Object findBookList(@PathVariable("bookId") Integer bookId) throws IOException {
-        List<KeywordDto> keywordList = new ArrayList<>();
-        keywordList.add(KeywordDto.builder().id(1).keyword("키워드").build());
-
-        BookDto book = BookDto.builder().id(bookId).bookName("책이름").publisher("출판").year(2021).
-                author("저자").contents("요약 줄거리").isbn("1234567891234").bookFileUrl(url).readCnt(4287).
-                keyword(keywordList).build();
-
-        BookDto.Response bookRes = new BookDto.Response();
-        bookRes.setData(book);
-
-//        JungboNaruAPI api = new JungboNaruAPI();
-//        api.searchKeyword("9788998139773");
-
-        return new ResponseEntity<BookDto.Response>(bookRes, HttpStatus.OK);
+    public Object findBook(@PathVariable("bookId") Integer bookId) throws IOException {
+        return new ResponseEntity<BookDto.Response>(bookService.findBook(bookId), HttpStatus.OK);
     }
 }

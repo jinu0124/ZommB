@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 
 @RestController
@@ -74,6 +75,12 @@ public class UserController {
 
     @Value("${dynamic.path}")
     private String dynamicPath;
+
+    @Value("${dynamic.front.path}")
+    private String dynamicFrontPath;
+
+    @Value("${cloud.profile}")
+    private String awsProfilePath;
 
     // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
     @GetMapping("")
@@ -142,10 +149,10 @@ public class UserController {
 //       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url + "?key=" + key);
         switch(url){
             case "" :
-                if(userService.confirmEmail(key)) response.sendRedirect(dynamicPath + url);
+                if(userService.confirmEmail(key)) response.sendRedirect(dynamicFrontPath + url);
                 break;
             case "reset-password" :
-                if(userService.confirmEmailForPassword(key)) response.sendRedirect(dynamicPath + url + "?key=" + key);
+                if(userService.confirmEmailForPassword(key)) response.sendRedirect(dynamicFrontPath + url + "?key=" + key);
                 break;
             default: return "유효하지 않은 url 입니다.";
         }
@@ -195,7 +202,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
         UserDto.Response userRes = userService.getUserInfo(userId, request);
-
+        userRes.getData().setUserFileUrl(awsProfilePath + userRes.getData().getUserFileUrl());
         return ResponseEntity.ok().body(userRes);
     }
 
@@ -205,13 +212,14 @@ public class UserController {
     @ApiOperation(value = "비밀번호 찾기 요청")
     public ResponseEntity findUser(@RequestParam String email) {
         int userId = userService.getUserInfoByEmail(email);
+        System.out.println(email);
         userService.TokenGeneration(userId, email, "reset-password");
 
         return ResponseEntity.ok().build();
     }
 
     //
-    @PatchMapping("/update-password")
+    @PutMapping("/update-password")
     @ApiOperation(value = "비밀번호 찾기를 통한 Password 변경 요청")
     public ResponseEntity updatePassword(@RequestBody Map<String, Object> map) {
         String key = (String) map.get("key");
@@ -244,7 +252,7 @@ public class UserController {
     }
 
     // 회원가입/로그인 - 비밀번호 변경
-    @PatchMapping("/{userId}")
+    @PutMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
                                          @RequestBody UserDto.ModifyPwRequest userReq,

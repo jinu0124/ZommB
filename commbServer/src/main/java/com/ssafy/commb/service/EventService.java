@@ -13,7 +13,7 @@ import java.time.LocalDate;
 public interface EventService {
     public MyEventDto.Response getMyEvent(HttpServletRequest request);
 
-    public WeeklyEventDto.Response bookRecommend(LocalDate time);
+    public WeeklyEventDto.Response bookRecommend(String time);
 
     public FeedDto.ResponseList weeklyFeeds(int weeklyId, HttpServletRequest request);
 
@@ -21,10 +21,14 @@ public interface EventService {
 
     public MyDto.ResponseList getWeeklyParticipants(int weeklyId, HttpServletRequest request);
 
-    public DailyEventDto.Response keywordRecommend(LocalDate today);
+    public DailyEventDto.Response keywordRecommend(String today);
 
     public FeedDto.ResponseList dailyFeeds(int keywordId, HttpServletRequest request);
 
     public MyDto.ResponseList getDailyParticipants(int dailyId, int userId);
+
+    public Integer getDailyParticipantsCnt(int dailyId);
+
+
 
 }

@@ -15,18 +15,20 @@ import org.springframework.stereotype.Component;
 @Builder                                    // Builder 패턴 사용
 @Alias("WeeklyEvent")
 public class WeeklyEventDto {
-    private Weekly weekly;
-    private BookDto book;
+//    private Weekly weekly;
+    private Integer weeklyId;
+//    private BookDto book;
+    private Integer bookId;
 
     private String bookFileUrl;
     private Boolean weeklyParticipate;
     private Integer week;
 
-    @Setter
-    @Getter
-    public static class Weekly{
-        private Integer id;
-    }
+//    @Setter
+//    @Getter
+//    public static class Weekly{
+//        private Integer id;
+//    }
 
     @Getter
     @AllArgsConstructor

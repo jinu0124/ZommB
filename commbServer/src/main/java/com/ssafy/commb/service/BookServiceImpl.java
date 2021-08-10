@@ -7,12 +7,10 @@ import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.GenreDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.exception.ApplicationException;
-import com.ssafy.commb.model.BookShelves;
-import com.ssafy.commb.model.BookShelvesId;
+import com.ssafy.commb.exception.book.NotFoundBookException;
+import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.BookShelvesRepository;
-import com.ssafy.commb.model.Book;
 import com.ssafy.commb.dto.book.KakaoSearchBookResponseDto;
-import com.ssafy.commb.model.QBookShelves;
 import com.ssafy.commb.repository.BookRepository;
 import com.ssafy.commb.util.KakaoSearchAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +56,7 @@ public class BookServiceImpl implements BookService{
         BookDto.ResponseList bookResList = new BookDto.ResponseList();
         GenreDto genre = new GenreDto();
         for(BookDto book : books){
-            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 13)));
+            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 12)));
         }
 
         bookResList.setData(books);
@@ -239,5 +237,27 @@ public class BookServiceImpl implements BookService{
                 .select(qBookShelves.user.count());
         if(query.fetchOne() == null) return 0;
         return query.fetchOne().intValue();
+    }
+
+    /**
+     *
+     * @param bookId : 찾을 책 Id
+     * @return : 책 상세정보 DTO
+     */
+    public BookDto.Response findBook(int bookId){
+        Book book = bookRepository.getById(bookId);
+
+        if(book == null) throw new NotFoundBookException();
+
+        BookDto bookDto = book.convertBookDto();
+
+        bookDto.setReadCnt(getBookReadCnt(book));
+        bookDto.setRate(getBookRate(book));
+        bookDto.setKeywords(book.getKeywords().stream()
+                .map(Keyword::convertKeywordDto)
+                .collect(Collectors.toList()));
+        return BookDto.Response.builder()
+                .data(bookDto)
+                .build();
     }
 }

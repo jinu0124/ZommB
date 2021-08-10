@@ -30,4 +30,7 @@ public interface EventDao {
 
     public List<MyDto> getDailyParticipants(int dailyId, int userId);
 
+    public Integer getDailyParticipantsCnt(int dailyId);
+
+
 }

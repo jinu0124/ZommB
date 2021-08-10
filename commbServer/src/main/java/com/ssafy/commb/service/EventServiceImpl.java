@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,16 +39,8 @@ public class EventServiceImpl implements EventService {
         int month = now.getMonthValue();
 
         List<WeeklyEventDto> weeklyEvents = eventDao.getWeekly((int) request.getAttribute("userId"), year, month);
-        List<WeeklyEventDto> weeklyEventDtoList = new ArrayList<>(4);
 
-        for(int i=1; i<5; i++) weeklyEventDtoList.add(WeeklyEventDto.builder().week(i).weeklyParticipate(false).bookFileUrl("").build());
-
-        for (WeeklyEventDto weeklyEvent : weeklyEvents) {
-            weeklyEvent.setWeeklyParticipate(true);
-            weeklyEventDtoList.set(weeklyEvent.getWeek() - 1, weeklyEvent);
-        }
-
-        my.setWeekly(weeklyEventDtoList);
+        my.setWeekly(weeklyEvents);
         MyEventDto.Response myRes = new MyEventDto.Response();
         myRes.setData(my);
 
@@ -56,8 +49,9 @@ public class EventServiceImpl implements EventService {
 
     // Weekly 책 추천
     @Override
-    public WeeklyEventDto.Response bookRecommend(LocalDate time) {
-        WeeklyEventDto weeklyEvent = eventDao.bookRecommend(time.getYear(), time.getMonthValue(), time.getDayOfMonth());
+    public WeeklyEventDto.Response bookRecommend(String time) {
+        LocalDate date = LocalDate.parse(time, DateTimeFormatter.ISO_DATE);
+        WeeklyEventDto weeklyEvent = eventDao.bookRecommend(date.getYear(), date.getMonthValue(), date.getDayOfMonth());
 
         WeeklyEventDto.Response weeklyRes = new WeeklyEventDto.Response();
         weeklyRes.setData(weeklyEvent);
@@ -93,13 +87,9 @@ public class EventServiceImpl implements EventService {
     }
 
     @Override
-    public DailyEventDto.Response keywordRecommend(LocalDate today) {
-        String year = String.valueOf(today.getYear());
-        String month = today.getMonthValue() < 10 ? "0" + today.getMonthValue() : String.valueOf(today.getMonthValue());
-        String day = today.getDayOfMonth() < 10 ? "0" + today.getDayOfMonth() : String.valueOf(today.getDayOfMonth());
-        String param = year + "-" + month + "-" + day ;
+    public DailyEventDto.Response keywordRecommend(String today) {
 
-        DailyEventDto daily = eventDao.keywordRecommend(param);
+        DailyEventDto daily = eventDao.keywordRecommend(today);
 
         DailyEventDto.Response dailyRes = new DailyEventDto.Response();
         dailyRes.setData(daily);
@@ -125,6 +115,12 @@ public class EventServiceImpl implements EventService {
         myResList.setData(mys);
 
         return myResList;
+    }
+
+    @Override
+    public Integer getDailyParticipantsCnt(int dailyId) {
+        Integer participantsCnt = eventDao.getDailyParticipantsCnt(dailyId);
+        return participantsCnt;
     }
 
 
