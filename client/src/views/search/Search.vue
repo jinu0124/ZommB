@@ -2,7 +2,7 @@
   <div class="search">
     <div class="sc-header d-flex flex-column">
       <div class="title">Search</div>
-      <div class="add-body align-self-center">
+      <div class="d-flex gap-2 mt-2 align-self-center">
         <input
           id="search"
           class="book-search-input"
@@ -32,25 +32,17 @@
       </div>
     </div>
     <div class="align-self-center">
-      <SearchDefault v-if="selectPage === 0 && this.isDefault == true" />
-      <SearchUser v-if="selectedPage === 0" />
+      <SearchDefault v-if="selectPage === 0 && this.isDefault" />
+      <UserListItem v-if="selectedPage === 0" />
       <SearchBook v-if="selectedPage === 1" />
       <SearchFeed v-if="selectedPage === 2" />
-    </div>
-    <div class="test">
-      Scroll Test 입니다. <br />
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
-      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia
-      quo odit optio! Lorem ispsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis
-      sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
-      assumenda officia quo odit optio!
     </div>
   </div>
 </template>
 
 <script>
 import SearchDefault from "@/components/search/SearchDefault";
-import SearchUser from "@/components/search/SearchUser";
+import UserListItem from "@/components/search/UserListItem";
 import SearchBook from "@/components/search/SearchBook";
 import SearchFeed from "@/components/search/SearchFeed";
 
@@ -58,7 +50,7 @@ export default {
   name: "Search",
   components: {
     SearchDefault,
-    SearchUser,
+    UserListItem,
     SearchBook,
     SearchFeed,
   },
@@ -77,7 +69,6 @@ export default {
 </script>
 
 <style src="@/assets/style/button.css"></style>
-<style src="@/assets/style/common.css"></style>
 <style scoped>
 .search {
   background: #683ec9;
@@ -95,9 +86,6 @@ export default {
 .sc-header .title {
   font-size: 1.5rem;
   font-weight: 700;
-}
-.add-body {
-  margin-top: 10px;
 }
 .book-search-input {
   width: 250px;
@@ -123,8 +111,5 @@ export default {
   border-bottom: 3px solid #c4c4c4;
   background: #683ec9;
   color: #c4c4c4;
-}
-.test {
-  margin-top: 20px;
 }
 </style>

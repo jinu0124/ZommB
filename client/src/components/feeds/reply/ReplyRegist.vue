@@ -63,7 +63,7 @@ export default {
   margin: auto 0;
 }
 .reply-input {
-  margin-left: 10px;
+  margin: 0px 10px;
   width: 100%;
   height: 35px;
   background-color: #f1f1f1;

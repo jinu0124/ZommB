@@ -1,6 +1,6 @@
 <template>
   <div class="feed-list-item">
-    <div class="main-section d-flex flex-column align-items-center">
+    <div class="item-body d-flex flex-column align-items-center">
       <div class="feed-header align-items-center">
         <span
           ><img
@@ -18,7 +18,7 @@
             type="button"
             id="UserProfile"
         /></span>
-        <span>
+        <span class="nick-title">
           <div class="owner">{{ nickname }}</div>
           <img
             alt="미니북"
@@ -40,41 +40,50 @@
         <FeedMenu />
       </div>
       <img
-        alt="피드 이미지"
+        v-if="myInfo.userFileUrl"
         class="feed-image"
-        src="https://static.overlay-tech.com/assets/b3d91dea-a647-4320-9fd1-a8c739f85404.png"
+        type="button"
+        id="FeedImage"
+        :src="myInfo.userFileUrl"
+        alt="feed-image"
       />
-      <div class="like-reply">
-        <span>
-          <img
-            alt="좋아요버튼안눌림"
-            class="dislike btn-like"
-            type="button"
-            @click="like()"
-            src="@/assets/image/deco/heartEmpty.svg"
-            v-show="disLike"
-          />
-          <img
-            alt="좋아요버튼눌림"
-            class="like btn-like"
-            type="button"
-            @click="dislike()"
-            src="@/assets/image/deco/heartFill.svg"
-            v-show="Like"
-          />
-        </span>
-        <span class="like-num" type="button" @click="moveToLike">{{ this.likeNum }}</span>
-        <span>
-          <img
-            alt=""
-            class="btn-reply"
-            type="button"
-            @click="moveToReply"
-            src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
-          />
-        </span>
-        <span class="reply-num" type="button" @click="moveToReply">{{ this.replyNum }}</span>
-      </div>
+      <img
+        v-else
+        alt="디폴트 피드 이미지"
+        class="feed-image default-feed-image"
+        src="@/assets/image/common/profileDefault.svg"
+      />
+    </div>
+    <div class="like-reply">
+      <span>
+        <img
+          alt="좋아요버튼안눌림"
+          class="dislike btn-like"
+          type="button"
+          @click="like()"
+          src="@/assets/image/deco/heartEmpty.svg"
+          v-show="disLike"
+        />
+        <img
+          alt="좋아요버튼눌림"
+          class="like btn-like"
+          type="button"
+          @click="dislike()"
+          src="@/assets/image/deco/heartFill.svg"
+          v-show="Like"
+        />
+      </span>
+      <span class="like-num" type="button" @click="moveToLike">{{ this.likeNum }}</span>
+      <span>
+        <img
+          alt=""
+          class="btn-reply"
+          type="button"
+          @click="moveToReply"
+          src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
+        />
+      </span>
+      <span class="reply-num" type="button" @click="moveToReply">{{ this.replyNum }}</span>
     </div>
     <div class="content">
       <p class="content-detail">{{ shortenContent }}</p>
@@ -84,6 +93,7 @@
       <p class="content-more" type="button" @click="showMoreContent(false)" v-show="moreContent">
         접기
       </p>
+      <p class="content-duration">{{ duration }}시간 전</p>
       <div>
         <span v-for="(tag, idx) in tags" :key="idx" class="tag rounded-pill me-1">#{{ tag }}</span>
       </div>
@@ -96,7 +106,7 @@
 
 <script>
 import { mapState } from "vuex";
-import FeedMenu from "@/components/feeds/feed/FeedMenu.vue";
+import FeedMenu from "@/components/feeds/feed/FeedMenu";
 import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
 import _ from "lodash";
 
@@ -118,18 +128,9 @@ export default {
       Like: false,
       disLike: true,
       moreContent: false,
+      duration: "3",
     };
   },
-  // created() {
-  //   axios.get('/feed')
-  //   .then( res => {
-  //     console.log(res);
-  //     this.feeds = res.data;
-  //   })
-  //   .catch( err => {
-  //     console.log(err);
-  //   })
-  // },
   methods: {
     moveToLike() {
       this.$router.push("/like");
@@ -165,19 +166,23 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.main-section {
-  text-align: center;
-}
 .feed-header {
   height: 60px;
   display: flex;
 }
 .default-user-image,
 .user-profile {
-  width: 2rem;
-  height: 2rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 100%;
-  margin-right: 15px;
+  margin: 0px 5px;
+}
+.default-feed-image {
+  width: 280px;
+  height: auto;
+}
+.nick-title {
+  margin-right: 40px;
 }
 .minibook {
   width: 1rem;
@@ -186,19 +191,19 @@ export default {
 .feed-menu {
   align-self: center;
 }
-.feed-image {
-  margin: 5px auto;
-}
 .like-reply {
   display: flex;
   align-items: flex-start;
 }
-.btn-like,
+.btn-like {
+  width: 24px;
+  height: 22px;
+  margin: 5px 0px;
+}
 .btn-reply {
   width: 24px;
   height: 24px;
 }
-.btn-like,
 .btn-reply,
 .like-num,
 .reply-num {
@@ -219,5 +224,14 @@ export default {
 }
 .reply-more {
   margin: 0px auto;
+}
+.content-duration {
+  width: 20%;
+  height: 2.86%;
+  font-family: "Noto Sans KR";
+  font-size: 9px;
+  font-weight: 400;
+  line-height: normal;
+  color: rgba(164, 164, 164, 1);
 }
 </style>

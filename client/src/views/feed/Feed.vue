@@ -1,55 +1,69 @@
-<template>
+<template class="temp">
   <div class="feed">
-    <div class="jump"></div>
-    <div class="feed-body fd-header d-flex flex-column">
-      <div class="title">NewsFeed</div>
-      <div class="feed-list d-flex gap-2 mt-2 align-self-center">
-        <FeedListItem />
+    <div class="fd-header d-flex flex-column">
+      <div class="title" style="float:left">
+        NewsFeed<img
+          src="@/assets/image/test/write-btn.svg"
+          class="write-btn"
+          style="float:right"
+          type="button"
+          @click="moveToWrite()"
+        />
       </div>
+    </div>
+    <div>
+      <FeedList />
+    </div>
+    <div>
+      Scroll Test 입니다. <br />
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
+      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia
+      quo odit optio! Lorem ispsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis
+      sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
+      assumenda officia quo odit optio!
     </div>
   </div>
 </template>
 
 <script>
-import FeedListItem from "@/components/feeds/feed/FeedListItem.vue";
+import FeedList from "@/components/feeds/feed/FeedList";
 
 export default {
   name: "Feed",
   components: {
-    FeedListItem,
+    FeedList,
   },
-  data: () => {
-    return {
-      id: "",
-      nickname: "",
-      userFileUrl: "",
-      isFollow: "",
-    };
+  methods: {
+    moveToWrite() {
+      this.$router.push("/write");
+    },
   },
-  methods: {},
 };
 </script>
 
 <style scoped>
-.jump {
-  height: 90px;
-  background: #7b60f1;
-  margin-bottom: -30px;
-}
-.feed-body {
+.feed {
   background: #ffffff;
   height: 100vh;
-  width: auto;
   border-radius: 30px 0px 0px 0px;
+  margin-top: 60px;
   padding: 20px 20px 100px;
   position: fixed;
   overflow: scroll;
 }
-.feed-body::-webkit-scrollbar {
+.feed::-webkit-scrollbar {
   display: none;
+}
+.fd-header {
+  display: flex;
 }
 .fd-header .title {
   font-size: 1.5rem;
   font-weight: 700;
+}
+.write-btn {
+  width: 24px;
+  height: 24px;
+  margin-top: 7px;
 }
 </style>

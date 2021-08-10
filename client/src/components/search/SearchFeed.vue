@@ -2,13 +2,22 @@
   <div class="search-feed">
     <div class="feed-list">
       <span class="image-back"
-        ><img class="default-feed-image" src="@/assets/image/camel/camelSmile.svg" alt="웃는 낙타"
+        ><img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelSmile.svg"
+          alt="웃는 낙타"
       /></span>
       <span class="image-back"
-        ><img class="default-feed-image" src="@/assets/image/camel/camelRotate.svg" alt="웃는 낙타"
+        ><img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
       /></span>
       <span class="image-back"
-        ><img class="default-feed-image" src="@/assets/image/camel/camelCrying.svg" alt="웃는 낙타"
+        ><img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelCrying.svg"
+          alt="웃는 낙타"
       /></span>
     </div>
     <div class="feed-list">

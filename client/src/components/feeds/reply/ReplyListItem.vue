@@ -74,20 +74,17 @@ export default {
   flex-direction: column;
   align-items: flex-start;
   font-family: "Noto Sans KR";
-  margin-left: 10px;
 }
 .replier {
   width: 80px;
   font-family: noto-sans-kr-10-bold;
 }
 .reply-like-num {
-  display: flex;
   font-family: "Noto Sans KR";
   font-size: 9px;
   color: rgba(164, 164, 164, 1);
 }
 .reply {
-  display: flex;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
 }

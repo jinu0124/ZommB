@@ -21,7 +21,7 @@
       </ul>
     </div>
     <span class="library-title">
-      <b>{{ this.nickname }}님이 가장 많이 읽은 장르는 <br />{{ this.genre }} 입니다!!</b>
+      <b>{{ this.nickname }}'s Library</b>
       <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽은책 추가</button>
     </span>
     <div>
@@ -46,7 +46,6 @@ export default {
   data() {
     return {
       nickname: "Nickname",
-      genre: "소설",
     };
   },
   methods: {
@@ -71,16 +70,11 @@ ul {
   white-space: nowrap;
 }
 .book {
-  height: 150px;
-  width: 100px;
+  height: 120px;
+  width: 80px;
   border-radius: 10px;
   box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
   margin-right: 10px;
-}
-.library-title {
-  display: flex;
-  font-size: 13px;
-  margin-left: 5px;
 }
 .book-search-input {
   width: 300px;

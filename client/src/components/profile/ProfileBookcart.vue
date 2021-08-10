@@ -2,7 +2,7 @@
   <div>
     <div class="bookcart-title">
       <span
-        ><b>{{ this.nickname }}님의 관심도서는 <br />무엇인가요? </b></span
+        ><b>{{ this.nickname }}'s BookCart</b></span
       >
       <span
         ><button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽을책 추가</button></span
@@ -41,8 +41,7 @@ export default {
 <style src="@/assets/style/button.css"></style>
 <style scoped>
 .bookcart-title {
-  display: flex;
-  align-items: center;
+  margin: 5px 0;
 }
 .book-search-input {
   margin: 5px;

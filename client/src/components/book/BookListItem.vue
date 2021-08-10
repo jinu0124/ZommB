@@ -38,8 +38,6 @@ export default {
 <style scoped>
 .book-list-item {
   display: flex;
-  margin: auto 10px;
-  width: 310px;
 }
 .book-btn {
   margin: auto 0px;
@@ -48,7 +46,7 @@ export default {
 .feed-write-btn,
 .delete-btn {
   width: 75px;
-  height: 30px;
+  height: 25px;
   margin: 2px 0px;
 }
 .book-info {
@@ -57,6 +55,7 @@ export default {
 }
 .title-writer-comp {
   width: 100px;
+  font-size: 13px;
 }
 .title,
 .writer-comp {
@@ -64,8 +63,8 @@ export default {
   margin: 0 5px;
 }
 .book {
-  height: 150px;
-  width: 100px;
+  height: 120px;
+  width: 80px;
   border-radius: 10px;
   box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
 }
@@ -73,7 +72,7 @@ export default {
   display: flex;
   margin: auto 0;
   background: #f1f1f1;
-  height: 120px;
+  height: 100px;
   width: 200px;
   border-radius: 0 10px 10px 0;
 }
