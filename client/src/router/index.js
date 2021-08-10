@@ -88,7 +88,7 @@ const routes = [
   },
   // book
   {
-    path: '/book',
+    path: '/book/:id',
     name : 'BookInfo',
     component : BookInfo
   },

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-if="bookInfo">
     <div class="subtitle">책 소개</div>
     <div class="content">
       <div v-if="viewShorten && shortenContent">
@@ -10,7 +10,7 @@
         >더보기</div>
       </div>
       <div v-else>
-        {{ content }}
+        {{ bookInfo.contents }}
         <div 
           v-if="shortenContent"
           class="btn-text-s btn-text-primary"
@@ -21,16 +21,17 @@
     <div class="subtitle mt-2">키워드</div>
     <div class="hashtags">
       <span
-        v-for="(tag, idx) in tags"
+        v-for="(keyword, idx) in bookInfo.keywords"
         :key="idx"
         class="badge rounded-pill me-1 px-2"
-      >#{{ tag }}</span>
+      >#{{ keyword.keyword }}</span>
     </div>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import { mapState } from 'vuex' 
 
 export default {
   name: 'BookInfoDescription',
@@ -39,19 +40,16 @@ export default {
       viewShorten: true,
     }
   },
-  props: {
-    content: String,
-    tags: Array
-  },
    methods: {
     changeContent () {
       this.viewShorten = !this.viewShorten
     }
   },
   computed: {
+    ...mapState('book', ['bookInfo']),
     shortenContent () {
-      if ( this.content.length > 200) {
-        return _.truncate(this.content, {
+      if ( this.bookInfo.contents.length > 200) {
+        return _.truncate(this.bookInfo.contents, {
           'length': 150,
           'omission': '...'
         })

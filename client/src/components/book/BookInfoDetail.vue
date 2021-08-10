@@ -1,19 +1,19 @@
 <template>
-  <div class="book-detail d-flex gap-3">
-    <img src="@/assets/image/test/bookTest.jpg" alt="">
+  <div v-if="bookInfo" class="book-detail d-flex gap-3 mx-4">
+    <img :src="bookInfo.bookFileUrl" alt="">
     <div class="d-flex flex-column">
-      <div class="title mb-2">{{ book.title }}</div>
+      <div class="title mb-2">{{ bookInfo.bookName }}</div>
       <div class="description">
         <div class="author">
-          <span>{{ book.author }}</span> 지음
+          <span>{{ author }}</span> 지음
         </div>
         <div class="publisher">
-          <span>{{ book.publisher }}</span> 펴냄
+          <span>{{ bookInfo.publisher }}</span> 펴냄
         </div>
         <!-- <div class="year">{{ book.year }}</div> -->
         <div class="rate d-flex align-items-center gap-1">
           <i class="fas fa-star deco"></i>
-          <span>{{ book.rate }}</span>({{ book.rateCnt }})
+          <span>{{ bookInfo.rate }}</span>({{ bookInfo.readCnt }})
         </div>
       </div>
       <div class="my-rating mt-2">
@@ -25,22 +25,22 @@
 </template>
 
 <script>
+import _ from 'lodash'
+import { mapState } from 'vuex' 
 import BookRating from './BookRating.vue'
 export default {
   name: 'BookInfoDetail',
   components: {
     BookRating
   },
-  data () {
-    return {
-      book: {
-        title: '내게 무해한 사람',
-        year: 2018,
-        author: '최은영',
-        publisher: '문학동네',
-        rate: 4.8,
-        rateCnt: 57
+  computed: {
+    ...mapState('book', ['bookInfo']),
+    author () {
+      const authors = _.split(this.bookInfo.author, ',')
+      if (authors.length > 1) {
+        return authors[0] + ` 외 ${authors.length - 1}명`
       }
+      return this.bookInfo.author
     }
   },
 }
@@ -53,7 +53,8 @@ export default {
     filter: drop-shadow(0px 4px 4px rgba(0, 0, 0, 0.25));
   }
   .book-detail .title {
-    font-size: 20px;
+    width: 100%;
+    font-size: 18px;
     font-weight: 700;
   }
   .book-detail .description {
