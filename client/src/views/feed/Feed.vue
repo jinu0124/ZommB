@@ -28,6 +28,7 @@
 
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Feed",
@@ -35,9 +36,13 @@ export default {
     FeedList,
   },
   methods: {
+    ...mapActions("feed", ["getFeedList"]),
     moveToWrite() {
       this.$router.push("/write");
     },
+  },
+  computed: {
+    ...mapState("feed", ["userInfo"]),
   },
 };
 </script>

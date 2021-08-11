@@ -13,6 +13,9 @@
           피드 작성
         </button>
         <button class="btn-5 btn-grey delete-btn">삭제</button>
+        <button class="btn-5 btn-yellow add-library-btn" @click="AddLibrary()">
+          완독
+        </button>
         <button
           class="btn-5 btn-yellow add-library-btn"
           @click="moveToAddLibrary()"
@@ -56,6 +59,7 @@ export default {
     moveToAddBookcart() {
       this.$router.push("/addBookcart");
     },
+    AddLibrary() {},
   },
 };
 </script>
@@ -64,6 +68,7 @@ export default {
 <style scoped>
 .book-list-item {
   display: flex;
+  justify-content: center;
 }
 .book-btn {
   margin: auto 0px;

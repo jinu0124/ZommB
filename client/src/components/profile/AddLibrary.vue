@@ -50,14 +50,15 @@ export default {
   position: fixed;
   overflow-y: scroll;
   overflow-x: hidden;
+  text-align: center;
 }
 .book-search-input {
-  margin: 10px auto;
-  width: 300px;
+  width: 280px;
   height: 35px;
   background-color: #f1f1f1;
   border: none;
-  padding-left: 20px;
+  outline: none;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
 }

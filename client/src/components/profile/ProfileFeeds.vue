@@ -59,12 +59,13 @@ export default {
 <style scoped>
 .feed-list {
   display: grid;
-  grid-template-rows: 100px 100px 100px;
-  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 90px 90px 90px;
+  grid-template-columns: 90px 90px 90px;
   text-align: center;
+  justify-content: center;
 }
 .default-feed-image {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
 }
 </style>

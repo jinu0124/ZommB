@@ -49,11 +49,12 @@ export default {
   margin: 5px 0;
 }
 .book-search-input {
-  width: 300px;
+  width: 280px;
   height: 35px;
   background-color: #f1f1f1;
   border: none;
   outline: none;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
 }

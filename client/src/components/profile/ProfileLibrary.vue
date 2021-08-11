@@ -62,9 +62,6 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.library-body {
-  align-self: center;
-}
 .collection-title,
 .library-title {
   margin: 5px 0;
@@ -72,7 +69,10 @@ export default {
 .collection-body {
   overflow-x: scroll;
   white-space: nowrap;
-  width: 280px;
+  margin-bottom: 10px;
+}
+.collection-body::-webkit-scrollbar {
+  display: none;
 }
 .book {
   height: 120px;
@@ -82,7 +82,7 @@ export default {
   margin-right: 10px;
 }
 .book-search-input {
-  width: 300px;
+  width: 280px;
   height: 35px;
   margin-top: 10px;
   background-color: #f1f1f1;
@@ -91,7 +91,7 @@ export default {
   border: none;
   outline: none;
   height: 35px;
-  padding-left: 20px;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
   transition: none;

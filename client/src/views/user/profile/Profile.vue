@@ -43,14 +43,15 @@
         >
         <span
           ><div>{{ this.libraryNum }}</div>
-          <div>읽은책</div></span
+          <div>서재</div></span
         >
         <span
           ><div>{{ this.bookcartNum }}</div>
-          <div>읽을책</div></span
+          <div>북카트</div></span
         >
       </div>
       <button class="btn-primary1 btn-1">팔로우</button>
+      <button class="btn-grey btn-1">팔로우 취소</button>
     </div>
     <div class="tabs">
       <input id="alticle-tab" type="radio" name="tab-item" checked />
@@ -164,8 +165,8 @@ export default {
 .follow-list {
   margin-top: 20px;
 }
-.btn-primary1 {
-  margin: 20px 20px;
+.btn-1 {
+  margin: 20px 0px;
 }
 .user-property {
   display: flex;
@@ -200,7 +201,6 @@ input[name="tab-item"] {
 .tab-content {
   clear: both;
   overflow: hidden;
-  text-align: center;
 }
 #alticle-tab:checked ~ #alticle-content,
 #library-tab:checked ~ #library-content,
