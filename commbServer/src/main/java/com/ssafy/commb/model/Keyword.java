@@ -29,6 +29,9 @@ public class Keyword {
     @OneToMany(mappedBy = "keyword")
     private List<DailyEvent> dailyEvents = new ArrayList<DailyEvent>();
 
+    @ManyToMany(mappedBy = "keywords", fetch = FetchType.LAZY)
+    private List<Book> books = new ArrayList<>();
+
     public KeywordDto convertKeywordDto(){
         return KeywordDto.builder()
                 .id(this.id)
