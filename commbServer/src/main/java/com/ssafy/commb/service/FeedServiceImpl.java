@@ -210,17 +210,16 @@ public class FeedServiceImpl implements FeedService {
 
         return myResList;
     }
-
+    // 해시태그로 검색
     public FeedDto.ResponseList getFeeds(String searchWord, int userId){
-
-        // 해시태그로 검색
         String dynamicQuery = "";
         String[] words = searchWord.split(" ");
         int countOfWords = words.length;
-        for(int i=0; i<countOfWords - 1; ++i){
-            dynamicQuery += "tag LIKE '" + words[i] + "%' OR ";
+        if(countOfWords > 0){
+            for(int i=0; i<countOfWords - 1; ++i) dynamicQuery += "tag LIKE '" + words[i] + "%' OR ";
+            dynamicQuery += "tag LIKE '" + words[countOfWords-1] + "%'";
         }
-        dynamicQuery += "tag LIKE '" + words[countOfWords-1] + "%'";
+        else dynamicQuery += "tag LIKE ''";
         System.out.println(dynamicQuery);
 
         List<FeedDto> feeds = feedDao.getFeeds(dynamicQuery, String.valueOf(userId), String.valueOf(countOfWords));

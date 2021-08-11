@@ -10,7 +10,7 @@
     </select>
 
     <select id="getWeekly" parameterType="Integer" resultType="WeeklyEvent">
-        SELECT distinct T.week, T.bookFileUrl, IF(IFNULL(f.id, 0) = 0, 0, 1) as weeklyParticipate
+        SELECT distinct T.week as week, T.bookFileUrl as bookFileUrl, IF(IFNULL(f.id, 0) = 0, 0, 1) as weeklyParticipate
         FROM
             (SELECT distinct b.id AS bid, CASE
                                               WHEN DATE_FORMAT(start_date, '%d') = '01' THEN 1
