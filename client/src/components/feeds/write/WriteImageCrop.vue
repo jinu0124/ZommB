@@ -1,16 +1,16 @@
 <template>
   <div
-    class="profile-crop modal fade"
-    id="profileCropModal"
+    class="modal fade"
+    id="imageCropModal"
     tabindex="-1"
-    aria-labelledby="profileCropModalLabel"
+    aria-labelledby="imageCropModalLabel"
     aria-hidden="true"
   >
     <div class="modal-dialog modal-fullscreen-sm-down">
       <div class="modal-content">
         <div class="modal-header d-flex align-items-center">
           <i class="back-btn fi-rr-angle-small-left" type="button" data-bs-dismiss="modal"></i>
-          <span class="modal-title" id="profileCropModalLabel">게시물 사진 등록</span>
+          <span class="modal-title" id="imageCropModalLabel">게시물 사진 등록</span>
         </div>
         <div class="modal-body d-flex flex-column align-items-center">
           <croppa
@@ -53,11 +53,11 @@ import "vue-croppa/dist/vue-croppa.css";
 Vue.use(Croppa);
 
 export default {
-  name: "FeedImageCrop",
+  name: 'WriteImageCrop',
   data: () => {
     return {
       croppa: null,
-    };
+    }
   },
   methods: {
     sendCroppa() {

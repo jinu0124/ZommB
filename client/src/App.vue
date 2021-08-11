@@ -5,18 +5,12 @@
       accounts: isAccounts,
       challenge: isChallenge,
       search: isSearch,
+      feed: isFeed,
+      profile: isProfile,
+      mybook: isMyBook,
     }"
   >
-    <Header
-      v-if="needHeader"
-      :class="{
-        accounts: isAccounts,
-        challenge: isChallenge,
-        feedlist: isFeedList,
-        profile: isProfile,
-        search: isSearch,
-      }"
-    />
+    <Header v-if="needHeader"/>
     <router-view />
   </div>
 </template>
@@ -43,13 +37,12 @@ export default {
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
         this.$route.name === "Like" ||
-        this.$route.name === "Reply" ||
         this.$route.name === "Report" ||
         this.$route.name === "Write" ||
+        this.$route.name === "Reply" ||
         this.$route.name === "SelectBook" ||
         this.$route.name === "AddBookcart" ||
         this.$route.name === "AddLibrary" ||
-        this.$route.name === "AddCollection" ||
         this.$route.name === "Follow"
       ) {
         return false;
@@ -71,8 +64,15 @@ export default {
     isChallenge() {
       return this.$route.name === "Challenge";
     },
-    isFeedList() {
-      return this.$route.name === "Feed";
+    isFeed() {
+      if (
+        this.$route.name === "Feed" ||
+        this.$route.name === "SelectBook" ||
+        this.$route.name === "Write"||
+        this.$route.name === "Reply") {
+        return true;
+      }
+      return false;
     },
     isProfile() {
       return this.$route.name === "Profile";
@@ -82,6 +82,14 @@ export default {
         return true;
       }
       return false;
+    },
+    isMyBook() {
+      if (
+        this.$route.name === "AddBookcart" ||
+        this.$route.name === "AddLibrary") {
+          return true
+        }
+      return false
     },
   },
 };
@@ -108,12 +116,16 @@ export default {
     background-color: #f1f1f1;
     color: #683ec9;
   }
-  .feedlist {
+  .feed {
     background-color: #7b60f1;
     color: #fff;
   }
   .profile {
-    background-color: #fff;
+    background-color: #f1f1f1;
     color: #683ec9;
+  }
+  .mybook {
+    background-color: #f1f1f1;
+    color: #212121;
   }
 </style>

@@ -1,8 +1,8 @@
 <template>
-  <div class="search">
+  <div class="search-page">
     <div class="sc-header d-flex flex-column">
       <div class="title">Search</div>
-      <div class="d-flex gap-2 mt-2 align-self-center">
+      <div class="mt-2 align-self-center">
         <input
           id="search"
           class="book-search-input"
@@ -70,7 +70,8 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.search {
+.search-page {
+  width: 100%;
   background: #683ec9;
   height: 100vh;
   border-radius: 30px 0px 0px 0px;
@@ -80,8 +81,11 @@ export default {
   position: fixed;
   overflow: scroll;
 }
-.search::-webkit-scrollbar {
+.search-page::-webkit-scrollbar {
   display: none;
+}
+.sc-header {
+  display: flex;
 }
 .sc-header .title {
   font-size: 1.5rem;

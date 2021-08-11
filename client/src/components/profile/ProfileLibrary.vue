@@ -1,8 +1,7 @@
 <template>
-  <div>
+  <div class="library-body">
     <div class="collection-title">
       <b>{{ this.nickname }}'s Collection</b>
-      <button class="addbtn btn-5 btn-primary1" @click="moveToCollect()">컬렉션 추가</button>
     </div>
     <div class="collection-body">
       <ul class="collection-list">
@@ -22,7 +21,9 @@
     </div>
     <span class="library-title">
       <b>{{ this.nickname }}'s Library</b>
-      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽은책 추가</button>
+      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">
+        서재에 추가
+      </button>
     </span>
     <div>
       <input
@@ -65,9 +66,13 @@ export default {
 .library-title {
   margin: 5px 0;
 }
-ul {
+.collection-body {
   overflow-x: scroll;
   white-space: nowrap;
+  margin-bottom: 10px;
+}
+.collection-body::-webkit-scrollbar {
+  display: none;
 }
 .book {
   height: 120px;
@@ -77,7 +82,7 @@ ul {
   margin-right: 10px;
 }
 .book-search-input {
-  width: 300px;
+  width: 280px;
   height: 35px;
   margin-top: 10px;
   background-color: #f1f1f1;
@@ -86,7 +91,7 @@ ul {
   border: none;
   outline: none;
   height: 35px;
-  padding-left: 20px;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
   transition: none;

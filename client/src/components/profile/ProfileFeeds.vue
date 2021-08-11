@@ -1,11 +1,21 @@
 <template>
   <div>
     <div class="feed-list">
-      <img class="default-feed-image" src="@/assets/image/camel/camelSmile.svg" alt="웃는 낙타" />
-      <img class="default-feed-image" src="@/assets/image/camel/camelRotate.svg" alt="웃는 낙타" />
-      <img class="default-feed-image" src="@/assets/image/camel/camelCrying.svg" alt="웃는 낙타" />
-    </div>
-    <div class="feed-list">
+      <img
+        class="default-feed-image"
+        src="@/assets/image/camel/camelSmile.svg"
+        alt="웃는 낙타"
+      />
+      <img
+        class="default-feed-image"
+        src="@/assets/image/camel/camelRotate.svg"
+        alt="웃는 낙타"
+      />
+      <img
+        class="default-feed-image"
+        src="@/assets/image/camel/camelCrying.svg"
+        alt="웃는 낙타"
+      />
       <img
         class="default-feed-image"
         src="@/assets/image/camel/camelSmileRotate.svg"
@@ -21,8 +31,6 @@
         src="@/assets/image/camel/camelSunglass.svg"
         alt="웃는 낙타"
       />
-    </div>
-    <div class="feed-list">
       <img
         class="default-feed-image"
         src="@/assets/image/common/profileDefault.svg"
@@ -50,12 +58,14 @@ export default {
 
 <style scoped>
 .feed-list {
-  display: inline;
-  flex-direction: row;
+  display: grid;
+  grid-template-rows: 90px 90px 90px;
+  grid-template-columns: 90px 90px 90px;
+  text-align: center;
+  justify-content: center;
 }
 .default-feed-image {
-  width: 100px;
-  height: 100px;
-  margin: 0 3px 5px;
+  width: 80px;
+  height: 80px;
 }
 </style>

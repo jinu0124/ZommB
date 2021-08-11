@@ -35,7 +35,7 @@ export default {
 
 <style scoped>
 .reply-header {
-  color: #585858;
+  color: #fff;
   background: #7b60f1;
 }
 .reply {
@@ -45,6 +45,8 @@ export default {
   overflow: scroll;
 }
 .reply-box {
+  background: #fff;
+  color: #212121;
   height: 100%;
   min-height: 100vh;
   width: 100vw;

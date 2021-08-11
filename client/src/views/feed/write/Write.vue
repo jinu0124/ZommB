@@ -1,183 +1,125 @@
 <template>
   <div class="write">
-    <SimpleHeader class="write-header" :title="title" />
-    <div class="write-box">
-      <div class="writing">
-        <!-- <BookListItem /> -->
-        <div class="write-part">
-          <input
-            class="write-content"
-            placeholder="게시물 내용을 입력하세요."
-          />
-        </div>
-        <!-- 사진 수정하면 preview -->
-        <img v-if="preview" class="profile" :src="preview" alt="" />
-        <!-- 아니면 기존 이미지 -->
-        <img
-          v-else-if="profilePath"
-          class="profile"
-          :src="profilePath"
-          alt=""
-        />
-        <!-- 둘 다 없으면 기본 이미지 -->
-        <img
-          v-else
-          class="profile"
-          src="@/assets/image/common/profileDefault.svg"
-          alt=""
-        />
-        <img
-          src="@/assets/image/deco/addPicture.svg"
-          class="addPicture"
-          type="button"
-          data-bs-toggle="modal"
-          data-bs-target="#feedImageCropModal"
-        />
-        <FeedImageCrop @select-croppa="saveNewFeedImage" />
-      </div>
-
-      <div class="btn-part">
-        <button class="btn-5 btn-grey" @click="$router.go(-1)">취소</button>
-        <button class="btn-5 btn-yellow">완료</button>
+    <SimpleHeader 
+      class="write-header" 
+      :title="title"
+    />
+    <WriteImageCrop
+      @select-croppa="saveImage"
+    />
+    <div class="write-body d-flex flex-column align-items-center">
+      <WriteBox
+        :preview="preview"
+        @write="insertContent"
+      />
+      <div class="mt-3 d-flex gap-2">
+        <button 
+          class="btn-5 btn-grey" 
+          @click="cancelWrite">취소</button>
+        <button 
+          :class="[ isSubmit ? 'btn-yellow' : 'btn-disabled', 'btn-5']"
+          @click="onPostFeed">완료</button>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import FeedImageCrop from "@/components/feeds/feed/FeedImageCrop";
-import SimpleHeader from "@/components/SimpleHeader";
-import { mapState } from "vuex";
+import SimpleHeader from '@/components/SimpleHeader'
+import WriteBox from '@/components/feeds/write/WriteBox'
+import WriteImageCrop from '@/components/feeds/write/WriteImageCrop'
+import { mapState } from 'vuex'
+import feedApi from '@/api/feed'
 
 export default {
-  name: "Write",
+  name: 'Write',
   components: {
-    FeedImageCrop,
     SimpleHeader,
+    WriteBox,
+    WriteImageCrop
   },
   data() {
     return {
-      title: "글쓰기",
+      title: '글쓰기',
       myCroppa: null,
-      // feed 사진 업데이트
-      feedPath: null,
       preview: null,
-      feedUpdate: 0,
-      isSubmit: false,
-      fail: {
-        profile: false,
-      },
-      isSuccessInfo: false,
-      userFD: null,
-    };
+      bookId: null,
+      content: null,
+      feedFD: null,
+    }
   },
   methods: {
-    saveNewProfile(croppa) {
-      this.preview = croppa.generateDataUrl("image/jpeg");
-      this.myCroppa = croppa;
-      this.feedUpdate = 1;
+    saveImage (croppa) {
+      this.preview = croppa.generateDataUrl('image/jpeg')
+      this.myCroppa = croppa
     },
-    onFileDelete() {
-      this.feedUpdate = 2;
-      this.preview = null;
-      this.feedPath = null;
-      this.myCroppa = null;
+    insertContent (content) {
+      this.content = content
     },
-  },
-  makeFormData() {
-    if (this.feedUpdate === 1) {
+    makeFormData () {
       this.myCroppa.generateBlob((blob) => {
-        var userInfo = new FormData();
-        userInfo.append("userFileUrl", blob, `${this.myInfo.id}.png`);
-        userInfo.append("nickname", this.nickname);
-        userInfo.append("flag", this.profileUpdate);
-        this.userFD = userInfo;
-      });
-    } else {
-      var userInfo = new FormData();
-      userInfo.append("nickname", this.nickname);
-      userInfo.append("flag", this.profileUpdate);
-      this.userFD = userInfo;
+        let feedInfo = new FormData()
+        feedInfo.append('bookId', this.bookId)
+        feedInfo.append('contents', this.content)
+        feedInfo.append('feedImg', blob, `feed.png`)
+        this.feedFD = feedInfo
+      })
+    },
+    async onPostFeed () {
+      this.makeFormData()
+      await feedApi.postFeed(this.feedFD)
+        .then((res) => {
+          console.log(res)
+        })
+        .catch((err) => {
+          console.log(err)
+        })
+    },
+    cancelWrite () {
+      this.$store.commit('book/SET_BOOK_INFO', null)
+      this.$router.push({name: 'Feed'})
     }
   },
   computed: {
-    ...mapState("user", ["myInfo"]),
+    ...mapState('user', ['myInfo']),
+    isSubmit () {
+      return this.bookId && this.myCroppa && this.content
+    }
   },
   watch: {
-    myCroppa: function () {
-      this.makeFormData();
+    myCroppa () {
+      this.makeFormData()
+    },
+    content () {
+      if (this.myCroppa) {
+        this.makeFormData()
+      }
     },
   },
-};
+  created () {
+    this.bookId = this.$route.params.id
+    this.$store.dispatch('book/getBookInfo', this.bookId)
+  }
+}
 </script>
 
-<style src="@/assets/style/button.css"></style>
 <style scoped>
 .write-header {
+  background: #7b60f1;
   color: #fff;
-  background: #683ec9;
 }
-.write-box {
+.write-body {
+  margin-top: 60px;
   background: #fff;
-  height: 100%;
-  min-height: 100vh;
+  height: 100vh;
   width: 100vw;
   border-radius: 30px 0px 0px 0px;
-  margin-top: 60px;
-  padding: 20px 0 40px;
-  color: #fff;
+  padding: 20px 20px 100px;
   position: fixed;
-  overflow-y: scroll;
   overflow-x: hidden;
+  overflow-y: scroll;
 }
-.write-box::-webkit-scrollbar {
+.write-body::-webkit-scrollbar {
   display: none;
-}
-.writing {
-  border-style: groove;
-  width: 300px;
-  text-align: center;
-  margin: auto;
-}
-.book {
-  height: 100px;
-  width: 70px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
-  margin-left: 10px;
-}
-.book-part {
-  display: flex;
-}
-.title-writer-comp {
-  width: 200px;
-  margin: auto 0;
-  background: #f1f1f1;
-  height: 70px;
-  border-radius: 0 10px 10px 0;
-}
-.book-info {
-  margin-left: 10px;
-  margin-top: 5px;
-}
-.write-content {
-  width: 100%;
-  height: 200px;
-  border-color: #f1f1f1;
-  margin-top: 10px;
-}
-.btn-part {
-  width: 300px;
-  text-align: center;
-  margin: auto;
-}
-.btn-5 {
-  margin: 10px 5px;
-}
-.profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  margin-right: 20px;
 }
 </style>

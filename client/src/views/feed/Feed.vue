@@ -1,11 +1,11 @@
 <template class="temp">
   <div class="feed">
     <div class="fd-header d-flex flex-column">
-      <div class="title" style="float:left">
+      <div class="title" style="float: left">
         NewsFeed<img
           src="@/assets/image/test/write-btn.svg"
           class="write-btn"
-          style="float:right"
+          style="float: right"
           type="button"
           @click="moveToWrite()"
         />
@@ -16,10 +16,11 @@
     </div>
     <div>
       Scroll Test 입니다. <br />
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
-      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia
-      quo odit optio! Lorem ispsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis
-      sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam
+      quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus
+      aliquam eum beatae assumenda officia quo odit optio! Lorem ispsum, dolor
+      sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
+      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
       assumenda officia quo odit optio!
     </div>
   </div>
@@ -27,6 +28,7 @@
 
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "Feed",
@@ -34,9 +36,13 @@ export default {
     FeedList,
   },
   methods: {
+    ...mapActions("feed", ["getFeedList"]),
     moveToWrite() {
       this.$router.push("/write");
     },
+  },
+  computed: {
+    ...mapState("feed", ["userInfo"]),
   },
 };
 </script>
@@ -50,12 +56,10 @@ export default {
   padding: 20px 20px 100px;
   position: fixed;
   overflow: scroll;
+  color: #212121;
 }
 .feed::-webkit-scrollbar {
   display: none;
-}
-.fd-header {
-  display: flex;
 }
 .fd-header .title {
   font-size: 1.5rem;

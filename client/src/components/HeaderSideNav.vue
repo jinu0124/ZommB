@@ -39,8 +39,8 @@
     <img class="offcanvas-deco" src="@/assets/image/camel/camelRotate.svg" alt="" />
     <div class="footer mx-4">
       <p>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Porttitor malesuada libero diam
-        elit nibh.
+        Copyright ©2021 All rights reserved.<br/>
+        CommB made by Team ZommB in SSAFY.
       </p>
     </div>
   </div>
@@ -66,7 +66,7 @@ export default {
 .footer {
   color: #fff;
   font-size: 0.7rem;
-  font-weight: 400;
+  font-weight: 200;
 }
 .offcanvas-deco {
   position: absolute;
