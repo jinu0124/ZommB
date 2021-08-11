@@ -2,6 +2,7 @@ package com.ssafy.commb.dto.user;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
+@Alias("My")
 public class MyDto {
     private Integer id;
     private String nickname;
@@ -23,6 +25,7 @@ public class MyDto {
     private Boolean isFollow;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class Request {                // 요청

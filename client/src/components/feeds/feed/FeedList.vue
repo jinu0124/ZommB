@@ -1,24 +1,18 @@
 <template>
-  <div>
-    <FeedListItem/>
+  <div class="feed-list">
+    <FeedListItem />
   </div>
 </template>
 
 <script>
-import FeedListItem from '@/components/feeds/feed/FeedListItem.vue';
+import FeedListItem from "@/components/feeds/feed/FeedListItem";
 
 export default {
-  name: 'FeedList',
+  name: "FeedList",
   components: {
     FeedListItem,
   },
-  data() {
-    return {
-    }
-  },
-}
+};
 </script>
 
-<style>
-
-</style>
+<style scoped></style>

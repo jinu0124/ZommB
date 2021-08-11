@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @RestController
-@RequestMapping(value="/follows")
+@RequestMapping(value="/api/follows")
 public class FollowController {
 
     @Autowired

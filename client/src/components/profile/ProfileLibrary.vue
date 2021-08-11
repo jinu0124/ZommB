@@ -1,10 +1,7 @@
 <template>
-  <div>
+  <div class="library-body">
     <div class="collection-title">
-      <b
-        >{{ nickname }}'s Collection
-        <button class="btn-5 btn-primary1">컬렉션 추가</button>
-      </b>
+      <b>{{ this.nickname }}'s Collection</b>
     </div>
     <div class="collection-body">
       <ul class="collection-list">
@@ -23,8 +20,10 @@
       </ul>
     </div>
     <span class="library-title">
-      <b>{{ nickname }}님이 가장 많이 읽은 장르는 {{ genre }} 입니다!! </b>
-      <button class="btn-5 btn-primary1">읽은책 추가</button>
+      <b>{{ this.nickname }}'s Library</b>
+      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">
+        서재에 추가
+      </button>
     </span>
     <div>
       <input
@@ -38,7 +37,7 @@
 </template>
 
 <script>
-import BookListItem from "@/components/BookListItem.vue";
+import BookListItem from "@/components/book/BookListItem.vue";
 
 export default {
   name: "ProfileLibrary",
@@ -48,35 +47,42 @@ export default {
   data() {
     return {
       nickname: "Nickname",
-      genre: "소설",
     };
   },
-  methods: {},
+  methods: {
+    moveToAdd() {
+      this.$router.push("/addLibrary");
+    },
+    moveToCollect() {
+      this.$router.push("/addCollection");
+    },
+  },
 };
 </script>
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.collection-title {
+.collection-title,
+.library-title {
   margin: 5px 0;
 }
-ul {
-  width: 408px;
+.collection-body {
   overflow-x: scroll;
   white-space: nowrap;
+  margin-bottom: 10px;
+}
+.collection-body::-webkit-scrollbar {
+  display: none;
 }
 .book {
-  height: 150px;
-  width: 100px;
+  height: 120px;
+  width: 80px;
   border-radius: 10px;
   box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
   margin-right: 10px;
 }
-.library-title {
-  display: flex;
-}
 .book-search-input {
-  width: 350px;
+  width: 280px;
   height: 35px;
   margin-top: 10px;
   background-color: #f1f1f1;
@@ -85,9 +91,14 @@ ul {
   border: none;
   outline: none;
   height: 35px;
-  padding-left: 20px;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
   transition: none;
+}
+.addbtn {
+  width: 85px;
+  height: 30px;
+  margin-left: 10px;
 }
 </style>

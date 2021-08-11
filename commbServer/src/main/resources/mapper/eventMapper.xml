@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.EventDao">
+
+    <select id="getBookmark" parameterType="Integer" resultType="MyEvent">
+        SELECT bookmark, pencil AS dailyParticipate
+        FROM user
+        WHERE id = #{userId}
+    </select>
+
+    <select id="getWeekly" parameterType="Integer" resultType="WeeklyEvent">
+        SELECT distinct T.week as week, T.bookFileUrl as bookFileUrl, IF(IFNULL(f.id, 0) = 0, 0, 1) as weeklyParticipate
+        FROM
+            (SELECT distinct b.id AS bid, CASE
+                                              WHEN DATE_FORMAT(start_date, '%d') = '01' THEN 1
+                                              WHEN DATE_FORMAT(start_date, '%d') = '08' THEN 2
+                                              WHEN DATE_FORMAT(start_date, '%d') = '15' THEN 3
+                                              WHEN DATE_FORMAT(start_date, '%d') = '22' THEN 4
+                                        END AS WEEK, b.file_url AS bookFileUrl, TRUE AS weeklyParticipate, w.start_date, w.end_date
+            FROM book b inner JOIN weekly_event w
+            ON DATE(w.start_date) between DATE(CONCAT(#{year}, '-', #{month}, '-01')) and DATE(LAST_DAY(CONCAT(#{year}, '-', #{month}, '-01'))) AND b.id = w.book_id)
+            AS T LEFT outer join feed f
+        ON DATE(f.create_at) between DATE(T.start_date) AND DATE(T.end_date) and f.user_id = #{userId} AND T.bid = f.book_id
+    </select>
+
+
+    <select id="bookRecommend" parameterType="Integer" resultMap="WeeklyEventInfo">
+        SELECT distinct b.id bid, b.file_url, w.id wid
+        FROM weekly_event w, book b
+        WHERE DATE(CONCAT(#{year}, '-', #{month}, '-', #{day})) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND b.id = w.book_id
+        LIMIT 1
+    </select>
+
+    <select id="weeklyFeeds" parameterType="Integer" resultMap="feedInformation">
+        SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+            (SELECT u.id AS uid, f.id fid, create_at, content, f.file_url AS f_file_url, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                    COUNT(distinct t.user_id) AS thumb_cnt
+            FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN weekly_event w
+            on f.user_id = u.id AND f.book_id = b.id AND b.id = w.book_id AND w.id = #{weeklyId} AND Date(f.create_at) BETWEEN DATE(w.start_date) AND DATE(w.end_date) AND f.blocked = 0
+            left outer join thumb t
+            on t.feed_id = f.id
+            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+            ON T1.fid = t.feed_id AND #{userId} = t.user_id
+        ORDER BY T1.create_at DESC
+    </select>
+
+    <select id="getWeeklyParticipantsCnt" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(distinct user_id)
+        FROM weekly_event w, book b, feed f
+        WHERE w.id = #{weeklyId} AND w.book_id = b.id AND b.id = f.book_id AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1
+    </select>
+
+    <select id="getWeeklyParticipants" parameterType="Integer" resultType="My">
+        SELECT T.id, T.nickname, T.file_url, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
+        FROM
+            (SELECT distinct u.id, u.nickname, u.file_url, f.create_at
+             FROM weekly_event w, book b, feed f, user u
+             WHERE w.id = #{weeklyId} AND w.book_id = b.id AND b.id = f.book_id AND f.user_id = u.id
+               AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND u.id != #{userId}) AS T LEFT OUTER JOIN follow fo
+        ON T.id = fo.following AND fo.follower = #{userId}
+        ORDER BY isFollow DESC
+    </select>
+
+
+    <select id="keywordRecommend" parameterType="String" resultMap="DailyEventInfo">
+        SELECT distinct d.id AS did, k.id AS kid, k.keyword
+        FROM daily_event d, keyword k
+        WHERE DATE_FORMAT(create_at, '%Y-%m-%d') = #{param} AND d.keyword_id = k.id
+    </select>
+
+
+    <select id="dailyFeeds" parameterType="Integer" resultMap="feedInformation">
+        SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+            (SELECT u.id AS uid, f.id fid, f.create_at, content, f.file_url AS f_file_url, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                    COUNT(distinct t.user_id) AS thumb_cnt
+            FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN book_keyword bk INNER JOIN daily_event d
+            on f.user_id = u.id AND f.book_id = b.id AND b.id = bk.book_id AND d.keyword_id = bk.keyword_id
+                    AND d.id = #{dailyId} AND DATE(d.create_at) = DATE(f.create_at) AND f.blocked = 0
+            left outer join thumb t
+            on t.feed_id = f.id
+            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+            ON T1.fid = t.feed_id AND #{userId} = t.user_id
+        ORDER BY T1.create_at DESC
+    </select>
+
+
+    <select id="getDailyParticipants" parameterType="Integer" resultType="My">
+        SELECT T.id, T.nickname, T.file_url, IF(IFNULL(f.following, 0) = 0, 0, 1) AS isFollow
+        FROM
+            (SELECT distinct u.id, u.nickname, u.file_url, dep.create_at
+             FROM daily_event_participate dep, user u, daily_event d
+             WHERE dep.daily_id = #{dailyId} AND u.id = dep.user_id AND d.id = dep.daily_id AND DATE(dep.create_at) = DATE(d.create_at)) AS T LEFT OUTER JOIN follow f
+        ON T.id = f.following AND f.follower = #{userId}
+        ORDER BY T.create_at DESC
+    </select>
+
+
+    <select id="getDailyParticipantsCnt" parameterType="Integer" resultType="Integer">
+        SELECT COUNT(distinct user_id) AS cnt
+        FROM daily_event d, book b, feed f, book_keyword bk
+        WHERE d.id = #{dailyId} AND bk.book_id = b.id AND b.id = f.book_id AND bk.keyword_id = d.keyword_id AND DATE(f.create_at) = DATE(d.create_at);
+    </select>
+
+
+    <resultMap id="WeeklyEventInfo" type="WeeklyEvent">
+        <result column="bid" property="bookId"/>
+        <result column="file_url" property="bookFileUrl"/>
+        <result column="wid" property="weeklyId"/>
+    </resultMap>
+
+
+    <resultMap type="Feed" id="feedInformation">
+        <result column="fid" property="id"/>
+        <result column="create_at" property="createAt"/>
+        <result column="content" property="content"/>
+        <result column="f_file_url" property="feedFileUrl"/>
+        <result column="is_thumb" property="isThumb"/>
+        <result column="thumb_cnt" property="thumbCnt"/>
+        <result column="uid" property="user.id"/>
+        <result column="nickname" property="user.nickname"/>
+        <result column="u_file_url" property="user.userFileUrl"/>
+        <result column="bid" property="book.id"/>
+        <result column="book_name" property="book.bookName"/>
+    </resultMap>
+
+
+    <resultMap id="DailyEventInfo" type="DailyEvent">
+        <result column="did" property="dailyId"/>
+        <result column="keyword" property="word"/>
+        <result column="kid" property="keywordId"/>
+    </resultMap>
+
+</mapper>

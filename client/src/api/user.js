@@ -43,7 +43,7 @@ export default {
   changePassword(userId, userData) {
     return _axios({
       url: `users/${userId}`,
-      method: 'patch',
+      method: 'put',
       data: userData
     })
   },
@@ -57,7 +57,7 @@ export default {
   resetPassword(userData) {
     return _axios({
       url: 'users/update-password',
-      method: 'patch',
+      method: 'put',
       data: userData
     })
   },
@@ -65,6 +65,26 @@ export default {
     return _axios({
       url: `users/withdraw`,
       method: 'delete',
+    })
+  },
+  socialLogin(userData) {
+    return _axios({
+      url: '/users/social/login',
+      method: 'get',
+      params: userData
+    })
+  },
+  getUserInfo(userId) {
+    return _axios({
+      url: `users/${userId}`,
+      method: 'get'
+    })
+  },
+  getMyBookList(userId, data) {
+    return _axios({
+      url: `users/${userId}/bookshelves`,
+      method: 'get',
+      params: { isRead: data }
     })
   }
 }

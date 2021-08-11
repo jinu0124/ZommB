@@ -1,6 +1,7 @@
 package com.ssafy.commb.service;
 
 import com.ssafy.commb.dao.UserDao;
+import com.ssafy.commb.dto.encode.Encoder;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
@@ -14,14 +15,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.StandardPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 @RequiredArgsConstructor
@@ -30,27 +31,18 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    /* for production after build code */
-//    static String uploadPath = request.getSession().getServletContext().getRealPath("/");
-
-    /* for eclipse development before build code */
-    static String uploadPath = "C:" + File.separator + "Users" + File.separator + "jinwoo"
-            + File.separator + "IdeaProjects"
-            + File.separator + "SUBPJT1"
-            + File.separator + "commbServer"
-            + File.separator + "src"
-            + File.separator + "main"
-            + File.separator + "resources"
-            + File.separator + "static";
-
     @Value("${cloud.profile}")
     private String awsProfileUrl;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    UserDao userDao;
+    private UserDao userDao;
+
+    //  Bcrypt는 패스워드를 해싱할 때 내부적으로 랜덤한 솔트를 생성하기 때문에 같은 문자열에 대해서 다른 인코드된 결과를 반환
+    private final String ENCODE_ID = "bcrypt";
+    private static final Map<String, PasswordEncoder> encoders = Encoder.getEncoder();
 
     @Override
     public UserDto.ResponseList getUsers(String nickname) {
@@ -77,7 +69,11 @@ public class UserServiceImpl implements UserService {
     }
 
     public int joinUser(MyDto.Request myReq) {
-        User user = new User(myReq.getEmail(), myReq.getPassword(), myReq.getName(), myReq.getNickname());
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+        String encPassword = passwordEncoder.encode(myReq.getPassword());
+        if(!passwordEncoder.matches(myReq.getPassword(), encPassword)) throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "비밀번호 암호화 중 불일치 오류");
+
+        User user = new User(myReq.getEmail(), encPassword, myReq.getName(), myReq.getNickname());
 
         return userRepository.save(user).getId();
     }
@@ -89,14 +85,34 @@ public class UserServiceImpl implements UserService {
     }
 
     public MyDto.Response login(MyDto.LoginRequest myReq) {
-        Optional<User> user = userRepository.findByEmailAndPassword(myReq.getEmail(), myReq.getPassword());
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+
+        Optional<User> user = userRepository.findByEmail(myReq.getEmail());
+        if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "일치하는 회원 정보가 없습니다.");
+        if(!passwordEncoder.matches(myReq.getPassword(), user.get().getPassword())) throw new ApplicationException(HttpStatus.valueOf(401), "일치하는 회원 정보가 없습니다.");
+
+        System.out.println(awsProfileUrl);
+        MyDto my = new MyDto();
+        my.setId(user.get().getId());
+        my.setNickname(user.get().getNickname());
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : null);
+
+        MyDto.Response myRes = new MyDto.Response();
+        myRes.setData(my);
+        if(user.get().getRole() == null) throw new ApplicationException(HttpStatus.valueOf(403), "이메일 인증 필요", my);
+
+        return myRes;
+    }
+
+    public MyDto.Response socialLogin(int userId){
+        Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
         System.out.println(awsProfileUrl);
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : "");
+        my.setUserFileUrl(user.get().getFileUrl() != null ? (user.get().getFileUrl()) : "");
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -146,24 +162,33 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void updatePassword(UserDto.ModifyPwRequest userReq, HttpServletRequest request) {
-        Optional<User> user = userRepository.findByIdAndPassword((int) request.getAttribute("userId"), userReq.getOldPassword());
-        System.out.println(userReq.getNewPassword());
+        Optional<User> user = userRepository.findById((int) request.getAttribute("userId"));
 
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보가 없습니다.");
 
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
+        if(!passwordEncoder.matches(userReq.getOldPassword(), user.get().getPassword())) throw new ApplicationException(HttpStatus.valueOf(401), "비밀번호 불일치");
+
         user.ifPresent(userSelect -> {
-            userSelect.setPassword(userReq.getNewPassword());
+            userSelect.setPassword(passwordEncoder.encode(userReq.getNewPassword()));
             userRepository.save(userSelect);
         });
     }
 
     @Override
     public void updatePassword(int userId, String password, int tmp) {
+        Optional<ConfirmationToken> confirmation = confirmationTokenRepository.findByUserId(userId);
+
+        confirmation.ifPresent(select -> {
+            userRepository.delete(select.getUser());
+        });
+
         Optional<User> user = userRepository.findById(userId);
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "회원 정보를 찾을 수 없습니다.");
 
+        PasswordEncoder passwordEncoder = new DelegatingPasswordEncoder(ENCODE_ID, encoders);
         user.ifPresent(selectUser -> {
-            selectUser.setPassword(password);
+            selectUser.setPassword(passwordEncoder.encode(password));
             userRepository.save(selectUser);
         });
     }
@@ -179,10 +204,6 @@ public class UserServiceImpl implements UserService {
         if(!user.isPresent()) return;
 
         userRepository.deleteById(userId);
-
-        // 기존 물리 파일 삭제 : DB에서 기존 파일의 물리 경로 가져와서 물리 파일 삭제하기
-        File file = new File(uploadPath + File.separator + user.get().getFileUrl());
-        if(file.exists()) file.delete();
     }
 
     @Override
@@ -210,3 +231,17 @@ public class UserServiceImpl implements UserService {
     }
 
 }
+
+
+
+/*
+다중 word 검색
+
+Set<Feeds> feeds <= HashTag 들
+for(HashTag)
+  feeds
+
+
+
+
+ */

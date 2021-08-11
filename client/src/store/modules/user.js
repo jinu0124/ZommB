@@ -7,11 +7,9 @@ const state = {
   accessToken: null,
   refreshToken: null,
   tempNickname: null,
-  myInfo: {
-    id: null,
-    nickname: null,
-    userFileUrl: null
-  }
+  myInfo: null,
+  bookShelf: null,
+  bookCart: null,
 }
 
 const actions = {
@@ -67,12 +65,14 @@ const actions = {
         console.log(err.response)
       })
   },
-  async onLogin ({ commit }, userData) {
+  async onLogin ({ commit, dispatch }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
+        dispatch('getBookShelf')
+        dispatch('getBookCart')
         router.push({ name: 'Feed' })
       })
       .catch((err) => {
@@ -100,22 +100,33 @@ const actions = {
         return Promise.reject(err.response)
       })
   },
-  async onResetPassword({ dispatch }, userData) {
-    // console.log(userData)
-    await userApi.resetPassword(userData)
+  async onSocialLogin ({ commit }, userData) {
+    await userApi.socialLogin(userData)
       .then((res) => {
-        console.log(res)
-        dispatch('moveToLogin')
+        // console.log(res)
+        commit('SET_ISLOGIN', true)
+        commit('SET_MY_INFO', res.data.data)
+        router.push({ name: 'Feed' })
       })
       .catch((err) => {
-        // 400 or 401
-        if (err.response.status === 400) {
-          return '비밀번호는 영문, 숫자 포함 8자 이상이어야 합니다.'
-        } else if (ErrorEvent.response.status === 401) {
-          return '잘못된 접근입니다.'
-        } else {
-          router.push({ name: 'ServerError' })
+        if (err.response.status === 403) {
+          commit('SET_MY_INFO', err.response.data.data)
         }
+        return Promise.reject(err.response)
+      })
+  },
+  async getBookShelf ({ state, commit }) {
+    await userApi.getMyBookList(state.myInfo.id, 1)
+      .then((res) => {
+        console.log(res)
+        commit('SET_BOOKSHELF', res.data.data)
+      })
+  },
+  async getBookCart ({ state, commit }) {
+    await userApi.getMyBookList(state.myInfo.id, 0)
+      .then((res) => {
+        console.log(res)
+        commit('SET_BOOKCART', res.data.data)
       })
   },
 }
@@ -137,14 +148,22 @@ const mutations = {
     state.tempNickname = payload
   },
   SET_MY_INFO(state, payload) {
-    state.myInfo.id = payload.id
-    state.myInfo.nickname = payload.nickname
-    state.myInfo.userFileUrl = payload.userFileUrl
+    state.myInfo = payload
+    // state.myInfo.id = payload.id
+    // state.myInfo.nickname = payload.nickname
+    // state.myInfo.userFileUrl = payload.userFileUrl
+  },
+  SET_BOOKSHELF(state, payload) {
+    state.bookShelf = payload
+  },
+  SET_BOOKCART(state, payload) {
+    state.bookCart = payload
   },
   RESET_MY_INFO(state) {
-    state.myInfo.id = null
-    state.myInfo.nickname = null
-    state.myInfo.userFileUrl = null
+    state.myInfo = null
+    // state.myInfo.id = payload
+    // state.myInfo.nickname = payload
+    // state.myInfo.userFileUrl = payload
   },
 
 }
