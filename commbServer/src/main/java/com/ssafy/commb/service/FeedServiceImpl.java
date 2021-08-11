@@ -210,6 +210,7 @@ public class FeedServiceImpl implements FeedService {
 
         return myResList;
     }
+
     // 해시태그로 검색
     public FeedDto.ResponseList getFeeds(String searchWord, int userId){
         StringBuilder dynamicQuery = new StringBuilder();

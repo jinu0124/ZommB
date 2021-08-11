@@ -15,7 +15,7 @@ public interface BookService {
 
     public void deleteBookInBookShelf(int bookId, HttpServletRequest request);
 
-    public void moveBook(int bookId, HttpServletRequest request);
+    public void moveBook(int bookId, double rate, HttpServletRequest request);
 
     public BookDto.ResponseList getTopBooks(int userId);
 

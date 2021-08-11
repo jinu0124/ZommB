@@ -18,9 +18,9 @@ public class BookShelves {
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
-    private int isRead;
+    private Integer isRead;
 
-    private double rate;
+    private Double rate;
 
     @ManyToOne
     @JoinColumn(name = "book_id", insertable=false, updatable=false)

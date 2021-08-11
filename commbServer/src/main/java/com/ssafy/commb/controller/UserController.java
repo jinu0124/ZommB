@@ -1,5 +1,6 @@
 package com.ssafy.commb.controller;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
@@ -22,6 +23,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -349,15 +351,17 @@ public class UserController {
         return ResponseEntity.status(204).build();
     }
 
-    // 북카트에서 서재로 옮기기
-    @PatchMapping("/{userId}/bookshelves/{bookId}")
+    // 북카트 <-> 서재로 옮기기
+    @PutMapping("/{userId}/bookshelves/{bookId}")
     @ApiOperation(value = "북카트에서 서재로 도서 이동")
     public ResponseEntity updateUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId,
+            @RequestBody @Nullable Map<String, Double> map,
             HttpServletRequest request
     ) {
-        bookService.moveBook(bookId, request);
+        if(map == null || map.get("rate") == null)  bookService.moveBook(bookId, 0, request);       // 서재 -> 북카트
+        else if(map.get("rate") != null) bookService.moveBook(bookId, map.get("rate"), request);        // 북카트 -> 서재
 
         return new ResponseEntity(HttpStatus.OK);
     }

@@ -54,10 +54,10 @@ public class BookServiceImpl implements BookService{
         List<BookDto> books = bookDao.getBooksByName(map);
 
         BookDto.ResponseList bookResList = new BookDto.ResponseList();
-        GenreDto genre = new GenreDto();
-        for(BookDto book : books){
-            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 12)));
-        }
+//        GenreDto genre = new GenreDto();
+//        for(BookDto book : books){
+//            book.setGenre(genre.getGenre().get(book.getIsbn().substring(10, 12)));        // isbn 장르 -> isbn에는 장르 정보가 없따
+//        }
 
         bookResList.setData(books);
         return bookResList;
@@ -112,17 +112,21 @@ public class BookServiceImpl implements BookService{
         bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
     }
 
+    // 서재 <-> 북카트
     @Override
-    public void moveBook(int bookId, HttpServletRequest request) {
+    public void moveBook(int bookId, double rate, HttpServletRequest request) {
         Optional<BookShelves> bookShelves = bookShelvesRepository.findByBookIdAndUserId(bookId, (int) request.getAttribute("userId"));
         if(!bookShelves.isPresent()) throw new ApplicationException(HttpStatus.GONE, "해당 도서를 DB로부터 찾을 수 없습니다.");
         bookShelves.ifPresent(bookSelect -> {
+            if(bookSelect.getIsRead() == 1) bookSelect.setRate(new BookShelves().getRate());
+            else bookSelect.setRate(rate);
             bookSelect.setIsRead(Math.abs(bookSelect.getIsRead() - 1));             // toggle
 
             bookShelvesRepository.save(bookSelect);
             if(bookSelect.getIsRead() == 0) bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
         });
     }
+
 
     @Override
     public BookDto.ResponseList getTopBooks(int userId) {
