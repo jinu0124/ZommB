@@ -2,6 +2,7 @@ package com.ssafy.commb.service;
 
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -16,6 +17,8 @@ public interface BookService {
     public void deleteBookInBookShelf(int bookId, HttpServletRequest request);
 
     public void moveBook(int bookId, double rate, HttpServletRequest request);
+
+    public BookShelfDto.Response getBookShelf(int userId, int bookId);
 
     public BookDto.ResponseList getTopBooks(int userId);
 

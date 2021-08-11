@@ -5,6 +5,7 @@ import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
@@ -365,6 +366,16 @@ public class UserController {
 
         return new ResponseEntity(HttpStatus.OK);
     }
+
+    @GetMapping("/{userId}/bookshelves/{bookId}")
+    @ApiOperation(value = "북카트/서재 특정 도서 조회")
+    public ResponseEntity findUserBookShelf(
+            @PathVariable("userId") Integer userId,
+            @PathVariable("bookId") Integer bookId
+    ) {
+        return new ResponseEntity<BookShelfDto.Response>(bookService.getBookShelf(userId, bookId), HttpStatus.OK);
+    }
+
 
     // 상단 바 도서 목록 조회
     @GetMapping("/{userId}/top-bar")

@@ -1,5 +1,6 @@
 package com.ssafy.commb.model;
 
+import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -29,4 +30,13 @@ public class BookShelves {
     @ManyToOne
     @JoinColumn(name = "user_id", insertable=false, updatable=false)
     private User user;
+
+    public BookShelfDto convertBookShelfDto(){
+        return BookShelfDto.builder()
+                .bookId(this.id.getBookId())
+                .userId(this.id.getUserId())
+                .isRead(this.isRead)
+                .rate(this.rate)
+                .build();
+    }
 }
