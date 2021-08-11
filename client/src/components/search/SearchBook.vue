@@ -1,6 +1,6 @@
 <template>
   <div class="search-book">
-    <div class="search-tab tabs gap-2 mt-2">
+    <div class="tabs mt-2 align-self-center">
       <span
         type="button"
         @click="changePage(0)"
@@ -26,12 +26,18 @@
         >키워드</span
       >
     </div>
+    <BookListItem />
   </div>
 </template>
 
 <script>
+import BookListItem from "@/components/book/BookListItem";
+
 export default {
   name: "SearchBook",
+  components: {
+    BookListItem,
+  },
   data() {
     return {
       selectedPage: 0,
@@ -46,12 +52,8 @@ export default {
 </script>
 
 <style scoped>
-.ch-header .title {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-.search-tab {
-  display: flex;
+.search-book {
+  text-align: center;
 }
 .tabs .badge {
   font-size: 0.8rem;
@@ -59,6 +61,7 @@ export default {
   padding: 5px 12px;
   vertical-align: middle;
   border-radius: 0.5rem;
+  margin: 0px 2px;
 }
 .tabs .current {
   background: #97dffc;
@@ -68,8 +71,5 @@ export default {
 .tabs .rest {
   background: #7b60f1;
   color: #fff;
-}
-.book-list-item {
-  width: 200px;
 }
 </style>

@@ -15,10 +15,4 @@ export default {
 };
 </script>
 <style scoped>
-.reply-list {
-  margin: 0 auto;
-  display: flex;
-  align-items: flex-start;
-  width: 320px;
-}
 </style>

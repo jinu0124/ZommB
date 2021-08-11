@@ -1,89 +1,19 @@
 <template>
   <div class="following-list">
-    <div class="following-list-item">
-      <span class="user-images">
-        <img
-          v-if="myInfo.userFileUrl"
-          class="user-profile"
-          type="button"
-          id="UserProfile"
-          :src="myInfo.userFileUrl"
-          alt="user-profile"
-        />
-        <img
-          v-else
-          src="@/assets/image/common/profileDefault.svg"
-          alt="defalut-profile"
-          class="default-user-image user-profile"
-          type="button"
-        />
-      </span>
-      <span class="user-nickname">{{ nickname }}</span>
-      <span>
-        <button class="follow btn-5 btn-grey" @click="unfollow()" v-show="!isFollow">
-          팔로우 취소
-        </button>
-      </span>
-      <span>
-        <button class="follow btn-5 btn-yellow" type="button" @click="follow()" v-show="isFollow">
-          팔로우
-        </button>
-      </span>
-    </div>
+    <UserListItem />
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import UserListItem from "@/components/search/UserListItem";
 
 export default {
   name: "Follower",
-  data() {
-    return {
-      isColor: false,
-      isFollow: false,
-      nickname: "Nickname",
-    };
-  },
-  methods: {
-    currentItem(flag) {
-      this.isColor = flag;
-    },
-    unfollow() {
-      this.isFollow = true;
-      console.log("팔로우 취소");
-    },
-    follow() {
-      this.isFollow = false;
-      console.log("팔로우");
-    },
-  },
-  computed: {
-    ...mapState("user", ["myInfo"]),
+  components: {
+    UserListItem,
   },
 };
 </script>
 
-<style src="@/assets/style/button.css"></style>
 <style scoped>
-div {
-  text-align: center;
-  align-items: center;
-}
-.following-list-item {
-  display: flex;
-  margin: auto;
-}
-.user-profile {
-  align-self: center;
-}
-.default-user-image,
-.user-profile {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
-.user-nickname {
-  margin: 0 20px 0 3px;
-}
 </style>

@@ -1,27 +1,31 @@
 <template>
   <div class="write">
-    <div class="d-flex justify-content-between align-items-center">
-      <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
-      <span class="logo">{{ this.Logo }}</span>
-    </div>
-    <div class="body">
+    <SimpleHeader class="write-header" :title="title" />
+    <div class="write-box">
       <div class="writing">
-        <div class="book-part">
-          <img class="book" src="@/assets/image/test/bookTest.jpg" />
-          <span class="title-writer-comp">
-            <div class="book-info">{{ this.title }}</div>
-            <div class="book-info">{{ this.writer }}|{{ this.comp }}</div>
-          </span>
-        </div>
+        <!-- <BookListItem /> -->
         <div class="write-part">
-          <input class="write-content" placeholder="게시물 내용을 입력하세요." />
+          <input
+            class="write-content"
+            placeholder="게시물 내용을 입력하세요."
+          />
         </div>
         <!-- 사진 수정하면 preview -->
         <img v-if="preview" class="profile" :src="preview" alt="" />
         <!-- 아니면 기존 이미지 -->
-        <img v-else-if="profilePath" class="profile" :src="profilePath" alt="" />
+        <img
+          v-else-if="profilePath"
+          class="profile"
+          :src="profilePath"
+          alt=""
+        />
         <!-- 둘 다 없으면 기본 이미지 -->
-        <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="" />
+        <img
+          v-else
+          class="profile"
+          src="@/assets/image/common/profileDefault.svg"
+          alt=""
+        />
         <img
           src="@/assets/image/deco/addPicture.svg"
           class="addPicture"
@@ -42,19 +46,18 @@
 
 <script>
 import FeedImageCrop from "@/components/feeds/feed/FeedImageCrop";
+import SimpleHeader from "@/components/SimpleHeader";
 import { mapState } from "vuex";
 
 export default {
   name: "Write",
   components: {
     FeedImageCrop,
+    SimpleHeader,
   },
   data() {
     return {
-      Logo: "글쓰기",
-      title: "아몬드",
-      writer: "손원평",
-      comp: "창비",
+      title: "글쓰기",
       myCroppa: null,
       // feed 사진 업데이트
       feedPath: null,
@@ -101,7 +104,7 @@ export default {
     ...mapState("user", ["myInfo"]),
   },
   watch: {
-    myCroppa: function() {
+    myCroppa: function () {
       this.makeFormData();
     },
   },
@@ -110,22 +113,25 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
-.write {
-  background: #7b60f1;
-  height: 60px;
-}
-.d-flex {
-  padding: 12px;
-}
-.back-btn {
-  font-size: 1.5rem;
+.write-header {
   color: #fff;
+  background: #683ec9;
 }
-.logo {
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 1rem;
+.write-box {
+  background: #fff;
+  height: 100%;
+  min-height: 100vh;
+  width: 100vw;
+  border-radius: 30px 0px 0px 0px;
+  margin-top: 60px;
+  padding: 20px 0 40px;
   color: #fff;
-  margin: auto;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.write-box::-webkit-scrollbar {
+  display: none;
 }
 .writing {
   border-style: groove;
