@@ -31,4 +31,7 @@ public interface BookService {
     public BookDto.ResponseList findBookList(BookDto.BookSearchRequest bookReq) throws IOException;
 
     public BookDto.Response findBook(int bookId);
+
+    public void updateBookEvent();
+
 }

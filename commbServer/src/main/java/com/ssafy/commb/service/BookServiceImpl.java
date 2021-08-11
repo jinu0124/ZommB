@@ -13,6 +13,7 @@ import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.BookShelvesRepository;
 import com.ssafy.commb.dto.book.KakaoSearchBookResponseDto;
 import com.ssafy.commb.repository.BookRepository;
+import com.ssafy.commb.repository.WeeklyEventRepository;
 import com.ssafy.commb.util.KakaoSearchAPI;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
+import java.time.*;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.io.IOException;
 import java.util.stream.Collectors;
@@ -37,6 +40,9 @@ public class BookServiceImpl implements BookService{
 
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private WeeklyEventRepository weeklyEventRepository;
 
     @Autowired
     KakaoSearchAPI kakaoSearchAPI;
@@ -276,5 +282,33 @@ public class BookServiceImpl implements BookService{
         return BookDto.Response.builder()
                 .data(bookDto)
                 .build();
+    }
+
+    /**
+     * @ Weekly Book 이벤트 업데이트
+     *
+     */
+    @Override
+    public void updateBookEvent() {
+        BookDto bookDto = bookDao.getRandomBook();
+        Book book = new Book();
+        book.setId(bookDto.getId());
+
+        WeeklyEvent weekly = new WeeklyEvent();
+        weekly.setBook(book);
+
+        LocalDate date = LocalDate.now(ZoneId.of("+9"));
+        ZonedDateTime dateTime = LocalDateTime.of(date.getYear(), date.getMonthValue(), date.getDayOfMonth(), 0, 0, 0).atZone(ZoneId.of("+9"));
+        weekly.setStartDate(Date.from(Instant.from(dateTime)));
+
+        if(dateTime.getDayOfMonth() == 22){
+            if(Arrays.asList(1, 3, 5, 7, 8, 10, 12).contains(dateTime.getMonthValue())) dateTime = dateTime.plusDays(10);
+            else if(Arrays.asList(4, 6, 9, 11).contains(dateTime.getMonthValue())) dateTime = dateTime.plusDays(9);
+            else dateTime = dateTime.plusDays(7);
+        }
+        else dateTime = dateTime.plusDays(7);
+        weekly.setEndDate(Date.from(Instant.from(dateTime)));
+
+        weeklyEventRepository.save(weekly);
     }
 }

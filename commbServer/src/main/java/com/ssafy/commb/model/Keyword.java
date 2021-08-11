@@ -29,6 +29,11 @@ public class Keyword {
     @OneToMany(mappedBy = "keyword")
     private List<DailyEvent> dailyEvents = new ArrayList<DailyEvent>();
 
+    public Keyword(int id, String keyword) {
+        this.id = id;
+        this.keyword = keyword;
+    }
+
     public KeywordDto convertKeywordDto(){
         return KeywordDto.builder()
                 .id(this.id)

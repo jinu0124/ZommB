@@ -24,5 +24,6 @@ public interface BookDao {
 
     public int deleteBookTop(int bookId, int userId);
 
+    public BookDto getRandomBook();
 
 }

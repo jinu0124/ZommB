@@ -54,6 +54,20 @@
         where user_id = #{userId} and book_id = #{bookId}
     </delete>
 
+    <select id="getRandomBook" resultType="Book">
+        SELECT book.id
+        FROM book INNER JOIN (SELECT id
+                              FROM book
+                              ORDER BY RAND()
+                              LIMIT 2) AS b
+                  inner JOIN (SELECT book_id
+                              FROM weekly_event
+                              ORDER BY id DESC
+                              LIMIT 1) AS w
+        ON book.id = b.id AND w.book_id != b.id
+        LIMIT 1
+    </select>
+
     <resultMap type="Book" id="bookInformation">
         <result column="id" property="id"/>
         <result column="book_name" property="bookName"/>
