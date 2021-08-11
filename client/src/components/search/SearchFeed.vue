@@ -1,63 +1,63 @@
 <template>
   <div class="search-feed">
-    <div class="feed-list flex-column align-items-center">
-      <div>
+    <span class="feed-list flex-column align-items-center">
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelSmile.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-      <div>
+      </span>
+      <span>
         <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
         />
-      </div>
-    </div>
+      </span>
+    </span>
   </div>
 </template>
 
@@ -69,15 +69,15 @@ export default {
 
 <style scoped>
 .feed-list {
-  text-align: center;
   display: grid;
-  grid-template-rows: 100px 100px 100px;
-  grid-template-columns: 100px 100px 100px;
+  grid-template-rows: 90px 90px 90px;
+  grid-template-columns: 90px 90px 90px;
   margin-top: 5px;
+  text-align: center;
 }
 .default-feed-image {
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background: #ffffff;
 }
 .image-back {

@@ -5,10 +5,10 @@
       <input
         class="book-search-input"
         type="text"
-        placeholder="북카트에서 완독한 책을 검색해보세요!"
+        placeholder="책 제목, 작가명으로 읽을 책을 검색해보세요!"
       />
+      <BookListItem />
     </div>
-    <BookListItem />
   </div>
 </template>
 
@@ -24,7 +24,7 @@ export default {
   },
   data() {
     return {
-      title: "읽은 책 추가",
+      title: "북카트 추가",
       booktitle: "아몬드",
       writer: "손원평",
       comp: "창비",
@@ -39,8 +39,17 @@ export default {
   color: #585858;
 }
 .add-body {
+  background: #fff;
+  color: #212121;
+  height: 100%;
+  min-height: 100vh;
+  width: 100%;
+  border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
-  display: flex;
+  padding: 20px 20px 100px;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 .book-search-input {
   margin: 10px auto;
@@ -51,51 +60,5 @@ export default {
   padding-left: 20px;
   font-size: 0.875rem;
   border-radius: 20px;
-}
-.book {
-  height: 120px;
-  width: 80px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
-  margin-left: 15px;
-}
-.item-body {
-  display: flex;
-  margin: auto 0;
-  background: #f1f1f1;
-  height: 100px;
-  width: 215px;
-  border-radius: 0 10px 10px 0;
-}
-.book-info {
-  margin: auto 5px;
-  display: flex;
-}
-.title-writer-comp {
-  width: 80px;
-  margin: auto 0px;
-}
-.title {
-  font-size: 18px;
-}
-.writer-comp {
-  font-size: 12px;
-}
-.title,
-.writer-comp {
-  width: 70px;
-  display: flex;
-  margin: 0 5px;
-}
-.star {
-  width: 15px;
-  height: 15px;
-}
-.book-btn {
-  margin: auto 15px;
-}
-.bookcart-add-btn {
-  width: 100px;
-  margin: 5px 0;
 }
 </style>

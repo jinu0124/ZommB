@@ -1,11 +1,13 @@
 <template>
-  <div>
+  <div class="bookcart">
     <div class="bookcart-title">
       <span
         ><b>{{ this.nickname }}'s BookCart</b></span
       >
       <span
-        ><button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽을책 추가</button></span
+        ><button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">
+          북카트 추가
+        </button></span
       >
     </div>
     <input
@@ -40,17 +42,18 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
+.bookcart {
+  background: #fff;
+}
 .bookcart-title {
   margin: 5px 0;
 }
 .book-search-input {
-  margin: 5px;
   width: 300px;
   height: 35px;
   background-color: #f1f1f1;
   border: none;
   outline: none;
-  padding-left: 20px;
   font-size: 0.875rem;
   border-radius: 20px;
 }

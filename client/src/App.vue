@@ -5,6 +5,12 @@
       accounts: isAccounts,
       challenge: isChallenge,
       search: isSearch,
+      feedlist: isFeedList,
+      profile: isProfile,
+      write: isWrite,
+      reply: isReply,
+      bookcart: isBookcart,
+      library: isLibrary,
     }"
   >
     <Header
@@ -43,13 +49,12 @@ export default {
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
         this.$route.name === "Like" ||
-        this.$route.name === "Reply" ||
         this.$route.name === "Report" ||
         this.$route.name === "Write" ||
+        this.$route.name === "Reply" ||
         this.$route.name === "SelectBook" ||
         this.$route.name === "AddBookcart" ||
         this.$route.name === "AddLibrary" ||
-        this.$route.name === "AddCollection" ||
         this.$route.name === "Follow"
       ) {
         return false;
@@ -83,6 +88,18 @@ export default {
       }
       return false;
     },
+    isWrite() {
+      return this.$route.name === "Write";
+    },
+    isReply() {
+      return this.$route.name === "Reply";
+    },
+    isBookcart() {
+      return this.$route.name === "AddBookcart";
+    },
+    isLibrary() {
+      return this.$route.name === "AddLibrary";
+    },
   },
 };
 </script>
@@ -113,7 +130,23 @@ export default {
   color: #fff;
 }
 .profile {
-  background-color: #fff;
+  background-color: #f1f1f1;
   color: #683ec9;
+}
+.write {
+  background-color: #683ec9;
+  color: #fff;
+}
+.reply {
+  background-color: #7b60f1;
+  color: #fff;
+}
+.bookcart {
+  background-color: #f1f1f1;
+  color: #585858;
+}
+.library {
+  background-color: #f1f1f1;
+  color: #585858;
 }
 </style>

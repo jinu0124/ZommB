@@ -71,6 +71,7 @@ export default {
 <style src="@/assets/style/button.css"></style>
 <style scoped>
 .search-page {
+  width: 100%;
   background: #683ec9;
   height: 100vh;
   border-radius: 30px 0px 0px 0px;
