@@ -6,6 +6,7 @@ import com.ssafy.commb.dao.BookDao;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.GenreDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.exception.book.NotFoundBookException;
 import com.ssafy.commb.model.*;
@@ -127,6 +128,18 @@ public class BookServiceImpl implements BookService{
         });
     }
 
+    public BookShelfDto.Response getBookShelf(int userId, int bookId){
+
+        Optional<BookShelves> bookShelves = bookShelvesRepository.findByBookIdAndUserId(bookId, userId);
+
+        if(!bookShelves.isPresent()) throw new ApplicationException(HttpStatus.NO_CONTENT, "책이 서재 또는 북카트에 없습니다.");
+
+        return BookShelfDto.Response.builder()
+                .data(
+                        bookShelves.get().convertBookShelfDto()
+                )
+                .build();
+    }
 
     @Override
     public BookDto.ResponseList getTopBooks(int userId) {
