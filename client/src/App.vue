@@ -5,6 +5,7 @@
       accounts: isAccounts,
       challenge: isChallenge,
       search: isSearch,
+      feedlist: isFeedList,
     }"
   >
     <Header
@@ -72,7 +73,13 @@ export default {
       return this.$route.name === "Challenge";
     },
     isFeedList() {
-      return this.$route.name === "Feed";
+      if (
+        this.$route.name === "Feed" ||
+        this.$route.name === "SelectBook" ||
+        this.$route.name === "Write") {
+        return true;
+      }
+      return false;
     },
     isProfile() {
       return this.$route.name === "Profile";
