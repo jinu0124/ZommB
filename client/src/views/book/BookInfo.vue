@@ -8,8 +8,6 @@
       <BookInfoSendScore
         v-if="isRated"
         class="alert-top-30"
-        :score=score
-        :title=bookInfo.bookName
         @ok="completeRating"
         @cancel="cancelRating"
       />
