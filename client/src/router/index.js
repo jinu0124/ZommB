@@ -126,7 +126,7 @@ const routes = [
     component: SelectBook
   },
   {
-    path: '/write',
+    path: '/write/:id',
     name: 'Write',
     component: Write
   },

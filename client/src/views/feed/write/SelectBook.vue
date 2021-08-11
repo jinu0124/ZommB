@@ -1,45 +1,37 @@
 <template>
   <div class="select-book">
-    <div class="d-flex justify-content-between align-items-center">
-      <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
-      <span class="logo">{{ this.Logo }}</span>
-    </div>
-    <div class="search-bar">
-      <input
-        class="search-input"
-        type="text"
-        placeholder="책 제목, 작가명으로 책을 검색해보세요!"
+    <SimpleHeader
+      class="select-header"
+      :title=title
+    />
+    <div class="select-body d-flex flex-column align-items-center">
+      <SelectBookSearchBar/>
+      <SelectBookList
+        class="mt-3"
       />
-      <div class="book-list-item">
-        <img class="book my-3" src="@/assets/image/test/bookTest.jpg" alt="" />
-        <span class="item-body">
-          <div class="book-info">
-            <div class="title-writer-comp">
-              <b class="title">{{ title }}</b>
-              <b class="writer-comp">{{ writer }} | {{ comp }}</b>
-            </div>
-            <span class="book-btn">
-              <button class="btn-5 btn-yellow feed-write-btn" @click="moveToWrite()">
-                피드 작성
-              </button>
-            </span>
-          </div>
-        </span>
-      </div>
     </div>
   </div>
 </template>
 
 <script>
+import SimpleHeader from '@/components/SimpleHeader'
+import SelectBookSearchBar from '@/components/feeds/write/SelectBookSearchBar'
+import SelectBookList from '@/components/feeds/write/SelectBookList'
 export default {
-  name: "SelectBook",
+  name: 'SelectBook',
+  components: {
+    SimpleHeader,
+    SelectBookList,
+    SelectBookSearchBar
+  },
   data() {
     return {
+      title: "글쓰기",
+      
       Logo: "책 고르기",
-      title: "아몬드",
       writer: "손원평",
       comp: "창비",
-    };
+    }
   },
   methods: {
     moveToWrite() {
@@ -49,83 +41,23 @@ export default {
 };
 </script>
 
-<style src="@/assets/style/button.css"></style>
 <style scoped>
-.select-book {
+.select-header {
   background: #7b60f1;
-  height: 60px;
-}
-.d-flex {
-  padding: 12px;
-}
-.back-btn {
-  font-size: 1.5rem;
   color: #fff;
 }
-.logo {
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 1rem;
-  color: #fff;
-  margin: auto;
+.select-body {
+  margin-top: 60px;
+  background: #fff;
+  height: 100vh;
+  width: 100vw;
+  border-radius: 30px 0px 0px 0px;
+  padding: 20px 20px 100px;
+  position: fixed;
+  overflow-x: hidden;
+  overflow-y: scroll;
 }
-.search-bar {
-  text-align: center;
-}
-.search-input {
-  width: 280px;
-  height: 35px;
-  margin: 10px auto 0px;
-  background-color: #f1f1f1;
-  border: none;
-  padding-left: 20px;
-  font-size: 0.875rem;
-  border-radius: 20px;
-}
-.book-list-item {
-  display: flex;
-  width: 320px;
-  margin: auto;
-}
-.book {
-  height: 120px;
-  width: 80px;
-  border-radius: 10px;
-  box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
-  margin-left: 15px;
-}
-.item-body {
-  display: flex;
-  margin: auto 0;
-  background: #f1f1f1;
-  height: 100px;
-  width: 210px;
-  border-radius: 0 10px 10px 0;
-}
-.book-info {
-  margin: auto 5px;
-  display: flex;
-}
-.title-writer-comp {
-  width: 80px;
-  margin: auto 0px;
-}
-.title {
-  font-size: 18px;
-}
-.writer-comp {
-  font-size: 12px;
-}
-.title,
-.writer-comp {
-  width: 70px;
-  display: flex;
-  margin: 0 5px;
-}
-.book-btn {
-  margin: auto 15px;
-}
-.feed-write-btn {
-  width: 80px;
-  margin: 5px 0;
+.select-body::-webkit-scrollbar {
+  display: none;
 }
 </style>

@@ -15,7 +15,6 @@ const actions = {
     router.push({ name: 'Reply' })
   },
   //api 요청
-  // async 
 }
 const mutations = {
 
