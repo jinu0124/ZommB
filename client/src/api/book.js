@@ -7,4 +7,11 @@ export default {
       method: 'get'
     })
   },
+  addBooktoProfile(userId, bookData) {
+    return _axios({
+      url: `/users/${userId}/bookshelves`,
+      method: 'post',
+      data: bookData
+    })
+  },
 }
