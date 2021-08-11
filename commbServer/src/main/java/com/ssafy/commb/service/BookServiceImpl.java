@@ -75,7 +75,7 @@ public class BookServiceImpl implements BookService{
         BookShelvesId bookShelvesId = new BookShelvesId(bookReq.getId(), (int) request.getAttribute("userId"));
         bookShelves.setId(bookShelvesId);
         bookShelves.setIsRead(bookReq.getIsRead());
-        bookShelves.setRate(bookReq.getRate());
+        if(!bookReq.getRate().isNaN()) bookShelves.setRate(bookReq.getRate());
         bookShelves.setCreateAt(new Date());
 
         bookShelvesRepository.save(bookShelves);
