@@ -268,10 +268,11 @@ public class BookServiceImpl implements BookService{
      * @return : 책 상세정보 DTO
      */
     public BookDto.Response findBook(int bookId){
-        Book book = bookRepository.getById(bookId);
+        Optional<Book> bookOp = bookRepository.findById(bookId);
+        
+        if(!bookOp.isPresent()) throw new NotFoundBookException();
 
-        if(book == null) throw new NotFoundBookException();
-
+        Book book = bookOp.get();
         BookDto bookDto = book.convertBookDto();
 
         bookDto.setReadCnt(getBookReadCnt(book));
