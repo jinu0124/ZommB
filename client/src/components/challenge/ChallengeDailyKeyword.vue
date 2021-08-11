@@ -1,10 +1,10 @@
 <template>
   <div class="daily-keyword">
-    <div class="d-flex flex-column align-items-center">
-      <div class="keyword my-3">#{{ keyword }}</div>
-      <div class="des1">#<strong>{{ keyword }}</strong>에 대한 글을 남겨보세요!</div>
+    <div v-if="dailyKeyword" class="d-flex flex-column align-items-center">
+      <div class="keyword my-3">#{{ dailyKeyword.word }}</div>
+      <div class="des1">#<strong>{{ dailyKeyword.word }}</strong>에 대한 글을 남겨보세요!</div>
       <div class="des2 mt-1">
-        <strong>{{ keyword }}</strong> 하면 떠오르는 책이나 책 속의 문장,<br>
+        <strong>{{ dailyKeyword.word }}</strong> 하면 떠오르는 책이나 책 속의 문장,<br>
         그 무엇이든 좋아요 : - )
       </div>
     </div>
@@ -12,13 +12,20 @@
 </template>
 
 <script>
+import moment from 'moment'
+import { mapState, mapActions } from 'vuex'
+
 export default {
   name: 'ChallengeDailyKeyword',
-  data() {
-    return {
-      keyword: 'Test'
-    }
-  }
+  methods: {
+    ...mapActions('challenge', ['getDailyKeyword']),
+  },
+  computed: {
+    ...mapState('challenge', ['dailyKeyword']),
+  },
+  created () {
+    this.getDailyKeyword(moment().format('YYYY-MM-DD'))
+  },
 }
 </script>
 
