@@ -7,7 +7,6 @@
       search: isSearch,
       feed: isFeed,
       profile: isProfile,
-      write: isWrite,
       mybook: isMyBook,
     }"
   >
