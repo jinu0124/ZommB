@@ -11,4 +11,10 @@ export default {
       },
     })
   },
+  getFeedList(userId) {
+    return _axios({
+      url: `/feeds/${userId}`,
+      method: 'get'
+    })
+  }
 }

@@ -9,7 +9,7 @@
             type="button"
             id="UserProfile"
             :src="myInfo.userFileUrl"
-            alt="user-profile"/>
+            alt="user-profile" />
           <img
             v-else
             alt="디폴트 회원 이미지"
@@ -73,7 +73,9 @@
           v-show="Like"
         />
       </span>
-      <span class="like-num" type="button" @click="moveToLike">{{ this.likeNum }}</span>
+      <span class="like-num" type="button" @click="moveToLike">{{
+        this.likeNum
+      }}</span>
       <span>
         <img
           alt=""
@@ -83,24 +85,43 @@
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span class="reply-num" type="button" @click="moveToReply">{{ this.replyNum }}</span>
+      <span class="reply-num" type="button" @click="moveToReply">{{
+        this.replyNum
+      }}</span>
     </div>
     <div class="content">
       <p class="content-detail">{{ shortenContent }}</p>
-      <p class="content-more" type="button" @click="showMoreContent(true)" v-show="!moreContent">
+      <p
+        class="content-more"
+        type="button"
+        @click="showMoreContent(true)"
+        v-show="!moreContent"
+      >
         더보기
       </p>
-      <p class="content-more" type="button" @click="showMoreContent(false)" v-show="moreContent">
+      <p
+        class="content-more"
+        type="button"
+        @click="showMoreContent(false)"
+        v-show="moreContent"
+      >
         접기
       </p>
       <p class="content-duration">{{ duration }}시간 전</p>
       <div>
-        <span v-for="(tag, idx) in tags" :key="idx" class="tag rounded-pill me-1">#{{ tag }}</span>
+        <span
+          v-for="(tag, idx) in tags"
+          :key="idx"
+          class="tag rounded-pill me-1"
+          >#{{ tag }}</span
+        >
       </div>
       <hr />
     </div>
     <ReplyListItem />
-    <div class="reply-more"><span type="button" @click="moveToReply">더보기</span></div>
+    <div class="reply-more">
+      <span type="button" @click="moveToReply">더보기</span>
+    </div>
   </div>
 </template>
 

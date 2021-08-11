@@ -1,5 +1,5 @@
 <template>
-  <div class="feed-list mt-3">
+  <div class="feed-list">
     <FeedListItem />
   </div>
 </template>

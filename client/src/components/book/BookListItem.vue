@@ -13,6 +13,27 @@
           피드 작성
         </button>
         <button class="btn-5 btn-grey delete-btn">삭제</button>
+        <button class="btn-5 btn-yellow add-library-btn" @click="AddLibrary()">
+          완독
+        </button>
+        <button
+          class="btn-5 btn-yellow add-library-btn"
+          @click="moveToAddLibrary()"
+        >
+          서재에 추가
+        </button>
+        <button
+          class="btn-5 btn-yellow add-bookcart-btn"
+          @click="moveToAddBookcart()"
+        >
+          북카트 추가
+        </button>
+        <button
+          class="btn-5 btn-primary1 add-collection-btn"
+          @click="addCollection()"
+        >
+          콜렉션 추가
+        </button>
       </span>
     </div>
   </div>
@@ -32,6 +53,13 @@ export default {
     moveToWrite() {
       this.$router.push("/write");
     },
+    moveToAddLibrary() {
+      this.$router.push("/addLibrary");
+    },
+    moveToAddBookcart() {
+      this.$router.push("/addBookcart");
+    },
+    AddLibrary() {},
   },
 };
 </script>
@@ -40,14 +68,18 @@ export default {
 <style scoped>
 .book-list-item {
   display: flex;
+  justify-content: center;
 }
 .book-btn {
   margin: auto 0px;
 }
+.add-collection-btn,
+.add-bookcart-btn,
+.add-library-btn,
 .feed-write-btn,
 .delete-btn {
   font-size: small;
-  width: 75px;
+  width: 80px;
   height: 25px;
   margin: 2px 0px;
 }

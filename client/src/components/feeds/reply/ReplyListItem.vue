@@ -85,6 +85,7 @@ export default {
   color: rgba(164, 164, 164, 1);
 }
 .reply {
+  background: #fff;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
 }
