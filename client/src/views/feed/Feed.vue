@@ -1,56 +1,69 @@
-<template>
-  <div class="feed-page">
-    <div class="feed-body d-flex flex-column">
-      <div class="title">NewsFeed</div>
-      <div class="feed d-flex gap-2 mt-2">
-        <FeedListItem />
+<template class="temp">
+  <div class="feed">
+    <div class="fd-header d-flex flex-column">
+      <div class="title" style="float:left">
+        NewsFeed<img
+          src="@/assets/image/test/write-btn.svg"
+          class="write-btn"
+          style="float:right"
+          type="button"
+          @click="moveToWrite()"
+        />
       </div>
+    </div>
+    <div>
+      <FeedList />
+    </div>
+    <div>
+      Scroll Test 입니다. <br />
+      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
+      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae assumenda officia
+      quo odit optio! Lorem ispsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam quis
+      sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
+      assumenda officia quo odit optio!
     </div>
   </div>
 </template>
 
 <script>
-import FeedListItem from "@/components/feeds/feed/FeedListItem.vue";
+import FeedList from "@/components/feeds/feed/FeedList";
 
 export default {
   name: "Feed",
   components: {
-    FeedListItem,
+    FeedList,
   },
-  data: () => {
-    return {
-      id: "",
-      nickname: "",
-      userFileUrl: "",
-      isFollow: "",
-    };
+  methods: {
+    moveToWrite() {
+      this.$router.push("/write");
+    },
   },
-  methods: {},
 };
 </script>
 
 <style scoped>
-.feed-page {
+.feed {
+  background: #ffffff;
+  height: 100vh;
+  border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
   padding: 20px 20px 100px;
-  border-radius: 30px 0px 0px 0px;
-  background: #ffffff;
-}
-.feed-body {
-  background: #ffffff;
   position: fixed;
   overflow: scroll;
-  height: 100vh;
 }
-.feed-body::-webkit-scrollbar {
+.feed::-webkit-scrollbar {
   display: none;
 }
-.feed {
-  font-weight: 500;
-  border-radius: 0.5rem;
+.fd-header {
+  display: flex;
 }
-.title {
+.fd-header .title {
   font-size: 1.5rem;
   font-weight: 700;
+}
+.write-btn {
+  width: 24px;
+  height: 24px;
+  margin-top: 7px;
 }
 </style>

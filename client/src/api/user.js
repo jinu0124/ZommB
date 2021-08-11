@@ -79,5 +79,12 @@ export default {
       url: `users/${userId}`,
       method: 'get'
     })
+  },
+  getMyBookList(userId, data) {
+    return _axios({
+      url: `users/${userId}/bookshelves`,
+      method: 'get',
+      params: { isRead: data }
+    })
   }
 }

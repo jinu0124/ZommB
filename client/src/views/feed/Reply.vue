@@ -1,33 +1,32 @@
 <template>
   <div class="reply">
-    <div class="fixed-top d-flex justify-content-between align-items-center">
-      <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
-      <span class="logo">{{ this.Logo }}</span>
-    </div>
-    <div class="reply-body">
+    <SimpleHeader class="reply-header" :title="title" />
+    <div class="reply-box">
       <Content />
       <ReplyList />
-      <hr class="horizon" />
+      <hr />
       <ReplyRegist />
     </div>
   </div>
 </template>
 
 <script>
-import Content from "@/components/feeds/reply/Content.vue";
-import ReplyList from "@/components/feeds/reply/ReplyList.vue";
-import ReplyRegist from "@/components/feeds/reply/ReplyRegist.vue";
+import SimpleHeader from "@/components/SimpleHeader";
+import Content from "@/components/feeds/reply/Content";
+import ReplyList from "@/components/feeds/reply/ReplyList";
+import ReplyRegist from "@/components/feeds/reply/ReplyRegist";
 
 export default {
   name: "Reply",
   components: {
+    SimpleHeader,
     Content,
     ReplyList,
     ReplyRegist,
   },
   data() {
     return {
-      Logo: "댓글",
+      title: "댓글",
     };
   },
   methods: {},
@@ -35,36 +34,28 @@ export default {
 </script>
 
 <style scoped>
+.reply-header {
+  color: #585858;
+  background: #7b60f1;
+}
 .reply {
   margin: 0 auto;
   align-items: center;
-  background-color: #7b60f1;
   height: 100vh;
   overflow: scroll;
 }
-.d-flex {
-  background: #7b60f1;
-  height: 60px;
-  padding: 12px;
-}
-.back-btn {
-  font-size: 1.5rem;
-  color: #fff;
-}
-.logo {
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 1rem;
-  color: #fff;
-  margin: auto;
-}
-.reply-body {
-  margin-top: 60px;
-  background-color: #ffffff;
+.reply-box {
+  height: 100%;
+  min-height: 100vh;
+  width: 100vw;
   border-radius: 30px 0px 0px 0px;
-  height: 100vh;
-  overflow: scroll;
+  margin-top: 60px;
+  padding: 20px 20px 100px;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
-.horizon {
-  margin: 10px 20px;
+.reply-box::-webkit-scrollbar {
+  display: none;
 }
 </style>

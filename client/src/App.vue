@@ -1,10 +1,10 @@
 <template>
-  <div 
-    id="app" 
-    :class="{ 
-      accounts: isAccounts, 
+  <div
+    id="app"
+    :class="{
+      accounts: isAccounts,
       challenge: isChallenge,
-      search: isSearch
+      search: isSearch,
     }"
   >
     <Header
@@ -78,10 +78,7 @@ export default {
       return this.$route.name === "Profile";
     },
     isSearch() {
-      if (
-        this.$route.name === "BookInfo" ||
-        this.$route.name === "Search"
-      ) {
+      if (this.$route.name === "BookInfo" || this.$route.name === "Search") {
         return true;
       }
       return false;
@@ -99,7 +96,6 @@ export default {
     height: 100%;
     min-height: 100vh;
   }
-
   .accounts {
     background-color: #7b60f1;
     color: #fff;
@@ -109,8 +105,8 @@ export default {
     color: #683ec9;
   }
   .search {
-    background-color: #F1F1F1;
-    color: #683EC9;
+    background-color: #f1f1f1;
+    color: #683ec9;
   }
   .feedlist {
     background-color: #7b60f1;
