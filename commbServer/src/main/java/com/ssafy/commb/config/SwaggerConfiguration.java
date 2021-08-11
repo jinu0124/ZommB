@@ -17,18 +17,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 import java.util.*;
 
-// 스웨거
 @Configuration
 @EnableSwagger2
 public class SwaggerConfiguration {
 
-//	Swagger 설정 확인
-//	http://localhost:8080/v2/api-docs
-//	Swagger-UI 확인
-//	http://localhost:8080/swagger-ui.html
+    /**
+     * @ Swagger 설정 확인 : http://localhost:8080/v2/api-docs
+     * @ Swagger -UI 확인 : http://localhost:8080/swagger-ui.html
+     */
 
-    private String version = "V1";
-    private String title = "CommB API " + version;
+    private final String version = "V1";
+    private final String title = "CommB API " + version;
 
     @Value("${security.accesstoken}")
     private String accessToken;

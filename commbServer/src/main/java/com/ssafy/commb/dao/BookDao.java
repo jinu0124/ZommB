@@ -1,8 +1,6 @@
 package com.ssafy.commb.dao;
 
 import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
-import com.ssafy.commb.dto.user.UserDto;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;

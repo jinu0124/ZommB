@@ -17,7 +17,9 @@ import org.springframework.web.servlet.resource.PathResourceResolver;
 import java.io.IOException;
 import java.util.List;
 
-// Config
+/**
+ * @ WebConfiguration : Custom Annotation, Interceptor, Resource Handler
+ */
 @Configuration
 @RequiredArgsConstructor
 public class WebConfiguration implements WebMvcConfigurer {
@@ -39,7 +41,6 @@ public class WebConfiguration implements WebMvcConfigurer {
                 .excludePathPatterns("/api/users/login"
                 , "/api/users", "/api/users/email", "/api/users/confirm-email", "/api/users/checkEmailComplete",
                         "/api/users/social/login", "/api/users/find-password", "/api/users/update-password");
-        //
     }
 
     @Override

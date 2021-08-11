@@ -14,6 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 
+/**
+ * @ My Event Info
+ */
 @RestController
 @RequestMapping(value="/api/my-events")
 @Api("MyEvent Controller API V1")

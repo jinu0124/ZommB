@@ -50,6 +50,12 @@ public class BookServiceImpl implements BookService{
     @PersistenceContext
     private EntityManager em;
 
+    /**
+     *
+     * @param bookReq : 책이름, 서재/북카트 flag
+     * @param request : 유저 ID
+     * @return : 서재/북카트 내 도서 검색 결과
+     */
     @Override
     public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, HttpServletRequest request) {
 
@@ -70,6 +76,11 @@ public class BookServiceImpl implements BookService{
         return bookResList;
     }
 
+    /**
+     * 북카트, 서재에 도서 추가
+     * @param bookReq : 책 ID, 완독 여부, 평점
+     * @param request : 유저 ID
+     */
     @Override
     public void addMyShelf(BookDto.RegisterRequest bookReq, HttpServletRequest request) {
         Optional<BookShelves> bookShelvesOptional = bookShelvesRepository.findByBookIdAndUserId((int) bookReq.getId(), (int) request.getAttribute("userId"));
@@ -86,8 +97,15 @@ public class BookServiceImpl implements BookService{
         bookShelves.setCreateAt(new Date());
 
         bookShelvesRepository.save(bookShelves);
+
+        // 유저 키워드 테이블 업데이트
     }
 
+    /**
+     * 서재/북카트 도서 개수
+     * @param userId : 유저 ID
+     * @return : 서재/북카트 도서 개수
+     */
     @Override
     public BookShelfCntDto.Response getUserReadCnt(int userId) {
         List<Map<String, Object>> list = bookDao.getUserReadCnt(userId);
@@ -108,6 +126,11 @@ public class BookServiceImpl implements BookService{
         return bookShelfCntRes;
     }
 
+    /**
+     * 북카트/서재 에서 도서 1권 삭제
+     * @param bookId : 도서 ID
+     * @param request : 유저 ID
+     */
     @Override
     public void deleteBookInBookShelf(int bookId, HttpServletRequest request) {
 
@@ -116,10 +139,15 @@ public class BookServiceImpl implements BookService{
         bookShelves.ifPresent(bookSelect -> {
             bookShelvesRepository.delete(bookSelect);
         });
-        bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
+        bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));                                        // Top Bar table 동기화
     }
 
-    // 서재 <-> 북카트
+    /**
+     * 서재 - 북카트 도서 이동
+     * @param bookId : 도서 ID
+     * @param rate : 평점
+     * @param request : 유저 ID
+     */
     @Override
     public void moveBook(int bookId, double rate, HttpServletRequest request) {
         Optional<BookShelves> bookShelves = bookShelvesRepository.findByBookIdAndUserId(bookId, (int) request.getAttribute("userId"));
@@ -127,12 +155,13 @@ public class BookServiceImpl implements BookService{
         bookShelves.ifPresent(bookSelect -> {
             if(bookSelect.getIsRead() == 1) bookSelect.setRate(new BookShelves().getRate());
             else bookSelect.setRate(rate);
-            bookSelect.setIsRead(Math.abs(bookSelect.getIsRead() - 1));             // toggle
+            bookSelect.setIsRead(Math.abs(bookSelect.getIsRead() - 1));                                                     // toggle
 
             bookShelvesRepository.save(bookSelect);
-            if(bookSelect.getIsRead() == 0) bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));        // Top Bar 동기화
+            if(bookSelect.getIsRead() == 0) bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId"));       // Top Bar table 동기화
         });
     }
+
 
     public BookShelfDto.Response getBookShelf(int userId, int bookId){
 
@@ -147,6 +176,11 @@ public class BookServiceImpl implements BookService{
                 .build();
     }
 
+    /**
+     * 상단 바 도서 목록 가져오기
+     * @param userId : 유저 ID
+     * @return : 상단바 도서 리스트
+     */
     @Override
     public BookDto.ResponseList getTopBooks(int userId) {
         List<BookDto> books = bookDao.getTopBooks(userId);
@@ -156,6 +190,11 @@ public class BookServiceImpl implements BookService{
         return bookResList;
     }
 
+    /**
+     * 상단 바에 도서 등록하기
+     * @param bookReq : 도서 ID
+     * @param request : 유저 ID
+     */
     @Override
     public void addBookTop(BookDto.TopBarRegisterRequest bookReq, HttpServletRequest request) {
         int cnt = bookDao.getBookByUserIdAndBookId(bookReq.getId(), (int) request.getAttribute("userId"));
@@ -167,17 +206,25 @@ public class BookServiceImpl implements BookService{
         }
     }
 
+    /**
+     * 상단바 도서 모두 삭제
+     * @param request : 유저 ID
+     */
     @Override
     public void deleteAllBookTop(HttpServletRequest request) {
         bookDao.deleteAllBookTop((int) request.getAttribute("userId"));
     }
 
+    /**
+     * 상단 바 도서 1권 삭제
+     * @param bookId : 도서 ID
+     * @param request : 유저 ID
+     */
     @Override
     public void deleteBookTop(int bookId, HttpServletRequest request) {
         if(bookDao.deleteBookTop(bookId, (int) request.getAttribute("userId")) != 1)
             throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, bookId + " 도서가 삭제되지 않았습니다.");
     }
-
 
 
     /**
@@ -287,7 +334,7 @@ public class BookServiceImpl implements BookService{
 
     /**
      * @ Weekly Book 이벤트 업데이트
-     *
+     * @ Scheduler
      */
     @Override
     public void updateBookEvent() {

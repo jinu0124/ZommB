@@ -85,6 +85,12 @@ public class FeedServiceImpl implements FeedService {
         // Daily Event
     }
 
+    /**
+     * 특정 유저의 피드 리스트 가져오기
+     * @param userId : target 유저 ID
+     * @param request : 자신 유저 ID
+     * @return : 피드 리스트
+     */
     @Override
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request) {
 
@@ -101,6 +107,11 @@ public class FeedServiceImpl implements FeedService {
         return feedResList;
     }
 
+    /**
+     * 특정 유저의 피드 개수
+     * @param userId : 유저 ID
+     * @return : 개수 반환
+     */
     @Override
     public int getUserFeedCnt(int userId) {
         return feedDao.userFeedCnt(userId);
@@ -169,12 +180,12 @@ public class FeedServiceImpl implements FeedService {
     public FeedDto.ResponseList getFollowingFeeds(int userId) {
 
         List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
-        System.out.println("fewfwegwewge");
+
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), userId));
         }
-        System.out.println(feeds.get(0).getComments());
+
         FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
         feedResList.setData(feeds);
 
@@ -211,7 +222,12 @@ public class FeedServiceImpl implements FeedService {
         return myResList;
     }
 
-    // 해시태그로 검색
+    /**
+     * 해시태그 피드 검색(FTS), 유사도 기준 정렬
+     * @param searchWord : 검색 단어(들), spacebar 기준 검색어 파싱
+     * @param userId : 유저 ID
+     * @return : 검색 피드들 반환
+     */
     public FeedDto.ResponseList getFeeds(String searchWord, int userId){
         StringBuilder dynamicQuery = new StringBuilder();
         String[] words = searchWord.split(" ");
@@ -220,7 +236,6 @@ public class FeedServiceImpl implements FeedService {
             for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
         }
         else dynamicQuery.append("\"\"");
-        System.out.println(dynamicQuery);
 
         List<FeedDto> feeds = feedDao.getFeeds(dynamicQuery.toString(), String.valueOf(userId), String.valueOf(countOfWords));
 

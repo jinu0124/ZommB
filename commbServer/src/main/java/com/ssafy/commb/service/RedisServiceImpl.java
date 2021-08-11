@@ -7,8 +7,12 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * Redis Service
+ */
 @Service
 public class RedisServiceImpl implements RedisService{
+
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -17,7 +21,6 @@ public class RedisServiceImpl implements RedisService{
         redisTemplate.opsForList().rightPush(key, value.get(1));
         redisTemplate.expire(key, expTime, TimeUnit.MILLISECONDS);
     }
-
 
     public void setStringValue(String key, Object value, Long expTime){
         redisTemplate.opsForList().rightPush(key, value);

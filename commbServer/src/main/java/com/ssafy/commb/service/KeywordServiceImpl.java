@@ -23,9 +23,11 @@ public class KeywordServiceImpl implements KeywordService{
     @Autowired
     private KeywordDao keywordDao;
 
-    @Autowired
-    private DailyEventRepository dailyEventRepository;
-
+    /**
+     * 각 유저별 검색 키워드 추천
+     * @param request : 유저 ID
+     * @return : 키워드 추천 리스트
+     */
     @Override
     public KeywordDto.ResponseList keywordRecommend(HttpServletRequest request) {
 
@@ -35,10 +37,14 @@ public class KeywordServiceImpl implements KeywordService{
         return keywordResList;
     }
 
+    /**
+     * @ 일일 키워드 이벤트 업데이트
+     * @ Scheduler
+     */
     @Override
     public void updateKeywordEvent() {
         if( keywordDao.getAndSetRandomKeyword() != 1){
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "일간 키워드 업데이트 배치작업 실패");
+            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "일일 키워드 업데이트 배치작업 실패");
         };
     }
 }
