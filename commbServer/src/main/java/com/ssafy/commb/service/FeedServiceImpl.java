@@ -93,28 +93,24 @@ public class FeedServiceImpl implements FeedService {
         }
 
 
-        // DailyEvent
-        LocalDateTime startDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-        LocalDateTime endDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-        Date startDate = java.sql.Timestamp.valueOf(startDateTime);
-        Date endDate = java.sql.Timestamp.valueOf(endDateTime);
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(startDate, endDate);
+        // DailyEvent 검색
+        DailyEvent dailyEvent = searchDailyEvent();
+        String keyword = dailyEvent.getKeyword().getKeyword();
 
-        String keyword = dailyEvent.get().getKeyword().getKeyword();
         List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
         for (HashTag hashTag : hashTags) {
 
             if (hashTag.getTag().equals(keyword)) {
 
-                Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent.get(), user);
+                Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
                 if (dailyEventParticipate.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
 
                 // DailyEventParticipate
-                DailyEventParticipate participate = new DailyEventParticipate();
-                participate.setCreateAt(feed.getCreateAt());
-                participate.setDailyEvent(dailyEvent.get());
-                participate.setUser(user);
-                dailyEventParticipateRepository.save(participate);
+                DailyEventParticipate participant = new DailyEventParticipate();
+                participant.setCreateAt(feed.getCreateAt());
+                participant.setDailyEvent(dailyEvent);
+                participant.setUser(user);
+                dailyEventParticipateRepository.save(participant);
 
                 // 회원 테이블의 bookmark, pencil +1씩
                 user.setBookmark(user.getBookmark() + 1);
@@ -151,30 +147,59 @@ public class FeedServiceImpl implements FeedService {
         Optional<Feed> feed = feedRepository.findById(feedId);
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
 
-        feed.ifPresent(feedSelect -> {
+        // DailyEvent 검색해서 참여했을 시 삭제
+        deleteIfParticipateDailyEvent(feed);
+        DailyEvent dailyEvent = searchDailyEvent();
+        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
 
-            List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
+        // 변경 전 content로 등록한 hashTag 삭제
+        for (HashTag hashTag : hashTags) {
+            hashTagRepository.delete(hashTag);
+        }
 
-            // 변경 전 content로 등록한 hashTag 삭제
-            for (HashTag hashTag : hashTags) {
-                hashTagRepository.delete(hashTag);
+        // 변경된 content로 feed 업데이트
+        feed.get().setContent(content.replace("#", ""));
+        feedRepository.save(feed.get());
+
+        List<String> Tags = extractHashTag(content);
+
+        for (int i = 0; i < Tags.size(); i++) {
+            HashTag hashTag = new HashTag();
+
+            hashTag.setTag(Tags.get(i));
+            hashTag.setFeed(feed.get());
+
+            hashTagRepository.save(hashTag);
+        }
+
+        // 다시 DailyEvent 검사
+        String keyword = dailyEvent.getKeyword().getKeyword();
+        User user = feed.get().getUser();
+
+        for (HashTag hashTag : hashTags) {
+
+            if (hashTag.getTag().equals(keyword)) {
+
+                Optional<DailyEventParticipate> participate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
+                if (participate.isPresent())
+                    throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
+
+                // DailyEventParticipate
+                DailyEventParticipate participant = new DailyEventParticipate();
+                participant.setCreateAt(feed.get().getCreateAt());
+                participant.setDailyEvent(dailyEvent);
+                participant.setUser(user);
+                dailyEventParticipateRepository.save(participant);
+
+                // 회원 테이블의 bookmark, pencil +1씩
+                user.setBookmark(user.getBookmark() + 1);
+                user.setPencil(user.getPencil() + 1);
+                userRepository.save(user);
             }
 
-            feedSelect.setContent(content.replace("#", ""));
-            feedRepository.save(feedSelect);
+        }
 
-            List<String> Tags = extractHashTag(content);
 
-            for (int i = 0; i < Tags.size(); i++) {
-                HashTag hashTag = new HashTag();
-
-                hashTag.setTag(Tags.get(i));
-                hashTag.setFeed(feed.get());
-
-                hashTagRepository.save(hashTag);
-            }
-
-        });
     }
 
     public int getUserId(int feedId) {
@@ -188,6 +213,9 @@ public class FeedServiceImpl implements FeedService {
 
         String url = feed.get().getFileUrl();
         S3service.deleteS3(url, "feed");
+
+        // DailyEvent 검색해서 참여했을 시 삭제
+        deleteIfParticipateDailyEvent(feed);
 
         feedRepository.deleteById(feedId);
     }
@@ -301,5 +329,31 @@ public class FeedServiceImpl implements FeedService {
 
         return hashTag;
     }
+
+    public DailyEvent searchDailyEvent() {
+        LocalDateTime startDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
+        LocalDateTime endDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
+        Date startDate = java.sql.Timestamp.valueOf(startDateTime);
+        Date endDate = java.sql.Timestamp.valueOf(endDateTime);
+        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(startDate, endDate);
+        return dailyEvent.get();
+    }
+
+    public void deleteIfParticipateDailyEvent(Optional<Feed> feed){
+        User user = feed.get().getUser();
+        DailyEvent dailyEvent = searchDailyEvent();
+
+        // DailyEvent 참여했을 시 삭제
+        Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
+        if (dailyEventParticipate.isPresent()) {
+            dailyEventParticipateRepository.delete(dailyEventParticipate.get());
+
+            // 회원 테이블의 bookmark, pencil -1씩
+            user.setBookmark(user.getBookmark() - 1);
+            user.setPencil(user.getPencil() - 1);
+            userRepository.save(user);
+        }
+    }
+
 
 }
