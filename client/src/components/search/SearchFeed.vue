@@ -1,58 +1,62 @@
 <template>
   <div class="search-feed">
-    <div class="feed-list">
-      <span class="image-back"
-        ><img
+    <div class="feed-list flex-column align-items-center">
+      <div>
+        <img
           class="default-feed-image"
           src="@/assets/image/camel/camelSmile.svg"
           alt="웃는 낙타"
-      /></span>
-      <span class="image-back"
-        ><img
+        />
+      </div>
+      <div>
+        <img
           class="default-feed-image"
           src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
-      /></span>
-      <span class="image-back"
-        ><img
+        />
+      </div>
+      <div>
+        <img
           class="default-feed-image"
-          src="@/assets/image/camel/camelCrying.svg"
+          src="@/assets/image/camel/camelRotate.svg"
           alt="웃는 낙타"
-      /></span>
-    </div>
-    <div class="feed-list">
-      <img
-        class="default-feed-image"
-        src="@/assets/image/camel/camelSmileRotate.svg"
-        alt="웃는 낙타"
-      />
-      <img
-        class="default-feed-image"
-        src="@/assets/image/camel/camelWithGrass.svg"
-        alt="웃는 낙타"
-      />
-      <img
-        class="default-feed-image"
-        src="@/assets/image/camel/camelSunglass.svg"
-        alt="웃는 낙타"
-      />
-    </div>
-    <div class="feed-list">
-      <img
-        class="default-feed-image"
-        src="@/assets/image/common/profileDefault.svg"
-        alt="웃는 낙타"
-      />
-      <img
-        class="default-feed-image"
-        src="@/assets/image/common/profileDefault.svg"
-        alt="웃는 낙타"
-      />
-      <img
-        class="default-feed-image"
-        src="@/assets/image/common/profileDefault.svg"
-        alt="웃는 낙타"
-      />
+        />
+      </div>
+      <div>
+        <img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
+        />
+      </div>
+      <div>
+        <img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
+        />
+      </div>
+      <div>
+        <img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
+        />
+      </div>
+      <div>
+        <img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
+        />
+      </div>
+      <div>
+        <img
+          class="default-feed-image"
+          src="@/assets/image/camel/camelRotate.svg"
+          alt="웃는 낙타"
+        />
+      </div>
     </div>
   </div>
 </template>
@@ -64,13 +68,16 @@ export default {
 </script>
 
 <style scoped>
-.search-feed {
+.feed-list {
   text-align: center;
+  display: grid;
+  grid-template-rows: 100px 100px 100px;
+  grid-template-columns: 100px 100px 100px;
+  margin-top: 5px;
 }
 .default-feed-image {
-  width: 80px;
-  height: 80px;
-  margin: 0 4px 5px;
+  width: 90px;
+  height: 90px;
   background: #ffffff;
 }
 .image-back {

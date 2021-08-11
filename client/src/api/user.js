@@ -73,5 +73,11 @@ export default {
       method: 'get',
       params: userData
     })
+  },
+  getUserInfo(userId) {
+    return _axios({
+      url: `users/${userId}`,
+      method: 'get'
+    })
   }
 }

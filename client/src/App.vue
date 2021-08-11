@@ -96,7 +96,6 @@ export default {
   height: 100%;
   min-height: 100vh;
 }
-
 .accounts {
   background-color: #7b60f1;
   color: #fff;

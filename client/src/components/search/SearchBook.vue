@@ -1,6 +1,6 @@
 <template>
   <div class="search-book">
-    <div class="tabs mt-2 align-self-center">
+    <div class="tabs mt-2">
       <span
         type="button"
         @click="changePage(0)"
@@ -26,7 +26,7 @@
         >키워드</span
       >
     </div>
-    <BookListItem />
+    <BookListItem class="book-list-item" />
   </div>
 </template>
 
@@ -52,9 +52,6 @@ export default {
 </script>
 
 <style scoped>
-.search-book {
-  text-align: center;
-}
 .tabs .badge {
   font-size: 0.8rem;
   font-weight: 500;
@@ -71,5 +68,8 @@ export default {
 .tabs .rest {
   background: #7b60f1;
   color: #fff;
+}
+.book-list-item {
+  color: #111;
 }
 </style>
