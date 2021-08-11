@@ -15,6 +15,14 @@ const actions = {
         commit('SET_BOOK_INFO', res.data.data)
       })
   },
+  async addBook({ rootState, dispatch }, bookData) {
+    const userId = rootState.user.myInfo.id
+    await bookApi.addBooktoProfile(userId, bookData)
+      .then((res) => {
+        console.log(res)
+        dispatch('getBookInfo', bookData.id)
+      })
+  }
 }
 
 const mutations = {
