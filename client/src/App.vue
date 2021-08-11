@@ -93,7 +93,7 @@ export default {
 <style src="@/assets/style/accounts.css"></style>
 <style src="@/assets/style/button.css"></style>
 <style src="@/assets/style/common.css"></style>
-<style scoped>
+<style>
   #app {
     font-family: "Noto Sans KR", sans-serif;
     height: 100%;

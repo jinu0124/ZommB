@@ -9,7 +9,7 @@
         v-if="isRated"
         class="alert-top-30"
         :score=score
-        :title=temp
+        :title=bookInfo.bookName
         @ok="completeRating"
         @cancel="cancelRating"
       />
@@ -21,17 +21,14 @@
         </div>
       </div>
       <div class="description-box">
-        <BookInfoDescription
-          :content=content
-          :tags=tags
-        />
+        <BookInfoDescription/>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex' 
+import { mapState, mapActions } from 'vuex' 
 import SimpleHeader from '@/components/SimpleHeader'
 import BookInfoDetail from '@/components/book/BookInfoDetail'
 import BookInfoSendScore from '@/components/book/BookInfoSendScore'
@@ -59,6 +56,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions('book', ['getBookInfo']),
     completeRating () {
       this.$store.commit('book/SET_SCORE', 0)
       this.$store.commit('book/SET_IS_RATED', false)
@@ -69,8 +67,11 @@ export default {
     }
   },
   computed: {
-    ...mapState('book', ['score', 'isRated']),
+    ...mapState('book', ['score', 'isRated', 'bookInfo']),
   },
+  created () {
+    this.getBookInfo(this.$route.params.id)
+  }
 }
 </script>
 
