@@ -31,9 +31,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @Transactional
 public class UserServiceImpl implements UserService {
 
-    @Value("${cloud.profile}")
-    private String awsProfileUrl;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -114,7 +111,7 @@ public class UserServiceImpl implements UserService {
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
-        my.setUserFileUrl(user.get().getFileUrl() != null ? (awsProfileUrl + user.get().getFileUrl()) : null);
+        my.setUserFileUrl(user.get().getFileUrl());
 
         MyDto.Response myRes = new MyDto.Response();
         myRes.setData(my);
@@ -132,7 +129,6 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById(userId);
         if (!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
 
-        System.out.println(awsProfileUrl);
         MyDto my = new MyDto();
         my.setId(user.get().getId());
         my.setNickname(user.get().getNickname());
