@@ -1,6 +1,10 @@
 package com.ssafy.commb.service;
 
 import com.amazonaws.services.dynamodbv2.xspec.M;
+import com.querydsl.core.Tuple;
+import com.querydsl.core.support.QueryBase;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dao.UserDao;
 import com.ssafy.commb.dto.encode.Encoder;
 import com.ssafy.commb.dto.user.MyDto;
@@ -8,6 +12,8 @@ import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
+import com.ssafy.commb.model.QBookShelves;
+import com.ssafy.commb.model.QUser;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.model.follow.Follow;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
@@ -21,6 +27,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +50,9 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDao userDao;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     //  Bcrypt는 패스워드를 해싱할 때 내부적으로 랜덤한 솔트를 생성하기 때문에 같은 문자열에 대해서 다른 인코딩 결과를 반환
     private final String ENCODE_ID = "bcrypt";
     private static final Map<String, PasswordEncoder> encoders = Encoder.getEncoder();      // 인코더 : 여러 타입의 암호화 방식을 저장
@@ -52,26 +63,45 @@ public class UserServiceImpl implements UserService {
      * @return : 검색된 유저 정보 리스트
      */
     @Override
-    public UserDto.ResponseList getUsers(String nickname) {
+    public UserDto.ResponseList getUsers(String nickname, int page) {
         UserDto.ResponseList retRes = new UserDto.ResponseList();
-        Optional<List<User>> users = userRepository.findByNicknameStartsWith(nickname);
+        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+        QUser qUser = QUser.user;
 
-        users.ifPresent(selectUser -> {
-            List<UserDto> userResList = new ArrayList<>();
+        JPAQuery<Tuple> ret = query.from(qUser)
+                .where(qUser.nickname.startsWith(nickname))
+                .orderBy(qUser.nickname.length().asc())
+                .offset(page)
+                .limit(50)
+                .select(qUser.nickname, qUser.id, qUser.name, qUser.bookmark, qUser.role, qUser.bookmarkOn, qUser.email, qUser.pencil, qUser.pencilOn, qUser.fileUrl);
 
-            for(User user : selectUser){
-                LevelDto level = LevelDto.builder().bookmark(user.getBookmark()).bookmarkOn(user.getBookmarkOn() != 0).pencil(user.getPencil())
-                        .pencilOn(user.getPencilOn() != 0).build();
+        List<Tuple> users = ret.fetch();
+        List<UserDto> userResList = new ArrayList<>();
 
-                UserDto userDto = UserDto.builder().id(user.getId()).email(user.getEmail()).name(user.getName()).nickname(user.getNickname())
-                        .role(user.getRole()).userFileUrl(user.getFileUrl()).level(level).build();
+        if(users.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
-                userResList.add(userDto);
-            }
+        for(Tuple user : users){
+            LevelDto level = LevelDto.builder()
+                    .bookmark(user.get(qUser.bookmark))
+                    .bookmarkOn(user.get(qUser.bookmarkOn) == 1)
+                    .pencil(user.get(qUser.pencil))
+                    .pencilOn(user.get(qUser.pencilOn) != 0)
+                    .build();
 
-            retRes.setData(userResList);
-        });
+            UserDto userDto = UserDto.builder()
+                    .id(user.get(qUser.id))
+                    .email(user.get(qUser.email))
+                    .name(user.get(qUser.name))
+                    .nickname(user.get(qUser.nickname))
+                    .role(user.get(qUser.role))
+                    .userFileUrl(user.get(qUser.fileUrl))
+                    .level(level)
+                    .build();
 
+            userResList.add(userDto);
+        }
+
+        retRes.setData(userResList);
         return retRes;
     }
 
@@ -289,8 +319,11 @@ public class UserServiceImpl implements UserService {
      * @return 추천 팔로우 목록 반환
      */
     @Override
-    public UserDto.ResponseList followRecommend(HttpServletRequest request) {
-        List<UserDto> users = userDao.getMyFollowerExFollowing( (int) request.getAttribute("userId"));
+    public UserDto.ResponseList followRecommend(int page, HttpServletRequest request) {
+        List<UserDto> users = userDao.getMyFollowerExFollowing( page, (int) request.getAttribute("userId"));
+
+        if(users.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
+
         UserDto.ResponseList userResList = new UserDto.ResponseList();
         userResList.setData(users);
         return userResList;
@@ -322,13 +355,21 @@ public class UserServiceImpl implements UserService {
         return user.get().getRole();
     }
 
+    /**
+     * 일반회원이 유저 검색
+     * @param nickname : 검색 닉네임
+     * @param page : 페이징
+     * @param request : 유저 ID
+     * @return
+     */
     @Override
-    public MyDto.ResponseList getUsers(String nickname, HttpServletRequest request) {
-       List<MyDto> my = userDao.getUsers(nickname, String.valueOf((int) request.getAttribute("userId")));
+    public MyDto.ResponseList getUsers(String nickname, int page, HttpServletRequest request) {
+        List<MyDto> my = userDao.getUsers(nickname, String.valueOf(page), String.valueOf((int) request.getAttribute("userId")));
 
-        MyDto.ResponseList myResList = new MyDto.ResponseList();
-        myResList.setData(my);
+        if(my.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
-        return myResList;
+        return MyDto.ResponseList.builder()
+                .data(my)
+                .build();
     }
 }

@@ -34,16 +34,18 @@ public class DailyEventController {
 
     @GetMapping("/{dailyId}/feeds")
     public ResponseEntity<FeedDto.ResponseList> findDailyEventFeedList(@PathVariable("dailyId") Integer dailyId,
+                                                                       @RequestParam Integer page,
                                                                        HttpServletRequest request){
-        FeedDto.ResponseList feedResList = eventService.dailyFeeds(dailyId, request);
+        FeedDto.ResponseList feedResList = eventService.dailyFeeds(dailyId, page * 20, request);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
 
     @GetMapping("/{dailyId}/users")
     public ResponseEntity<MyDto.ResponseList> findDailyEventUserList(@PathVariable("dailyId") Integer dailyId,
+                                                                     @RequestParam Integer page,
                                                                      HttpServletRequest request){
-        MyDto.ResponseList myResList = eventService.getDailyParticipants(dailyId, (int) request.getAttribute("userId"));
+        MyDto.ResponseList myResList = eventService.getDailyParticipants(dailyId, page * 50, (int) request.getAttribute("userId"));
 
         return new ResponseEntity<MyDto.ResponseList>(myResList, HttpStatus.OK);
     }
