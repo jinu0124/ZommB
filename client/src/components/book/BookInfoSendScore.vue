@@ -7,13 +7,13 @@
         @click="requestClose"
       ></i>
       <div class="txt-1">
-        "{{ title }}"에<br/>
+        "{{ bookInfo.bookName }}"에<br/>
         {{ score }}점을 주시겠습니까?
       </div>
       <div class="txt-2">
         평가 완료 시,<br/> 
         {{ myInfo.nickname }} 님의 서재에<br/>
-        {{ title }} 이 추가됩니다
+        {{ bookInfo.bookName }} 이 추가됩니다
       </div>
     </div>
     <div class="al-footer fixed-bottom d-flex justify-content-center align-items-center">
@@ -27,23 +27,29 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 
 export default {
   name: 'BookInfoSendScore',
-  props: {
-    score: Number,
-    title: String
-  },
   computed: {
-    ...mapState('user', ['myInfo'])
+    ...mapState('user', ['myInfo']),
+    ...mapState('book', ['score', 'bookInfo']),
+    bookScore () {
+      return {
+        id: this.bookInfo.id, 
+        isRead : 1,
+        rate : parseFloat(this.score),
+      }
+    }
   },
   methods: {
+    ...mapActions('book', ['addBook']),
     requestClose () {
       this.$emit('cancel')
     },
     requestOK () {
       // 서재에 추가 api 요청 파트 추가 예정
+      this.addBook(this.bookScore)
       this.$emit('ok')
     },
   }

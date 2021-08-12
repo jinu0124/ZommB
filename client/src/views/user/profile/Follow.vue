@@ -1,10 +1,7 @@
 <template>
   <div class="follow">
-    <div class="d-flex justify-content-between align-items-center">
-      <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
-      <span class="logo">{{ this.Logo }}</span>
-    </div>
-    <div class="tabs">
+    <SimpleHeader class="follow-header" :title="title" />
+    <div class="tabs fixed-top">
       <input id="follower-tab" type="radio" name="tab-item" checked />
       <label class="tab-item" for="follower-tab" @click="changePage(0)"
         >{{ follower }} 팔로워</label
@@ -24,18 +21,20 @@
 </template>
 
 <script>
+import SimpleHeader from "@/components/SimpleHeader";
 import Follower from "@/components/profile/Follower";
 import Following from "@/components/profile/Following";
 
 export default {
   name: "Follow",
   components: {
+    SimpleHeader,
     Follower,
     Following,
   },
   data() {
     return {
-      Logo: "팔로우",
+      title: "팔로우",
       selectedPage: 0,
       follower: 0,
       following: 0,
@@ -50,28 +49,14 @@ export default {
 </script>
 
 <style scoped>
-.follow {
+.follow-header {
   background: #7b60f1;
-  height: 60px;
-}
-.d-flex {
-  padding: 12px;
-}
-.back-btn {
-  font-size: 1.5rem;
   color: #fff;
-}
-.logo {
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 1rem;
-  color: #fff;
-  margin: auto;
 }
 .tabs {
-  margin: 20px auto;
+  margin: 60px auto;
   padding-bottom: 40px;
-  background-color: #ffffff;
-  width: 320px;
+  background-color: #7b60f1;
 }
 .tab-item {
   width: calc(100% / 2);
@@ -96,9 +81,10 @@ input[name="tab-item"] {
 }
 .tab-content {
   display: none;
-  padding: 40px 40px 0;
   clear: both;
+  height: 100vh;
   overflow: hidden;
+  background: #fff;
 }
 #follower-tab:checked ~ #follower-content,
 #following-tab:checked ~ #following-content {

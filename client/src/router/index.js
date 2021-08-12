@@ -21,9 +21,8 @@ import Write from '@/views/feed/write/Write'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
-import AddBookcart from '@/views/user/profile/AddBookcart'
-import AddLibrary from '@/views/user/profile/AddLibrary'
-import AddCollection from '@/views/user/profile/AddCollection'
+import AddBookcart from '@/components/profile/AddBookcart'
+import AddLibrary from '@/components/profile/AddLibrary'
 import OAuthRedirect from '@/views/user/OAuthRedirect'
 
 Vue.use(VueRouter)
@@ -126,7 +125,7 @@ const routes = [
     component: SelectBook
   },
   {
-    path: '/write',
+    path: '/write/:id',
     name: 'Write',
     component: Write
   },
@@ -152,11 +151,6 @@ const routes = [
     path: '/addLibrary',
     name: 'AddLibrary',
     component: AddLibrary
-  },
-  {
-    path: '/addCollection',
-    name: 'AddCollection',
-    component: AddCollection
   },
   {
     path: '/search',
