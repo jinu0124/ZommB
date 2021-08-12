@@ -27,18 +27,9 @@ export default {
   data() {
     return {
       title: "글쓰기",
-      
-      Logo: "책 고르기",
-      writer: "손원평",
-      comp: "창비",
     }
   },
-  methods: {
-    moveToWrite() {
-      this.$router.push("/write");
-    },
-  },
-};
+}
 </script>
 
 <style scoped>
