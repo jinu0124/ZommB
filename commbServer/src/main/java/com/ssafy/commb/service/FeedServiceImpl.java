@@ -68,6 +68,7 @@ public class FeedServiceImpl implements FeedService {
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
+        feed.setCreateAt(new Date());
         feed.setContent(feedReq.getContents().replace("#", ""));
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴

@@ -16,6 +16,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -81,18 +82,22 @@ public class UserController {
     @Value("${dynamic.front.path}")
     private String dynamicFrontPath;
 
-    @GetMapping("")
+    @GetMapping("/info")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
-    public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
-        // 관리자, 일반회원 요청 분기
+    public ResponseEntity findUserList(@RequestParam String nickname,
+                                                             HttpServletRequest request) {
 
-        UserDto.ResponseList userResList = userService.getUsers(nickname);
+        switch (userService.getUserRole((int) request.getAttribute("userId"))) {
+            case "USR":
+                return ResponseEntity.ok().body(userService.getUsers(nickname, request));
+            case "ADM":
+                UserDto.ResponseList userResList = userService.getUsers(nickname);
+                return ResponseEntity.ok().body(userResList);
+        }
 
-        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
+        return ResponseEntity.status(401).build();
     }
 
-    // 일반 회원 검색 만들기
-//    @GetMapping(value="")
 
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제

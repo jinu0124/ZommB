@@ -11,6 +11,8 @@ import java.util.Optional;
 public interface UserService {
     public UserDto.ResponseList getUsers(String nickname);
 
+    public MyDto.ResponseList getUsers(String nickname, HttpServletRequest request);
+
     public int joinUser(MyDto.Request myReq);
 
     public boolean isExistEmail(String email);
@@ -37,5 +39,10 @@ public interface UserService {
     public int getUserInfoByEmail(String email);
 
     public MyDto.Response socialLogin(int userId);
+
+    public String getUserRole(int userId);
+
+
+
 
 }

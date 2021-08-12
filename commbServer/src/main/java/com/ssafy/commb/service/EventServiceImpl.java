@@ -148,7 +148,6 @@ public class EventServiceImpl implements EventService {
     @Override
     public MyDto.ResponseList getDailyParticipants(int dailyId, int userId) {
         List<MyDto> mys = eventDao.getDailyParticipants(dailyId, userId);
-        System.out.println(mys.size());
         MyDto.ResponseList myResList = new MyDto.ResponseList();
         myResList.setData(mys);
 
