@@ -81,12 +81,10 @@ public class UserController {
     @Value("${dynamic.front.path}")
     private String dynamicFrontPath;
 
-    @Value("${cloud.profile}")
-    private String awsProfilePath;
-
     @GetMapping("")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
     public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
+        // 관리자, 일반회원 요청 분기
 
         UserDto.ResponseList userResList = userService.getUsers(nickname);
 
@@ -191,7 +189,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
         UserDto.Response userRes = userService.getUserInfo(userId, request);
-        userRes.getData().setUserFileUrl(awsProfilePath + userRes.getData().getUserFileUrl());
+
         return ResponseEntity.ok().body(userRes);
     }
 
