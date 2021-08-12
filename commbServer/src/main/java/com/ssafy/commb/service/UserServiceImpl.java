@@ -1,5 +1,6 @@
 package com.ssafy.commb.service;
 
+import com.amazonaws.services.dynamodbv2.xspec.M;
 import com.ssafy.commb.dao.UserDao;
 import com.ssafy.commb.dto.encode.Encoder;
 import com.ssafy.commb.dto.user.MyDto;
@@ -8,11 +9,12 @@ import com.ssafy.commb.dto.user.level.LevelDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.model.User;
+import com.ssafy.commb.model.follow.Follow;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
+import com.ssafy.commb.repository.FollowRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -33,6 +35,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private FollowRepository followRepository;
 
     @Autowired
     private UserDao userDao;
@@ -140,6 +145,8 @@ public class UserServiceImpl implements UserService {
 
         return myRes;
     }
+
+
 
     private final ConfirmationTokenService confirmationTokenService;
     private final ConfirmationTokenRepository confirmationTokenRepository;
@@ -301,4 +308,27 @@ public class UserServiceImpl implements UserService {
         throw new ApplicationException(HttpStatus.valueOf(401), "존재하지 않는 이메일 입니다.");
     }
 
+
+    /**
+     * 유저 권한 받기
+     * @param userId : 유저 ID
+     * @return : 권한
+     */
+    @Override
+    public String getUserRole(int userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if(!user.isPresent()) throw new ApplicationException(HttpStatus.BAD_REQUEST, "존재하지 않는 사용자");
+
+        return user.get().getRole();
+    }
+
+    @Override
+    public MyDto.ResponseList getUsers(String nickname, HttpServletRequest request) {
+       List<MyDto> my = userDao.getUsers(nickname, String.valueOf((int) request.getAttribute("userId")));
+
+        MyDto.ResponseList myResList = new MyDto.ResponseList();
+        myResList.setData(my);
+
+        return myResList;
+    }
 }

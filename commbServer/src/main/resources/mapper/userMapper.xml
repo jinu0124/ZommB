@@ -30,6 +30,17 @@
         ORDER BY cnt DESC, nickname;
     </select>
 
+    <select id="getUsers" parameterType="String" resultType="My">
+        SELECT T.name, T.nickname, T.file_url AS userFileUrl, IF(IFNULL(f.following, 0) = 0, 0, 1) AS isFollow, LENGTH(T.nickname) AS len
+        FROM
+            (SELECT *
+             FROM user u
+             WHERE nickname LIKE '${nickname}%') AS T LEFT OUTER JOIN follow f
+            ON f.follower = #{userId} AND T.id = f.following
+        ORDER BY len, isFollow DESC
+        LIMIT 100
+    </select>
+
     <resultMap type="User" id="userInformation">
         <result column="id" property="id"/>
         <result column="email" property="email"/>
