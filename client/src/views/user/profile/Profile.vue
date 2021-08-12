@@ -7,7 +7,7 @@
           class="edit-btn"
           style="float: right"
           type="button"
-          @click="moveToUpdate()"
+          @click="moveToUpdateInfo()"
         />
       </div>
     </div>
@@ -28,11 +28,12 @@
     </div>
     <div class="user-info">
       <span>
-        <b class="user-nickname">Nickname</b>
+        <b class="user-nickname">{{ myInfo.nickname }}</b>
         <img src="@/assets/image/pen/3.svg" class="badge-pen" />
         <img src="@/assets/image/bookmark/4.svg" class="badge-bookmark" />
       </span>
       <div class="follow-list" type="button" @click="moveToFollow()">
+        <!-- 보류 -->
         <span class="follow">{{ this.followerNum }} followers</span>
         <span class="follow">{{ this.followingNum }} followings</span>
       </div>
@@ -50,8 +51,10 @@
           <div>북카트</div></span
         >
       </div>
-      <button class="btn-primary1 btn-1">팔로우</button>
-      <button class="btn-grey btn-1">팔로우 취소</button>
+      <div>
+        <button class="btn-primary1 btn-1">팔로우</button>
+        <button class="btn-grey btn-1">팔로우 취소</button>
+      </div>
     </div>
     <div class="tabs">
       <input id="alticle-tab" type="radio" name="tab-item" checked />
@@ -80,7 +83,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import ProfileFeeds from "@/components/profile/ProfileFeeds";
 import ProfileLibrary from "@/components/profile/ProfileLibrary";
 import ProfileBookcart from "@/components/profile/ProfileBookcart";
@@ -103,14 +106,9 @@ export default {
     };
   },
   methods: {
+    ...mapActions("user", ["moveToFollow", "moveToUpdateInfo"]),
     changePage(val) {
       this.selectedPage = val;
-    },
-    moveToFollow() {
-      this.$router.push("/follow");
-    },
-    moveToUpdate() {
-      this.$router.push("/updateinfo");
     },
   },
   computed: {
