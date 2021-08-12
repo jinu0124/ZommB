@@ -76,7 +76,7 @@ export default {
     }
   },
   mounted () {
-    window.addEventListener('resize', this.calLine)
+    // window.addEventListener('resize', this.calLine)
     this.calLine()
   }
 }
