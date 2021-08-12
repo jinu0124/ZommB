@@ -49,10 +49,16 @@ public class Book implements Serializable {
 
 
     // 도서 키워드
-    @ManyToMany
-    @JoinTable(name="Book_Keyword", joinColumns = @JoinColumn(name="book_id")
-            , inverseJoinColumns = @JoinColumn(name="keyword_id"))
+    @ManyToMany(fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL)
+    @JoinTable(name="book_keyword", joinColumns = @JoinColumn(name="book_id", referencedColumnName = "id")
+            , inverseJoinColumns = @JoinColumn(name="keyword_id", referencedColumnName = "id"))
     private List<Keyword> keywords = new ArrayList<Keyword>();
+
+    public void addKeyword(Keyword keyword){
+        this.keywords.add(keyword);
+        keyword.getBooks().add(this);
+    }
 
     public BookDto convertBookDto(){
         return BookDto.builder()

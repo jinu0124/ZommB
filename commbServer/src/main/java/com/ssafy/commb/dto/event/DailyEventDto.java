@@ -17,9 +17,7 @@ import java.util.List;
 @Builder                                    // Builder 패턴 사용
 @Alias("DailyEvent")
 public class DailyEventDto {
-//    private Daily daily;
     private Integer dailyId;
-//    private KeywordDto keyword;
     private Integer keywordId;
     private String word;
 

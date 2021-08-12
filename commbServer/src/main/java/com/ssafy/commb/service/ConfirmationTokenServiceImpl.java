@@ -4,7 +4,6 @@ import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.ConfirmationToken;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.mail.SimpleMailMessage;
@@ -13,14 +12,10 @@ import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 @RequiredArgsConstructor
 @Service
 public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
-
-    @Autowired
-    private RedisService redisService;
 
     @Value("${dynamic.path}")
     private String dynamicPath;
@@ -42,9 +37,9 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         String query = "/checkEmailComplete" + "?key=" + emailConfirmationToken.getId() + "&url=" + url;
         mailMessage.setSubject("CommB 이메일 인증");
         mailMessage.setText("메일 인증을 위해 URL 링크를 통해 접속해주세요. \n"+ dynamicPath + "api/users" + query);
-        System.out.println("메일 발송 전");
-        emailSenderService.sendEmail(mailMessage);          // 메일 발송
-        System.out.println("메일 발송 완료");
+
+        emailSenderService.sendEmail(mailMessage);                                                                           // 메일 발송
+
         return emailConfirmationToken.getId();
     }
 
