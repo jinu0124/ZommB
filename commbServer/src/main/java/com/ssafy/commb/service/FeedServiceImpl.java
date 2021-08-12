@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
@@ -64,12 +65,17 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
+        System.out.println((Integer)request.getAttribute("userId"));
+        System.out.println(feedReq.getContents());
+        System.out.println(feedReq.getBookId());
+
+//        user.setId(10000005);
         user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
-//        feed.setCreateAt(new Date());
-        feed.setContent(feedReq.getContent().replace("#", ""));
+        feed.setCreateAt(new Date());
+        feed.setContent(feedReq.getContents().replace("#", ""));
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
         String fileUrl = S3service.uploadS3(part, "feed");
@@ -81,7 +87,7 @@ public class FeedServiceImpl implements FeedService {
         // hashTag 추출 후 DB에 저장
         int feedId = feed.getId();
         Optional<Feed> updateFeed = feedRepository.findById(feedId);
-        List<String> Tags = extractHashTag(feedReq.getContent());
+        List<String> Tags = extractHashTag(feedReq.getContents());
 
         for (int i = 0; i < Tags.size(); i++) {
             HashTag hashTag = new HashTag();
