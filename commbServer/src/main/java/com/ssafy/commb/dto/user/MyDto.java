@@ -84,7 +84,6 @@ public class MyDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @Builder
-    @JsonInclude(JsonInclude.Include.NON_NULL)
     public static class ResponseList {               // 반환
         private List<MyDto> data;
         private String retMsg;

@@ -57,15 +57,17 @@ public class BookServiceImpl implements BookService{
      * @return : 서재/북카트 내 도서 검색 결과
      */
     @Override
-    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, HttpServletRequest request) {
+    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, int page, HttpServletRequest request) {
 
         bookReq.setUserId((int) request.getAttribute("userId"));
         Map<String, Object> map = new HashMap<>();
         map.put("userId", bookReq.getUserId());
         map.put("bookName", bookReq.getBookName());
         map.put("isRead", bookReq.getIsRead());
+        map.put("page", page);
         List<BookDto> books = bookDao.getBooksByName(map);
 
+        if(books.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
         BookDto.ResponseList bookResList = new BookDto.ResponseList();
 //        GenreDto genre = new GenreDto();
 //        for(BookDto book : books){
@@ -185,9 +187,7 @@ public class BookServiceImpl implements BookService{
     public BookDto.ResponseList getTopBooks(int userId) {
         List<BookDto> books = bookDao.getTopBooks(userId);
 
-        BookDto.ResponseList bookResList = new BookDto.ResponseList();
-        bookResList.setData(books);
-        return bookResList;
+        return BookDto.ResponseList.builder().data(books).build();
     }
 
     /**

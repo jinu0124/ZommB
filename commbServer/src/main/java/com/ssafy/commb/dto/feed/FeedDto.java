@@ -67,6 +67,7 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Builder
     public static class ResponseList {          // 반환
         private List<FeedDto> data;
         private String retMsg;                  // message

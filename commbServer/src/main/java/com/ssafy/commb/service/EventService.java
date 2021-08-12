@@ -15,17 +15,17 @@ public interface EventService {
 
     public WeeklyEventDto.Response bookRecommend(String time);
 
-    public FeedDto.ResponseList weeklyFeeds(int weeklyId, HttpServletRequest request);
+    public FeedDto.ResponseList weeklyFeeds(int weeklyId, int page, HttpServletRequest request);
 
     public Integer getWeeklyParticipantsCnt(int weeklyId);
 
-    public MyDto.ResponseList getWeeklyParticipants(int weeklyId, HttpServletRequest request);
+    public MyDto.ResponseList getWeeklyParticipants(int weeklyId, int page, HttpServletRequest request);
 
     public DailyEventDto.Response keywordRecommend(String today);
 
-    public FeedDto.ResponseList dailyFeeds(int keywordId, HttpServletRequest request);
+    public FeedDto.ResponseList dailyFeeds(int keywordId, int page, HttpServletRequest request);
 
-    public MyDto.ResponseList getDailyParticipants(int dailyId, int userId);
+    public MyDto.ResponseList getDailyParticipants(int dailyId, int page, int userId);
 
     public Integer getDailyParticipantsCnt(int dailyId);
 

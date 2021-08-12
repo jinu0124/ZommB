@@ -58,11 +58,13 @@ public class FeedController {
     // 게시물 리스트 검색
     @GetMapping("")
     @ApiOperation(value = "피드 리스트 검색", response = FeedDto.Response.class)
-    public ResponseEntity<FeedDto.ResponseList> getFeeds(@RequestParam String searchWord, HttpServletRequest request) {
+    public ResponseEntity<FeedDto.ResponseList> getFeeds(@RequestParam String searchWord,
+                                                         @RequestParam Integer page,
+                                                         HttpServletRequest request) {
 
         int userId = (Integer) request.getAttribute("userId");
 
-        FeedDto.ResponseList feedResList = feedService.getFeeds(searchWord, userId);
+        FeedDto.ResponseList feedResList = feedService.getFeeds(searchWord, page * 20, userId);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
@@ -138,10 +140,10 @@ public class FeedController {
     }
 
     // /feeds/5/feed-likes
-    // 게시물 좋아요 목록
+    // 게시물 좋아요 유저 목록
     @GetMapping("/{feedId}/feed-likes")
-    @ApiOperation(value = "피드 좋아요 리스트", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, HttpServletRequest request) {
+    @ApiOperation(value = "피드 좋아요 유저 리스트", response = MyDto.Response.class)
+    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, int page, HttpServletRequest request) {
 
         int userId = (Integer) request.getAttribute("userId");
 
@@ -220,11 +222,13 @@ public class FeedController {
     // 내가 팔로잉하는 사람들의 피드 목록
     @GetMapping("/{userId}/following/feeds")
     @ApiOperation(value = "내가 팔로잉 하는 사람들의 피드 리스트", response = FeedDto.Response.class)
-    public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId, HttpServletRequest request) {
+    public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId,
+                                                                  @RequestParam Integer page,
+                                                                  HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
 
-        FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(myUserId);
+        FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(page * 20, myUserId);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
