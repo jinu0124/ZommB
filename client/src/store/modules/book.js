@@ -1,4 +1,4 @@
-// import router from '@/router'
+import router from '@/router'
 import bookApi from '@/api/book'
 
 const state = {
@@ -11,10 +11,22 @@ const actions = {
   async getBookInfo({ commit }, bookId) {
     await bookApi.getBookDetail(bookId)
       .then((res) => {
-        // console.log(res)
         commit('SET_BOOK_INFO', res.data.data)
       })
+      .catch((err) => {
+        if (err.response.status === 404) {
+          router.push({ name: 'PageNotFound' })
+        }
+      })
   },
+  async addBook({ rootState, dispatch }, bookData) {
+    const userId = rootState.user.myInfo.id
+    await bookApi.addBooktoProfile(userId, bookData)
+      .then((res) => {
+        console.log(res)
+        dispatch('getBookInfo', bookData.id)
+      })
+  }
 }
 
 const mutations = {

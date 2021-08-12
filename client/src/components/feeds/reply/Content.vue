@@ -20,7 +20,10 @@
       <p class="content-writer">{{ nickname }}</p>
       <p class="article">{{ content }}</p>
       <div>
-        <span v-for="(tag, idx) in tags" :key="idx" class="content-tag rounded-pill me-1"
+        <span
+          v-for="(tag, idx) in tags"
+          :key="idx"
+          class="content-tag rounded-pill me-1"
           >#{{ tag }}</span
         >
       </div>
@@ -37,7 +40,8 @@ export default {
   data() {
     return {
       nickname: "Nickname",
-      content: "밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.",
+      content:
+        "밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.",
       tags: ["해시태그", "테스트", "입니다."],
       duration: "3",
     };
@@ -52,8 +56,6 @@ export default {
 .content-part {
   margin: 0 auto;
   display: flex;
-  align-items: flex-start;
-  width: 320px;
 }
 .user-profile,
 .default-user-image {
@@ -64,12 +66,8 @@ export default {
   border-radius: 203px;
 }
 .content {
-  width: 100%;
   margin-right: 10px;
-  display: flex;
   flex-direction: column;
-  text-align: left;
-  align-items: flex-start;
 }
 .content-writer {
   width: 82px;
@@ -78,7 +76,6 @@ export default {
   font-family: noto-sans-kr-10-bold;
 }
 .article {
-  max-width: 300px;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
   font-family: noto-sans-kr-10-regular;
