@@ -10,9 +10,16 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * @ Global Exception Handler
+ */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+        /**
+         * @param e : 던져오는 Exception   Map<HttpStatus, Object, String>
+         * @return : ResponseEntity
+         */
     @ExceptionHandler(value = ApplicationException.class)
     public ResponseEntity handleApplicationException(ApplicationException e){
         e.printStackTrace();

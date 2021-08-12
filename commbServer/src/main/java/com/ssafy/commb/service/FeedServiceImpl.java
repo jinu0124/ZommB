@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import javax.servlet.ServletException;
@@ -48,9 +47,6 @@ public class FeedServiceImpl implements FeedService {
     private DailyEventRepository dailyEventRepository;
 
     @Autowired
-    private DailyEventParticipateRepository dailyEventParticipateRepository;
-
-    @Autowired
     private FeedDao feedDao;
 
     @Autowired
@@ -65,17 +61,12 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
-        System.out.println((Integer)request.getAttribute("userId"));
-        System.out.println(feedReq.getContents());
-        System.out.println(feedReq.getBookId());
-
-//        user.setId(10000005);
         user.setId((Integer) request.getAttribute("userId"));
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
         feed.setCreateAt(new Date());
-        feed.setContent(feedReq.getContents().replace("#", ""));
+        feed.setContent(feedReq.getContents());
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
         String fileUrl = S3service.uploadS3(part, "feed");
@@ -85,49 +76,24 @@ public class FeedServiceImpl implements FeedService {
 
 
         // hashTag 추출 후 DB에 저장
-        int feedId = feed.getId();
-        Optional<Feed> updateFeed = feedRepository.findById(feedId);
         List<String> Tags = extractHashTag(feedReq.getContents());
 
         for (int i = 0; i < Tags.size(); i++) {
             HashTag hashTag = new HashTag();
 
             hashTag.setTag(Tags.get(i));
-            hashTag.setFeed(updateFeed.get());
+            hashTag.setFeed(feed);
 
             hashTagRepository.save(hashTag);
         }
-
-
-        // DailyEvent 검색
-        DailyEvent dailyEvent = searchDailyEvent();
-        String keyword = dailyEvent.getKeyword().getKeyword();
-
-        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
-        for (HashTag hashTag : hashTags) {
-
-            if (hashTag.getTag().equals(keyword)) {
-
-                Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-                if (dailyEventParticipate.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
-
-                // DailyEventParticipate
-                DailyEventParticipate participant = new DailyEventParticipate();
-                participant.setCreateAt(feed.getCreateAt());
-                participant.setDailyEvent(dailyEvent);
-                participant.setUser(user);
-                dailyEventParticipateRepository.save(participant);
-
-                // 회원 테이블의 bookmark, pencil +1씩
-                user.setBookmark(user.getBookmark() + 1);
-                user.setPencil(user.getPencil() + 1);
-                userRepository.save(user);
-            }
-
-        }
-
     }
 
+    /**
+     * 특정 유저의 피드 리스트 가져오기
+     * @param userId : target 유저 ID
+     * @param request : 자신 유저 ID
+     * @return : 피드 리스트
+     */
     @Override
     public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request) {
 
@@ -144,6 +110,11 @@ public class FeedServiceImpl implements FeedService {
         return feedResList;
     }
 
+    /**
+     * 특정 유저의 피드 개수
+     * @param userId : 유저 ID
+     * @return : 개수 반환
+     */
     @Override
     public int getUserFeedCnt(int userId) {
         return feedDao.userFeedCnt(userId);
@@ -153,18 +124,14 @@ public class FeedServiceImpl implements FeedService {
         Optional<Feed> feed = feedRepository.findById(feedId);
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
 
-        // DailyEvent 검색해서 참여했을 시 삭제
-        deleteIfParticipateDailyEvent(feed);
-        DailyEvent dailyEvent = searchDailyEvent();
-        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
-
         // 변경 전 content로 등록한 hashTag 삭제
+        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
         for (HashTag hashTag : hashTags) {
             hashTagRepository.delete(hashTag);
         }
 
         // 변경된 content로 feed 업데이트
-        feed.get().setContent(content.replace("#", ""));
+        feed.get().setContent(content);
         feedRepository.save(feed.get());
 
         List<String> Tags = extractHashTag(content);
@@ -177,35 +144,6 @@ public class FeedServiceImpl implements FeedService {
 
             hashTagRepository.save(hashTag);
         }
-
-        // 다시 DailyEvent 검사
-        String keyword = dailyEvent.getKeyword().getKeyword();
-        User user = feed.get().getUser();
-
-        for (HashTag hashTag : hashTags) {
-
-            if (hashTag.getTag().equals(keyword)) {
-
-                Optional<DailyEventParticipate> participate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-                if (participate.isPresent())
-                    throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
-
-                // DailyEventParticipate
-                DailyEventParticipate participant = new DailyEventParticipate();
-                participant.setCreateAt(feed.get().getCreateAt());
-                participant.setDailyEvent(dailyEvent);
-                participant.setUser(user);
-                dailyEventParticipateRepository.save(participant);
-
-                // 회원 테이블의 bookmark, pencil +1씩
-                user.setBookmark(user.getBookmark() + 1);
-                user.setPencil(user.getPencil() + 1);
-                userRepository.save(user);
-            }
-
-        }
-
-
     }
 
     public int getUserId(int feedId) {
@@ -219,9 +157,6 @@ public class FeedServiceImpl implements FeedService {
 
         String url = feed.get().getFileUrl();
         S3service.deleteS3(url, "feed");
-
-        // DailyEvent 검색해서 참여했을 시 삭제
-        deleteIfParticipateDailyEvent(feed);
 
         feedRepository.deleteById(feedId);
     }
@@ -244,12 +179,12 @@ public class FeedServiceImpl implements FeedService {
     public FeedDto.ResponseList getFollowingFeeds(int userId) {
 
         List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
-        System.out.println("fewfwegwewge");
+
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), userId));
         }
-        System.out.println(feeds.get(0).getComments());
+
         FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
         feedResList.setData(feeds);
 
@@ -285,19 +220,23 @@ public class FeedServiceImpl implements FeedService {
 
         return myResList;
     }
-    // 해시태그로 검색
+
+    /**
+     * 해시태그 피드 검색(FTS), 유사도 기준 정렬
+     * @param searchWord : 검색 단어(들), spacebar 기준 검색어 파싱
+     * @param userId : 유저 ID
+     * @return : 검색 피드들 반환
+     */
     public FeedDto.ResponseList getFeeds(String searchWord, int userId){
-        String dynamicQuery = "";
+        StringBuilder dynamicQuery = new StringBuilder();
         String[] words = searchWord.split(" ");
         int countOfWords = words.length;
         if(countOfWords > 0){
-            for(int i=0; i<countOfWords - 1; ++i) dynamicQuery += "tag LIKE '" + words[i] + "%' OR ";
-            dynamicQuery += "tag LIKE '" + words[countOfWords-1] + "%'";
+            for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
         }
-        else dynamicQuery += "tag LIKE ''";
-        System.out.println(dynamicQuery);
+        else dynamicQuery.append("\"\"");
 
-        List<FeedDto> feeds = feedDao.getFeeds(dynamicQuery, String.valueOf(userId), String.valueOf(countOfWords));
+        List<FeedDto> feeds = feedDao.getFeeds(dynamicQuery.toString(), String.valueOf(userId), String.valueOf(countOfWords));
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
@@ -334,31 +273,5 @@ public class FeedServiceImpl implements FeedService {
 
         return hashTag;
     }
-
-    public DailyEvent searchDailyEvent() {
-        LocalDateTime startDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-        LocalDateTime endDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
-        Date startDate = java.sql.Timestamp.valueOf(startDateTime);
-        Date endDate = java.sql.Timestamp.valueOf(endDateTime);
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(startDate, endDate);
-        return dailyEvent.get();
-    }
-
-    public void deleteIfParticipateDailyEvent(Optional<Feed> feed){
-        User user = feed.get().getUser();
-        DailyEvent dailyEvent = searchDailyEvent();
-
-        // DailyEvent 참여했을 시 삭제
-        Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-        if (dailyEventParticipate.isPresent()) {
-            dailyEventParticipateRepository.delete(dailyEventParticipate.get());
-
-            // 회원 테이블의 bookmark, pencil -1씩
-            user.setBookmark(user.getBookmark() - 1);
-            user.setPencil(user.getPencil() - 1);
-            userRepository.save(user);
-        }
-    }
-
 
 }

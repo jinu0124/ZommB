@@ -70,7 +70,7 @@ public class FeedController {
     // 게시물 작성
     @PostMapping("")
     @ApiOperation(value = "피드 작성")
-    // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 → formData 형식에서는 사용 X → swagger에서 MultipartHttpServletRequest 사용 X
+    // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 → formData 형식에서는 사용 X , swagger에서 MultipartHttpServletRequest 사용 X
     public ResponseEntity uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
         feedService.uploadFeed(feedReq, request);
