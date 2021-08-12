@@ -33,8 +33,14 @@ export default {
   name: 'BookInfoSendScore',
   computed: {
     ...mapState('user', ['myInfo']),
-    ...mapState('book', ['score', 'bookInfo']),
+    ...mapState('book', ['score', 'bookInfo', 'myBookshelves']),
     bookScore () {
+      if (this.myBookshelves) {
+        return {
+          id: this.bookInfo.id, 
+          rate : parseFloat(this.score)
+        }
+      }
       return {
         id: this.bookInfo.id, 
         isRead : 1,
@@ -43,13 +49,16 @@ export default {
     }
   },
   methods: {
-    ...mapActions('book', ['addBook']),
+    ...mapActions('book', ['addBook', 'moveBook']),
     requestClose () {
       this.$emit('cancel')
     },
     requestOK () {
-      // 서재에 추가 api 요청 파트 추가 예정
-      this.addBook(this.bookScore)
+      if (this.myBookshelves) {
+        this.moveBook(this.bookScore)
+      } else {
+        this.addBook(this.bookScore)
+      }
       this.$emit('ok')
     },
   }
