@@ -8,4 +8,6 @@ import java.util.List;
 @Mapper
 public interface KeywordDao {
     public List<KeywordDto> getKeywordRecommend(int userId);
+
+    public int getAndSetRandomKeyword();
 }

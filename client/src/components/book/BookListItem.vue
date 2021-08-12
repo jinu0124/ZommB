@@ -9,8 +9,31 @@
         </div>
       </div>
       <span class="book-btn">
-        <button class="btn-5 btn-yellow feed-write-btn" @click="moveToWrite()">피드 작성</button>
+        <button class="btn-5 btn-yellow feed-write-btn" @click="moveToWrite()">
+          피드 작성
+        </button>
         <button class="btn-5 btn-grey delete-btn">삭제</button>
+        <button class="btn-5 btn-yellow add-library-btn" @click="AddLibrary()">
+          완독
+        </button>
+        <button
+          class="btn-5 btn-yellow add-library-btn"
+          @click="moveToAddLibrary()"
+        >
+          서재에 추가
+        </button>
+        <button
+          class="btn-5 btn-yellow add-bookcart-btn"
+          @click="moveToAddBookcart()"
+        >
+          북카트 추가
+        </button>
+        <button
+          class="btn-5 btn-primary1 add-collection-btn"
+          @click="addCollection()"
+        >
+          콜렉션 추가
+        </button>
       </span>
     </div>
   </div>
@@ -30,6 +53,13 @@ export default {
     moveToWrite() {
       this.$router.push("/write");
     },
+    moveToAddLibrary() {
+      this.$router.push("/addLibrary");
+    },
+    moveToAddBookcart() {
+      this.$router.push("/addBookcart");
+    },
+    AddLibrary() {},
   },
 };
 </script>
@@ -38,25 +68,27 @@ export default {
 <style scoped>
 .book-list-item {
   display: flex;
-  margin: auto 10px;
-  width: 310px;
+  justify-content: center;
 }
 .book-btn {
   margin: auto 0px;
-  width: 30px;
 }
+.add-collection-btn,
+.add-bookcart-btn,
+.add-library-btn,
 .feed-write-btn,
 .delete-btn {
-  width: 75px;
-  height: 30px;
+  font-size: small;
+  width: 80px;
+  height: 25px;
   margin: 2px 0px;
 }
 .book-info {
-  width: 100px;
   margin: auto 10px;
 }
 .title-writer-comp {
   width: 100px;
+  font-size: 13px;
 }
 .title,
 .writer-comp {
@@ -64,8 +96,8 @@ export default {
   margin: 0 5px;
 }
 .book {
-  height: 150px;
-  width: 100px;
+  height: 100px;
+  width: 70px;
   border-radius: 10px;
   box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
 }
@@ -73,8 +105,8 @@ export default {
   display: flex;
   margin: auto 0;
   background: #f1f1f1;
-  height: 120px;
-  width: 200px;
+  height: 80px;
+  width: 210px;
   border-radius: 0 10px 10px 0;
 }
 </style>

@@ -18,24 +18,28 @@ public class SecurityServiceImpl implements SecurityService{
     private RedisServiceImpl redisService;
 
     @Value("${security.expire.accesstoken}")
-    private Long ACCESS_TOKEN_EXP_TIME;     // test : 1분             // 30분 기준
+    private Long ACCESS_TOKEN_EXP_TIME;
 
     @Value("${security.expire.refreshtoken}")
-    private Long REFRESH_TOKEN_EXP_TIME;     // test : 5분          // 7일 기준
+    private Long REFRESH_TOKEN_EXP_TIME;
 
     @Value("${security.secretkey}")
-    private String SECRET_KEY;   // 암/복호 키(회원 비밀번호로 사용 보통)
+    private String SECRET_KEY;
 
-    // 로그인 후 토큰 발행
+    /**
+     * 로그인 후 토큰 발행
+     * @param userId : 유저 ID
+     * @return : Access, Refresh Token
+     */
     @Transactional
     public Map<String, Object> createToken(int userId){
-        String accessToken = createAccessToken(String.valueOf(userId), ACCESS_TOKEN_EXP_TIME, SECRET_KEY);  // 클라이언트에 제공
-        String refreshToken = createRefreshToken(REFRESH_TOKEN_EXP_TIME, accessToken);                      // Redis에 저장 & 클라이언트에 제공
+        String accessToken = createAccessToken(String.valueOf(userId), ACCESS_TOKEN_EXP_TIME, SECRET_KEY);
+        String refreshToken = createRefreshToken(REFRESH_TOKEN_EXP_TIME, accessToken);
 
         List<String> userIdAccToken = new ArrayList<>();
         userIdAccToken.add(String.valueOf(userId));
         userIdAccToken.add(accessToken);
-        save(refreshToken, userIdAccToken, REFRESH_TOKEN_EXP_TIME);    // RefreshToken DB에 저장
+        save(refreshToken, userIdAccToken, REFRESH_TOKEN_EXP_TIME);                                                         // RefreshToken DB에 저장
 
         Map<String, Object> map = new HashMap<>();
         map.put("acToken", accessToken);
@@ -44,7 +48,13 @@ public class SecurityServiceImpl implements SecurityService{
         return map;
     }
 
-    // AccessToken 발행
+    /**
+     * Access Token 발행
+     * @param userId : 유저 ID
+     * @param expTime : 만료시간
+     * @param secretKey : 암호화 Key
+     * @return : 발행 토큰
+     */
     public String createAccessToken(String userId, Long expTime, String secretKey) {
         if (expTime < 0L) throw new RuntimeException("만료시간이 0보다 커야합니다.");
 
@@ -53,13 +63,18 @@ public class SecurityServiceImpl implements SecurityService{
         Date expireTime = new Date(System.currentTimeMillis() + expTime);
         // 추가로 클레임, 헤더 등 다양한 정보를 더 넣을 수 있음
         return Jwts.builder()
-                .setSubject(userId)                          // userId & 발행일자를 담아서 암호화
+                .setSubject(userId)
                 .setIssuedAt(new Date())
-                .signWith(signingKey, SignatureAlgorithm.HS256)   // key, key 암호화 알고리즘 사용
-                .setExpiration(expireTime).compact();       // 만료 시점 지정 & compact to String
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .setExpiration(expireTime).compact();
     }
 
-    // RefreshToken 발행
+    /**
+     * Refresh Token 발행
+     * @param expTime : 만료시간
+     * @param secretKey : 암호화 Key
+     * @return : 발행 토큰
+     */
     public String createRefreshToken(Long expTime, String secretKey) {
         if (expTime < 0L) throw new RuntimeException("만료시간이 0보다 커야합니다.");
 
@@ -67,15 +82,18 @@ public class SecurityServiceImpl implements SecurityService{
 
         Date expireTime = new Date(System.currentTimeMillis() + expTime);
 
-        // 추가로 클레임, 헤더 등 다양한 정보를 더 넣을 수 있음
         return Jwts.builder()
                 .setSubject("valid")
-                .setIssuedAt(new Date())                     // 발행일자를 담아서 암호화
-                .signWith(signingKey, SignatureAlgorithm.HS256)   // key, key 암호화 알고리즘 사용
-                .setExpiration(expireTime).compact();       // 만료 시점 지정 & compact to String
+                .setIssuedAt(new Date())
+                .signWith(signingKey, SignatureAlgorithm.HS256)
+                .setExpiration(expireTime).compact();
     }
 
-    // SignKey 생성
+    /**
+     * Signing Key 생성
+     * @param secretKey : 암호화 키
+     * @return : Signing Secret Key
+     */
     public Key makeKey(String secretKey){
         SignatureAlgorithm signatureAlgorithm = SignatureAlgorithm.HS256;       // HS256 암호화 알고리즘 사용
         byte[] securityByte = DatatypeConverter.parseBase64Binary(secretKey);   // String 형태의 키를 Byte 형태로 인코딩
@@ -83,7 +101,7 @@ public class SecurityServiceImpl implements SecurityService{
         return new SecretKeySpec(securityByte, signatureAlgorithm.getJcaName());   // 암호화된 Key 생성
     }
 
-    // Redis save
+    // Redis
     public void save(String token, List<String> userIdAccToken, Long expTime){
         redisService.setStringValue(token, userIdAccToken, expTime);
     }
@@ -92,7 +110,6 @@ public class SecurityServiceImpl implements SecurityService{
         return redisService.getStringValue(token);
     }
 
-    // Redis select
     public List<Object> find(String token){
         List<Object> userId = redisService.getListValue(token);
         return userId;
@@ -102,7 +119,12 @@ public class SecurityServiceImpl implements SecurityService{
         redisService.del(token);
     }
 
-    // 토큰 Validation & Get Subject
+    /**
+     * 토큰 검증 & Subject 반환
+     * @param token : 토큰
+     * @param secretKey : 암/복호화 키 (대칭키)
+     * @return : Subject
+     */
     public String decodeToken(String token, String secretKey){
         // 클레임 : Payload 에 들어있는 값
         try{
@@ -122,24 +144,26 @@ public class SecurityServiceImpl implements SecurityService{
         }
     }
 
-    // AccessToken 의 무제한 발행을 막아야한다!  // 1가지 해결 필요 : 유효하지만 만료된 Access토큰과 유효한 RefreshToken을 보냈을때 1번만 발행해야하는데 계속 발행 가능
-    // RefreshToken 받아서 AccessToken 재발행
+    /**
+     * Refresh Token 검증 및 새 Access Token 반환 -> Access Token 을 함께 받아서 만료되었다면 Refresh Token 유효성을 검증한 후 AccessToken 반환
+     * @param acToken : Access Token
+     * @param rfToken : Refresh Token
+     * @return : Renew Access Token
+     */
     public Map<String, Object> validRefreshToken(String acToken, String rfToken){
         Map<String, Object> map = new HashMap<>();
 
-        String acUserId = decodeToken(acToken, SECRET_KEY);    // AccessToken을 통해 userId를 추출한다. -> 만료라면 "expire" 반환
-        List<Object> userIdAccToken = find(rfToken);           // redis로 부터 key(refreshToken)를 통해 userId & First AccessToken(rfToken 복호화에 사용)을 가져온다.
+        String acUserId = decodeToken(acToken, SECRET_KEY);
+        List<Object> userIdAccToken = find(rfToken);
 
         if(userIdAccToken.size() < 2) {
             map.put("msg", "RefreshToken has been expired");
             map.put("status", 401);
         }
-        // RefreshToken 인증은 성공했지만 AccessToken이 만료되지 않은 경우 = AccessToken이 살아있는데 재발급 받으려는 경우 : 발급 불가 반환
         else if(acUserId.equals(userIdAccToken.get(0))) {
             map.put("msg", "AccessToken Already Valid.");
-            map.put("status", 403);    // 발급 불가
+            map.put("status", 403);
         }
-        // RefreshToken 유효 & AccessToken 유효한 값이지만 만료 => 재발급
         else if(acUserId.equals("expire")) {
             map.put("token", createAccessToken(String.valueOf(userIdAccToken.get(0)), ACCESS_TOKEN_EXP_TIME, SECRET_KEY));
             map.put("status", 200);
@@ -148,7 +172,7 @@ public class SecurityServiceImpl implements SecurityService{
         }
         else {
             map.put("msg", "AccessToken Not Valid.");
-            map.put("status", 403);    // 발급 불가
+            map.put("status", 403);
         }
 
         return map;

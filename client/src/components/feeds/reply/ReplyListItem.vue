@@ -1,7 +1,8 @@
 <template>
   <div class="reply-list-item">
-    <p class="replier">{{ this.replier }}</p>
+    <!-- user<img> -->
     <div class="reply-content">
+      <p class="replier">{{ this.replier }}</p>
       <p class="reply">{{ shortenContent }}</p>
       <div class="reply-like-num">좋아요 {{ this.replyLikeNum }}개</div>
     </div>
@@ -70,28 +71,22 @@ export default {
   display: flex;
 }
 .reply-content {
-  width: 100%;
   flex-direction: column;
   align-items: flex-start;
   font-family: "Noto Sans KR";
-  margin-left: 10px;
+  margin: 0px 5px;
 }
 .replier {
-  width: 80px;
   font-family: noto-sans-kr-10-bold;
 }
 .reply-like-num {
-  display: flex;
   font-family: "Noto Sans KR";
   font-size: 9px;
   color: rgba(164, 164, 164, 1);
 }
 .reply {
-  display: flex;
+  background: #fff;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
-}
-.btn-like {
-  align-self: center;
 }
 </style>

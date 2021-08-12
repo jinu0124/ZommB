@@ -71,7 +71,7 @@ export default {
     text-align: justify;
   }
   .badge {
-    font-size: 10px;
+    font-size: 11px;
     color: #585858;
     background: #FFDC7C;
   }

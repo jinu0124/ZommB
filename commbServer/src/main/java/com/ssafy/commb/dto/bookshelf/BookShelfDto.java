@@ -19,6 +19,15 @@ public class BookShelfDto {
 
     private List<BookDto> books;
 
+    private Integer bookId;
+
+    private Integer userId;
+
+    private Integer isRead;
+
+    private Double rate;
+
+
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
@@ -32,6 +41,7 @@ public class BookShelfDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Builder
     public static class Response{               // 반환
         private BookShelfDto data;
         private String retMsg;

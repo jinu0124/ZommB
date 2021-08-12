@@ -1,7 +1,11 @@
-// import axios from 'axios'
-
-// const SERVER_URL = 'http://localhost:8080/'
+import _axios from "./Default"
 
 export default {
-
+  searchBookTitle(searchData) {
+    return _axios({
+      url: 'books',
+      method: 'get',
+      params: {searchType: 'title', searchWord: searchData}
+    })
+  },
 }

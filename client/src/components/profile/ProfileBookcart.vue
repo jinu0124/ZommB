@@ -1,8 +1,14 @@
 <template>
-  <div>
+  <div class="bookcart">
     <div class="bookcart-title">
-      <b>{{ this.nickname }}님의 최대 관심 장르는 <br />{{ this.genre }} 입니다!! </b>
-      <button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">읽을책 추가</button>
+      <span
+        ><b>{{ this.nickname }}'s BookCart</b></span
+      >
+      <span
+        ><button class="addbtn btn-5 btn-primary1" @click="moveToAdd()">
+          북카트 추가
+        </button></span
+      >
     </div>
     <input
       class="book-search-input"
@@ -24,7 +30,6 @@ export default {
   data() {
     return {
       nickname: "Nickname",
-      genre: "소설",
     };
   },
   methods: {
@@ -37,25 +42,25 @@ export default {
 
 <style src="@/assets/style/button.css"></style>
 <style scoped>
+.bookcart {
+  background: #fff;
+}
 .bookcart-title {
-  display: flex;
-  align-items: center;
-  width: 320px;
+  margin: 5px 0;
 }
 .book-search-input {
-  margin: 5px;
-  width: 300px;
+  width: 280px;
   height: 35px;
   background-color: #f1f1f1;
   border: none;
   outline: none;
-  padding-left: 20px;
+  padding-left: 10px;
   font-size: 0.875rem;
   border-radius: 20px;
 }
 .addbtn {
-  width: 85px;
-  height: 30px;
+  width: 90px;
+  height: 25px;
   margin-left: 5px;
 }
 </style>

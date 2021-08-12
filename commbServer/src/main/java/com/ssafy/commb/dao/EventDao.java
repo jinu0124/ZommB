@@ -12,6 +12,7 @@ import java.util.List;
 @Mapper
 public interface EventDao {
     public MyEventDto getBookmark(int userId);
+
     public List<WeeklyEventDto> getWeekly(int userId, int year, int month);
 
 

@@ -1,11 +1,13 @@
 package com.ssafy.commb.exception;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.http.HttpStatus;
 
+/**
+ * @ ApplicationException(Custom Exception) 상속 RuntimeException
+ */
 @Getter
 @Setter
 @NoArgsConstructor
