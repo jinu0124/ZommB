@@ -15,10 +15,11 @@ export default {
       method: 'get'
     })
   },
-  getWeeklyFeeds(data) {
+  getWeeklyFeeds(data, page) {
     return _axios({
       url: `/weekly-events/${data}/feeds`,
-      method: 'get'
+      method: 'get',
+      params: {page: page}
     })
   },
   // Daily

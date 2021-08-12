@@ -23,8 +23,10 @@
             :class="[!book.weeklyParticipate ? 'mono' : '', book.week > weeklyTotal ? 'blur' : '', 'book-cover rounded']" 
             :src="book.bookFileUrl"
             :alt="'week-' + book.week + '-Book'"
+            type="button"
+            @click="$router.push({ name: 'BookInfo', params: {id: book.id} })"
           >
-          <img v-if="book.week > weeklyTotal" class="private" src="@/assets/image/test/private.svg" alt="">
+          <img v-if="book.week > weeklyTotal" class="private" src="@/assets/image/camel/camelQuestionMark.svg" alt="">
           <i 
             :id="'star' + book.week" 
             :class="[book.weeklyParticipate ? 'yellow' : '', 'week fas fa-star mt-2']"></i>
@@ -93,7 +95,7 @@ export default {
     position: relative;
   }
   .my-weekly-content .book-cover {
-    width: 40px;
+    width: 45px;
     height: auto;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
   }
@@ -116,12 +118,13 @@ export default {
   .blur {
     opacity: 80%;
     filter: brightness(0);
+    pointer-events: none;
   }
   .private {
     position: absolute;
-    width: 25px;
+    width: 30px;
     height: auto;
-    top: 13px;
+    top: 8px;
   }
   .yellow {
     color: #FFDC7C;
