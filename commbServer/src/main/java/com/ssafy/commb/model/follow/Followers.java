@@ -16,7 +16,7 @@ public class Followers {
             mappedBy = "following",
             fetch = FetchType.LAZY,
             cascade = CascadeType.PERSIST,
-            orphanRemoval = true
+            orphanRemoval = false
     )
     private List<Follow> followers;
 

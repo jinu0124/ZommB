@@ -12,16 +12,18 @@ import java.util.Date;
 @Setter
 public class DailyEventParticipate {
     @EmbeddedId
-    private DailyEventParticipateId id;
+    private DailyEventParticipateId id = new DailyEventParticipateId(); // null 값 방지
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date createAt;
 
-    @ManyToOne
-    @JoinColumn(name="daily_id", insertable=false, updatable=false)
+    @MapsId("dailyId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="daily_id", insertable = false, updatable = false)
     private DailyEvent dailyEvent;
 
-    @ManyToOne
-    @JoinColumn(name="user_id", insertable=false, updatable=false)
+    @MapsId("userId")
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="user_id", insertable = false, updatable = false)
     private User user;
 }
