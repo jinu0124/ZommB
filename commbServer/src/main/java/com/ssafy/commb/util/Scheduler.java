@@ -23,14 +23,13 @@ public class Scheduler {
     @Scheduled(cron = "1 0 0 * * *")
     public void cronJobDailyUpdate() {
 
-        keywordService.updateKeywordEvent();                                                                                  // Query 로 로직 수행
+        keywordService.updateKeywordEvent();
     }
 
     @Scheduled(cron = "1 0 0 1,8,15,22 * *")
     public void cronJobWeeklyUpdate(){
 
-        bookService.updateBookEvent();                                                                                        // Query로 뽑아서 Application, JPA로 로직 수행
+        bookService.updateBookEvent();
     }
-
 
 }

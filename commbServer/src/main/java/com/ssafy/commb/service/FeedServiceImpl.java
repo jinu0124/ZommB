@@ -59,7 +59,7 @@ public class FeedServiceImpl implements FeedService {
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
-        feed.setContent(feedReq.getContent().replace("#", ""));
+        feed.setContent(feedReq.getContents().replace("#", ""));
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
         String fileUrl = S3service.uploadS3(part, "feed");
@@ -71,7 +71,7 @@ public class FeedServiceImpl implements FeedService {
         // hashTag 추출 후 DB에 저장
         int feedId = feed.getId();
         Optional<Feed> updateFeed = feedRepository.findById(feedId);
-        List<String> Tags = extractHashTag(feedReq.getContent());
+        List<String> Tags = extractHashTag(feedReq.getContents());
 
         for (int i = 0; i < Tags.size(); i++) {
             HashTag hashTag = new HashTag();

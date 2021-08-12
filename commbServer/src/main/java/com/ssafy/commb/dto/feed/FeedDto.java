@@ -40,15 +40,16 @@ public class FeedDto {
         private Integer bookId;
         private String keywordId;
 
-        private String content;
+        private String contents;
     }
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class RegisterRequest {                // 요청
         private Integer bookId;
-        private String content;
+        private String contents;
     }
 
     @Getter
