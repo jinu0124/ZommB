@@ -7,7 +7,9 @@ import com.ssafy.commb.dto.event.MyEventDto;
 import com.ssafy.commb.dto.event.WeeklyEventDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.exception.ApplicationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -71,13 +73,14 @@ public class EventServiceImpl implements EventService {
      * @return : 피드 리스트
      */
     @Override
-    public FeedDto.ResponseList weeklyFeeds(int weeklyId, HttpServletRequest request) {
-        List<FeedDto> feeds = eventDao.weeklyFeeds(weeklyId, (int) request.getAttribute("userId"));
+    public FeedDto.ResponseList weeklyFeeds(int weeklyId, int page, HttpServletRequest request) {
+        List<FeedDto> feeds = eventDao.weeklyFeeds(weeklyId, page, (int) request.getAttribute("userId"));
 
-        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
-        feedResList.setData(getHashAndComments(feeds, (int) request.getAttribute("userId")));
+        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
-        return feedResList;
+        return FeedDto.ResponseList.builder()
+                .data(getHashAndComments(feeds, (int) request.getAttribute("userId")))
+                .build();
     }
 
     /**
@@ -87,8 +90,8 @@ public class EventServiceImpl implements EventService {
      */
     @Override
     public Integer getWeeklyParticipantsCnt(int weeklyId) {
-        Integer participantsCnt = eventDao.getWeeklyParticipantsCnt(weeklyId);
-        return participantsCnt;
+
+        return eventDao.getWeeklyParticipantsCnt(weeklyId);
     }
 
     /**
@@ -98,13 +101,12 @@ public class EventServiceImpl implements EventService {
      * @return : 참여자 목록
      */
     @Override
-    public MyDto.ResponseList getWeeklyParticipants(int weeklyId, HttpServletRequest request) {
-        List<MyDto> mys = eventDao.getWeeklyParticipants(weeklyId, (int) request.getAttribute("userId"));
+    public MyDto.ResponseList getWeeklyParticipants(int weeklyId, int page, HttpServletRequest request) {
+        List<MyDto> mys = eventDao.getWeeklyParticipants(weeklyId, page, (int) request.getAttribute("userId"));
 
-        MyDto.ResponseList myResList = new MyDto.ResponseList();
-        myResList.setData(mys);
+        if(mys.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
-        return myResList;
+        return MyDto.ResponseList.builder().data(mys).build();
     }
 
     /**
@@ -130,13 +132,14 @@ public class EventServiceImpl implements EventService {
      * @return : 피드 리스트
      */
     @Override
-    public FeedDto.ResponseList dailyFeeds(int dailyId, HttpServletRequest request) {
-        List<FeedDto> feeds = eventDao.dailyFeeds(dailyId, (int) request.getAttribute("userId"));
+    public FeedDto.ResponseList dailyFeeds(int dailyId, int page, HttpServletRequest request) {
+        List<FeedDto> feeds = eventDao.dailyFeeds(dailyId, page, (int) request.getAttribute("userId"));
 
-        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
-        feedResList.setData(getHashAndComments(feeds, (int) request.getAttribute("userId")));
+        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
-        return feedResList;
+        return FeedDto.ResponseList.builder()
+                .data(getHashAndComments(feeds, (int) request.getAttribute("userId")))
+                .build();
     }
 
     /**
@@ -146,13 +149,12 @@ public class EventServiceImpl implements EventService {
      * @return : 참여자
      */
     @Override
-    public MyDto.ResponseList getDailyParticipants(int dailyId, int userId) {
-        List<MyDto> mys = eventDao.getDailyParticipants(dailyId, userId);
-        System.out.println(mys.size());
-        MyDto.ResponseList myResList = new MyDto.ResponseList();
-        myResList.setData(mys);
+    public MyDto.ResponseList getDailyParticipants(int dailyId, int page, int userId) {
+        List<MyDto> mys = eventDao.getDailyParticipants(dailyId, page, userId);
 
-        return myResList;
+        if(mys.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
+
+        return MyDto.ResponseList.builder().data(mys).build();
     }
 
     /**

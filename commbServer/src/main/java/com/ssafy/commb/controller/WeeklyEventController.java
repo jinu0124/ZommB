@@ -27,7 +27,7 @@ public class WeeklyEventController {
     @GetMapping("")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @ApiOperation(value = "주간 이벤트 정보리스트")
-    public ResponseEntity<WeeklyEventDto.Response> findWeeklyEventList(@RequestParam String today){
+    public ResponseEntity<WeeklyEventDto.Response> findWeeklyEvent(@RequestParam String today){
         WeeklyEventDto.Response weeklyEvent = eventService.bookRecommend(today);
 
         return ResponseEntity.ok().body(weeklyEvent);
@@ -37,9 +37,10 @@ public class WeeklyEventController {
     @ApiOperation(value = "주간 이벤트에 대한 게시물 리스트")
     public ResponseEntity<FeedDto.ResponseList> findWeeklyEventFeedList(
             @PathVariable("weeklyId") Integer weeklyId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ){
-        FeedDto.ResponseList feedRes = eventService.weeklyFeeds(weeklyId, request);
+        FeedDto.ResponseList feedRes = eventService.weeklyFeeds(weeklyId, page * 20, request);
 
         return ResponseEntity.ok().body(feedRes);
     }
@@ -60,9 +61,10 @@ public class WeeklyEventController {
     @ApiOperation(value = "주간 이벤트 참여자 목록")
     public ResponseEntity<MyDto.ResponseList> findWeeklyEventUserList(
             @PathVariable("weeklyId") Integer weeklyId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ){
-        MyDto.ResponseList myResList = eventService.getWeeklyParticipants(weeklyId, request);
+        MyDto.ResponseList myResList = eventService.getWeeklyParticipants(weeklyId, page * 50, request);
 
         return ResponseEntity.ok().body(myResList);
     }

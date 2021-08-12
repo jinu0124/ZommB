@@ -92,8 +92,6 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
-  profile: https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/profile/
-  feed : https://s3.ap-northeast-2.amazonaws.com/ssafy.commb/feed/
 
 dynamic:
   path: http://127.0.0.1:8080/

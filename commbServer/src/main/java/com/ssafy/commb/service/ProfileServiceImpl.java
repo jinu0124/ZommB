@@ -22,9 +22,6 @@ import java.util.Optional;
 @Service
 public class ProfileServiceImpl implements ProfileService {
 
-    @Value("${cloud.profile}")
-    private String awsProfileUrl;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -58,15 +55,13 @@ public class ProfileServiceImpl implements ProfileService {
 
         if(myReq.getFlag() == 0) {                                          // 프로필 이미지 유지
             updateDb(user, user.get().getFileUrl(), myReq.getNickname());
-            if(my.getUserFileUrl() != null) my.setUserFileUrl(awsProfileUrl + user.get().getFileUrl());
-            else my.setUserFileUrl(null);
         }
         else if(myReq.getFlag() == 1) {                                      // 프로필 이미지 수정
             Part part = s3Service.extractFile(parts);
             String fileName = s3Service.uploadS3(part, "profile");
 
             updateDb(user, fileName, myReq.getNickname());
-            my.setUserFileUrl(awsProfileUrl + fileName);
+            my.setUserFileUrl(fileName);
         }
         else{                                                               // 프로필 이미지 삭제 -> DB userFileUrl -> null
             updateDb(user, null, myReq.getNickname());

@@ -17,6 +17,7 @@
         WHERE T.id = T2.book_id AND bs.is_read = 1 AND bs.book_id = T.id
         GROUP BY bs.book_id
         ORDER BY T.rate DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
     <select id="getUserReadCnt" parameterType="Integer" resultType="HashMap">

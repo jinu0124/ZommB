@@ -88,7 +88,8 @@ public class S3ServiceImpl implements S3Service{
         s3Client.putObject(new PutObjectRequest(bucket,  dir + "/" + fileName, byteArrayIs, objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));                                                        // public read 권한 주기
 
-        return fileName;
+
+        return "http://" + s3Client.getUrl(this.bucket, dir + "/" + fileName).toString().substring(8);
     }
 
     public Part extractFile(Collection<Part> parts) throws IOException {

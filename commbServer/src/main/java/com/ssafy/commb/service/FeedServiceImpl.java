@@ -1,5 +1,8 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
@@ -12,6 +15,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.ServletException;
 import java.io.IOException;
 import java.time.LocalDate;
@@ -55,6 +60,9 @@ public class FeedServiceImpl implements FeedService {
     @Autowired
     private FollowService followService;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     public void uploadFeed(FeedDto.RegisterRequest feedReq, MultipartHttpServletRequest request) throws IOException, ServletException {
 
         User user = new User();
@@ -95,19 +103,20 @@ public class FeedServiceImpl implements FeedService {
      * @return : 피드 리스트
      */
     @Override
-    public FeedDto.ResponseList getUserFeed(int userId, HttpServletRequest request) {
+    public FeedDto.ResponseList getUserFeed(int userId, int page, HttpServletRequest request) {
 
-        List<FeedDto> feeds = feedDao.userFeed(userId, (Integer) request.getAttribute("userId"));
+        List<FeedDto> feeds = feedDao.userFeed(userId, page, (Integer) request.getAttribute("userId"));
+
+        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), (Integer) request.getAttribute("userId")));
         }
 
-        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
-        feedResList.setData(feeds);
-
-        return feedResList;
+        return FeedDto.ResponseList.builder()
+                .data(feeds)
+                .build();
     }
 
     /**
@@ -176,19 +185,18 @@ public class FeedServiceImpl implements FeedService {
         reportRepository.save(report);
     }
 
-    public FeedDto.ResponseList getFollowingFeeds(int userId) {
+    public FeedDto.ResponseList getFollowingFeeds(int page, int userId) {
 
-        List<FeedDto> feeds = feedDao.getFollowingFeeds(userId);
+        List<FeedDto> feeds = feedDao.getFollowingFeeds(page, userId);
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
             feed.setComments(feedDao.getComments(feed.getId(), userId));
         }
 
-        FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
-        feedResList.setData(feeds);
-
-        return feedResList;
+        return FeedDto.ResponseList.builder()
+                .data(feeds)
+                .build();
     }
 
     public MyDto.ResponseList likeFeeds(int feedId, int userId) {
@@ -227,16 +235,22 @@ public class FeedServiceImpl implements FeedService {
      * @param userId : 유저 ID
      * @return : 검색 피드들 반환
      */
-    public FeedDto.ResponseList getFeeds(String searchWord, int userId){
+    public FeedDto.ResponseList getFeeds(String searchWord, int page, int userId){
         StringBuilder dynamicQuery = new StringBuilder();
         String[] words = searchWord.split(" ");
+
         int countOfWords = words.length;
-        if(countOfWords > 0){
-            for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
-        }
+        if(countOfWords > 0) for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
         else dynamicQuery.append("\"\"");
 
-        List<FeedDto> feeds = feedDao.getFeeds(dynamicQuery.toString(), String.valueOf(userId), String.valueOf(countOfWords));
+        Map<String, Object> map = new HashMap<>();
+        map.put("dynamicQuery", dynamicQuery.toString());
+        map.put("userId", userId);
+        map.put("countOfWords", countOfWords);
+        map.put("page", page);
+        List<FeedDto> feeds = feedDao.getFeeds(map);
+
+        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
@@ -246,7 +260,9 @@ public class FeedServiceImpl implements FeedService {
         FeedDto.ResponseList feedResList = new FeedDto.ResponseList();
         feedResList.setData(feeds);
 
-        return feedResList;
+        return FeedDto.ResponseList.builder()
+                .data(feeds)
+                .build();
     }
 
     public List<String> extractHashTag(String content) {

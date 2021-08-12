@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 public interface BookService {
-    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, HttpServletRequest request);
+    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, int page, HttpServletRequest request);
 
     public void addMyShelf(BookDto.RegisterRequest bookReq, HttpServletRequest request);
 
