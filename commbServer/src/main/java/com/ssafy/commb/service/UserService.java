@@ -9,9 +9,9 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
 
 public interface UserService {
-    public UserDto.ResponseList getUsers(String nickname);
+    public UserDto.ResponseList getUsers(String nickname, int page);
 
-    public MyDto.ResponseList getUsers(String nickname, HttpServletRequest request);
+    public MyDto.ResponseList getUsers(String nickname, int page, HttpServletRequest request);
 
     public int joinUser(MyDto.Request myReq);
 
@@ -34,7 +34,7 @@ public interface UserService {
 
     public UserDto.Response getUserInfo(int userId, HttpServletRequest request);
 
-    public UserDto.ResponseList followRecommend(HttpServletRequest request);
+    public UserDto.ResponseList followRecommend(int page, HttpServletRequest request);
 
     public int getUserInfoByEmail(String email);
 

@@ -44,6 +44,7 @@
             GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
             ON T1.fid = t.feed_id AND #{userId} = t.user_id
         ORDER BY T1.create_at DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
     <select id="getWeeklyParticipantsCnt" parameterType="Integer" resultType="Integer">
@@ -61,6 +62,7 @@
                AND DATE(f.create_at) BETWEEN DATE(start_date) AND DATE(end_date) - 1 AND u.id != #{userId}) AS T LEFT OUTER JOIN follow fo
         ON T.id = fo.following AND fo.follower = #{userId}
         ORDER BY isFollow DESC
+        LIMIT 50 OFFSET #{page}
     </select>
 
 
@@ -84,6 +86,7 @@
             GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
         ON T1.fid = t.feed_id AND #{userId} = t.user_id
         ORDER BY T1.create_at DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
 
@@ -96,6 +99,7 @@
 	            f.user_id = u.id AND h.feed_id = f.id AND h.tag = k.keyword AND u.id != #{userId}) AS T LEFT OUTER JOIN follow fo
         ON T.id = fo.following AND fo.follower = #{userId}
         ORDER BY isFollow DESC
+        LIMIT 50 OFFSET #{page}
     </select>
 
 

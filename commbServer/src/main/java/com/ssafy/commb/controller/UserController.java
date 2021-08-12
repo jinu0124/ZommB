@@ -85,13 +85,14 @@ public class UserController {
     @GetMapping("/info")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
     public ResponseEntity findUserList(@RequestParam String nickname,
+                                                             @RequestParam Integer page,
                                                              HttpServletRequest request) {
 
         switch (userService.getUserRole((int) request.getAttribute("userId"))) {
             case "USR":
-                return ResponseEntity.ok().body(userService.getUsers(nickname, request));
+                return ResponseEntity.ok().body(userService.getUsers(nickname, page * 50, request));
             case "ADM":
-                UserDto.ResponseList userResList = userService.getUsers(nickname);
+                UserDto.ResponseList userResList = userService.getUsers(nickname, page * 50);
                 return ResponseEntity.ok().body(userResList);
         }
 
@@ -268,9 +269,10 @@ public class UserController {
     @ApiOperation(value = "1인(특정 사람) 피드 리스트 조회", response = FeedDto.Response.class)
     public ResponseEntity<FeedDto.ResponseList> findUserFeed(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, request);
+        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, page * 20, request);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
@@ -291,9 +293,10 @@ public class UserController {
     public ResponseEntity<BookDto.ResponseList> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
             @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, request);
+        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, page, request);
 
         return ResponseEntity.ok().body(bookResList);
     }
@@ -399,9 +402,10 @@ public class UserController {
     @ApiOperation(value = "친구 추천 목록 조회", response = UserDto.Response.class)
     public ResponseEntity<UserDto.ResponseList> findFollowRecommend(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        UserDto.ResponseList userResList = userService.followRecommend(request);
+        UserDto.ResponseList userResList = userService.followRecommend(page, request);
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }

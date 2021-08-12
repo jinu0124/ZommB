@@ -10,8 +10,8 @@ import java.util.List;
 public interface UserDao {
     public UserDto userInfo(int userId, int myUserId);
 
-    public List<UserDto> getMyFollowerExFollowing(int userId);
+    public List<UserDto> getMyFollowerExFollowing(int page, int userId);
 
-    public List<MyDto> getUsers(String nickname, String userId);
+    public List<MyDto> getUsers(String nickname, String page, String userId);
 
 }
