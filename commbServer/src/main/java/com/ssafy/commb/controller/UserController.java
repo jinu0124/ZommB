@@ -94,6 +94,8 @@ public class UserController {
     }
 
     // 일반 회원 검색 만들기
+//    @GetMapping(value="")
+
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제
 //    @GetMapping("")
