@@ -35,7 +35,7 @@ spring:
             authorization-grant-type: authorization_code
             client-id: 816e60a58fc8adaf01fa27c0bc3ed383
             client-secret: gUfGcX3lSRaX4y1uVNOBrvdr7WIEhy2F
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "{baseUrl}/api/login/oauth2/code/{registrationId}"
             scope:
             client-authentication-method: POST
             client-name: Kakao
