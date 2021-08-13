@@ -7,7 +7,7 @@
         <div class="subtitle mt-1">{{ book.author }} | {{ book.publisher }}</div>
       </div>
       <button 
-        class="btn-65 btn-yellow"
+        class="btn-65 btn-yellow right-fix"
         @click="$router.push({ name: 'Write', params: { id: book.id }})"
       >글쓰기</button>
     </div>
@@ -20,16 +20,6 @@ export default {
   props: {
     book: Object
   },
-  data () {
-    return {
-      temp: {
-        bookName: '해리포터와 마법사의 돌',
-        author: '조앤 K. 롤링',
-        publisher: '문학수첩',
-        bookFileUrl: 'https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F1171108%3Ftimestamp%3D20210521185213'
-      }
-    }
-  }
 }
 </script>
 
@@ -65,7 +55,7 @@ export default {
   .info-box .subtitle {
     width: 100%;
     max-width: 110px;
-    font-size: 10px;
+    font-size: 11px;
     line-height: 12px;
   }
   .btn-65 {
@@ -76,5 +66,9 @@ export default {
     outline: none;
     font-size: 12px;
     font-weight: 500;
+  }
+  .right-fix {
+    position: absolute;
+    right: 10px
   }
 </style>

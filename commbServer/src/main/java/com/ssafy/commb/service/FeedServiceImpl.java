@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +53,7 @@ public class FeedServiceImpl implements FeedService {
     private DailyEventRepository dailyEventRepository;
 
     @Autowired
-    private DailyEventParticipateRepository dailyEventParticipateRepository;
+    private WeeklyEventRepository weeklyEventRepository;
 
     @Autowired
     private FeedDao feedDao;
@@ -72,12 +73,13 @@ public class FeedServiceImpl implements FeedService {
         Book book = new Book();
         Feed feed = new Feed();
 
-        user.setId((Integer) request.getAttribute("userId"));
+        int userId = (Integer) request.getAttribute("userId");
+        user.setId(userId);
         book.setId(feedReq.getBookId());
         feed.setUser(user);
         feed.setBook(book);
         feed.setCreateAt(new Date());
-        feed.setContent(feedReq.getContents().replace("#", ""));
+        feed.setContent(feedReq.getContents());
 
         Part part = S3service.extractFile(request.getParts()); // 파일 하나 받아옴
         String fileUrl = S3service.uploadS3(part, "feed");
@@ -86,48 +88,71 @@ public class FeedServiceImpl implements FeedService {
         feedRepository.save(feed);
 
 
-        // hashTag 추출 후 DB에 저장
-        int feedId = feed.getId();
-        Optional<Feed> updateFeed = feedRepository.findById(feedId);
+        // hashTag 추출 후 DB에 저장 & DailyEvent 참여 피드인지 확인
         List<String> Tags = extractHashTag(feedReq.getContents());
+
+        Date[] dates = transformDay(feed.getCreateAt());
+        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
+        String keyword = dailyEvent.get().getKeyword().getKeyword();
+        Boolean checkDailyEvent = false;
 
         for (int i = 0; i < Tags.size(); i++) {
             HashTag hashTag = new HashTag();
 
             hashTag.setTag(Tags.get(i));
-            hashTag.setFeed(updateFeed.get());
+            hashTag.setFeed(feed);
+            if (keyword.equals(Tags.get(i))) checkDailyEvent = true;
 
             hashTagRepository.save(hashTag);
         }
 
 
-        // DailyEvent 검색
-        DailyEvent dailyEvent = searchDailyEvent();
-        String keyword = dailyEvent.getKeyword().getKeyword();
+        // DailyEvent 참여 피드가 아닌경우 -> 처리 X
+        // DailyEvent 참여 피드인 경우, 피드 생성 날짜 기준으로 그 날 작성한 모든 피드를 가져와서 해시태그랑 키워드를 비교해서 1개면(등록한 해당 피드) pencil +1
+        int dailyEventFeedCnt = 0;
+        if (checkDailyEvent) {
+            List<Feed> feeds = feedRepository.findByUserIdAndCreateAtBetween(userId, dates[0], dates[1]);
 
-        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
-        for (HashTag hashTag : hashTags) {
+            all:
+            for (Feed f : feeds) {
+                List<HashTag> hashTags = hashTagRepository.findByFeedId(f.getId());
 
-            if (hashTag.getTag().equals(keyword)) {
+                for (HashTag hashTag : hashTags) {
+                    if (keyword.equals(hashTag.getTag())) {
+                        dailyEventFeedCnt++;
+                        if (dailyEventFeedCnt > 1) break all;
+                    }
+                }
+            }
 
-                Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-                if (dailyEventParticipate.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
-
-                // DailyEventParticipate
-                DailyEventParticipate participant = new DailyEventParticipate();
-                participant.setCreateAt(feed.getCreateAt());
-                participant.setDailyEvent(dailyEvent);
-                participant.setUser(user);
-                dailyEventParticipateRepository.save(participant);
-
-                // 회원 테이블의 bookmark, pencil +1씩
-                user.setBookmark(user.getBookmark() + 1);
+            if (dailyEventFeedCnt == 1) {
                 user.setPencil(user.getPencil() + 1);
                 userRepository.save(user);
             }
-
         }
 
+
+        // WeeklyEvent 참여 피드가 아닌경우 -> 처리 X
+        // WeeklyEvent 참여 피드인 경우, 피드 생성 날짜 기준으로 그 주 작성한 모든 피드를 가져와서 북 아이디랑 비교해서 1개면(등록한 해당 피드) bookmark +1
+        dates = transformWeek(feed.getCreateAt());
+        Optional<WeeklyEvent> weeklyEvent = weeklyEventRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(dates[0], dates[1]);
+        int eventBookId = weeklyEvent.get().getBook().getId();
+
+        if (eventBookId == feed.getBook().getId()) {
+            List<Feed> feeds = feedRepository.findByUserIdAndCreateAtBetween(userId, weeklyEvent.get().getStartDate(), weeklyEvent.get().getEndDate());
+            int weeklyEventFeedCnt = 0;
+            for (Feed f : feeds) {
+                if (eventBookId == f.getBook().getId()) {
+                    weeklyEventFeedCnt++;
+                    if (weeklyEventFeedCnt > 1) break;
+                }
+            }
+
+            if (weeklyEventFeedCnt == 1) {
+                user.setBookmark(user.getBookmark() + 1);
+                userRepository.save(user);
+            }
+        }
     }
 
     /**
@@ -141,7 +166,7 @@ public class FeedServiceImpl implements FeedService {
 
         List<FeedDto> feeds = feedDao.userFeed(userId, page, (Integer) request.getAttribute("userId"));
 
-        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
+        if (feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
@@ -167,18 +192,14 @@ public class FeedServiceImpl implements FeedService {
         Optional<Feed> feed = feedRepository.findById(feedId);
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "변경할 피드가 없습니다.");
 
-        // DailyEvent 검색해서 참여했을 시 삭제
-        deleteIfParticipateDailyEvent(feed);
-        DailyEvent dailyEvent = searchDailyEvent();
-        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
-
         // 변경 전 content로 등록한 hashTag 삭제
+        List<HashTag> hashTags = hashTagRepository.findByFeedId(feedId);
         for (HashTag hashTag : hashTags) {
             hashTagRepository.delete(hashTag);
         }
 
         // 변경된 content로 feed 업데이트
-        feed.get().setContent(content.replace("#", ""));
+        feed.get().setContent(content);
         feedRepository.save(feed.get());
 
         List<String> Tags = extractHashTag(content);
@@ -191,35 +212,6 @@ public class FeedServiceImpl implements FeedService {
 
             hashTagRepository.save(hashTag);
         }
-
-        // 다시 DailyEvent 검사
-        String keyword = dailyEvent.getKeyword().getKeyword();
-        User user = feed.get().getUser();
-
-        for (HashTag hashTag : hashTags) {
-
-            if (hashTag.getTag().equals(keyword)) {
-
-                Optional<DailyEventParticipate> participate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-                if (participate.isPresent())
-                    throw new ApplicationException(HttpStatus.valueOf(400), "이미 DailyEvent에 참여하셨습니다!");
-
-                // DailyEventParticipate
-                DailyEventParticipate participant = new DailyEventParticipate();
-                participant.setCreateAt(feed.get().getCreateAt());
-                participant.setDailyEvent(dailyEvent);
-                participant.setUser(user);
-                dailyEventParticipateRepository.save(participant);
-
-                // 회원 테이블의 bookmark, pencil +1씩
-                user.setBookmark(user.getBookmark() + 1);
-                user.setPencil(user.getPencil() + 1);
-                userRepository.save(user);
-            }
-
-        }
-
-
     }
 
     public int getUserId(int feedId) {
@@ -233,9 +225,6 @@ public class FeedServiceImpl implements FeedService {
 
         String url = feed.get().getFileUrl();
         S3service.deleteS3(url, "feed");
-
-        // DailyEvent 검색해서 참여했을 시 삭제
-        deleteIfParticipateDailyEvent(feed);
 
         feedRepository.deleteById(feedId);
     }
@@ -305,12 +294,12 @@ public class FeedServiceImpl implements FeedService {
      * @param userId : 유저 ID
      * @return : 검색 피드들 반환
      */
-    public FeedDto.ResponseList getFeeds(String searchWord, int page, int userId){
+    public FeedDto.ResponseList getFeeds(String searchWord, int page, int userId) {
         StringBuilder dynamicQuery = new StringBuilder();
         String[] words = searchWord.split(" ");
 
         int countOfWords = words.length;
-        if(countOfWords > 0) for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
+        if (countOfWords > 0) for (String word : words) dynamicQuery.append("\"").append(word).append("\" ");
         else dynamicQuery.append("\"\"");
 
         Map<String, Object> map = new HashMap<>();
@@ -320,7 +309,7 @@ public class FeedServiceImpl implements FeedService {
         map.put("page", page);
         List<FeedDto> feeds = feedDao.getFeeds(map);
 
-        if(feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
+        if (feeds.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         for (FeedDto feed : feeds) {
             feed.setHashTags(feedDao.getHashTags(feed.getId()));
@@ -360,30 +349,71 @@ public class FeedServiceImpl implements FeedService {
         return hashTag;
     }
 
-    public DailyEvent searchDailyEvent() {
-        LocalDateTime startDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(0, 0, 0));
-        LocalDateTime endDateTime = LocalDateTime.of(LocalDate.now(), LocalTime.of(23, 59, 59));
+    public Date[] transformDay(Date date) {
+        // Date -> LocalDate
+        LocalDate feedCreate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+
+        // feed createAt 기준 0시 0분 0초 ~ 23시 59분 59초
+        LocalDateTime startDateTime = LocalDateTime.of(feedCreate, LocalTime.of(0, 0, 0));
+        LocalDateTime endDateTime = LocalDateTime.of(feedCreate, LocalTime.of(23, 59, 59));
+
+        // LocalDate -> Date
         Date startDate = java.sql.Timestamp.valueOf(startDateTime);
         Date endDate = java.sql.Timestamp.valueOf(endDateTime);
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(startDate, endDate);
-        return dailyEvent.get();
+
+        Date[] dates = new Date[2];
+        dates[0] = startDate;
+        dates[1] = endDate;
+
+        return dates;
     }
 
-    public void deleteIfParticipateDailyEvent(Optional<Feed> feed){
-        User user = feed.get().getUser();
-        DailyEvent dailyEvent = searchDailyEvent();
+    public Date[] transformWeek(Date date) {
+        // Date -> LocalDate
+        LocalDate feedCreate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
 
-        // DailyEvent 참여했을 시 삭제
-        Optional<DailyEventParticipate> dailyEventParticipate = dailyEventParticipateRepository.findByDailyEventAndUser(dailyEvent, user);
-        if (dailyEventParticipate.isPresent()) {
-            dailyEventParticipateRepository.delete(dailyEventParticipate.get());
+        int year = feedCreate.getYear();
+        int month = feedCreate.getMonthValue();
+        int day = feedCreate.getDayOfMonth();
+        int startDay, endDay;
+        LocalDate start, end;
+        LocalDateTime startDateTime, endDateTime;
 
-            // 회원 테이블의 bookmark, pencil -1씩
-            user.setBookmark(user.getBookmark() - 1);
-            user.setPencil(user.getPencil() - 1);
-            userRepository.save(user);
+        if (1 <= day && day <= 7) {
+            startDay = 1;
+            endDay = 7;
+            start = LocalDate.of(year, month, startDay);
+            end = LocalDate.of(year, month, endDay);
+        } else if (8 <= day && day <= 14) {
+            startDay = 8;
+            endDay = 14;
+            start = LocalDate.of(year, month, startDay);
+            end = LocalDate.of(year, month, endDay);
+        } else if (15 <= day && day <= 21) {
+            startDay = 15;
+            endDay = 21;
+            start = LocalDate.of(year, month, startDay);
+            end = LocalDate.of(year, month, endDay);
+        } else {
+            startDay = 22;
+            endDay = 31;
+            if (month == 2) endDay = 28; // 윤달도 고려...?
+            else if (month == 4 || month == 6 || month == 9 || month == 11) endDay = 30;
+            start = LocalDate.of(year, month, startDay);
+            end = LocalDate.of(year, month, endDay);
         }
-    }
+        startDateTime = LocalDateTime.of(start, LocalTime.of(0, 0, 0));
+        endDateTime = LocalDateTime.of(end, LocalTime.of(23, 59, 59));
 
+        // LocalDate -> Date
+        Date startDate = java.sql.Timestamp.valueOf(startDateTime);
+        Date endDate = java.sql.Timestamp.valueOf(endDateTime);
+
+        Date[] dates = new Date[2];
+        dates[0] = startDate;
+        dates[1] = endDate;
+
+        return dates;
+    }
 
 }

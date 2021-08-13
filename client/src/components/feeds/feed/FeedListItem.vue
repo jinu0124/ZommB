@@ -126,7 +126,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import FeedMenu from "@/components/feeds/feed/FeedMenu";
 import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
 import _ from "lodash";
@@ -153,12 +153,7 @@ export default {
     };
   },
   methods: {
-    moveToLike() {
-      this.$router.push("/like");
-    },
-    moveToReply() {
-      this.$router.push("/reply");
-    },
+    ...mapActions("feed", ["moveToReply", "moveToLike"]),
     like() {
       this.Like = true;
       this.disLike = false;

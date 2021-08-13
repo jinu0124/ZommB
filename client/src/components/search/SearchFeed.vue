@@ -1,6 +1,8 @@
 <template>
   <div class="search-feed">
-    <span class="feed-list flex-column align-items-center">
+    <span
+      class="feed-list flex-column align-items-center justify-content-center"
+    >
       <span>
         <img
           class="default-feed-image"

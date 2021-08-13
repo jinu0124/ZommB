@@ -81,17 +81,20 @@
   font-size: 0.6rem;
 }
 
-
 .btn-primary1 {
-  background-color: #683EC9;
+  background-color: #683ec9;
   color: #fff;
 }
 .btn-yellow {
-  background-color: #FFDC7C;
+  background-color: #ffdc7c;
   color: #585858;
 }
 .btn-grey {
-  background-color: #A4A4A4;
+  background-color: #a4a4a4;
+  color: #fff;
+}
+.btn-red {
+  background-color: #ff7777;
   color: #fff;
 }
 .btn-disabled {
@@ -101,12 +104,12 @@
 }
 
 .btn-text-s {
-  color: #A4A4A4;
+  color: #a4a4a4;
   font-size: 0.75rem;
 }
 
 .btn-text-primary {
-  color: #683EC9;
+  color: #683ec9;
   font-size: 0.75rem;
   font-weight: 500;
 }

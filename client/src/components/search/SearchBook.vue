@@ -52,6 +52,9 @@ export default {
 </script>
 
 <style scoped>
+.search-book {
+  text-align: center;
+}
 .tabs .badge {
   font-size: 0.8rem;
   font-weight: 500;

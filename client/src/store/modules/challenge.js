@@ -3,17 +3,22 @@ import bookApi from '@/api/book'
 import challengeApi from '@/api/challenge'
 
 const state = {
-  weekyId: null,
+  // Weekly
+  weeklyId: null,
   weeklyBookId: null,
   weeklyBook: null,
+  weeklyFeed: null,
+  weeklyCnt: null,
   dailyId: null,
   dailyKeyword: null,
   myChallenge: null,
+  stopRequest: false,
   bookmark: ['BRONZE', 'SILVER', 'GOLD', 'PLATINNUM', 'DIAMOND'],
   pen: ['BRONZE', 'SILVER', 'GOLD', 'DIAMOND'],
 }
 
 const actions = {
+  // Weekly Book
   async getWeeklyBook ({ commit, dispatch }, data) {
     await challengeApi.getWeeklyBook(data)
       .then((res) => {
@@ -29,6 +34,31 @@ const actions = {
         // console.log(res)
         commit('SET_WEEKLY_BOOK', res.data.data)
       })
+  },
+  async getWeeklyParticipate ({ state, commit }) {
+    await challengeApi.getWeeklyParticipants(state.weeklyId)
+      .then((res) => {
+        // console.log(res)
+        commit('SET_WEEKLY_CNT', res.data.participants)
+      })
+  },
+  async getWeeklyFeeds ({ state, commit }, page) {
+    if (!page || !state.stopRequest) {
+      await challengeApi.getWeeklyFeeds(state.weeklyId, page)
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            if (!page) {
+              commit('SET_WEEKLY_FEEDS', res.data.data)
+            } else {
+              commit('ADD_WEEKLY_FEEDS', res.data.data)
+            }
+            commit('SET_STOP', false)
+          } else if (res.status === 204) {
+            commit('SET_STOP', true)
+          }
+        })
+    }
   },
   async getDailyKeyword ({ commit }, data) {
     await challengeApi.getDailyKeyword(data)
@@ -61,6 +91,12 @@ const mutations = {
   SET_WEEKLY_BOOK(state, payload) {
     state.weeklyBook = payload
   },
+  SET_WEEKLY_CNT(state, payload) {
+    state.weeklyCnt = payload
+  },
+  SET_WEEKLY_FEEDS(state, payload) {
+    state.weeklyFeed = payload
+  },
   SET_DAILY_ID(state, payload) {
     state.dailyId = payload
   },
@@ -70,6 +106,14 @@ const mutations = {
   SET_MY_CHALLENGE(state, payload) {
     state.myChallenge = payload
   },
+  SET_STOP(state, payload) {
+    state.stopRequest = payload
+  },
+  ADD_WEEKLY_FEEDS(state, payload) {
+    payload.forEach(data => {
+      state.weeklyFeed.push(data)
+    })
+  }
 }
 
 const getters = {

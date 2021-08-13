@@ -24,7 +24,7 @@
           v-for="(tag, idx) in tags"
           :key="idx"
           class="content-tag rounded-pill me-1"
-          >#{{ tag }}</span
+          >{{ tag }}</span
         >
       </div>
       <p class="content-duration">{{ duration }}시간 전</p>
@@ -80,14 +80,6 @@ export default {
   margin-bottom: 2px;
   font-family: noto-sans-kr-10-regular;
 }
-
-.hashtag {
-  height: 12px;
-  width: 35px;
-  color: rgba(88, 88, 88, 1);
-  display: flex;
-  font-family: noto-sans-kr-8-bold;
-}
 .content-menu {
   margin-top: 27px;
   padding: 0 2.45px;
@@ -107,5 +99,7 @@ export default {
 .content-tag {
   color: #585858;
   background: #ffdc7c;
+  padding: 5px;
+  margin: 20px 0px;
 }
 </style>
