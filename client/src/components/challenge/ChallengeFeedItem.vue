@@ -80,6 +80,7 @@ export default {
     font-weight: 300;
     text-align: justify;
     margin: 2px 3px 0;
+    white-space: pre-line;
   }
   .user .profile {
     width: 16px;
