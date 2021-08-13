@@ -6,6 +6,7 @@ import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import Withdraw from '@/views/user/Withdraw'
 import Profile from '@/views/user/profile/Profile'
 import Follow from '@/views/user/profile/Follow'
 import Search from '@/views/search/Search'
@@ -63,6 +64,12 @@ const routes = [
     path: '/reset-password',
     name: 'ResetPassword',
     component: ResetPassword,
+  },
+  {
+    path: '/withdraw',
+    name: 'Withdraw',
+    component: Withdraw,
+    meta: { requireAuth: true }
   },
   // social login
   {
