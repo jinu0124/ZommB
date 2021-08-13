@@ -73,7 +73,7 @@ export default {
       method: 'delete',
     })
   },
-  getNewFeed(userId, data) {
+  getNewsFeed(userId, data) {
     return _axios({
       url: `follows/${userId}/following/feeds`,
       method: 'get',

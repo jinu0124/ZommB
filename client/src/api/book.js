@@ -14,13 +14,6 @@ export default {
       data: bookData
     })
   },
-  //책 삭제
-  deleteBook(bookId) {
-    return _axios({
-      url: `users/bookshelves/${bookId}`,
-      method: 'delete',
-    })
-  },
   //서재, 북카트 내 도서 검색
   searchBook(userId, searchData, data) {
     return _axios({
