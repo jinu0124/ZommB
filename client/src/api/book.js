@@ -23,8 +23,6 @@ export default {
       data: bookData
     })
   },
-<<<<<<< HEAD
-=======
   // 북카드-서재 도서 이동
   moveBookinProfile(userId, bookId, bookData) {
     return _axios({
@@ -40,7 +38,6 @@ export default {
       method: 'delete',
     })
   },
->>>>>>> ea7c3df9266ce7fee49ea32235233376010c164f
   //서재, 북카트 내 도서 검색
   searchBook(userId, searchData, data) {
     return _axios({
