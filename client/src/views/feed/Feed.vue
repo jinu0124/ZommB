@@ -7,21 +7,12 @@
           class="write-btn"
           style="float: right"
           type="button"
-          @click="moveToWrite()"
+          @click="moveToSelectBook()"
         />
       </div>
     </div>
     <div>
       <FeedList />
-    </div>
-    <div>
-      Scroll Test 입니다. <br />
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam
-      quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus
-      aliquam eum beatae assumenda officia quo odit optio! Lorem ispsum, dolor
-      sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
-      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
-      assumenda officia quo odit optio!
     </div>
   </div>
 </template>
@@ -37,8 +28,8 @@ export default {
   },
   methods: {
     ...mapActions("feed", ["getFeedList"]),
-    moveToWrite() {
-      this.$router.push("/write");
+    moveToSelectBook() {
+      this.$router.push("/select");
     },
   },
   computed: {
@@ -49,6 +40,7 @@ export default {
 
 <style scoped>
 .feed {
+  width: 100%;
   background: #ffffff;
   height: 100vh;
   border-radius: 30px 0px 0px 0px;
