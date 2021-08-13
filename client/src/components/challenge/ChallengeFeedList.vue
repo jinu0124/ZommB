@@ -36,20 +36,24 @@ export default {
     },
     handleScroll() {
       const elems = document.querySelectorAll('.up-on-scroll')
-      elems.forEach(elem => {
-        if (this.isElementUnderBottom(elem, -45)) {
-          elem.style.opacity = "0";
-          elem.style.transform = 'translateY(30px)'
-        } else {
-          elem.style.opacity = "1";
-          elem.style.transform = 'translateY(0px)'
-        }
-      })
+      if (elems) {
+        elems.forEach(elem => {
+          if (this.isElementUnderBottom(elem, -45)) {
+            elem.style.opacity = "0";
+            elem.style.transform = 'translateY(30px)'
+          } else {
+            elem.style.opacity = "1";
+            elem.style.transform = 'translateY(0px)'
+          }
+        })
+      }
     },
     checkLast() {
       const last = document.querySelector('.up-on-scroll:last-child')
-      if (!this.isElementUnderBottom(last, 200)) {
-        this.$emit('last')
+      if (last) {
+        if (!this.isElementUnderBottom(last, 200)) {
+          this.$emit('last')
+        }
       }
     }
   },
