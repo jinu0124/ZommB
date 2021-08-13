@@ -10,6 +10,10 @@
       v-if="!searchResult.length"
       class="no-result mt-5"
     >검색 결과가 없습니다.</div>
+    <button
+      class="top-btn"
+      @click="goToTop"
+    ><i class="fi-sr-caret-up"></i></button>
   </div>
 </template>
 
@@ -49,6 +53,19 @@ export default {
           this.$emit('last')
         }
       }
+    },
+    needTopBtn() {
+      const { bottom } = document.getElementsByClassName('search-input')[0].getBoundingClientRect()
+      const currentTop = document.getElementById('select').scrollTop
+      const btn = document.querySelector('.top-btn')
+      if (currentTop > bottom) {
+        btn.style.opacity = "1"
+      } else {
+        btn.style.opacity = "0"
+      }
+    },
+    goToTop() {
+      document.getElementById('select').scrollTop = 0
     }
   },
   computed: {
@@ -58,6 +75,7 @@ export default {
     const select = document.getElementById('select')
     select.addEventListener('scroll', this.handleScroll)
     select.addEventListener('scroll', this.checkLast)
+    select.addEventListener('scroll', this.needTopBtn)
     this.handleScroll()
   }
 }
