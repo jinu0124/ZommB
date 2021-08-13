@@ -101,4 +101,7 @@ dynamic:
 # Backend Local : http://127.0.0.1:8080/
 # Frontend Local : http://127.0.0.1:8000/
 # Backend Server : i5a602.p.ssafy.io:8080/
-# Frontend Server : i5a602.p.ssafy.io:8000/
+# Frontend Server : i5a602.p.ssafy.io/
+
+fcm:
+  service-account-file: commb-43e85-firebase-adminsdk-q0km7-396da64733.json

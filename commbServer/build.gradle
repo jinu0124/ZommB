@@ -76,6 +76,10 @@ dependencies {
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-core', version: '1.12.39'
     implementation group: 'com.amazonaws', name: 'aws-java-sdk-s3', version: '1.12.39'
 
+    implementation group: 'com.google.firebase', name: 'firebase-admin', version: '6.8.0'
+    implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.2.2'
+
+
     compile("com.querydsl:querydsl-jpa") // querydsl
     compile("com.querydsl:querydsl-apt") // querydsl
 }

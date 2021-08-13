@@ -49,6 +49,7 @@ public class MyDto {
     public static class LoginRequest {                // 요청
         private String email;
         private String password;
+        private String firebaseToken;
     }
 
     @Getter
