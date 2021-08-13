@@ -78,7 +78,6 @@ dependencies {
 
     compile("com.querydsl:querydsl-jpa") // querydsl
     compile("com.querydsl:querydsl-apt") // querydsl
-
 }
 
 ext {
