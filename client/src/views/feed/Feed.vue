@@ -39,7 +39,7 @@ export default {
   created(){
     messaging.onMessage((payload) => {
       console.log("message received", payload)
-      alert("message Received", payload)
+      alert(payload.notification.title + "\n" + payload.notification.body)
     })
   }
 };

@@ -74,7 +74,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<CommentThumb> comments = new ArrayList<>();
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private List<FirebaseToken> firebaseTokens = new ArrayList<>();
 
     @OneToOne(mappedBy = "user")

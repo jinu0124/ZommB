@@ -80,6 +80,13 @@
     </select>
 
 
+    <select id="getFeedWriterToken" parameterType="Integer" resultType="String">
+        SELECT ft.token as token
+        FROM feed f, firebase_token ft
+        WHERE f.id = #{feedId} AND f.user_id = ft.user_id
+    </select>
+
+
     <resultMap type="Feed" id="feedInformation">
         <result column="fid" property="id"/>
         <result column="create_at" property="createAt"/>

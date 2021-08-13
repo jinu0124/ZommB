@@ -2,6 +2,7 @@ package com.ssafy.commb.common.fcm;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.firebase.messaging.*;
 import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
@@ -14,15 +15,10 @@ import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.io.IOException;
-import java.net.UnknownServiceException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ExecutionException;
 
 @Service
 @RequiredArgsConstructor
@@ -38,39 +34,32 @@ public class FcmServiceImpl implements FcmService{
 
     /**
      * Firebase 서버에 Push 알림 발송 요청
-     * @param targetToken : 타겟 유저 Firebase Token
-     * @param title : 발신 제목
-     * @param body : 발신 내용
+     * @Param : FcmDto
      * @throws IOException
      */
     @Override
-    public void send(String targetToken, String title, String body) throws IOException {
-
-//        Message message = Message.builder()
-//                .setToken(targetToken)
-//                .setWebpushConfig(WebpushConfig.builder().putHeader("ttl", "300")
-//                        .setNotification(new WebpushNotification(title, body))
-//                        .build())
-//                .build();
-//
-//        String response = FirebaseMessaging.getInstance().sendAsync(message).get();
-////        System.out.println(FirebaseMessaging.getInstance().toString());
-//        System.out.println(response);
-
+    public void send(FcmDto fcm) throws IOException {
         OkHttpClient okHttpClient = new OkHttpClient();
-        RequestBody requestBody = RequestBody
-                .create(makeMessage(targetToken, title, body), MediaType.get("application/json; charset=utf-8"));
-
-        Request request = new Request.Builder()
-                .url(API_URL)
-                .post(requestBody)
-                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + fcmInitializer.getFcmAccessToken())
-                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
-                .build();
+        Request request = makeRequest(makeMessage(fcm));
 
         Response response = okHttpClient.newCall(request).execute();
         System.out.println(response.body().string());
-        System.out.println(response.headers());
+    }
+
+    @Override
+    public void sends(List<FirebaseToken> tokens, FcmDto fcm) throws InterruptedException, IOException, FirebaseMessagingException {
+
+        List<String> tokenList = new ArrayList<>();
+
+        for(FirebaseToken token : tokens) tokenList.add(token.getToken());
+        MulticastMessage multicastMessage = MulticastMessage.builder()
+                .setNotification(new Notification(fcm.getMessage().getNotification().getTitle(), fcm.getMessage().getNotification().getBody()))
+                .addAllTokens(tokenList)
+                .build();
+
+        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
+
+        System.out.println(response.getResponses());
     }
 
     /**
@@ -145,26 +134,26 @@ public class FcmServiceImpl implements FcmService{
 
     /**
      * Firebase로 REST 전송을 위한 메시지 만들기
-     * @param targetToken : 클라이언트마다의 Firebase Token
-     * @param title : 발신 제목
-     * @param body : 발신 내용
+     *
      * @return : String(메시지), FcmDto
      * @throws : JsonProcessingException
      */
-    private String makeMessage(String targetToken, String title, String body) throws JsonProcessingException {
+    private String makeMessage(FcmDto fcm) throws JsonProcessingException {
         ObjectMapper objectMapper = new ObjectMapper();
-        return objectMapper.writeValueAsString(FcmDto.builder()
-                                        .message(FcmDto.Message.builder()
-                                                    .token(targetToken)
-                                                    .notification(FcmDto.Notification.builder()
-                                                                                    .title(title)
-                                                                                    .body(body)
-                                                                                    .build())
-                                                    .build()
-                                        ).validate_only(false)
-                                        .build());
+
+        return objectMapper.writeValueAsString(fcm);
 
     }
 
+    private Request makeRequest(String message){
+        RequestBody requestBody = RequestBody
+                .create(message, MediaType.get("application/json; charset=utf-8"));
 
+        return new Request.Builder()
+                .url(API_URL)
+                .post(requestBody)
+                .addHeader(HttpHeaders.AUTHORIZATION, "Bearer " + fcmInitializer.getFcmAccessToken())
+                .addHeader(HttpHeaders.CONTENT_TYPE, "application/json; UTF-8")
+                .build();
+    }
 }

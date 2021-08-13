@@ -1,5 +1,7 @@
 package com.ssafy.commb.common.fcm;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.model.FirebaseToken;
@@ -8,7 +10,9 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FcmService {
-    public void send(String targetToken, String title, String body) throws InterruptedException, IOException;
+    public void send(FcmDto fcm) throws InterruptedException, IOException;
+
+    public void sends(List<FirebaseToken> tokens, FcmDto fcm) throws InterruptedException, IOException, FirebaseMessagingException;
 
     public void save(MyDto.Response myRes, String token);
 

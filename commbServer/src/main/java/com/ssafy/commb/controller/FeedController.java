@@ -1,8 +1,12 @@
 package com.ssafy.commb.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.ssafy.commb.common.fcm.FcmService;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
+import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
 import com.ssafy.commb.service.ThumbService;
@@ -19,7 +23,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/feeds")
@@ -53,6 +60,9 @@ public class FeedController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private FcmService fcmService;
 
     // /feeds?searchWord="abc"
     // 게시물 리스트 검색
@@ -156,11 +166,20 @@ public class FeedController {
     // 댓글 작성
     @PostMapping("/{feedId}/comments")
     @ApiOperation(value = "댓글 작성")
-    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
+    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
 
         int userId = (Integer) request.getAttribute("userId");
-
+        System.out.println(userId);
         commentService.uploadComment(feedId, userId, content);
+
+        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content);
+        List<FirebaseToken> tokens = new ArrayList<>();
+        List<String> tokenStr = new ArrayList<>();
+
+        for(FcmDto fcm : fcms) tokenStr.add(fcm.getMessage().getToken());
+        for (String token : tokenStr) tokens.add(FirebaseToken.builder().token(token).build());
+
+        fcmService.sends(tokens, fcms.get(0));
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }

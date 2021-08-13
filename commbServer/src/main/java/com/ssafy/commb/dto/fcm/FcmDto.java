@@ -21,6 +21,7 @@ public class FcmDto {
     public static class Message{
         private Notification notification;
         private String token;
+        private PayData data;
     }
 
     @Builder
@@ -30,6 +31,21 @@ public class FcmDto {
         private String title;
         private String body;
     }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class PayData{
+        private Integer userId;
+        private String nickname;
+        private String userFileUrl;
+        private Integer feedId;
+        private String feedFileUrl;
+        private Integer commentId;
+        private String comment;
+    }
+
+
 
     @Getter
     @Setter
