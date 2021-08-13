@@ -1,11 +1,12 @@
 import _axios from "./Default"
 
 export default {
+  // 책 제목으로 검색
   searchBookTitle(searchData) {
     return _axios({
       url: 'books',
       method: 'get',
-      params: {searchType: 'title', searchWord: searchData}
+      params: searchData
     })
   },
   searchBookAuthor(searchData) {

@@ -4,7 +4,6 @@
       # <strong>{{ cnt }}명</strong>의 사용자가 
       <strong>챌린지에 참여</strong>했어요!
     </div>
-    <!-- 데이터 들어오면 v-for 추가 -->
     <div v-if="feeds">
       <ChallengeFeedItem
         v-for="(feed, idx) in feeds"
@@ -13,6 +12,10 @@
         :feed=feed
         :need-book=needBook
       />
+      <button
+        class="top-btn"
+        @click="goToTop"
+      ><i class="fi-sr-caret-up"></i></button>
     </div>
   </div>
 </template>
@@ -41,10 +44,10 @@ export default {
       if (elems) {
         elems.forEach(elem => {
           if (this.isElementUnderBottom(elem, -45)) {
-            elem.style.opacity = "0";
+            elem.style.opacity = "0"
             elem.style.transform = 'translateY(30px)'
           } else {
-            elem.style.opacity = "1";
+            elem.style.opacity = "1"
             elem.style.transform = 'translateY(0px)'
           }
         })
@@ -57,12 +60,26 @@ export default {
           this.$emit('last')
         }
       }
+    },
+    needTopBtn() {
+      const { bottom } = document.getElementsByClassName('tabs')[0].getBoundingClientRect()
+      const currentTop = document.getElementById('challenge').scrollTop
+      const btn = document.querySelector('.top-btn')
+      if (currentTop > bottom) {
+        btn.style.opacity = "1"
+      } else {
+        btn.style.opacity = "0"
+      }
+    },
+    goToTop() {
+      document.getElementById('challenge').scrollTop = 0
     }
   },
   mounted () {
     const page = document.getElementById('challenge')
     page.addEventListener('scroll', this.handleScroll)
     page.addEventListener('scroll', this.checkLast)
+    page.addEventListener('scroll', this.needTopBtn)
     this.handleScroll()
   }
 }
