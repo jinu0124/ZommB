@@ -24,7 +24,7 @@
             :src="book.bookFileUrl"
             :alt="'week-' + book.week + '-Book'"
             type="button"
-            @click="$router.push({ name: 'BookInfo', params: {id: book.id} })"
+            @click="$router.push({ name: 'BookInfo', params: {id: book.bookId} })"
           >
           <img v-if="book.week > weeklyTotal" class="private" src="@/assets/image/camel/camelQuestionMark.svg" alt="">
           <i 

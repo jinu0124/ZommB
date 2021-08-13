@@ -21,7 +21,9 @@
           v-for="(day, idx) in week"
           :key=idx
         >
-          <img :src="stamp(day)" alt="">
+          <img v-if="day > dailyTotal" src="@/assets/image/dailyStamp/x.svg" alt="">
+          <img v-else-if="day <= myChallenge.dailyParticipate" :src="stamp(day)" alt="">
+          <img v-else src="@/assets/image/dailyStamp/yet.svg" alt="">
         </div>
       </div>
     </div>
