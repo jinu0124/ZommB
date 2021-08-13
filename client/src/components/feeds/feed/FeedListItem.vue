@@ -40,11 +40,11 @@
         <FeedMenu />
       </div>
       <img
-        v-if="myInfo.userFileUrl"
+        v-if="feedInfo.feedFileUrl"
         class="feed-image"
         type="button"
         id="FeedImage"
-        :src="myInfo.userFileUrl"
+        :src="feedInfo.feedFileUrl"
         alt="feed-image"
       />
       <img
