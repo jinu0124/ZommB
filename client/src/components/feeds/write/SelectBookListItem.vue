@@ -4,7 +4,7 @@
       <img class="book-cover" :src="book.bookFileUrl" alt="">
       <div>
         <div class="title">{{ book.bookName }}</div>
-        <div class="subtitle mt-1">{{ book.author }} | {{ book.publisher }}</div>
+        <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
       </div>
       <button 
         class="btn-65 btn-yellow right-fix"
@@ -15,11 +15,21 @@
 </template>
 
 <script>
+import _ from 'lodash'
 export default {
   name: 'SelectBookListItem',
   props: {
     book: Object
   },
+  computed: {
+    author () {
+      const authors = _.split(this.book.author, ',')
+      if (authors.length > 1) {
+        return authors[0] + ` 외 ${authors.length - 1}명`
+      }
+      return this.book.author
+    }
+  }
 }
 </script>
 
