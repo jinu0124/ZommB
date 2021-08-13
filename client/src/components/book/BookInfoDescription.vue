@@ -6,6 +6,7 @@
         {{ shortenContent }}
         <div
           class="btn-text-s btn-text-primary"
+          type="button"
           @click="changeContent"
         >더보기</div>
       </div>
@@ -13,6 +14,7 @@
         {{ bookInfo.contents }}
         <div 
           v-if="shortenContent"
+          type="button"
           class="btn-text-s btn-text-primary"
           @click="changeContent"
         >간략히 보기</div>

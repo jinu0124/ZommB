@@ -70,15 +70,12 @@ const actions = {
         console.log(err.response)
       })
   },
-  async onLogin ({ commit, dispatch }, userData) {
+  async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
         console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
-        dispatch('getBookShelf')
-        dispatch('getBookCart')
-        dispatch('getFeed')
         router.push({ name: 'Feed' })
       })
       .catch((err) => {

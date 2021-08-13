@@ -1,11 +1,17 @@
 <template>
   <div class="daily">
     <ChallengeDailyKeyword/>
-    <ChallengeFeedList/>
+    <ChallengeFeedList
+      :cnt=dailyCnt
+      :feeds=dailyFeed
+      :need-book=needBook
+      @last=addFeed
+    />
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import ChallengeDailyKeyword from './ChallengeDailyKeyword'
 import ChallengeFeedList from './ChallengeFeedList'
 
@@ -14,6 +20,27 @@ export default {
   components: {
     ChallengeDailyKeyword,
     ChallengeFeedList
+  },
+  data() {
+    return {
+      page: 1,
+      isEnd: false,
+      needBook: true
+    }
+  },
+  methods: {
+    ...mapActions('challenge', ['getDailyFeeds', 'getDailyParticipate']),
+    addFeed () {
+      this.getDailyFeeds(this.page)
+      this.page ++
+    }
+  },
+  computed: {
+    ...mapState('challenge', ['dailyCnt', 'dailyFeed'])
+  },
+  created () {
+    this.getDailyFeeds(0)
+    this.getDailyParticipate()
   }
 }
 </script>

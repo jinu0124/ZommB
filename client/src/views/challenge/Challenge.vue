@@ -1,5 +1,5 @@
 <template>
-  <div class="challenge d-flex flex-column align-items-center">
+  <div id="challenge" class="challenge d-flex flex-column align-items-center">
     <div style="max-width: 450px;">
       <div class="ch-header d-flex flex-column">
         <div class="title">
