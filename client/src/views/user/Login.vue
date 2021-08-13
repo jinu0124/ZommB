@@ -168,7 +168,7 @@ export default {
       this.isSubmit = isSubmit;
     },
     kakaoLogin() {
-      window.location.href="http://localhost:8080/oauth2/authorization/kakao";
+      window.location.href= process.env.VUE_APP_SERVER_URL + "/oauth2/authorization/kakao";
     }
   },
   created() {

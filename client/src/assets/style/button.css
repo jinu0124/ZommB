@@ -81,6 +81,20 @@
   font-size: 0.6rem;
 }
 
+.top-btn {
+  border: none;
+  outline: none;
+  position: fixed;
+  bottom: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+}
+
 .btn-primary1 {
   background-color: #683ec9;
   color: #fff;
