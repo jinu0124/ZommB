@@ -2,9 +2,10 @@
   <div class="Weelky">
     <ChallengeWeeklyBook/>
     <ChallengeFeedList
-      :cnt="weeklyCnt"
-      :feeds="weeklyFeed"
-      @last="addFeed"
+      :cnt=weeklyCnt
+      :feeds=weeklyFeed
+      :need-book=needBook
+      @last=addFeed
     />
   </div>
 </template>
@@ -23,7 +24,8 @@ export default {
   data() {
     return {
       page: 1,
-      isEnd: false
+      isEnd: false,
+      needBook: false
     }
   },
   methods: {

@@ -11,6 +11,7 @@
         class="up-on-scroll"
         :key=idx
         :feed=feed
+        :need-book=needBook
       />
     </div>
   </div>
@@ -26,7 +27,8 @@ export default {
   },
   props: {
     cnt: Number,
-    feeds: Array
+    feeds: Array,
+    needBook: Boolean
   },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {

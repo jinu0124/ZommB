@@ -1,6 +1,12 @@
 <template>
   <div class="weekly-article d-flex flex-column my-3">
-    <img class="article-img" :src="feed.feedFileUrl" alt="">
+    <img 
+      v-if="needBook" 
+      class="article-img" 
+      :src="bookCover" alt=""
+      @click="$router.push({ name: 'BookInfo', params: { id: feed.book.id } })"
+    >
+    <img v-else class="article-img" :src="feed.feedFileUrl" alt="">
     <div class="article-info">
       <div class="user d-flex align-items-center gap-1">
         <img v-if="feed.user.userFileUrl" class="profile" :src="feed.user.userFileUrl" alt="">
@@ -16,7 +22,7 @@
         >#{{ hashtag.tag }}</span>
         <span
           v-if="feed.hashTags.length > 2"
-          class="badge rounded-pill me-1">...</span>
+          class="badge and-more rounded-pill me-1">+{{feed.hashTags.length - 2}}</span>
       </div>
     </div>
   </div>
@@ -24,32 +30,40 @@
 
 <script>
 import _ from 'lodash'
+import bookApi from '@/api/book'
 
 export default {
   name: 'ChallengeFeedItem',
   props: {
-    feed: Object
+    feed: Object,
+    needBook: Boolean
   },
-  data() {
+  data () {
     return {
-      content: 'truncate 테스트입니다. 왼쪽은 저희 집 고양이에여. 너무 귀엽죠? 저도 알아여 ㅎㅎㅎ 몇 자에서 끊기는 거니 도대체..',
-      tags: [
-        '해시태그',
-        '테스트',
-        '입니다'
-      ]
+      bookCover: null
     }
   },
   computed: {
     shortenContent () {
       return _.truncate(this.feed.content, {
-        'length': 40,
+        'length': 50,
       })
+    },
+    shortenBookName () {
+      return _.split(this.feed.book.bookName, '(')[0]
     },
     hashtagSlice () {
       return _.slice(this.feed.hashTags, 0, 2)
     }
   },
+  async mounted () {
+    if (this.needBook) {
+      await bookApi.getBookDetail(this.feed.book.id)
+        .then((res) => {
+          this.bookCover = res.data.data.bookFileUrl
+        })
+    }
+  }
 }
 </script>
 
@@ -75,11 +89,16 @@ export default {
     padding-left: 110px;
     padding-right: 10px;
   }
+  .article-info .book {
+    font-size: 12px;
+    color: #C4C4C4;
+  }
   .article-info .content {
     font-size: 10px;
-    font-weight: 300;
+    font-weight: 200;
     text-align: justify;
     margin: 2px 3px 0;
+    white-space: pre-line;
   }
   .user .profile {
     width: 16px;
@@ -88,10 +107,14 @@ export default {
   }
   .user .name {
    font-size: 12px;
+   font-weight: 500;
   }
   .badge {
     font-size: 8px;
     color: #585858;
     background: #FFDC7C;
+  }
+  .and-more {
+    background:  rgba(255, 220, 124, 0.8);
   }
 </style>

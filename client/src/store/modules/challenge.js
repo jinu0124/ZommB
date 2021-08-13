@@ -11,6 +11,8 @@ const state = {
   weeklyCnt: null,
   dailyId: null,
   dailyKeyword: null,
+  dailyFeed: null,
+  dailyCnt: null,
   myChallenge: null,
   stopRequest: false,
   bookmark: ['BRONZE', 'SILVER', 'GOLD', 'PLATINNUM', 'DIAMOND'],
@@ -60,6 +62,7 @@ const actions = {
         })
     }
   },
+  // Daily Keyword
   async getDailyKeyword ({ commit }, data) {
     await challengeApi.getDailyKeyword(data)
       .then((res) => {
@@ -72,6 +75,31 @@ const actions = {
         commit('SET_DAILY_KEYWORD', keywordInfo)
       })
   },
+  async getDailyParticipate ({ state, commit }) {
+    await challengeApi.getDailyParticipants(state.dailyId)
+      .then((res) => {
+        // console.log(res)
+        commit('SET_DAILY_CNT', res.data.participants)
+      })
+  },
+  async getDailyFeeds ({ state, commit }, page) {
+    if (!page || !state.stopRequest) {
+      await challengeApi.getDailyFeeds(state.dailyId, page)
+        .then((res) => {
+          console.log(res)
+          if (res.status === 200) {
+            if (!page) {
+              commit('SET_DAILY_FEEDS', res.data.data)
+            } else {
+              commit('ADD_DAILY_FEEDS', res.data.data)
+            }
+            commit('SET_STOP', false)
+          } else if (res.status === 204) {
+            commit('SET_STOP', true)
+          }
+        })
+    }
+  },
   async getMyChallenge ({ commit }, data) {
     await challengeApi.getMyChallenge(data)
       .then((res) => {
@@ -82,6 +110,7 @@ const actions = {
 }
 
 const mutations = {
+  // Weekly Books
   SET_WEEKLY_ID(state, payload) {
     state.weeklyId = payload
   },
@@ -97,23 +126,37 @@ const mutations = {
   SET_WEEKLY_FEEDS(state, payload) {
     state.weeklyFeed = payload
   },
+  ADD_WEEKLY_FEEDS(state, payload) {
+    payload.forEach(data => {
+      state.weeklyFeed.push(data)
+    })
+  },
+  // Daily Keyword
   SET_DAILY_ID(state, payload) {
     state.dailyId = payload
   },
   SET_DAILY_KEYWORD(state, payload) {
     state.dailyKeyword = payload
   },
+  SET_DAILY_CNT(state, payload) {
+    state.dailyCnt = payload
+  },
+  SET_DAILY_FEEDS(state, payload) {
+    state.dailyFeed = payload
+  },
+  ADD_DAILY_FEEDS(state, payload) {
+    payload.forEach(data => {
+      state.dailyFeed.push(data)
+    })
+  },
+  // My Challenge
   SET_MY_CHALLENGE(state, payload) {
     state.myChallenge = payload
   },
   SET_STOP(state, payload) {
     state.stopRequest = payload
   },
-  ADD_WEEKLY_FEEDS(state, payload) {
-    payload.forEach(data => {
-      state.weeklyFeed.push(data)
-    })
-  }
+
 }
 
 const getters = {
