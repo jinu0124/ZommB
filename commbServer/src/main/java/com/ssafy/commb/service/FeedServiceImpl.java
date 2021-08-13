@@ -223,6 +223,65 @@ public class FeedServiceImpl implements FeedService {
         Optional<Feed> feed = feedRepository.findById(feedId);
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "삭제할 피드가 없습니다.");
 
+        // DailyEvent 참여 피드가 아닌경우 -> 처리 X
+        // DailyEvent 참여 피드인 경우, 피드 생성 날짜 기준으로 그 날 작성한 모든 피드를 가져와서 해시태그랑 키워드를 비교해서 1개면(등록한 해당 피드) pencil -1
+        List<String> Tags = extractHashTag(feed.get().getContent());
+
+        Date[] dates = transformDay(feed.get().getCreateAt());
+        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
+        String keyword = dailyEvent.get().getKeyword().getKeyword();
+        Boolean checkDailyEvent = false;
+        for (int i = 0; i < Tags.size(); i++) {
+            if (keyword.equals(Tags.get(i))) checkDailyEvent = true;
+        }
+
+        User user = feed.get().getUser();
+        int dailyEventFeedCnt = 0;
+        if (checkDailyEvent) {
+            List<Feed> feeds = feedRepository.findByUserIdAndCreateAtBetween(user.getId(), dates[0], dates[1]);
+
+            all:
+            for (Feed f : feeds) {
+                List<HashTag> hashTags = hashTagRepository.findByFeedId(f.getId());
+
+                for (HashTag hashTag : hashTags) {
+                    if (keyword.equals(hashTag.getTag())) {
+                        dailyEventFeedCnt++;
+                        if (dailyEventFeedCnt > 1) break all;
+                    }
+                }
+            }
+
+            if (dailyEventFeedCnt == 1) {
+                user.setPencil(user.getPencil() - 1);
+                userRepository.save(user);
+            }
+        }
+
+        // WeeklyEvent 참여 피드가 아닌경우 -> 처리 X
+        // WeeklyEvent 참여 피드인 경우, 피드 생성 날짜 기준으로 그 주 작성한 모든 피드를 가져와서 북 아이디랑 비교해서 1개면(등록한 해당 피드) bookmark +1
+        dates = transformWeek(feed.get().getCreateAt());
+        Optional<WeeklyEvent> weeklyEvent = weeklyEventRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(dates[0], dates[1]);
+        int eventBookId = weeklyEvent.get().getBook().getId();
+
+        if (eventBookId == feed.get().getBook().getId()) {
+            List<Feed> feeds = feedRepository.findByUserIdAndCreateAtBetween(user.getId(), weeklyEvent.get().getStartDate(), weeklyEvent.get().getEndDate());
+            int weeklyEventFeedCnt = 0;
+            for (Feed f : feeds) {
+                if (eventBookId == f.getBook().getId()) {
+                    weeklyEventFeedCnt++;
+                    if (weeklyEventFeedCnt > 1) break;
+                }
+            }
+
+            if (weeklyEventFeedCnt == 1) {
+                user.setBookmark(user.getBookmark() - 1);
+                userRepository.save(user);
+            }
+        }
+
+
+        // 피드 삭제
         String url = feed.get().getFileUrl();
         S3service.deleteS3(url, "feed");
 
