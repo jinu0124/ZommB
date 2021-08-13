@@ -60,7 +60,7 @@ export default {
     font-weight: 700;
   }
   .weekly-book .info {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 300;
   }
 </style>

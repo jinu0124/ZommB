@@ -71,6 +71,7 @@ export default {
   display: flex;
 }
 .reply-content {
+  width: 100%;
   flex-direction: column;
   align-items: flex-start;
   font-family: "Noto Sans KR";

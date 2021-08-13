@@ -187,6 +187,7 @@ export default {
       this.preview = null
       this.profilePath = null
       this.myCroppa = null
+      this.makeFormData()
     },
     makeFormData () {
       if (this.profileUpdate === 1) {
