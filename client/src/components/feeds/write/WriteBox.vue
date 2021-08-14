@@ -3,7 +3,7 @@
     <div class="book-info d-flex flex-column justify-content-center">
       <img  class="book-cover" :src="bookInfo.bookFileUrl" alt="">
       <div class="title">{{ bookInfo.bookName }}</div>
-      <div class="subtitle mt-1">{{ bookInfo.author }} | {{ bookInfo.publisher }}</div>
+      <div class="subtitle mt-1">{{ author }} | {{ bookInfo.publisher }}</div>
       <i 
         class="fi-rr-picture add-photo-btn"
         type="button"
@@ -27,6 +27,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState } from 'vuex'
 
 export default {
@@ -46,7 +47,14 @@ export default {
     }
   },
   computed: {
-    ...mapState('book', ['bookInfo'])
+    ...mapState('book', ['bookInfo']),
+    author () {
+      const authors = _.split(this.bookInfo.author, ',')
+      if (authors.length > 1) {
+        return authors[0] + ` 외 ${authors.length - 1}명`
+      }
+      return this.bookInfo.author
+    }
   },
 }
 </script>

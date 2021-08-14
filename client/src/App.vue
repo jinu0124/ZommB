@@ -33,6 +33,7 @@ export default {
         this.$route.name === "SignupEmail" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
@@ -55,6 +56,7 @@ export default {
         this.$route.name === "Signup" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "UpdateInfo"
       ) {
         return true;
