@@ -1,15 +1,18 @@
 package com.ssafy.commb.controller;
 
 import com.ssafy.commb.common.QueryStringArgResolver;
+import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfDto;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.jwt.SecurityService;
+import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
@@ -30,8 +33,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /**
  * @ User, Bookshelves, Keyword/Follow Recommend Function Controller
@@ -68,7 +76,10 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    RedisService redisService;
+    private RedisService redisService;
+
+    @Autowired
+    private FcmService fcmService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -178,15 +189,28 @@ public class UserController {
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
+    @DeleteMapping("/login")
+    @ApiOperation(value = "로그아웃")
+    public ResponseEntity logout(@RequestParam String firebaseToken){
+        fcmService.del(firebaseToken);
+        return ResponseEntity.status(204).build();
+    }
+
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
+    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) throws InterruptedException, IOException {
         MyDto.Response myRes = userService.login(myReq);
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        fcmService.save(myRes, myReq.getFirebaseToken());
+
+//        fcmService.send(myReq.getFirebaseToken(), "제목", "내용");
+//        String token = "BJF9g6SsclFA3hxLFj8YgBgT4vhAaUXL6Mzsad7Dh2nESKkS1cm1jURzUA9hactgtLe9-HGh_uEX4WIGl3D1YPk";
+//        fcmService.register(myRes.getData().getId(), token);
 
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
@@ -422,3 +446,58 @@ public class UserController {
     }
 
 }
+
+
+
+/*
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBBx4cBxQU_YDA4IWx11dT6UXwtvrQgdE4",
+    authDomain: "commb-27f77.firebaseapp.com",
+    projectId: "commb-27f77",
+    storageBucket: "commb-27f77.appspot.com",
+    messagingSenderId: "1096431511822",
+    appId: "1:1096431511822:web:8098fb0674c582d68acf5f"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+
+
+AAAA_0hpKQ4:APA91bFyxBKgfKFJwtQCKfodjXI5ANsC6srfmShL3vjDVxAQKIbuqCVvml5dbzdvcuFe6OJhEHiEcXJUmFwvjicOvqhptiWhOQacPX1Gi8AqPP59tiU452lXJR_lSjN5g4LAsGUTZkuQ
+
+BJF9g6SsclFA3hxLFj8YgBgT4vhAaUXL6Mzsad7Dh2nESKkS1cm1jURzUA9hactgtLe9-HGh_uEX4WIGl3D1YPk
+
+
+
+ */
+
+
+//<!-- The core Firebase JS SDK is always required and must be listed first -->
+//<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+//
+//<!-- TODO: Add SDKs for Firebase products that you want to use
+//        https://firebase.google.com/docs/web/setup#available-libraries -->
+//
+//<script>
+//// Your web app's Firebase configuration
+//  var firebaseConfig = {
+//          apiKey: "AIzaSyBi-CjUpqtPjDFgo8jLiwxwpcm0KhWI31g",
+//          authDomain: "commb-43e85.firebaseapp.com",
+//          projectId: "commb-43e85",
+//          storageBucket: "commb-43e85.appspot.com",
+//          messagingSenderId: "366820301866",
+//          appId: "1:366820301866:web:ef81fde40aeda933d63753"
+//          };
+//          // Initialize Firebase
+//          firebase.initializeApp(firebaseConfig);
+//</script>

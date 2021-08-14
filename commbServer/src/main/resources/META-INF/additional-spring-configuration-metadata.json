@@ -54,5 +54,10 @@
       "name": "dynamic.front.path",
       "type": "java.lang.String",
       "description": "Description for dynamic.front.path."
+    },
+    {
+      "name": "fcm.service-account-file",
+      "type": "java.lang.String",
+      "description": "Description for fcm.service-account-file."
     }
   ] }

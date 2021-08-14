@@ -17,6 +17,7 @@
 
 <script>
 import Header from "@/components/Header";
+import messaging from '@/api/firebase.js'
 
 export default {
   name: "App",
@@ -33,6 +34,7 @@ export default {
         this.$route.name === "SignupEmail" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
@@ -55,6 +57,7 @@ export default {
         this.$route.name === "Signup" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "UpdateInfo"
       ) {
         return true;
@@ -91,6 +94,12 @@ export default {
         }
       return false
     },
+  },
+  created(){
+    messaging.onMessage((payload) => {
+      console.log("message received", payload)
+      alert(payload.notification.title + "\n" + payload.notification.body)
+    })
   },
 };
 </script>

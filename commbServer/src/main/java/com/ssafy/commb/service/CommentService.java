@@ -1,5 +1,10 @@
 package com.ssafy.commb.service;
 
+import com.ssafy.commb.dto.fcm.FcmDto;
+
+import java.util.List;
+import java.util.Map;
+
 public interface CommentService {
 
     public void uploadComment(int feedId, int userId, String content);
@@ -13,5 +18,8 @@ public interface CommentService {
     public void likeComment(int feedId, int commentId, int userId);
 
     public void deleteLikeComment(int feedId, int commentId, int userId);
+
+    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content);
+
 
 }

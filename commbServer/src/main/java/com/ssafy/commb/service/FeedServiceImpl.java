@@ -1,8 +1,6 @@
 package com.ssafy.commb.service;
 
-import com.querydsl.core.Tuple;
-import com.querydsl.jpa.impl.JPAQuery;
-import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.exception.ApplicationException;
@@ -24,6 +22,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -362,6 +361,14 @@ public class FeedServiceImpl implements FeedService {
         report.setReason(reason);
 
         reportRepository.save(report);
+
+        Optional<List<Feed>> feedReported = reportRepository.findByFeedId(feedId);              // 신고 4회부터는 블럭처리
+        feedReported.ifPresent(select -> {
+            if(select.size() > 3) {
+                feed.get().setBlocked(1);
+                feedRepository.save(feed.get());
+            }
+        });
     }
 
     public FeedDto.ResponseList getFollowingFeeds(int page, int userId) {
@@ -442,6 +449,30 @@ public class FeedServiceImpl implements FeedService {
         return FeedDto.ResponseList.builder()
                 .data(feeds)
                 .build();
+    }
+
+    /**
+     * FeedId를 토대로 기본적인 알림을 위한 피드 정보 반환, 피드가 존재하지 않을때는 null return
+     * @param feedId : 피드 ID
+     * @return : 피드 정보
+     */
+    @Override
+    public FeedDto getFeedInfo(int feedId) {
+        Optional<Feed> feed = feedRepository.findById(feedId);
+
+        AtomicReference<FeedDto> feedDto = new AtomicReference<>();
+
+        feed.ifPresent(select -> {
+            feedDto.set(FeedDto.builder()
+                    .book(BookDto.builder()
+                            .id(select.getBook().getId()).build())
+                    .feedFileUrl(select.getFileUrl())
+                    .id(select.getId())
+                    .content(select.getContent())
+                    .build());
+        });
+
+        return feedDto.get();
     }
 
     public List<String> extractHashTag(String content) {

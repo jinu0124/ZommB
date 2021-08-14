@@ -41,7 +41,8 @@ public class AuthInterceptor implements HandlerInterceptor {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws Exception {
-        System.out.println("PreHandler / Request Url : " + request.getRequestURI());
+
+        System.out.println("(" + request.getMethod() + ")PreHandler / Request Url : " + request.getRequestURI());
 
         Map<String, Object> map = new HashMap<>();
         Gson gson = new Gson();

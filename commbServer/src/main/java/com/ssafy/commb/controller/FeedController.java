@@ -1,11 +1,17 @@
 package com.ssafy.commb.controller;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.ssafy.commb.common.fcm.FcmService;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
+import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
 import com.ssafy.commb.service.ThumbService;
+import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/feeds")
@@ -53,6 +62,12 @@ public class FeedController {
 
     @Autowired
     private CommentService commentService;
+
+    @Autowired
+    private FcmService fcmService;
+
+    @Autowired
+    private UserService userService;
 
     // /feeds?searchWord="abc"
     // 게시물 리스트 검색
@@ -117,11 +132,31 @@ public class FeedController {
     // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
     @ApiOperation(value = "피드 좋아요 누르기")
-    public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
+    public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) throws InterruptedException, FirebaseMessagingException, IOException {
 
         int userId = (Integer) request.getAttribute("userId");
 
         thumbService.likeFeed(feedId, userId);
+
+        List<FirebaseToken> firebaseToken = fcmService.getUserToken(feedService.getUserId(feedId));
+
+        UserDto.Response user = userService.getUserInfo(userId, request);
+        FeedDto feed = feedService.getFeedInfo(feedId);
+
+        fcmService.sends(firebaseToken, FcmDto.builder()
+                .message(FcmDto.Message.builder()
+                        .data(FcmDto.PayData.builder()
+                                .nickname(user.getData().getNickname())
+                                .feedId(feed.getId())
+                                .feedFileUrl(feed.getFeedFileUrl())
+                                .content(feed.getContent())
+                                .build())
+                        .notification(FcmDto.Notification.builder()
+                                .title("like")
+                                .body("")
+                                .build())
+                        .build())
+                .build());
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -156,15 +191,23 @@ public class FeedController {
     // 댓글 작성
     @PostMapping("/{feedId}/comments")
     @ApiOperation(value = "댓글 작성")
-    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
+    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
 
         int userId = (Integer) request.getAttribute("userId");
-
+        System.out.println(userId);
         commentService.uploadComment(feedId, userId, content);
+
+        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content);
+        List<FirebaseToken> tokens = new ArrayList<>();
+        List<String> tokenStr = new ArrayList<>();
+
+        for(FcmDto fcm : fcms) tokenStr.add(fcm.getMessage().getToken());
+        for (String token : tokenStr) tokens.add(FirebaseToken.builder().token(token).build());
+
+        fcmService.sends(tokens, fcms.get(0));
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
-
 
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")

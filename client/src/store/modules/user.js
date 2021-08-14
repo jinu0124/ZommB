@@ -92,6 +92,13 @@ const actions = {
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
+  async withdrawal ({ dispatch }) {
+    await userApi.withdrawal()
+      .then((res) => {
+        console.log(res)
+        dispatch('onLogout')
+      })
+  },
   async onUpdatePassword({ state }, userData) {
     await userApi.changePassword(state.myInfo.id, userData)
       .then((res) => {
