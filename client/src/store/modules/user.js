@@ -73,7 +73,6 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await userApi.login(userData)
       .then((res) => {
-        console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
