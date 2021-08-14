@@ -5,6 +5,7 @@ import Index from '@/views/Index'
 import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
+import Notification from '@/views/user/Notification'
 import UpdateInfo from '@/views/user/UpdateInfo'
 import Withdraw from '@/views/user/Withdraw'
 import Profile from '@/views/user/profile/Profile'
@@ -69,6 +70,12 @@ const routes = [
     path: '/withdraw',
     name: 'Withdraw',
     component: Withdraw,
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/notification',
+    name: 'Notification',
+    component: Notification,
     meta: { requireAuth: true }
   },
   // social login
