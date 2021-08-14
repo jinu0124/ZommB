@@ -25,10 +25,21 @@
       </span>
       <span class="user-nickname">{{ nickname }}</span>
       <span>
-        <button class="follow btn-5 btn-yellow" @click="follow()" v-show="Follow">팔로우</button>
+        <button
+          class="follow btn-5 btn-yellow"
+          @click="follow()"
+          v-show="Follow"
+        >
+          팔로우
+        </button>
       </span>
       <span>
-        <button class="follow btn-5 btn-grey" type="button" @click="unfollow()" v-show="unFollow">
+        <button
+          class="follow btn-5 btn-grey"
+          type="button"
+          @click="unfollow()"
+          v-show="unFollow"
+        >
           팔로우 취소
         </button>
       </span>
