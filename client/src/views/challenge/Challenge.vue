@@ -11,17 +11,14 @@
         </div>
         <div class="tabs d-flex gap-2 mt-2">
           <span 
-            type="button"
             @click=changePage(0)
             :class="[ selectedPage === 0 ? 'current' : 'rest', 'badge']"
           >Weekly Books</span>
           <span 
-            type="button"
             @click=changePage(1)
             :class="[ selectedPage === 1 ? 'current' : 'rest', 'badge']"
           >Daily Keyword</span>
           <span 
-            type="button"
             @click=changePage(2)
             :class="[ selectedPage === 2 ? 'current' : 'rest', 'badge']"
           >My</span>
@@ -104,6 +101,7 @@ export default {
     padding: 5px 12px;
     vertical-align: middle;
     border-radius: .5rem;
+    cursor: pointer;
   }
   .tabs .current {
     background: #97DFFC;

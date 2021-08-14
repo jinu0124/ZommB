@@ -1,8 +1,11 @@
 /* IOS 버튼 디자인 변경 막기 */
-* {
+input, textarea, button, router-link { 
   appearance: none; 
   -moz-appearance: none; 
   -webkit-appearance: none; 
+  border-radius: 0; 
+  -webkit-border-radius: 0; 
+  -moz-border-radius: 0; 
 }
 
 .alert-center {
