@@ -43,13 +43,17 @@ export default {
   name: "Header",
   methods: {
     moveToWrite() {
-      this.$router.push("/write");
+      this.$router.push("/write")
     },
     moveHome() {
       if (this.myInfo.id) {
-        this.$router.push({ name: "Feed" });
+        if (this.$route.name === 'Feed') {
+          this.$router.go(this.$router.currentRoute)
+        } else {
+          this.$router.push({ name: "Feed" })
+        }
       } else {
-        this.$router.push({ name: "Index" });
+        this.$router.push({ name: "Index" })
       }
     },
   },
