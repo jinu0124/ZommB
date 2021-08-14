@@ -15,7 +15,9 @@ import org.apache.http.HttpHeaders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -36,7 +38,7 @@ public class FcmServiceImpl implements FcmService{
     private FirebaseTokenRepository firebaseTokenRepository;
 
     /**
-     * Firebase 서버에 Push 알림 1:1 발송 요청 : FcmDto 데이터 모두 발송(notification, data)
+     * Firebase 서버에 Push 알림 1:1 발송 요청(가장 최근 접속한 클라이언트 브라우저) : FcmDto 데이터 모두 발송(notification, data)
      * @Param : FcmDto
      * @throws IOException
      */
@@ -52,7 +54,7 @@ public class FcmServiceImpl implements FcmService{
     }
 
     /**
-     * Firebase 서버에 Push 알림 1:다 발송 요청 : FcmDto notification 만 발송
+     * Firebase 서버에 Push 알림 1:다 발송 요청 : FcmDto 데이터 모두 발송
      * @param tokens : 수신받을 클라이언트의 토큰 리스트
      * @param fcm : FcmDto
      * @throws InterruptedException
@@ -83,7 +85,7 @@ public class FcmServiceImpl implements FcmService{
         FirebaseToken firebaseToken = FirebaseToken.builder()
                 .user(user)
                 .token(token)
-                .createAt(new Date())
+                .createAt(LocalDateTime.now(ZoneId.of("+9")))
                 .build();
 
         firebaseTokenRepository.save(firebaseToken);
@@ -137,6 +139,18 @@ public class FcmServiceImpl implements FcmService{
 
         firebaseToken.ifPresent(select -> {
             firebaseTokenRepository.delete(select);
+        });
+    }
+
+    /**
+     * 하루 전까지의 Trash Firebase Token 정보 삭제하기 (알림 관련)
+     */
+    @Override
+    public void deleteLastDay() {
+        Optional<List<FirebaseToken>> firebaseTokens = firebaseTokenRepository.findByCreateAtBefore(LocalDateTime.now(ZoneId.of("+9")).minusDays(1));
+
+        firebaseTokens.ifPresent(select ->{
+            firebaseTokenRepository.deleteAll(firebaseTokens.get());
         });
     }
 

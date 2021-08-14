@@ -193,7 +193,7 @@ public class UserController {
     @ApiOperation(value = "로그아웃")
     public ResponseEntity logout(@RequestParam String firebaseToken){
         fcmService.del(firebaseToken);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(204).build();
     }
 
     @PostMapping("/login")

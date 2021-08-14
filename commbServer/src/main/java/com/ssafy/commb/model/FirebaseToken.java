@@ -1,8 +1,10 @@
 package com.ssafy.commb.model;
 
 import lombok.*;
+import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,8 +22,8 @@ public class FirebaseToken {
 
     private String token;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createAt;
+    @CreatedDate
+    private LocalDateTime createAt;
 
     @ManyToOne
     @JoinColumn(name="user_id")

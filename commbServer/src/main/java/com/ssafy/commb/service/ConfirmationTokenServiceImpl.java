@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.List;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -45,7 +47,7 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
 
     // 유효한 토큰 가져오기
     public Optional<ConfirmationToken> findByIdAndExpirationDateAfterAndExpired(String confirmationTokenId) {
-        return confirmationTokenRepository.findByIdAndExpirationDateAfterAndExpired(confirmationTokenId, LocalDateTime.now(), false);
+        return confirmationTokenRepository.findByIdAndExpirationDateAfterAndExpired(confirmationTokenId, LocalDateTime.now(ZoneId.of("+9")), false);
     }
 
     @Override
@@ -58,6 +60,15 @@ public class ConfirmationTokenServiceImpl implements ConfirmationTokenService{
         }
 
         throw new ApplicationException(HttpStatus.valueOf(401), "유효한 회원 인증 토큰을 찾을 수 없습니다. 서버에 문의");
+    }
+
+    @Override
+    public void deleteLast() {
+        Optional<List<ConfirmationToken>> confirmationTokens = confirmationTokenRepository.findByExpirationDateBefore(LocalDateTime.now(ZoneId.of("+9")));
+
+        confirmationTokens.ifPresent(select -> {
+            confirmationTokenRepository.deleteAll(confirmationTokens.get());
+        });
     }
 
 

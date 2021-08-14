@@ -39,16 +39,8 @@
         /></span>
         <FeedMenu />
       </div>
+      
       <img
-        v-if="feedInfo.feedFileUrl"
-        class="feed-image"
-        type="button"
-        id="FeedImage"
-        :src="feedInfo.feedFileUrl"
-        alt="feed-image"
-      />
-      <img
-        v-else
         alt="디폴트 피드 이미지"
         class="feed-image default-feed-image"
         src="@/assets/image/common/profileDefault.svg"
