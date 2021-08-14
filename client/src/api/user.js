@@ -9,6 +9,13 @@ export default {
       data: userData
     })
   },
+  logout(userData) {
+    return _axios({
+      url: '/users/login',
+      method: 'delete',
+      params: { firebaseToken: userData }
+    })
+  },
   signup(userData) {
     return _axios({
       url: '/users',
