@@ -65,10 +65,12 @@ export default {
       const { bottom } = document.getElementsByClassName('tabs')[0].getBoundingClientRect()
       const currentTop = document.getElementById('challenge').scrollTop
       const btn = document.querySelector('.top-btn')
-      if (currentTop > bottom) {
-        btn.style.opacity = "1"
-      } else {
-        btn.style.opacity = "0"
+      if (btn) {
+        if (currentTop > bottom) {
+          btn.style.opacity = "1"
+        } else {
+          btn.style.opacity = "0"
+        }
       }
     },
     goToTop() {

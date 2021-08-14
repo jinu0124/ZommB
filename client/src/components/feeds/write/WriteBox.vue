@@ -6,7 +6,6 @@
       <div class="subtitle mt-1">{{ author }} | {{ bookInfo.publisher }}</div>
       <i 
         class="fi-rr-picture add-photo-btn"
-        type="button"
         data-bs-toggle="modal" 
         data-bs-target="#imageCropModal"
       ></i>
@@ -105,6 +104,7 @@ export default {
     right: 10px;
     bottom: 3px;
     font-size: 1.1rem;
+    cursor: pointer;
   }
   .write-box .image-preview {
     position: absolute;
