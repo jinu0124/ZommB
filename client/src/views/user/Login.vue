@@ -89,7 +89,6 @@ import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
 import EmailReConfirmAlert from '@/components/user/EmailReConfirmAlert'
-import messaging from '../../api/firebase'
 
 export default {
   name: 'Login',
@@ -117,13 +116,6 @@ export default {
       this.needEmailConfirm = false
     },
     async login () {
-      await messaging.getToken({ vapidKey: "BJUm1CHDLOWdb7ZaInHrC7FLNOfRti5g3Z4XnMw7xjfD62MWKyoHpe1uoBndb9hFc92qkB-__2Bewhop2VrLo90" })
-      .then((currToken) => {
-        console.log("curr : ", currToken)
-        this.userData.firebaseToken = currToken;
-      })
-      console.log("token : ", this.userData.firebaseToken)
-
       await this.onLogin(this.userData)
         .catch ((err) => {
           console.log(err)
@@ -189,8 +181,7 @@ export default {
     userData: function () {
       return {
         'email': this.email,
-        'password': this.password,
-        'firebaseToken': ""
+        'password': this.password
       }
     },
   },

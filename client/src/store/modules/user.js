@@ -1,11 +1,13 @@
 import router from '@/router'
 import userApi from '@/api/user'
+import messaging from '@/api/firebase'
 
 const state = {
   isLogin: false,
   isResister: false, 
   accessToken: null,
   refreshToken: null,
+  firebaseToken: null,
   tempNickname: null,
   myInfo: null,
   bookShelf: null,
@@ -71,6 +73,11 @@ const actions = {
       })
   },
   async onLogin ({ commit }, userData) {
+    await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
+      .then((token) => {
+        userData.firebaseToken = token
+        commit('SET_FIREBASE_TOKEN', token)
+      })
     await userApi.login(userData)
       .then((res) => {
         commit('SET_ISLOGIN', true)
@@ -175,6 +182,9 @@ const mutations = {
   SET_ISRESISTER(state, payload) {
     state.isResister = payload
   },
+  SET_FIREBASE_TOKEN(state, payload) {
+    state.firebaseToken = payload
+  },
   SET_ACCESS_TOKEN(state, payload) {
     state.accessToken = payload
   },
@@ -186,9 +196,6 @@ const mutations = {
   },
   SET_MY_INFO(state, payload) {
     state.myInfo = payload
-    // state.myInfo.id = payload.id
-    // state.myInfo.nickname = payload.nickname
-    // state.myInfo.userFileUrl = payload.userFileUrl
   },
   SET_BOOKSHELF(state, payload) {
     state.bookShelf = payload
