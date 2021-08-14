@@ -130,16 +130,18 @@ public class CommentServiceImpl implements CommentService {
         Optional<User> user = userRepository.findById(userId);
 
         for(String token : tokens) {
-            System.out.println(token);
             FcmDto fcm = FcmDto.builder()
                     .message(FcmDto.Message.builder().token(token)
                             .notification(FcmDto.Notification.builder()
-                                    .title(user.get().getNickname())
+                                    .title("comment")
                                     .body(content)
                                     .build())
                             .data(FcmDto.PayData.builder()
                                     .feedId(feedId)
                                     .userId(userId)
+                                    .nickname(user.get().getNickname())
+                                    .userFileUrl(user.get().getFileUrl())
+                                    .comment(content)
                                     .build())
                             .build())
                     .build();

@@ -84,6 +84,7 @@
         SELECT ft.token as token
         FROM feed f, firebase_token ft
         WHERE f.id = #{feedId} AND f.user_id = ft.user_id
+        ORDER BY ft.create_at DESC
     </select>
 
 

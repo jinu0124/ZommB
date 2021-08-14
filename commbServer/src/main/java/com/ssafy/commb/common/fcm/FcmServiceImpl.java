@@ -16,7 +16,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,12 +36,14 @@ public class FcmServiceImpl implements FcmService{
     private FirebaseTokenRepository firebaseTokenRepository;
 
     /**
-     * Firebase 서버에 Push 알림 발송 요청
+     * Firebase 서버에 Push 알림 1:1 발송 요청 : FcmDto 데이터 모두 발송(notification, data)
      * @Param : FcmDto
      * @throws IOException
      */
     @Override
     public void send(FcmDto fcm) throws IOException {
+        if(fcm.getMessage().getToken() == null) return;
+
         OkHttpClient okHttpClient = new OkHttpClient();
         Request request = makeRequest(makeMessage(fcm));
 
@@ -46,19 +51,21 @@ public class FcmServiceImpl implements FcmService{
         System.out.println(response.body().string());
     }
 
+    /**
+     * Firebase 서버에 Push 알림 1:다 발송 요청 : FcmDto notification 만 발송
+     * @param tokens : 수신받을 클라이언트의 토큰 리스트
+     * @param fcm : FcmDto
+     * @throws InterruptedException
+     * @throws IOException
+     * @throws FirebaseMessagingException
+     */
     @Override
     public void sends(List<FirebaseToken> tokens, FcmDto fcm) throws InterruptedException, IOException, FirebaseMessagingException {
+        if(tokens.size() == 0) return;
 
-        List<String> tokenList = new ArrayList<>();
-
-        for(FirebaseToken token : tokens) tokenList.add(token.getToken());
-        MulticastMessage multicastMessage = MulticastMessage.builder()
-                .setNotification(new Notification(fcm.getMessage().getNotification().getTitle(), fcm.getMessage().getNotification().getBody()))
-                .addAllTokens(tokenList)
-                .build();
+        MulticastMessage multicastMessage = makeMulticastMessage(tokens, fcm);
 
         BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
-
         System.out.println(response.getResponses());
     }
 
@@ -76,6 +83,7 @@ public class FcmServiceImpl implements FcmService{
         FirebaseToken firebaseToken = FirebaseToken.builder()
                 .user(user)
                 .token(token)
+                .createAt(new Date())
                 .build();
 
         firebaseTokenRepository.save(firebaseToken);
@@ -94,7 +102,7 @@ public class FcmServiceImpl implements FcmService{
     }
 
     /**
-     * 여러 유저에게 캐스팅을 위해 Firebase Auth Token 들 가져오기
+     * 여러 유저에게 캐스팅을 위해 Firebase Auth Token 들 가져오기 (최근 접속한 브라우저 순으로 정렬하여 반환)
      * @param users  : UserDto 리스트
      * @return : Firebase 인증 토큰
      */
@@ -102,13 +110,13 @@ public class FcmServiceImpl implements FcmService{
     public List<FirebaseToken> getUsersToken(List<UserDto> users) {
         List<Integer> userIds = new ArrayList<>();
         for(UserDto user : users) userIds.add(user.getId());
-        Optional<List<FirebaseToken>> firebaseTokens = firebaseTokenRepository.findByUserIdIn(userIds);
+        Optional<List<FirebaseToken>> firebaseTokens = firebaseTokenRepository.findByUserIdInOrderByCreateAtDesc(userIds);
 
         return firebaseTokens.orElse(null);
     }
 
     /**
-     * 현재 접속해 있는 모든 사용자에게 캐스팅
+     * 현재 접속해 있는 모든 사용자에게 캐스팅을 위해
      * @return :  Firebase 인증 토큰
      */
     @Override
@@ -142,9 +150,37 @@ public class FcmServiceImpl implements FcmService{
         ObjectMapper objectMapper = new ObjectMapper();
 
         return objectMapper.writeValueAsString(fcm);
-
     }
 
+    /**
+     * Firebase로 REST 전송을 위한 Multicast 메시지 준비하기, null 데이터는 ""로 치환
+     * @param tokens : 수신자 클라이언트의 Registration Tokens
+     * @param fcm : FcmDto data
+     * @return : Multicast Message
+     */
+    private MulticastMessage makeMulticastMessage(List<FirebaseToken> tokens, FcmDto fcm){
+        List<String> tokenList = new ArrayList<>();
+        for(FirebaseToken token : tokens) tokenList.add(token.getToken());
+
+        return MulticastMessage.builder()
+                .setNotification(new Notification(fcm.getMessage().getNotification().getTitle(), fcm.getMessage().getNotification().getBody()))
+                .putData("nickname", String.valueOf(fcm.getMessage().getData().getNickname() == null ? "" : fcm.getMessage().getData().getNickname() ))
+                .putData("userId", String.valueOf(fcm.getMessage().getData().getUserId() == null ? "" : fcm.getMessage().getData().getUserId() ))
+                .putData("userFileUrl", String.valueOf(fcm.getMessage().getData().getUserFileUrl() == null ? "" : fcm.getMessage().getData().getUserFileUrl() ))
+                .putData("feedId", String.valueOf(fcm.getMessage().getData().getFeedId() == null ? "" : fcm.getMessage().getData().getFeedId() ))
+                .putData("feedFileUrl", String.valueOf(fcm.getMessage().getData().getFeedFileUrl() == null ? "" : fcm.getMessage().getData().getFeedFileUrl() ))
+                .putData("commentId", String.valueOf(fcm.getMessage().getData().getCommentId() == null ? "" : fcm.getMessage().getData().getCommentId() ))
+                .putData("comment", String.valueOf(fcm.getMessage().getData().getComment() == null ? "" : fcm.getMessage().getData().getComment() ))
+                .putData("content", String.valueOf(fcm.getMessage().getData().getContent() == null ? "" : fcm.getMessage().getData().getContent()))
+                .addAllTokens(tokenList)
+                .build();
+    }
+
+    /**
+     * OkHttp Request 준비하기
+     * @param message : 메시지 : Client Registration Token, FcmDto data
+     * @return : Request
+     */
     private Request makeRequest(String message){
         RequestBody requestBody = RequestBody
                 .create(message, MediaType.get("application/json; charset=utf-8"));

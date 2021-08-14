@@ -43,6 +43,7 @@ public class FcmDto {
         private String feedFileUrl;
         private Integer commentId;
         private String comment;
+        private String content;
     }
 
 

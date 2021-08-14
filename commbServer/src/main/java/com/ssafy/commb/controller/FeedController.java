@@ -5,11 +5,13 @@ import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
 import com.ssafy.commb.service.ThumbService;
+import com.ssafy.commb.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +65,9 @@ public class FeedController {
 
     @Autowired
     private FcmService fcmService;
+
+    @Autowired
+    private UserService userService;
 
     // /feeds?searchWord="abc"
     // 게시물 리스트 검색
@@ -127,11 +132,31 @@ public class FeedController {
     // 게시물 좋아요
     @PostMapping("/{feedId}/feed-like")
     @ApiOperation(value = "피드 좋아요 누르기")
-    public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
+    public ResponseEntity likeFeed(@PathVariable Integer feedId, HttpServletRequest request) throws InterruptedException, FirebaseMessagingException, IOException {
 
         int userId = (Integer) request.getAttribute("userId");
 
         thumbService.likeFeed(feedId, userId);
+
+        List<FirebaseToken> firebaseToken = fcmService.getUserToken(feedService.getUserId(feedId));
+
+        UserDto.Response user = userService.getUserInfo(userId, request);
+        FeedDto feed = feedService.getFeedInfo(feedId);
+
+        fcmService.sends(firebaseToken, FcmDto.builder()
+                .message(FcmDto.Message.builder()
+                        .data(FcmDto.PayData.builder()
+                                .nickname(user.getData().getNickname())
+                                .feedId(feed.getId())
+                                .feedFileUrl(feed.getFeedFileUrl())
+                                .content(feed.getContent())
+                                .build())
+                        .notification(FcmDto.Notification.builder()
+                                .title("like")
+                                .body("")
+                                .build())
+                        .build())
+                .build());
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -183,7 +208,6 @@ public class FeedController {
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
-
 
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")

@@ -22,7 +22,7 @@ public class FcmInitializer {
     private String FcmAccessToken;
 
     @PostConstruct
-    public String initializer() throws IOException {
+    public void initializer() throws IOException {
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream())).build();
 
@@ -36,6 +36,5 @@ public class FcmInitializer {
         googleCredentials.refreshIfExpired();
 
         FcmAccessToken = googleCredentials.getAccessToken().getTokenValue();
-        return googleCredentials.getAccessToken().getTokenValue();
     }
 }

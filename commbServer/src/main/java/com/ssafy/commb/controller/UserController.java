@@ -189,49 +189,6 @@ public class UserController {
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
-
-
-
-    @GetMapping(value="/test1/{userId}")
-    @ApiOperation(value = "한 유저 토큰 조회")
-    public ResponseEntity<List<FcmDto>> userInfo1(@PathVariable Integer userId, HttpServletRequest request){
-        List<FirebaseToken> ftokens = fcmService.getUserToken(userId);
-        List<FcmDto> fcms = new ArrayList<>();
-        for(int i=0; i<ftokens.size(); i++) fcms.add(FcmDto.builder().message(FcmDto.Message.builder().token(ftokens.get(i).getToken()).build()).build());
-
-        return ResponseEntity.ok().body(fcms);
-    }
-
-    @GetMapping(value="/test2/{userId}")
-    @ApiOperation(value = "여러 유저 토큰 조회")
-    public ResponseEntity<List<FcmDto>> userInfo2(@PathVariable Integer userId, HttpServletRequest request){
-        List<UserDto> users = new ArrayList<>();
-        UserDto user = new UserDto();
-        user.setId(10000051);
-        UserDto user2 = new UserDto();
-        user2.setId(10000001);
-        users.add(user);
-        users.add(user2);
-
-        List<FirebaseToken> ftokens = fcmService.getUsersToken(users);
-        List<FcmDto> fcms = new ArrayList<>();
-        for(int i=0; i<ftokens.size(); i++) fcms.add(FcmDto.builder().message(FcmDto.Message.builder().token(ftokens.get(i).getToken()).build()).build());
-
-        return ResponseEntity.ok().body(fcms);
-    }
-
-
-    @GetMapping(value="/test3/{userId}")
-    @ApiOperation(value = "모든 유저 토큰 조회")
-    public ResponseEntity<List<FcmDto>> userInfo3(@PathVariable Integer userId, HttpServletRequest request){
-        List<FirebaseToken> ftokens = fcmService.getBroadcastToken();
-        List<FcmDto> fcms = new ArrayList<>();
-        for(int i=0; i<ftokens.size(); i++) fcms.add(FcmDto.builder().message(FcmDto.Message.builder().token(ftokens.get(i).getToken()).build()).build());
-
-        return ResponseEntity.ok().body(fcms);
-    }
-
-
     @DeleteMapping("/login")
     @ApiOperation(value = "로그아웃")
     public ResponseEntity logout(@RequestParam String firebaseToken){

@@ -4,7 +4,9 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.model.FirebaseToken;
+import com.ssafy.commb.model.User;
 import com.ssafy.commb.service.FollowService;
 import com.ssafy.commb.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,19 +40,25 @@ public class FollowController {
         int follower = (int) request.getAttribute("userId");
         int following = Integer.parseInt(userId);
 
+        followService.addFollowing(follower, following);
+
+        UserDto.Response user = userService.getUserInfo(follower, request);
+
         List<FirebaseToken> firebaseTokens = fcmService.getUserToken(following);
-        String nick = userService.getUserInfo(Integer.parseInt(userId), request).getData().getNickname();
 
         fcmService.sends(firebaseTokens, FcmDto.builder()
                 .message(FcmDto.Message.builder()
                         .notification(FcmDto.Notification.builder()
-                                .title("following")
-                                .body(nick)
+                                .title("follow")
+                                .body("")
+                                .build())
+                        .data(FcmDto.PayData.builder()
+                                .userId(follower)
+                                .nickname(user.getData().getNickname())
+                                .userFileUrl(user.getData().getUserFileUrl())
                                 .build())
                         .build())
                 .build());
-
-        followService.addFollowing(follower, following);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }

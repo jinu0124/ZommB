@@ -104,4 +104,4 @@ dynamic:
 # Frontend Server : i5a602.p.ssafy.io/
 
 fcm:
-  service-account-file: commb-43e85-firebase-adminsdk-q0km7-396da64733.json
+  service-account-file: /config/commb-43e85-firebase-adminsdk-q0km7-396da64733.json

@@ -17,6 +17,7 @@
 
 <script>
 import Header from "@/components/Header";
+import messaging from '@/api/firebase.js'
 
 export default {
   name: "App",
@@ -93,6 +94,12 @@ export default {
         }
       return false
     },
+  },
+  created(){
+    messaging.onMessage((payload) => {
+      console.log("message received", payload)
+      alert(payload.notification.title + "\n" + payload.notification.body)
+    })
   },
 };
 </script>

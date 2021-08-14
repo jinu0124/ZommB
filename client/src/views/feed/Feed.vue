@@ -20,7 +20,6 @@
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
 import { mapActions, mapState } from "vuex";
-import messaging from '../../api/firebase'
 
 export default {
   name: "Feed",
@@ -36,12 +35,6 @@ export default {
   computed: {
     ...mapState("feed", ["userInfo"]),
   },
-  created(){
-    messaging.onMessage((payload) => {
-      console.log("message received", payload)
-      alert(payload.notification.title + "\n" + payload.notification.body)
-    })
-  }
 };
 </script>
 

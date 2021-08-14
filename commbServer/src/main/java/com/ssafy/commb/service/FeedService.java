@@ -30,4 +30,6 @@ public interface FeedService {
 
     public FeedDto.ResponseList getFeeds(String searchWord, int page, int userId);
 
+    public FeedDto getFeedInfo(int feedId);
+
 }

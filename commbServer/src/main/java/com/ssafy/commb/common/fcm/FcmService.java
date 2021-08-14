@@ -22,5 +22,5 @@ public interface FcmService {
 
     public List<FirebaseToken> getBroadcastToken();
 
-    public void del(String token);              // 브라우저마다 각각 로그인 접속해 있는 상태일 수 있기에 각 브라우저별로 토큰 관리
+    public void del(String token);                                                 // 브라우저마다 각각 로그인 접속해 있는 상태일 수 있기에 각 브라우저별로 토큰 관리
 }
