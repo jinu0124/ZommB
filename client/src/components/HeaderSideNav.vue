@@ -49,12 +49,12 @@
 <script>
 export default {
   name: "HeaderSideNav",
-};
+}
 </script>
 
 <style scoped>
 .offcanvas {
-  background: rgba(117, 64, 238, 0.9);
+  background: rgba(104, 62, 201, 0.9);
   border: none;
 }
 .menu-item {
