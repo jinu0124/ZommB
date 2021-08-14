@@ -12,6 +12,7 @@
     "core-js": "^3.6.5",
     "email-validator": "^2.0.4",
     "firebase": "^8.9.1",
+    "firebase-messaging": "^1.0.6",
     "firebase-tools": "^9.16.3",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
