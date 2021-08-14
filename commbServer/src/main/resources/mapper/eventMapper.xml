@@ -70,6 +70,7 @@
         SELECT distinct d.id AS did, k.id AS kid, k.keyword
         FROM daily_event d, keyword k
         WHERE DATE_FORMAT(create_at, '%Y-%m-%d') = #{param} AND d.keyword_id = k.id
+        LIMIT 1
     </select>
 
 
