@@ -182,7 +182,6 @@ public class FeedController {
 
         int userId = (Integer) request.getAttribute("userId");
 
-        // 팔로우 된 사람 - 이름 순으로 정렬 기준 처리 해야함!!!!!
         MyDto.ResponseList myResList = feedService.likeFeeds(feedId, userId);
 
         return new ResponseEntity<MyDto.ResponseList>(myResList, HttpStatus.OK);
