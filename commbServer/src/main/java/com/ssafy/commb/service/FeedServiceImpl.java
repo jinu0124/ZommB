@@ -401,7 +401,7 @@ public class FeedServiceImpl implements FeedService {
                             .userFileUrl(u.getFileUrl())
                             .isFollow(followService.isFollow(userRepository.findUserById(userId).get(), u))
                             .build();
-                }).collect(Collectors.toList());
+                }).sorted(Comparator.comparing(MyDto::getNickname)).sorted(Comparator.comparing(MyDto::getIsFollow).reversed()).collect(Collectors.toList());
 
         MyDto.ResponseList myResList = MyDto.ResponseList.builder().data(myDtoList).build();
 
