@@ -17,6 +17,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import userApi from '@/api/user'
 export default {
   name: 'UserListItem',
@@ -29,13 +30,20 @@ export default {
     }
   },
   methods: {
+    ...mapActions('user', ['getFollowing']),
     async follow () {
-      await userApi.follow(this.user.id)
       this.isFollow = true
+      await userApi.follow(this.user.id)
+        .then(() => {
+          this.getFollowing(this.$route.params.id)
+        })
     },
     async unfollow () {
-      await userApi.unfollow(this.user.id)
       this.isFollow = false
+      await userApi.unfollow(this.user.id)
+        .then(() => {
+          this.getFollowing(this.$route.params.id)
+        })
     }
   },
   created () {
