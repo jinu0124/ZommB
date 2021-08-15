@@ -78,6 +78,12 @@ const routes = [
     component: Notification,
     meta: { requireAuth: true }
   },
+  {
+    path: '/profile/:id',
+    name: 'Profile',
+    component: Profile,
+    meta: { requireAuth: true }
+  },
   // social login
   {
     path: '/oauth/redirect',
@@ -122,11 +128,6 @@ const routes = [
     path: '/reply',
     name: 'Reply',
     component: Reply
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile
   },
   {
     path: '/report',

@@ -31,7 +31,7 @@
         >
       </div>
       <div>
-        <router-link :to="{ name: 'Profile' }" class="menu-item" data-bs-dismiss="offcanvas"
+        <router-link :to="{ name: 'Profile', params: {id: myInfo.id} }" class="menu-item" data-bs-dismiss="offcanvas"
           >MyProfile</router-link
         >
       </div>
@@ -47,8 +47,12 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: "HeaderSideNav",
+  computed: {
+    ...mapState('user', ['myInfo'])
+  }
 }
 </script>
 
