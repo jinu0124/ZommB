@@ -2,7 +2,7 @@
   <div class="info-box my-4 d-flex align-items-center gap-2">
     <img class="book-cover" :src="book.bookFileUrl" alt="">
     <div>
-      <div class="title">{{ book.bookName }}</div>
+      <div class="title">{{ bookName }}</div>
       <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
     </div>
     <div 
@@ -44,6 +44,9 @@ export default {
         return authors[0] + ` 외 ${authors.length - 1}명`
       }
       return this.book.author
+    },
+    bookName () {
+      return _.split(this.book.bookName, '(')[0]
     }
   }
 }
