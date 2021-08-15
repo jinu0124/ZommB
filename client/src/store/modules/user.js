@@ -9,6 +9,8 @@ const state = {
   refreshToken: null,
   firebaseToken: null,
   tempNickname: null,
+  notification: [],
+  notiCnt: 0,
   myInfo: null,
   bookShelf: null,
   bookCart: null,
@@ -75,6 +77,7 @@ const actions = {
   async onLogin ({ commit }, userData) {
     await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
       .then((token) => {
+        console.log(token)
         userData.firebaseToken = token
         commit('SET_FIREBASE_TOKEN', token)
       })
@@ -91,10 +94,18 @@ const actions = {
         return Promise.reject(err.response)
       })
   },
-  onLogout({ commit, dispatch }) {
+  async onLogout({ state, commit, dispatch }) {
+    await userApi.logout(state.firebaseToken)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     commit('SET_ISLOGIN', false)
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
+    commit('SET_FIREBASE_TOKEN', null)
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
@@ -115,6 +126,14 @@ const actions = {
         // console.log(err.response)
         return Promise.reject(err.response)
       })
+  },
+  onNotification({ commit }, payload) {
+    const notiData = {
+      type: payload.notification.title,
+      data: payload.data
+    }
+    commit('SET_NOTIFICATION', notiData)
+    commit('SET_NOTI_CNT')
   },
   async onSocialLogin ({ commit }, userData) {
     await userApi.socialLogin(userData)
@@ -190,6 +209,12 @@ const mutations = {
   },
   SET_REFRESH_TOKEN(state, payload) {
     state.refreshToken = payload
+  },
+  SET_NOTIFICATION(state, payload) {
+    state.notification.push(payload)
+  },
+  SET_NOTI_CNT(state) {
+    state.notiCnt ++
   },
   SET_TEMP_NICKNAME(state, payload) {
     state.tempNickname = payload
