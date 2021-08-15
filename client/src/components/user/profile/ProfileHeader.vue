@@ -20,7 +20,7 @@
         @click="$router.push({ name: 'Follow', params: {id: profileInfo.user.id, flag: 'following'}})"
       >{{ profileInfo.user.follow.following }} followings</span>
     </div>
-    <div class="d-flex cnt-info justify-content-between">
+    <div class="d-flex cnt-info justify-content-between mt-2">
       <div class="d-flex flex-column align-items-center">
         <span class="cnt">{{ profileInfo.cnt.feed }}</span>
         <span class="target">게시물</span>
