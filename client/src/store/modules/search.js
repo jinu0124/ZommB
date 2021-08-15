@@ -39,7 +39,20 @@ const actions = {
       .catch((err) => {
         console.log(err.response)
       })
-  }
+  },
+  async searchUserNickname({ commit }, searchWord) {
+    if (searchWord.length < 2) {
+      return
+    }
+    await searchApi.searchUserNickname(searchWord)
+      .then((res) => {
+        console.log(res)
+        commit('SET_SEARCH_RESULT', res.data.data)
+      })
+    .catch((err) => {
+        console.log(err.response)
+      })
+  },
 }
 const mutations = {
   SET_SEARCH_RESULT(state, payload) {

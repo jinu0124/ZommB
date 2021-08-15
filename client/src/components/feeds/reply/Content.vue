@@ -17,8 +17,8 @@
       id="UserProfile"
     />
     <div class="content">
-      <p class="content-writer">{{ nickname }}</p>
-      <p class="article">{{ content }}</p>
+      <p class="content-writer">{{ feed.user.nickname }}</p>
+      <p class="article">{{ feed.content }}</p>
       <div>
         <span
           v-for="(tag, idx) in tags"
@@ -27,7 +27,7 @@
           >{{ tag }}</span
         >
       </div>
-      <p class="content-duration">{{ duration }}시간 전</p>
+      <p class="content-duration">{{ feed.createAt }}시간 전</p>
     </div>
   </div>
 </template>
@@ -39,11 +39,7 @@ export default {
   name: "Content",
   data() {
     return {
-      nickname: "Nickname",
-      content:
-        "밤 12시, 죽기 바로 전에만 열리는 마법의 도서관에서 인생의 두 번째 기회를 드립니다.",
       tags: ["해시태그", "테스트", "입니다."],
-      duration: "3",
     };
   },
   computed: {

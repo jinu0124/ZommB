@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-menu">
-    <div class="dropdown-item">수정하기</div>
-    <div><a class="dropdown-item">삭제하기</a></div>
+    <div class="dropdown-item" @click="editContent()">수정하기</div>
+    <div><a class="dropdown-item" @click="deleteFeed()">삭제하기</a></div>
     <div><a class="dropdown-item" @click="moveToReport()">신고하기</a></div>
   </div>
 </template>
