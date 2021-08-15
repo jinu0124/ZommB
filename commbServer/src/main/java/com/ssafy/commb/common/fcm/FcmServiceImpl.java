@@ -78,7 +78,8 @@ public class FcmServiceImpl implements FcmService{
      */
     @Override
     public void save(MyDto.Response myRes, String token) {
-        if (firebaseTokenRepository.findByUserIdAndToken(myRes.getData().getId(), token).isPresent()) return;
+        Optional<List<FirebaseToken>> firebaseTokens = firebaseTokenRepository.findByUserIdAndToken(myRes.getData().getId(), token);
+        if(firebaseTokens.isPresent() && firebaseTokens.get().size() >= 1) return;
 
         User user = new User();
         user.setId(myRes.getData().getId());
@@ -135,10 +136,10 @@ public class FcmServiceImpl implements FcmService{
      */
     @Override
     public void del(String token) {
-        Optional<FirebaseToken> firebaseToken = firebaseTokenRepository.findByToken(token);
+        Optional<List<FirebaseToken>> firebaseTokens = firebaseTokenRepository.findByToken(token);
 
-        firebaseToken.ifPresent(select -> {
-            firebaseTokenRepository.delete(select);
+        firebaseTokens.ifPresent(select -> {
+            firebaseTokenRepository.deleteAll(select);
         });
     }
 
