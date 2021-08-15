@@ -119,7 +119,7 @@ const routes = [
       // meta: { requireAuth: true }
   },
   {
-    path: '/reply',
+    path: '/reply/:feedId',
     name: 'Reply',
     component: Reply
   },

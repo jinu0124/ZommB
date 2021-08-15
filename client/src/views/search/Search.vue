@@ -2,14 +2,6 @@
   <div class="search-page">
     <div class="sc-header d-flex flex-column">
       <div class="title">Search</div>
-      <div class="mt-2 align-self-center">
-        <input
-          id="search"
-          class="book-search-input"
-          type="text"
-          placeholder="검색어를 입력하세요."
-        />
-      </div>
       <div class="tabs d-flex gap-2 mt-2 align-self-center">
         <span
           type="button"
@@ -33,7 +25,7 @@
     </div>
     <div class="align-self-center">
       <SearchDefault v-if="selectPage === 0 && this.isDefault" />
-      <UserListItem v-if="selectedPage === 0" />
+      <SearchUser v-if="selectedPage === 0" />
       <SearchBook v-if="selectedPage === 1" />
       <SearchFeed v-if="selectedPage === 2" />
     </div>
@@ -42,7 +34,7 @@
 
 <script>
 import SearchDefault from "@/components/search/SearchDefault";
-import UserListItem from "@/components/search/UserListItem";
+import SearchUser from "@/components/search/SearchUser";
 import SearchBook from "@/components/search/SearchBook";
 import SearchFeed from "@/components/search/SearchFeed";
 
@@ -50,7 +42,7 @@ export default {
   name: "Search",
   components: {
     SearchDefault,
-    UserListItem,
+    SearchUser,
     SearchBook,
     SearchFeed,
   },

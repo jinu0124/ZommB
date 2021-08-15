@@ -48,11 +48,11 @@ const actions = {
       })
   },
   //게시물 좋아요 취소
-  async dislikeFeed({ dispatch }, feedId) {
+  async dislikeFeed({ commit }, feedId) {
     await feedApi.dislikeFeed(feedId)
       .then(() => {
         //console.log(res)
-        dispatch('getFeedInfo', feedId)
+        commit('SET_FEED_DISLIKE', feedId)
       })
   },
   //게시물 삭제
@@ -72,7 +72,10 @@ const mutations = {
     state.likeInfo = payload
   },
   SET_FEED_LIKE(state, payload) {
-    state.feedInfo = payload
+    state.isLike = payload
+  },
+  SET_FEED_DISLIKE(state, payload) {
+    state.isLike = payload
   },
 }
 const getters = {

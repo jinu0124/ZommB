@@ -9,11 +9,7 @@
 <script>
 export default {
   name: "FeedMenu",
-  methods: {
-    moveToReport() {
-      this.$router.push("/report");
-    },
-  },
+  methods: {},
 };
 </script>
 

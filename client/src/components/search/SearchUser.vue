@@ -44,7 +44,7 @@
 import { mapState } from "vuex";
 
 export default {
-  name: "UserListItem",
+  name: "SearchUser",
   computed: {
     ...mapState("user", ["myInfo"]),
   },

@@ -24,6 +24,13 @@ export default {
       method: 'post',
     })
   },
+  //게시물 좋아요 취소
+  dislikeFeed(feedId) {
+    return _axios({
+      url: `feeds/${feedId}/feed-like`,
+      method: 'delete',
+    })
+  },
   //게시물 작성
   postFeed(feedData) {
     return _axios({
@@ -46,13 +53,6 @@ export default {
   deleteFeed(feedId) {
     return _axios({
       url: `feeds/${feedId}`,
-      method: 'delete',
-    })
-  },
-  //게시물 좋아요 취소
-  dislikeFeed(feedId) {
-    return _axios({
-      url: `feeds/${feedId}/feed-like`,
       method: 'delete',
     })
   },

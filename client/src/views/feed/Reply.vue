@@ -2,7 +2,6 @@
   <div class="reply">
     <SimpleHeader class="reply-header" :title="title" />
     <div class="reply-box">
-      <Content />
       <ReplyList />
       <hr />
       <ReplyRegist />
@@ -11,9 +10,7 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
 import SimpleHeader from "@/components/SimpleHeader";
-import Content from "@/components/feeds/reply/Content";
 import ReplyList from "@/components/feeds/reply/ReplyList";
 import ReplyRegist from "@/components/feeds/reply/ReplyRegist";
 
@@ -21,7 +18,6 @@ export default {
   name: "Reply",
   components: {
     SimpleHeader,
-    Content,
     ReplyList,
     ReplyRegist,
   },
@@ -30,10 +26,6 @@ export default {
       title: "댓글",
     };
   },
-  computed: {
-    ...mapState("feed", ["feedInfo"]),
-  },
-  methods: {},
 };
 </script>
 
