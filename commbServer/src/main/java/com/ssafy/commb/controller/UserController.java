@@ -312,6 +312,18 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    //서재, 북카트
+    // users/{userId}/bookshelves/all
+    @GetMapping("/{userId}/bookshelves/all")
+    @ApiOperation(value = "북카트/서재 도서 목록 불러오기")
+    public ResponseEntity getBookshelfAll(@PathVariable Integer userId,
+                                         @RequestParam Integer isRead){
+
+        List<BookDto> books = bookService.getBookshelfAll(userId, isRead);
+
+        return ResponseEntity.ok().body(BookDto.ResponseList.builder().data(books).build());
+    }
+
     @GetMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findUserBookShelvesList(
@@ -320,7 +332,7 @@ public class UserController {
             @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, page, request);
+        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, page * 20, request);
 
         return ResponseEntity.ok().body(bookResList);
     }
@@ -429,7 +441,7 @@ public class UserController {
             @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        UserDto.ResponseList userResList = userService.followRecommend(page, request);
+        UserDto.ResponseList userResList = userService.followRecommend(page * 50, request);
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
