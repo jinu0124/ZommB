@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Header from "@/components/Header";
+import Header from "@/components/Header"
 import messaging from '@/api/firebase.js'
 
 export default {
@@ -81,7 +81,8 @@ export default {
     isProfile() {
       if (
         this.$route.name === "Notification" ||
-        this.$route.name === "Profile"
+        this.$route.name === "Profile" ||
+        this.$route.name === "Follow"
       ) {
         return true
       }
@@ -104,10 +105,12 @@ export default {
   },
   created(){
     messaging.onMessage((payload) => {
+      console.log(payload)
+      alert(payload.notification.title + "\n" + payload.notification.body)
       this.$store.dispatch('user/onNotification', payload)
     })
   },
-};
+}
 </script>
 
 <style src="@/assets/style/accounts.css"></style>
