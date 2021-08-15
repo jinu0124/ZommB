@@ -8,6 +8,9 @@ import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -394,7 +397,7 @@ public class FeedServiceImpl implements FeedService {
                 .build();
     }
 
-    public MyDto.ResponseList likeFeeds(int feedId, int userId) {
+    public MyDto.ResponseList likeFeeds(int feedId, int page, int userId) {
 
         Optional<Feed> feed = feedRepository.findById(feedId);
 
@@ -417,9 +420,14 @@ public class FeedServiceImpl implements FeedService {
                             .userFileUrl(u.getFileUrl())
                             .isFollow(followService.isFollow(userRepository.findUserById(userId).get(), u))
                             .build();
-                }).sorted(Comparator.comparing(MyDto::getNickname)).sorted(Comparator.comparing(MyDto::getIsFollow).reversed()).collect(Collectors.toList());
+                }).sorted(Comparator.comparing(MyDto::getNickname)).sorted(Comparator.comparing(MyDto::getIsFollow).reversed())
+                .skip(page * 50)
+                .limit(50)
+                .collect(Collectors.toList());
 
         MyDto.ResponseList myResList = MyDto.ResponseList.builder().data(myDtoList).build();
+
+        if(myResList.getData().size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         return myResList;
     }
