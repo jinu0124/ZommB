@@ -1,16 +1,14 @@
 <template>
-  <div>
-    <div class="info-box my-4 d-flex align-items-center gap-2">
-      <img class="book-cover" :src="book.bookFileUrl" alt="">
-      <div>
-        <div class="title">{{ book.bookName }}</div>
-        <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
-      </div>
-      <button 
-        class="btn-65 btn-yellow right-fix"
-        @click="$router.push({ name: 'Write', params: { id: book.id }})"
-      >글쓰기</button>
+  <div class="info-box my-4 d-flex align-items-center gap-2">
+    <img class="book-cover" :src="book.bookFileUrl" alt="">
+    <div>
+      <div class="title">{{ book.bookName }}</div>
+      <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
     </div>
+    <button 
+      class="btn-65 btn-yellow right-fix"
+      @click="$router.push({ name: 'Write', params: { id: book.id }})"
+    >글쓰기</button>
   </div>
 </template>
 
