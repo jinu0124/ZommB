@@ -6,6 +6,8 @@ import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.List;
 
 public interface BookService {
     public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, int page, HttpServletRequest request);
@@ -32,6 +34,7 @@ public interface BookService {
 
     public BookDto.Response findBook(int bookId);
 
-    public void updateBookEvent();
+    public void updateBookEvent() throws Exception;
 
+    public List<BookDto> getBookshelfAll(Integer userId, Integer isRead);
 }
