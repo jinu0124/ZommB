@@ -1,8 +1,23 @@
 <template>
   <div class="d-flex align-items-center gap-2 my-3">
-    <img v-if="user.userFileUrl" class="profile" :src="user.userFileUrl" alt="">
-    <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="">
-    <span class="nickname">{{ user.nickname }}</span>
+    <img 
+      v-if="user.userFileUrl" 
+      :src="user.userFileUrl" 
+      alt=""
+      class="profile"
+      @click="$router.push({ name: 'Profile', params: {id: user.id} })" 
+    >
+    <img 
+      v-else 
+      src="@/assets/image/common/profileDefault.svg" 
+      alt=""
+      class="profile"
+      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+    >
+    <span 
+      class="nickname"
+      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+    >{{ user.nickname }}</span>
     <button 
       v-if="isFollow" 
       class="btn-follow btn-grey"
@@ -57,11 +72,13 @@ export default {
     width: 40px;
     height: 40px;
     border-radius: 100%;
+    cursor: pointer;
   }
   .nickname {
     font-size: 14px;
     font-weight: 500;
     width: 130px;
+    cursor: pointer;
   }
   .btn-follow {
     border: none;
