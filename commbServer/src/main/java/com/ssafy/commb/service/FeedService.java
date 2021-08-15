@@ -26,7 +26,7 @@ public interface FeedService {
 
     public FeedDto.ResponseList getFollowingFeeds(int page, int userId);
 
-    public MyDto.ResponseList likeFeeds(int feedId, int userId);
+    public MyDto.ResponseList likeFeeds(int feedId, int page, int userId);
 
     public FeedDto.ResponseList getFeeds(String searchWord, int page, int userId);
 
