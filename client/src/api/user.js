@@ -117,7 +117,7 @@ export default {
     })
   },
   //isRead : false(북카트), true(서재)
-  getMyBookList(userId, data) {
+  getBookList(userId, data) {
     return _axios({
       url: `users/${userId}/bookshelves/all`,
       method: 'get',

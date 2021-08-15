@@ -208,23 +208,22 @@ const actions = {
         commit('SET_COLLECTION', res.data.data)
       })
   },
-  //서재 목록 얻기
-  // async getBookShelf ({ state, commit }, userId) {
-  //   await userApi.getMyBookList(userId, 1)
-  //     .then((res) => {
-  //       console.log(res)
-  //       commit('SET_BOOKSHELF', res.data.data)
-  //     })
-  // },
-  //북카트 목록 얻기
-  // async getBookCart ({ state, commit }) {
-  //   await userApi.getMyBookList(state.myInfo.id, 0)
-  //     .then((res) => {
-  //       console.log(res)
-  //       commit('SET_BOOKCART', res.data.data)
-  //     })
-  // },
-  //특정 회원의 북카트 및 서재의 책 수
+  // 서재 목록 얻기
+  async getBookShelf ({ commit }, userId) {
+    await userApi.getBookList(userId, 1)
+      .then((res) => {
+        console.log(res)
+        commit('SET_BOOKSHELF', res.data.data)
+      })
+  },
+  // 북카트 목록 얻기
+  async getBookCart ({ commit }, userId) {
+    await userApi.getBookList(userId, 0)
+      .then((res) => {
+        console.log(res)
+        commit('SET_BOOKCART', res.data.data)
+      })
+  },
   //팔로우 정보 세팅
   async getFollower({ commit }, userId) {
     await userApi.getFollowerList(userId)
@@ -286,6 +285,12 @@ const mutations = {
   },
   SET_BOOKCART(state, payload) {
     state.profileInfo.bookCart = payload
+  },
+  DELETE_BOOK_LIBRARY(state, payload) {
+    const newBookShelf = state.profileInfo.bookShelf.filter((book) => {
+      return book.id != payload
+    })
+    state.profileInfo.bookShelf = newBookShelf
   },
   // 팔로우
   SET_FOLLOWER(state, payload) {

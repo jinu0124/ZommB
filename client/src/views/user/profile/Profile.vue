@@ -21,6 +21,9 @@
     <ProfileLibrary
       v-else-if="selectedPage === 1"
     />
+    <ProfileBookcart
+      v-else-if="selectedPage === 2"
+    />
   </div>
 </template>
 
@@ -29,13 +32,15 @@ import { mapActions } from "vuex";
 import ProfileHeader from "@/components/user/profile/ProfileHeader"
 import ProfileFeeds from "@/components/user/profile/ProfileFeeds"
 import ProfileLibrary from "@/components/user/profile/ProfileLibrary"
+import ProfileBookcart from "@/components/user/profile/ProfileBookcart"
 
 export default {
   name: "Profile",
   components: {
     ProfileHeader,
     ProfileFeeds,
-    ProfileLibrary
+    ProfileLibrary,
+    ProfileBookcart
   },
   data() {
     return {
@@ -43,7 +48,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['getUserInfo', 'getUserFeed']),
+    ...mapActions('user', ['getUserInfo', 'getUserFeed', 'getBookShelf', 'getBookCart']),
     changePage (val) {
       this.selectedPage = val
     }
@@ -51,6 +56,8 @@ export default {
   created() {
     this.getUserInfo(this.$route.params.id)
     this.getUserFeed({id: this.$route.params.id, page: 0})
+    this.getBookShelf(this.$route.params.id)
+    this.getBookCart(this.$route.params.id)
   },
 };
 </script>
