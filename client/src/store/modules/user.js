@@ -149,6 +149,14 @@ const actions = {
         commit('SET_FEED')
       })
   },
+  //회원 프로필에 정보 뿌리기
+  async getProfile({ state, commit }) {
+    await userApi.getUserInfo(state.myInfo.id)
+      .then((res) => {
+        console.log(res)
+        commit('SET_PROFILE')
+      })
+  },
   //특정 회원의 피드 수
   // async getFeedCount({ state, commit }) {
   //  await userApi.getFeedCnt(state.myInfo.id)
@@ -198,6 +206,9 @@ const mutations = {
     state.bookCart = payload
   },
   SET_FEED(state, payload) {
+    state.feed = payload
+  },
+  SET_PROFILE(state, payload) {
     state.feed = payload
   },
   SET_FEED_CNT(state, payload) {

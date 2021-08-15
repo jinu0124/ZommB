@@ -17,6 +17,13 @@ export default {
       params: { page:page }
     })
   },
+  //게시물 좋아요
+  likeFeed(feedId) {
+    return _axios({
+      url: `feeds/${feedId}/feed-like`,
+      method: 'post',
+    })
+  },
   //게시물 작성
   postFeed(feedData) {
     return _axios({
@@ -40,14 +47,6 @@ export default {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'delete',
-    })
-  },
-  //게시물 좋아요
-  likeFeed(feedId, userId) {
-    return _axios({
-      url: `feeds/${feedId}/feed-like`,
-      method: 'post',
-      params: { userId: userId}
     })
   },
   //게시물 좋아요 취소

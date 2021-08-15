@@ -5,8 +5,12 @@ const state = {
   feedInfo: null,
   feedId: null,
   bookId: null,
+  isFollow: null,
   isLike: false,
-  tags: [],
+  likeCnt: null,
+  commentCnt: null,
+  hashTags: [],
+  tag: null,
 }
 const actions = {
   moveToFeed() {
@@ -29,7 +33,7 @@ const actions = {
   },
   //게시물 좋아요 목록
   async getLikeInfo({ rootState, commit }, page) {
-    await feedApi.feedLikeList(rootState.user.myInfo.id, page)
+    await feedApi.feedLikeList(rootState.feed.myInfo.id, page)
       .then((res) => {
         console.log(res)
         commit('SET_LIKE_INFO', res.data.data)

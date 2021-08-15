@@ -60,9 +60,9 @@
           alt="좋아요버튼안눌림"
           class="dislike btn-like"
           type="button"
-          @click="like()"
+          @click="likeFee()"
           src="@/assets/image/deco/heartEmpty.svg"
-          v-show="disLike"
+          v-show="!feed.isThumb"
         />
         <img
           alt="좋아요버튼눌림"
@@ -70,7 +70,7 @@
           type="button"
           @click="dislike()"
           src="@/assets/image/deco/heartFill.svg"
-          v-show="Like"
+          v-show="feed.isThumb"
         />
       </span>
       <span class="like-num" type="button" @click="moveToLike">{{
@@ -108,13 +108,15 @@
         접기
       </p>
       <p class="content-duration">{{ feed.createAt }}시간 전</p>
+      <!-- 시간 계산 필요 -->
       <div>
-        <span
+        <!-- <span
           v-for="(feed, idx) in feedInfo"
           :key="idx"
           class="tag rounded-pill me-1"
-          >#{{ feed.hashTags.idx.tag }}</span
-        >
+          :feed="feed"
+          >#{{ feed.hashTags }}</span
+        > -->
       </div>
       <hr />
     </div>
@@ -141,8 +143,6 @@ export default {
     return {
       likeNum: 0,
       replyNum: 0,
-      Like: false,
-      disLike: true,
       moreContent: false,
       duration: "3",
     };
@@ -153,20 +153,19 @@ export default {
   methods: {
     ...mapActions("feed", ["moveToReply", "moveToLike", "likeFeed"]),
     like() {
-      this.Like = true;
-      this.disLike = false;
-      this.likeNum += 1;
+      this.feed.thumbCnt += 1;
+      this.feed.isThumb = true;
     },
     dislike() {
-      this.Like = false;
-      this.disLike = true;
-      this.likeNum -= 1;
+      this.feed.isThumb = false;
+      this.feed.thumbCnt -= 1;
     },
     showMoreContent(flag) {
       this.moreContent = flag;
     },
   },
   computed: {
+    ...mapState("user", ["myInfo"]),
     shortenContent() {
       if (this.moreContent) {
         return this.content;
@@ -174,7 +173,6 @@ export default {
         return _.truncate(this.content, { length: 50 });
       }
     },
-    ...mapState("user", ["myInfo"]),
   },
 };
 </script>

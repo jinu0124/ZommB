@@ -1,5 +1,5 @@
 <template>
-  <div class="like-list">
+  <div>
     <div
       class="like-list-item"
       @mouseover="currentItem(true)"
@@ -8,11 +8,11 @@
     >
       <span class="user-images">
         <img
-          v-if="myInfo.userFileUrl"
+          v-if="feed.userFileUrl"
           class="user-profile"
           type="button"
           id="UserProfile"
-          :src="myInfo.userFileUrl"
+          :src="feed.userFileUrl"
           alt="user-profile"
         />
         <img
@@ -23,7 +23,7 @@
           type="button"
         />
       </span>
-      <span class="user-nickname">{{ nickname }}</span>
+      <span class="user-nickname">{{ like.nickname }}</span>
       <span>
         <button
           class="follow btn-5 btn-yellow"
@@ -48,8 +48,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   name: "LikeListItem",
   data() {
@@ -78,9 +76,7 @@ export default {
       console.log("팔로우 취소");
     },
   },
-  computed: {
-    ...mapState("user", ["myInfo"]),
-  },
+  computed: {},
 };
 </script>
 
