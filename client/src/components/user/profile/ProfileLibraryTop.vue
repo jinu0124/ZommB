@@ -1,12 +1,10 @@
 <template>
   <div>
-    <div v-if="profileInfo.bookCollection">
-      <div
-        v-for="book in profileInfo.bookCollection"
-        :key="book.id"
-      >
-        <img :src="book.bookFileUrl" alt="">
-      </div>
+    <div
+      v-for="book in profileInfo.bookCollection"
+      :key="book.id"
+    >
+      <img :src="book.bookFileUrl" alt="">
     </div>
   </div>
 </template>
@@ -22,10 +20,5 @@ export default {
 </script>
 
 <style scoped>
-  .nothing {
-    height: 120px;
-    width: 82.76px;
-    background: #F1F1F1;
-    border-radius: 10px;
-  }
+  
 </style>

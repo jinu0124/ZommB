@@ -12,9 +12,13 @@
       src="@/assets/image/common/profileDefault.svg" alt="no profile image">
     <div class="nickname mt-2">{{ profileInfo.user.nickname }}</div>
     <div class="d-flex follow-info">
-      <span>{{ profileInfo.user.follow.follower }} followers</span>
+      <span
+        @click="$router.push({ name: 'Follow', params: {id: profileInfo.user.id, flag: 'follower'}})"
+      >{{ profileInfo.user.follow.follower }} followers</span>
       <span class="mx-2">•</span>
-      <span>{{ profileInfo.user.follow.following }} followings</span>
+      <span
+        @click="$router.push({ name: 'Follow', params: {id: profileInfo.user.id, flag: 'following'}})"
+      >{{ profileInfo.user.follow.following }} followings</span>
     </div>
     <div class="d-flex cnt-info justify-content-between">
       <div class="d-flex flex-column align-items-center">

@@ -1,14 +1,14 @@
 <template>
   <div class="profile-library">
-    <div v-if="profileInfo.bookCollection">
-      <div class="title">{{ profileInfo.user.nickname }}'s Collection</div>
+    <div  v-if="profileInfo.bookCollection">
+      <div class="title mb-2">{{ profileInfo.user.nickname }}'s Collection</div>
       <ProfileLibraryTop/>
     </div>
     <div>
       <input
         class="search-input"
         type="text"
-        placeholder="책 제목, 작가로 읽은 책을 검색해보세요!"
+        placeholder="책 제목으로 읽은 책을 검색해보세요!"
         :value="searchInput"
         @input="insertInput"
       />
