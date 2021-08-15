@@ -7,7 +7,7 @@
           id="search"
           class="book-search-input"
           type="text"
-          placeholder="서재에서 컬렉션에 등록할 책을 검색해보세요!"
+          placeholder="검색어를 입력하세요."
         />
       </div>
       <div class="tabs d-flex gap-2 mt-2 align-self-center">

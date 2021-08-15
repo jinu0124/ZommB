@@ -1,12 +1,16 @@
 import router from '@/router'
 import userApi from '@/api/user'
+import messaging from '@/api/firebase'
 
 const state = {
   isLogin: false,
   isResister: false, 
   accessToken: null,
   refreshToken: null,
+  firebaseToken: null,
   tempNickname: null,
+  notification: [],
+  notiCnt: 0,
   myInfo: null,
   bookShelf: null,
   bookCart: null,
@@ -71,9 +75,14 @@ const actions = {
       })
   },
   async onLogin ({ commit }, userData) {
+    await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
+      .then((token) => {
+        console.log(token)
+        userData.firebaseToken = token
+        commit('SET_FIREBASE_TOKEN', token)
+      })
     await userApi.login(userData)
       .then((res) => {
-        console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
         router.push({ name: 'Feed' })
@@ -85,10 +94,18 @@ const actions = {
         return Promise.reject(err.response)
       })
   },
-  onLogout({ commit, dispatch }) {
+  async onLogout({ state, commit, dispatch }) {
+    await userApi.logout(state.firebaseToken)
+      .then((res) => {
+        console.log(res)
+      })
+      .catch((err) => {
+        console.log(err)
+      })
     commit('SET_ISLOGIN', false)
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
+    commit('SET_FIREBASE_TOKEN', null)
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
@@ -109,6 +126,14 @@ const actions = {
         // console.log(err.response)
         return Promise.reject(err.response)
       })
+  },
+  onNotification({ commit }, payload) {
+    const notiData = {
+      type: payload.notification.title,
+      data: payload.data
+    }
+    commit('SET_NOTIFICATION', notiData)
+    commit('SET_NOTI_CNT')
   },
   async onSocialLogin ({ commit }, userData) {
     await userApi.socialLogin(userData)
@@ -149,6 +174,14 @@ const actions = {
         commit('SET_FEED')
       })
   },
+  //회원 프로필에 정보 뿌리기
+  async getProfile({ state, commit }) {
+    await userApi.getUserInfo(state.myInfo.id)
+      .then((res) => {
+        console.log(res)
+        commit('SET_PROFILE')
+      })
+  },
   //특정 회원의 피드 수
   // async getFeedCount({ state, commit }) {
   //  await userApi.getFeedCnt(state.myInfo.id)
@@ -176,20 +209,26 @@ const mutations = {
   SET_ISRESISTER(state, payload) {
     state.isResister = payload
   },
+  SET_FIREBASE_TOKEN(state, payload) {
+    state.firebaseToken = payload
+  },
   SET_ACCESS_TOKEN(state, payload) {
     state.accessToken = payload
   },
   SET_REFRESH_TOKEN(state, payload) {
     state.refreshToken = payload
   },
+  SET_NOTIFICATION(state, payload) {
+    state.notification.push(payload)
+  },
+  SET_NOTI_CNT(state) {
+    state.notiCnt ++
+  },
   SET_TEMP_NICKNAME(state, payload) {
     state.tempNickname = payload
   },
   SET_MY_INFO(state, payload) {
     state.myInfo = payload
-    // state.myInfo.id = payload.id
-    // state.myInfo.nickname = payload.nickname
-    // state.myInfo.userFileUrl = payload.userFileUrl
   },
   SET_BOOKSHELF(state, payload) {
     state.bookShelf = payload
@@ -198,6 +237,9 @@ const mutations = {
     state.bookCart = payload
   },
   SET_FEED(state, payload) {
+    state.feed = payload
+  },
+  SET_PROFILE(state, payload) {
     state.feed = payload
   },
   SET_FEED_CNT(state, payload) {

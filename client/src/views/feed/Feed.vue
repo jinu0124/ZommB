@@ -19,7 +19,7 @@
 
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Feed",
@@ -27,13 +27,14 @@ export default {
     FeedList,
   },
   methods: {
-    ...mapActions("feed", ["getFeedList"]),
+    ...mapActions("feed", ["getFeedInfo"]),
     moveToSelectBook() {
       this.$router.push("/select");
     },
   },
-  computed: {
-    ...mapState("feed", ["userInfo"]),
+  //페이지 렌더링 시 피드 정보를 0페이지부터 가져온다.
+  created() {
+    this.getFeedInfo(0);
   },
 };
 </script>

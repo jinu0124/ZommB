@@ -48,7 +48,7 @@ const actions = {
     if (!page || !state.stopRequest) {
       await challengeApi.getWeeklyFeeds(state.weeklyId, page)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.status === 200) {
             if (!page) {
               commit('SET_WEEKLY_FEEDS', res.data.data)
@@ -86,7 +86,7 @@ const actions = {
     if (!page || !state.stopRequest) {
       await challengeApi.getDailyFeeds(state.dailyId, page)
         .then((res) => {
-          console.log(res)
+          // console.log(res)
           if (res.status === 200) {
             if (!page) {
               commit('SET_DAILY_FEEDS', res.data.data)
@@ -103,7 +103,7 @@ const actions = {
   async getMyChallenge ({ commit }, data) {
     await challengeApi.getMyChallenge(data)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_MY_CHALLENGE', res.data.data)
       })
   },

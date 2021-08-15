@@ -62,13 +62,11 @@
       <div class="move-btns my-2">
         <span
           class="btn-text-s"
-          type="button"
           @click="moveToSignup"
         >회원가입</span>
         <span class="btn-text-s"> | </span>
         <span
           class="btn-text-s"
-          type="button"
           @click="moveToFindPassword"
         >비밀번호 찾기</span>
       </div>
@@ -77,10 +75,7 @@
         <img class="img-fluid my-3" src="@/assets/image/deco/or.svg" alt="">
         <div class="d-flex gap-3 justify-content-center">
           <button class="kakao-btn" @click="kakaoLogin">
-            <img src="@/assets/image/deco/kakao.png" alt="">
-          </button>
-          <button class="google-btn">
-            <img src="@/assets/image/deco/google.png" alt="">
+            <img src="@/assets/image/deco/kakao.png" alt="kakao-login">
           </button>
         </div>
       </div>
@@ -94,7 +89,6 @@ import * as EmailValidator from "email-validator"
 import { mapActions } from "vuex"
 import UnauthorizedHeader from '@/components/user/UnauthorizedHeader'
 import EmailReConfirmAlert from '@/components/user/EmailReConfirmAlert'
-import messaging from '../../api/firebase'
 
 export default {
   name: 'Login',
@@ -122,13 +116,6 @@ export default {
       this.needEmailConfirm = false
     },
     async login () {
-      await messaging.getToken({ vapidKey: "BJUm1CHDLOWdb7ZaInHrC7FLNOfRti5g3Z4XnMw7xjfD62MWKyoHpe1uoBndb9hFc92qkB-__2Bewhop2VrLo90" })
-      .then((currToken) => {
-        console.log("curr : ", currToken)
-        this.userData.firebaseToken = currToken;
-      })
-      console.log("token : ", this.userData.firebaseToken)
-
       await this.onLogin(this.userData)
         .catch ((err) => {
           console.log(err)
@@ -194,8 +181,7 @@ export default {
     userData: function () {
       return {
         'email': this.email,
-        'password': this.password,
-        'firebaseToken': ""
+        'password': this.password
       }
     },
   },
@@ -206,27 +192,17 @@ export default {
   .social-login {
     width: 210px;
   }
-
-  .social-login button {
+  .kakao-btn {
     width: 45px;
     height: 45px;
     border-radius: 100%;
     border: none;
     outline: none;
-  }
-
-  .kakao-btn {
     background-color: #FFD600;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
-
-  .google-btn {
-    background-color: #fff;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  }
-  
-  .social-login button img {
-    max-width: 70%;
+  .kakao-btn img {
+    width: 70%;
     height: auto;
   }
 </style>

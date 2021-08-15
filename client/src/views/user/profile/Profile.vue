@@ -83,7 +83,7 @@
 </template>
 
 <script>
-import { mapActions, mapState } from "vuex";
+import { mapActions, mapState, mapGetters } from "vuex";
 import ProfileFeeds from "@/components/profile/ProfileFeeds";
 import ProfileLibrary from "@/components/profile/ProfileLibrary";
 import ProfileBookcart from "@/components/profile/ProfileBookcart";
@@ -106,13 +106,17 @@ export default {
     };
   },
   methods: {
-    ...mapActions("user", ["moveToFollow", "moveToUpdateInfo"]),
+    ...mapActions("user", ["moveToFollow", "moveToUpdateInfo", "getUserInfo"]),
     changePage(val) {
       this.selectedPage = val;
     },
   },
   computed: {
     ...mapState("user", ["myInfo"]),
+    ...mapGetters("challenge", ["myLevel"]),
+  },
+  created() {
+    this.getUserInfo();
   },
 };
 </script>

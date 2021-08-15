@@ -8,6 +8,9 @@ import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -91,8 +94,11 @@ public class FeedServiceImpl implements FeedService {
         List<String> Tags = extractHashTag(feedReq.getContents());
 
         Date[] dates = transformDay(feed.getCreateAt());
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
-        String keyword = dailyEvent.get().getKeyword().getKeyword();
+        List<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
+        if (dailyEvent.size() == 0) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 없습니다!");
+        if (dailyEvent.size() > 1) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 2개 이상 등록되어 있습니다!");
+
+        String keyword = dailyEvent.get(0).getKeyword().getKeyword();
         Boolean checkDailyEvent = false;
 
         for (int i = 0; i < Tags.size(); i++) {
@@ -193,8 +199,11 @@ public class FeedServiceImpl implements FeedService {
 
 
         Date[] dates = transformDay(feed.get().getCreateAt());
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
-        String keyword = dailyEvent.get().getKeyword().getKeyword();
+        List<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
+        if (dailyEvent.size() == 0) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 없습니다!");
+        if (dailyEvent.size() > 1) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 2개 이상 등록되어 있습니다!");
+
+        String keyword = dailyEvent.get(0).getKeyword().getKeyword();
         Boolean checkDailyEventBefore = false;
 
         // 변경 전 content로 등록한 hashTag 삭제 & DailyEvent 참여 피드인지 확인
@@ -288,8 +297,11 @@ public class FeedServiceImpl implements FeedService {
         List<String> Tags = extractHashTag(feed.get().getContent());
 
         Date[] dates = transformDay(feed.get().getCreateAt());
-        Optional<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
-        String keyword = dailyEvent.get().getKeyword().getKeyword();
+        List<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
+        if (dailyEvent.size() == 0) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 없습니다!");
+        if (dailyEvent.size() > 1) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 2개 이상 등록되어 있습니다!");
+
+        String keyword = dailyEvent.get(0).getKeyword().getKeyword();
         Boolean checkDailyEvent = false;
         for (int i = 0; i < Tags.size(); i++) {
             if (keyword.equals(Tags.get(i))) checkDailyEvent = true;
@@ -385,7 +397,7 @@ public class FeedServiceImpl implements FeedService {
                 .build();
     }
 
-    public MyDto.ResponseList likeFeeds(int feedId, int userId) {
+    public MyDto.ResponseList likeFeeds(int feedId, int page, int userId) {
 
         Optional<Feed> feed = feedRepository.findById(feedId);
 
@@ -408,9 +420,14 @@ public class FeedServiceImpl implements FeedService {
                             .userFileUrl(u.getFileUrl())
                             .isFollow(followService.isFollow(userRepository.findUserById(userId).get(), u))
                             .build();
-                }).collect(Collectors.toList());
+                }).sorted(Comparator.comparing(MyDto::getNickname)).sorted(Comparator.comparing(MyDto::getIsFollow).reversed())
+                .skip(page * 50)
+                .limit(50)
+                .collect(Collectors.toList());
 
         MyDto.ResponseList myResList = MyDto.ResponseList.builder().data(myDtoList).build();
+
+        if(myResList.getData().size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
 
         return myResList;
     }
@@ -477,7 +494,7 @@ public class FeedServiceImpl implements FeedService {
 
     public List<String> extractHashTag(String content) {
 
-        Pattern pattern = Pattern.compile("\\#([0-9a-zA-Z가-힣]*)"); // 주어진 정규표현식으로부터 패턴을 만든다.
+        Pattern pattern = Pattern.compile("\\#([0-9a-zA-Z가-힣`~!@$%^&*()=_+{};':,./<>?]*)"); // 주어진 정규표현식으로부터 패턴을 만든다.
         Matcher matcher = pattern.matcher(content); // 대상 문자열이 패턴과 일치할 경우 true 반환
         String extractHashTag = null;
         List<String> hashTags = new ArrayList<>();

@@ -19,14 +19,15 @@
         :book="book"
       >
         <div class="d-flex flex-column align-items-center">
-          <img 
-            :class="[!book.weeklyParticipate ? 'mono' : '', book.week > weeklyTotal ? 'blur' : '', 'book-cover rounded']" 
-            :src="book.bookFileUrl"
-            :alt="'week-' + book.week + '-Book'"
-            type="button"
-            @click="$router.push({ name: 'BookInfo', params: {id: book.bookId} })"
-          >
-          <img v-if="book.week > weeklyTotal" class="private" src="@/assets/image/camel/camelQuestionMark.svg" alt="">
+          <div class="book-zone">
+            <img 
+              :class="[!book.weeklyParticipate ? 'mono' : '', book.week > weeklyTotal ? 'blur' : '', 'book-cover rounded']" 
+              :src="book.bookFileUrl"
+              :alt="'week-' + book.week + '-Book'"
+              @click="$router.push({ name: 'BookInfo', params: {id: book.bookId} })"
+            >
+            <img v-if="book.week > weeklyTotal" class="private" src="@/assets/image/camel/camelQuestionMark.svg" alt="">
+          </div>
           <i 
             :id="'star' + book.week" 
             :class="[book.weeklyParticipate ? 'yellow' : '', 'week fas fa-star mt-2']"></i>
@@ -94,9 +95,13 @@ export default {
   .my-weekly-content {
     position: relative;
   }
+  .my-weekly-content .book-zone {
+    position: relative;
+  }
   .my-weekly-content .book-cover {
     width: 45px;
     height: auto;
+    cursor: pointer;
     box-shadow: 0 3px 3px rgba(0, 0, 0, 0.25);
   }
   .my-weekly-content .week {
@@ -116,15 +121,17 @@ export default {
     filter: grayscale(90%);
   }
   .blur {
-    opacity: 80%;
-    filter: brightness(0);
+    opacity: 100%;
+    filter: brightness(0.1);
     pointer-events: none;
   }
   .private {
     position: absolute;
-    width: 30px;
+    width: 60%;
     height: auto;
-    top: 8px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
   }
   .yellow {
     color: #FFDC7C;

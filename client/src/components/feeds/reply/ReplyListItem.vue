@@ -2,7 +2,7 @@
   <div class="reply-list-item">
     <!-- user<img> -->
     <div class="reply-content">
-      <p class="replier">{{ this.replier }}</p>
+      <p class="replier">{{ feed.comments.nickname }}</p>
       <p class="reply">{{ shortenContent }}</p>
       <div class="reply-like-num">좋아요 {{ this.replyLikeNum }}개</div>
     </div>
@@ -28,6 +28,7 @@
 
 <script>
 import _ from "lodash";
+import { mapState } from "vuex";
 
 export default {
   name: "ReplyListItem",
@@ -61,6 +62,7 @@ export default {
     shortenContent() {
       return _.truncate(this.reply, { length: 50 });
     },
+    ...mapState("feed", ["feedInfo"]),
   },
 };
 </script>

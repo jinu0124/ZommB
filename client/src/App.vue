@@ -34,6 +34,7 @@ export default {
         this.$route.name === "SignupEmail" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Notification" ||
         this.$route.name === "Withdraw" ||
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
@@ -78,7 +79,13 @@ export default {
       return false;
     },
     isProfile() {
-      return this.$route.name === "Profile";
+      if (
+        this.$route.name === "Notification" ||
+        this.$route.name === "Profile"
+      ) {
+        return true
+      }
+      return false
     },
     isSearch() {
       if (this.$route.name === "BookInfo" || this.$route.name === "Search") {
@@ -97,8 +104,7 @@ export default {
   },
   created(){
     messaging.onMessage((payload) => {
-      console.log("message received", payload)
-      alert(payload.notification.title + "\n" + payload.notification.body)
+      this.$store.dispatch('user/onNotification', payload)
     })
   },
 };

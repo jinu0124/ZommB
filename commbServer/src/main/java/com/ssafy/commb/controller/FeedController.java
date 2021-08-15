@@ -178,12 +178,11 @@ public class FeedController {
     // 게시물 좋아요 유저 목록
     @GetMapping("/{feedId}/feed-likes")
     @ApiOperation(value = "피드 좋아요 유저 리스트", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, int page, HttpServletRequest request) {
+    public ResponseEntity<MyDto.ResponseList> likeFeeds(@PathVariable Integer feedId, @RequestParam Integer page, HttpServletRequest request) {
 
         int userId = (Integer) request.getAttribute("userId");
 
-        // 팔로우 된 사람 - 이름 순으로 정렬 기준 처리 해야함!!!!!
-        MyDto.ResponseList myResList = feedService.likeFeeds(feedId, userId);
+        MyDto.ResponseList myResList = feedService.likeFeeds(feedId, page, userId);
 
         return new ResponseEntity<MyDto.ResponseList>(myResList, HttpStatus.OK);
     }

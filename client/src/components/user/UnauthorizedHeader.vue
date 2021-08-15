@@ -3,12 +3,10 @@
     <div class="d-flex align-items-center">
       <i 
         class="back-btn fi-rr-angle-small-left"
-        type="button"
         @click="$router.push({ name: 'Index' })"
       ></i>
       <span
         class="header-logo"
-        type="button"
         @click="$router.push({ name: 'Index' })"
       >CommB</span>
     </div>
@@ -31,12 +29,14 @@ export default {
   .back-btn {
     font-size: 1.5rem;
     color: #fff;
+    cursor: pointer;
   }
   .header-logo {
     font-family: 'Black Han Sans', sans-serif;
     font-size: 1.5rem;
     margin: 0 auto;
     color: #fff;
+    cursor: pointer;
   }
   
 </style>
