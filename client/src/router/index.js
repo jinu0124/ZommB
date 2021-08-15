@@ -84,6 +84,12 @@ const routes = [
     component: Profile,
     meta: { requireAuth: true }
   },
+  {
+    path: '/follow/:id/:flag',
+    name: 'Follow',
+    component: Follow,
+    meta: { requireAuth: true }
+  },
   // social login
   {
     path: '/oauth/redirect',
@@ -143,12 +149,6 @@ const routes = [
     path: '/write/:id',
     name: 'Write',
     component: Write
-  },
-  {
-    path: '/follow',
-    name: 'Follow',
-    component: Follow,
-    // meta: { requireAuth: true }
   },
   // challenge
   {
