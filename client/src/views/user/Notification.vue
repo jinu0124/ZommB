@@ -11,7 +11,9 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import SimpleHeader from '@/components/SimpleHeader'
+
 export default {
   name: 'Notification',
   components: {
@@ -21,6 +23,9 @@ export default {
     return {
       title: '알림'
     }
+  },
+  computed: {
+    ...mapState('user', ['notification', 'notiCnt'])
   }
 }
 </script>
