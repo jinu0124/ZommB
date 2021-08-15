@@ -67,7 +67,7 @@ public class FollowServiceImpl implements FollowService{
         if(!followerUser.isPresent() || !followingUser.isPresent()) throw new NotFoundUserException();
 
         // 존재하지 않는 팔로우일 경우 exception
-        if(isFollow(followerUser.get(), followingUser.get())) throw new NotFoundFollowException();
+        if(isFollow(followerUser.get(), followingUser.get()) == false) throw new NotFoundFollowException();
 
         // 안팔로우
         followerUser.get().unfollow(followingUser.get());
