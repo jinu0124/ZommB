@@ -1,29 +1,29 @@
 <template>
   <div id="challenge" class="challenge d-flex flex-column">
-    <div style="max-width: 450px;">
-      <div class="ch-header d-flex flex-column">
-        <div class="title">
-          Challenge
-          <span 
-            v-if="selectedPage === 2"
-            class="month"
-          >in {{ month }}</span>
-        </div>
-        <div class="tabs d-flex gap-2 mt-2">
-          <span 
-            @click=changePage(0)
-            :class="[ selectedPage === 0 ? 'current' : 'rest', 'badge']"
-          >Weekly Books</span>
-          <span 
-            @click=changePage(1)
-            :class="[ selectedPage === 1 ? 'current' : 'rest', 'badge']"
-          >Daily Keyword</span>
-          <span 
-            @click=changePage(2)
-            :class="[ selectedPage === 2 ? 'current' : 'rest', 'badge']"
-          >My</span>
-        </div>
+    <div class="ch-header d-flex flex-column">
+      <div class="title">
+        Challenge
+        <span 
+          v-if="selectedPage === 2"
+          class="month"
+        >in {{ month }}</span>
       </div>
+      <div class="tabs d-flex gap-2 mt-2">
+        <span 
+          @click=changePage(0)
+          :class="[ selectedPage === 0 ? 'current' : 'rest', 'badge']"
+        >Weekly Books</span>
+        <span 
+          @click=changePage(1)
+          :class="[ selectedPage === 1 ? 'current' : 'rest', 'badge']"
+        >Daily Keyword</span>
+        <span 
+          @click=changePage(2)
+          :class="[ selectedPage === 2 ? 'current' : 'rest', 'badge']"
+        >My</span>
+      </div>
+    </div>
+    <div class="align-self-center mt-2" style="max-width: 450px;">
       <ChallengeWeekly
         id="weekly"
         v-if="selectedPage === 0"
