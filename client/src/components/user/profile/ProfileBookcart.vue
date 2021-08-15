@@ -1,9 +1,5 @@
 <template>
-  <div class="profile-library">
-    <div  v-if="profileInfo.bookCollection">
-      <div class="title mb-2">{{ profileInfo.user.nickname }}'s Collection</div>
-      <ProfileLibraryTop/>
-    </div>
+  <div class="profile-bookcart">
     <div>
       <input
         class="search-input"
@@ -13,7 +9,7 @@
         @input="insertInput"
       />
       <ProfileBookList
-        :books=profileInfo.bookShelf
+        :books=profileInfo.bookCart
         @delete="deleteBook"
       />
     </div>
@@ -22,12 +18,10 @@
 
 <script>
 import { mapState } from 'vuex'
-import ProfileLibraryTop from './ProfileLibraryTop'
 import ProfileBookList from './ProfileBookList'
 export default {
-  name: "ProfileLibrary",
+  name: "ProfileBookcart",
   components: {
-    ProfileLibraryTop,
     ProfileBookList
   },
   data () {

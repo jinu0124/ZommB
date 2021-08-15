@@ -2,10 +2,11 @@
   <div>
     <div v-if="books">
       <ProfileBookListItem
-        v-for="(book, idx) in books"
+        v-for="book in books"
         class="up-on-scroll"
-        :key=idx
+        :key=book.id
         :book=book
+        @delete="onDeleteBook"
       />
       <button
         class="top-btn"
@@ -31,6 +32,9 @@ export default {
     books: Array
   },
   methods: {
+    onDeleteBook (bookId) {
+      this.$emit('delete', bookId)
+    },
     isElementUnderBottom(elem, triggerDiff) {
       const { top } = elem.getBoundingClientRect()
       const { innerHeight } = window

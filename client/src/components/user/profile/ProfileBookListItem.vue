@@ -1,27 +1,43 @@
 <template>
-  <div>
-    <div class="info-box my-4 d-flex align-items-center gap-2">
-      <img class="book-cover" :src="book.bookFileUrl" alt="">
-      <div>
-        <div class="title">{{ book.bookName }}</div>
-        <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
-      </div>
+  <div class="info-box my-4 d-flex align-items-center gap-2">
+    <img class="book-cover" :src="book.bookFileUrl" alt="">
+    <div>
+      <div class="title">{{ book.bookName }}</div>
+      <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
+    </div>
+    <div 
+      v-if="profileInfo.user.id === myInfo.id"
+      class="d-flex flex-column right-fix gap-2"
+    >
       <button 
-        class="btn-65 btn-yellow right-fix"
+        class="btn-65 btn-yellow"
         @click="$router.push({ name: 'Write', params: { id: book.id }})"
       >글쓰기</button>
+      <button 
+        class="btn-65 btn-grey"
+        @click="onDeleteBook"
+      >삭제</button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex'
 import _ from 'lodash'
 export default {
   name: 'ProfileBookListItem',
   props: {
     book: Object
   },
+  methods: {
+    ...mapActions('book', ['deleteBook']),
+    onDeleteBook () {
+      this.deleteBook(this.book.id)
+      this.$emit('delete', this.book.id) 
+    },
+  },
   computed: {
+    ...mapState('user', ['profileInfo', 'myInfo']),
     author () {
       const authors = _.split(this.book.author, ',')
       if (authors.length > 1) {
@@ -41,8 +57,8 @@ export default {
     width: 270px;
     padding: 10px 10px 10px 75px;
     background: #f1f1f1;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
     border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
     color: #212121;
   }
   .info-box .book-cover {
@@ -75,7 +91,7 @@ export default {
     border-radius: 13px;
     outline: none;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 700;
   }
   .right-fix {
     position: absolute;
