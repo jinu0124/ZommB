@@ -34,9 +34,8 @@
 </template>
 
 <script>
-import { mapActions } from "vuex";
-import SearchBookBar from "@/components/search/SearchBookBar";
-import SearchBookList from "@/components/search/SearchBookList";
+import SearchBookBar from "@/components/search/searchBook/SearchBookBar";
+import SearchBookList from "@/components/search/searchBook/SearchBookList";
 
 export default {
   name: "SearchBook",
@@ -52,7 +51,6 @@ export default {
     };
   },
   methods: {
-    ...mapActions("search", ["searchBook"]),
     changePage(val) {
       this.selectedPage = val;
     },

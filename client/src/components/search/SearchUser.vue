@@ -1,67 +1,47 @@
 <template>
   <div class="user-list-item">
-    <span class="user-images">
-      <img
-        v-if="myInfo.userFileUrl"
-        class="user-profile"
-        type="button"
-        id="UserProfile"
-        :src="myInfo.userFileUrl"
-        alt="user-profile"
-      />
-      <img
-        v-else
-        src="@/assets/image/common/profileDefault.svg"
-        alt="defalut-profile"
-        class="default-user-image user-profile"
-        type="button"
-      />
-    </span>
-    <span class="user-nickname">{{ nickname }}</span>
-    <span>
-      <button
-        class="follow btn-5 btn-yellow"
-        @click="follow()"
-        v-show="isFollow"
-      >
-        팔로우
-      </button>
-    </span>
-    <span>
-      <button
-        class="follow btn-5 btn-grey"
-        type="button"
-        @click="unfollow()"
-        v-show="!isFollow"
-      >
-        팔로우 취소
-      </button>
-    </span>
+    <div class="mt-2 align-self-center">
+      <SearchUserBar @search="onInputChange" />
+    </div>
+    <SearchUserList class="mt-3" @last="addResult" />
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import SearchUserBar from "@/components/search/searchUser/SearchUserBar";
+import SearchUserList from "@/components/search/searchUser/SearchUserList";
 
 export default {
   name: "SearchUser",
-  computed: {
-    ...mapState("user", ["myInfo"]),
+  components: {
+    SearchUserBar,
+    SearchUserList,
   },
   data() {
     return {
-      isFollow: true,
-      nickname: "Nickname",
+      selectedPage: 0,
+      page: 2,
+      word: null,
     };
   },
   methods: {
-    follow() {
-      this.isFollow = false;
-      console.log("팔로우");
+    changePage(val) {
+      this.selectedPage = val;
     },
-    unfollow() {
-      this.isFollow = true;
-      console.log("팔로우 취소");
+    onInputChange(word) {
+      this.word = word;
+      this.page = 2;
+    },
+    addResult() {
+      this.searchUserNickname(this.searchWord);
+      this.page++;
+    },
+  },
+  computed: {
+    searchData() {
+      return {
+        searchWord: this.word,
+      };
     },
   },
 };
@@ -72,21 +52,5 @@ export default {
   text-align: center;
   margin-top: 20px;
   font-size: 15px;
-}
-.user-profile {
-  align-self: center;
-}
-.default-user-image,
-.user-profile {
-  width: 35px;
-  height: 35px;
-  border-radius: 50%;
-}
-.user-nickname {
-  margin: 0 20px 0 5px;
-}
-.follow {
-  width: 100px;
-  height: 25px;
 }
 </style>

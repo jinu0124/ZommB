@@ -21,10 +21,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions("search", ["searchUser"]),
+    ...mapActions("search", ["searchUserNickname"]),
     insertInput(event) {
       this.searchInput = event.target.value;
-      this.searchBookTitle(this.searchData);
+      this.searchUserNickname(this.searchWord);
       this.$emit("search", this.searchInput);
     },
     clean() {
@@ -34,15 +34,13 @@ export default {
   computed: {
     searchData() {
       return {
-        searchType: "title",
-        searchWord: this.searchInput,
-        page: 1,
+        nickname: this.searchInput,
       };
     },
   },
   watch: {
     searchData() {
-      if (!this.searchData.length) {
+      if (!this.searchWord.length) {
         this.clean();
       }
     },
