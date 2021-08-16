@@ -10,6 +10,7 @@
           @input="insertInput"
         />
         <button 
+          v-if="isMine"
           class="add-btn"
           @click="$router.push({ name: 'SelectBook', params: { flag: 'bookcart' }})"
         >+</button>
@@ -50,7 +51,7 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['profileInfo']),
+    ...mapState('user', ['profileInfo', 'myInfo']),
     books () {
       if (this.searchInput.length > 1) {
         return this.profileInfo.bookCart.filter((book) => {
@@ -59,6 +60,9 @@ export default {
       } else {
         return this.profileInfo.bookCart
       }
+    },
+    isMine () {
+      return this.profileInfo.user.id === this.myInfo.id
     }
   },
 }

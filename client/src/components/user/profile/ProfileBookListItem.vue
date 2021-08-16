@@ -41,11 +41,12 @@
         @click="$router.push({ name: 'Write', params: { id: book.id }})"
       >글쓰기</button>
       <button 
-        v-else-if="from === 'bookcart'"
+        v-if="from === 'bookcart' && isMine"
         class="btn-65 btn-yellow"
         @click="onMoveBook"
       >완독</button>
       <button 
+        v-if="isMine"
         class="btn-65 btn-grey"
         @click="onDeleteBook"
       >삭제</button>
