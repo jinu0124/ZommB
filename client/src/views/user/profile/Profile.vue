@@ -101,6 +101,12 @@ export default {
   computed: {
     ...mapState('user', ['moveTarget'])
   },
+  watch: {
+    '$route'() {
+      this.userId = this.$route.params.id
+      this.getProfileInfo()
+    }
+  },
   created() {
     this.userId = this.$route.params.id
     this.getProfileInfo ()
