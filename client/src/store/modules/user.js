@@ -12,10 +12,10 @@ const state = {
   notification: [],
   notiCnt: 0,
   myInfo: null,
-  // bookShelf: null,
-  // bookCart: null,
-  // feed: null,
-  // feedCnt: null,
+  myBookShelves: {
+    library: null,
+    bookcart: null
+  },
   profileInfo: {
     user: null,
     cnt: null,
@@ -24,6 +24,7 @@ const state = {
     bookShelf: null,
     bookCart: null,
   },
+  moveTarget: null,
   followInfo: {
     follower: null,
     following: null
@@ -224,6 +225,22 @@ const actions = {
         commit('SET_BOOKCART', res.data.data)
       })
   },
+  // 내 서재 목록 얻기
+  async getMyBookShelf ({ state, commit }) {
+    await userApi.getBookList(state.myInfo.id, 1)
+      .then((res) => {
+        console.log(res)
+        commit('SET_MY_BOOKSHELF', res.data.data)
+      })
+  },
+  // 내 북카트 목록 얻기
+  async getMyBookCart ({ state, commit }) {
+    await userApi.getBookList(state.myInfo.id, 0)
+      .then((res) => {
+        console.log(res)
+        commit('SET_MY_BOOKCART', res.data.data)
+      })
+  },
   //팔로우 정보 세팅
   async getFollower({ commit }, userId) {
     await userApi.getFollowerList(userId)
@@ -267,6 +284,12 @@ const mutations = {
   SET_MY_INFO(state, payload) {
     state.myInfo = payload
   },
+  SET_MY_BOOKSHELF(state, payload) {
+    state.myBookShelves.library = payload
+  },
+  SET_MY_BOOKCART(state, payload) {
+    state.myBookShelves.bookcart = payload
+  },
   // 프로필 관련
   SET_USER_INFO(state, payload) {
     state.profileInfo.user = payload
@@ -291,6 +314,9 @@ const mutations = {
       return book.id != payload
     })
     state.profileInfo.bookShelf = newBookShelf
+  },
+  SET_MOVE_TARGET(state, payload) {
+    state.moveTarget = payload
   },
   // 팔로우
   SET_FOLLOWER(state, payload) {
