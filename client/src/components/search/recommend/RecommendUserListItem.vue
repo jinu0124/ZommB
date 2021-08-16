@@ -27,16 +27,6 @@
         팔로우
       </button>
     </span>
-    <span>
-      <button
-        class="follow btn-5 btn-grey"
-        type="button"
-        @click="unfollow()"
-        v-show="user.follow.follow"
-      >
-        팔로우 취소
-      </button>
-    </span>
   </div>
 </template>
 
@@ -65,6 +55,9 @@ export default {
   align-items: center;
   margin-top: 10px;
   font-size: 15px;
+}
+.user-profile {
+  align-self: center;
 }
 .default-user-image,
 .user-profile {

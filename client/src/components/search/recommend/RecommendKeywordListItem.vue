@@ -1,7 +1,7 @@
 <template>
-  <div class="recommend-keyword-list-item">
-    <span class="tag rounded-pill">#{{ keyword.keyword }}</span>
-  </div>
+  <span class="recommend-keyword-list-item">
+    <span class="tag rounded-pill" type="button">#{{ keyword.keyword }}</span>
+  </span>
 </template>
 
 <script>

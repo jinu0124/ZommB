@@ -13,15 +13,22 @@ import RecommendKeywordListItem from "@/components/search/recommend/RecommendKey
 import { mapState } from "vuex";
 
 export default {
-  name: "RecommendKeywordListItem",
+  name: "RecommendKeywordList",
   components: {
     RecommendKeywordListItem,
   },
   computed: {
-    ...mapState("s", ["keywordInfo"]),
+    ...mapState("search", ["keywordInfo"]),
   },
 };
 </script>
 
 <style scoped>
+.list-item {
+  text-align: center;
+}
+.recommend-keyword-list {
+  width: 270px;
+  margin: 0px auto;
+}
 </style>
