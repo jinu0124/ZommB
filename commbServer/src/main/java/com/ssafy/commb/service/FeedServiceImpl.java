@@ -92,8 +92,8 @@ public class FeedServiceImpl implements FeedService {
 
         Date[] dates = transformDay(feed.getCreateAt());
         List<DailyEvent> dailyEvent = dailyEventRepository.findAllByCreateAtBetween(dates[0], dates[1]);
-        if (dailyEvent.size() == 0) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 없습니다!");
-        if (dailyEvent.size() > 1) throw new ApplicationException(HttpStatus.valueOf(400), "DailyEvent가 2개 이상 등록되어 있습니다!");
+        if (dailyEvent.size() == 0) System.err.println("DailyEvent가 없습니다!");
+        if (dailyEvent.size() > 1) System.err.println("DailyEvent가 2개 이상 등록되어 있습니다!");
 
         String keyword = dailyEvent.get(0).getKeyword().getKeyword();
         Boolean checkDailyEvent = false;
@@ -128,8 +128,10 @@ public class FeedServiceImpl implements FeedService {
             }
 
             if (dailyEventFeedCnt == 1) {
-                user.setPencil(user.getPencil() + 1);
-                userRepository.save(user);
+                User u = userRepository.findById(feed.getUser().getId()).get();
+                System.out.println(u.getPencil());
+                u.setPencil(u.getPencil() + 1);
+                userRepository.save(u);
             }
         }
 
@@ -138,6 +140,7 @@ public class FeedServiceImpl implements FeedService {
         // WeeklyEvent 참여 피드인 경우, 피드 생성 날짜 기준으로 그 주 작성한 모든 피드를 가져와서 북 아이디랑 비교해서 1개면(등록한 해당 피드) bookmark +1
         dates = transformWeek(feed.getCreateAt());
         Optional<WeeklyEvent> weeklyEvent = weeklyEventRepository.findAllByStartDateLessThanEqualAndEndDateGreaterThanEqual(dates[0], dates[1]);
+        if(!weeklyEvent.isPresent()) System.err.println("WeeklyEvent가 없습니다!");
         int eventBookId = weeklyEvent.get().getBook().getId();
 
         if (eventBookId == feed.getBook().getId()) {
@@ -151,8 +154,9 @@ public class FeedServiceImpl implements FeedService {
             }
 
             if (weeklyEventFeedCnt == 1) {
-                user.setBookmark(user.getBookmark() + 1);
-                userRepository.save(user);
+                User u = userRepository.findById(feed.getUser().getId()).get();
+                u.setBookmark(u.getBookmark() + 1);
+                userRepository.save(u);
             }
         }
     }
