@@ -106,8 +106,6 @@ export default {
   },
   created(){
     messaging.onMessage((payload) => {
-      console.log(payload)
-      alert(payload.notification.title + "\n" + payload.notification.body)
       this.$store.dispatch('user/onNotification', payload)
     })
   },
