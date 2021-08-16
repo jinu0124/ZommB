@@ -35,25 +35,6 @@ import java.util.Map;
 @Api("Feed Controller API V1")
 public class FeedController {
 
-    // Dummy Data Set----------------------------------------------------------------------------
-    static final int id = 1;
-    static final String nickname = "크루엘라";
-    static final String url = "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F484319%3Ftimestamp%3D20201124225204";
-    static final String tag = "#오늘도 힘내세요";
-    static final String content = "이것은 글입니다.";
-    static final int cnt = 134;
-    static Date date;
-    static final boolean bool = true;
-
-    static {
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").parse("2021-07-31 10:12:15");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-    // Dummy Data Set----------------------------------------------------------------------------
-
     @Autowired
     private FeedService feedService;
 
@@ -167,9 +148,13 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 취소")
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        thumbService.deleteLikeFeed(feedId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "피드 좋아요 취소 권한 없음");
+
+        thumbService.deleteLikeFeed(feedId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -253,9 +238,13 @@ public class FeedController {
     @ApiOperation(value = "댓글 좋아요 취소")
     public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        commentService.deleteLikeComment(feedId, commentId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 좋아요 취소 권한 없음");
+
+        commentService.deleteLikeComment(feedId, commentId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
