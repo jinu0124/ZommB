@@ -43,11 +43,8 @@ const actions = {
         console.log(err.response)
       })
   },
-  async searchUserNickname({ commit }, searchData) {
-    if (searchData.searchWord.length < 2) {
-      return
-    }
-    await searchApi.searchUserNickname(searchData)
+  async searchUserNickname({ commit }, searchData, page) {
+    await searchApi.searchUserNickname(searchData, page)
       .then((res) => {
         console.log(res)
         commit('SET_SEARCH_RESULT', res.data.data)
@@ -56,6 +53,16 @@ const actions = {
         console.log(err.response)
       })
   },
+  async searchFeedHashtag({ commit }, searchData, page) {
+    await searchApi.searchFeedHashtag(searchData, page)
+      .then((res) => {
+        console.log(res)
+        commit('SET_SEARCH_RESULT', res.data.data)
+      })
+        .catch((err) => {
+        console.log(err.response)
+      })
+    },
   async recommendUser({ rootState, commit }, page) {
     await searchApi.recommendUser(rootState.user.myInfo.id, page)
       .then((res) => {

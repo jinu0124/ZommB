@@ -83,10 +83,8 @@ export default {
 
 <style scoped>
 .up-on-scroll {
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
-  transition: transform 1s, opacity 1s;
   width: 270px;
-  margin: 0px auto;
+  margin: 8px auto;
 }
 .no-result {
   color: #c4c4c4;
