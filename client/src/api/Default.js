@@ -3,8 +3,8 @@ import router from '@/router'
 import store from '@/store/index.js'
 
 const _axios = axios.create({
-  // baseURL: process.env.VUE_APP_SERVER_URL,
-  baseURL: "http://i5a602.p.ssafy.io/api",
+  // baseURL: process.env.VUE_APP_SERVER_URL,    "http://i5a602.p.ssafy.io/api"
+  baseURL: "http://localhost:8080/api",
   timeout: 10000,
 })
 

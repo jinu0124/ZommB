@@ -67,7 +67,7 @@ export default {
     month () {
       return moment().format('MMMM')
     }
-  }
+  },
 }
 </script>
 

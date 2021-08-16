@@ -20,10 +20,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -67,8 +64,22 @@ public class FcmServiceImpl implements FcmService{
 
         MulticastMessage multicastMessage = makeMulticastMessage(tokens, fcm);
 
-        BatchResponse response = FirebaseMessaging.getInstance().sendMulticast(multicastMessage);
-        System.out.println(response.getResponses());
+        BatchResponse response = FirebaseMessaging.getInstance()
+                .sendMulticast(multicastMessage);
+
+        if (response.getFailureCount() > 0) {
+            List<SendResponse> responses = response.getResponses();
+            List<String> failedTokens = new ArrayList<>();
+            for (int i = 0; i < responses.size(); i++) {
+                if (!responses.get(i).isSuccessful()) {
+                    // The order of responses corresponds to the order of the registration tokens.
+                    System.out.println(responses.get(i).getMessageId());
+                    failedTokens.add(tokens.get(i).getToken());
+                }
+            }
+
+            System.out.println("List of tokens that caused failures: " + failedTokens);
+        }
     }
 
     /**
@@ -176,7 +187,7 @@ public class FcmServiceImpl implements FcmService{
     private MulticastMessage makeMulticastMessage(List<FirebaseToken> tokens, FcmDto fcm){
         List<String> tokenList = new ArrayList<>();
         for(FirebaseToken token : tokens) tokenList.add(token.getToken());
-
+        System.out.println(Arrays.toString(tokenList.stream().toArray()));
         return MulticastMessage.builder()
                 .setNotification(new Notification(fcm.getMessage().getNotification().getTitle(), fcm.getMessage().getNotification().getBody()))
                 .putData("nickname", String.valueOf(fcm.getMessage().getData().getNickname() == null ? "" : fcm.getMessage().getData().getNickname() ))

@@ -6,20 +6,17 @@ import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfDto;
-import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.jwt.SecurityService;
-import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +30,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 /**
  * @ User, Bookshelves, Keyword/Follow Recommend Function Controller

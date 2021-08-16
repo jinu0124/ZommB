@@ -46,6 +46,7 @@ public class FollowController {
 
         List<FirebaseToken> firebaseTokens = fcmService.getUserToken(following);
 
+
         fcmService.sends(firebaseTokens, FcmDto.builder()
                 .message(FcmDto.Message.builder()
                         .notification(FcmDto.Notification.builder()

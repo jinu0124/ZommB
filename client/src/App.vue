@@ -104,9 +104,10 @@ export default {
   },
   created(){
     messaging.onMessage((payload) => {
+      console.log(payload)
       this.$store.dispatch('user/onNotification', payload)
     })
-  },
+  }, 
 };
 </script>
 
