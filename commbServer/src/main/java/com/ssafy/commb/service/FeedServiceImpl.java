@@ -496,7 +496,7 @@ public class FeedServiceImpl implements FeedService {
 
     public List<String> extractHashTag(String content) {
 
-        Pattern pattern = Pattern.compile("\\#([0-9a-zA-Z가-힣`~!@$%^&*()=_+{};':,./<>?]*)"); // 주어진 정규표현식으로부터 패턴을 만든다.
+        Pattern pattern = Pattern.compile("\\#([0-9a-zA-Z가-힣_]*)"); // 주어진 정규표현식으로부터 패턴을 만든다.
         Matcher matcher = pattern.matcher(content); // 대상 문자열이 패턴과 일치할 경우 true 반환
         String extractHashTag = null;
         List<String> hashTags = new ArrayList<>();
