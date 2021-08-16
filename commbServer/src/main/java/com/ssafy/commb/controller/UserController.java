@@ -6,6 +6,7 @@ import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfDto;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
@@ -448,6 +449,24 @@ public class UserController {
         KeywordDto.ResponseList keyResList =  keywordService.keywordRecommend(request);
 
         return new ResponseEntity<KeywordDto.ResponseList>(keyResList, HttpStatus.OK);
+    }
+
+    @GetMapping("/alarms")
+    @ApiOperation(value = "쌓인 알림 목록 요청")
+    public ResponseEntity getAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @GetMapping("/alarms/all")
+    @ApiOperation(value = "전체 알림 목록 요청")
+    public ResponseEntity getAllAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAllAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
     }
 
 }

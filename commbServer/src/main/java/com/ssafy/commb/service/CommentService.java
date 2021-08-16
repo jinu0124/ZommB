@@ -7,7 +7,7 @@ import java.util.Map;
 
 public interface CommentService {
 
-    public void uploadComment(int feedId, int userId, String content);
+    public int uploadComment(int feedId, int userId, String content);
 
     public void modifyComment(int commentId, String content, int feedId);
 
@@ -19,7 +19,7 @@ public interface CommentService {
 
     public void deleteLikeComment(int feedId, int commentId, int userId);
 
-    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content);
+    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content ,int commentId);
 
 
 }

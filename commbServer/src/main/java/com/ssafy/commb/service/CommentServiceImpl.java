@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
 
 @Service
@@ -36,7 +38,7 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private FeedDao feedDao;
 
-    public void uploadComment(int feedId, int userId, String content) {
+    public int uploadComment(int feedId, int userId, String content) {
         Comment comment = new Comment();
 
         Optional<Feed> feed = feedRepository.findById(feedId);
@@ -46,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user.get());
         comment.setContent(content);
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment).getId();
     }
 
     public void modifyComment(int commentId, String content, int feedId) {
@@ -123,11 +125,12 @@ public class CommentServiceImpl implements CommentService {
     }
 
     @Override
-    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content) {
+    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content, int commentId) {
         List<FcmDto> fcms = new ArrayList<>();
 
         List<String> tokens = feedDao.getFeedWriterToken(feedId);
         Optional<User> user = userRepository.findById(userId);
+        Optional<Feed> feed = feedRepository.findById(feedId);
 
         for(String token : tokens) {
             FcmDto fcm = FcmDto.builder()
@@ -142,12 +145,18 @@ public class CommentServiceImpl implements CommentService {
                                     .nickname(user.get().getNickname())
                                     .userFileUrl(user.get().getFileUrl())
                                     .comment(content)
+                                    .commentId(commentId)
+                                    .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                    .targetUserId(feed.get().getUser().getId())
+                                    .isRead(0)
                                     .build())
                             .build())
                     .build();
 
             fcms.add(fcm);
         }
+
+        System.out.println("1" + fcms.get(0).getMessage().getNotification().getTitle());
 
         return fcms;
     }

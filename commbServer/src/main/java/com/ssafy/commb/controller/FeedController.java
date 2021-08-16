@@ -25,10 +25,10 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/feeds")
@@ -143,20 +143,27 @@ public class FeedController {
         UserDto.Response user = userService.getUserInfo(userId, request);
         FeedDto feed = feedService.getFeedInfo(feedId);
 
-        fcmService.sends(firebaseToken, FcmDto.builder()
+        FcmDto fcm = FcmDto.builder()
                 .message(FcmDto.Message.builder()
                         .data(FcmDto.PayData.builder()
+                                .userId(userId)
                                 .nickname(user.getData().getNickname())
                                 .feedId(feed.getId())
                                 .feedFileUrl(feed.getFeedFileUrl())
                                 .content(feed.getContent())
+                                .targetUserId(feed.getUser().getId())
+                                .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                .isRead(firebaseToken.size() == 0 ? 0 : 1)
                                 .build())
                         .notification(FcmDto.Notification.builder()
                                 .title("like")
                                 .body("")
                                 .build())
                         .build())
-                .build());
+                .build();
+
+        if(firebaseToken.size() >= 1) fcmService.sends(firebaseToken, fcm);
+        fcmService.savePushAlarm(fcm);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -193,17 +200,18 @@ public class FeedController {
     public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
 
         int userId = (Integer) request.getAttribute("userId");
-        System.out.println(userId);
-        commentService.uploadComment(feedId, userId, content);
+        int commentId = commentService.uploadComment(feedId, userId, content);
 
-        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content);
+        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content, commentId);
         List<FirebaseToken> tokens = new ArrayList<>();
-        List<String> tokenStr = new ArrayList<>();
 
-        for(FcmDto fcm : fcms) tokenStr.add(fcm.getMessage().getToken());
-        for (String token : tokenStr) tokens.add(FirebaseToken.builder().token(token).build());
+        for (String token : fcms.stream().map(FcmDto::getMessage).map(FcmDto.Message::getToken).collect(Collectors.toList())) tokens.add(FirebaseToken.builder().token(token).build());
 
-        fcmService.sends(tokens, fcms.get(0));
+        if(fcms.size() >= 1) {
+            fcms.get(0).getMessage().getData().setIsRead(1);
+            fcmService.sends(tokens, fcms.get(0));
+        }
+        fcmService.savePushAlarm(fcms.get(0));
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }

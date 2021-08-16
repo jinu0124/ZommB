@@ -19,6 +19,7 @@
         <mapper resource="mapper/bookMapper.xml"></mapper>
         <mapper resource="mapper/keywordMapper.xml"></mapper>
         <mapper resource="mapper/eventMapper.xml"></mapper>
+        <mapper resource="mapper/pushAlarmMapper.xml"></mapper>
     </mappers>
 
 </configuration>
