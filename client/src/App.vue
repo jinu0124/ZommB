@@ -71,7 +71,7 @@ export default {
     isFeed() {
       if (
         this.$route.name === "Feed" ||
-        this.$route.name === "SelectBook" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag === 'write') ||
         this.$route.name === "Write"||
         this.$route.name === "Reply") {
         return true;
@@ -82,6 +82,7 @@ export default {
       if (
         this.$route.name === "Notification" ||
         this.$route.name === "Profile" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag != 'write') ||
         this.$route.name === "Follow"
       ) {
         return true

@@ -1,38 +1,55 @@
 <template>
-  <div id="profile" class="profile d-flex flex-column align-items-center">
-    <ProfileHeader/>
-    <div class="tabs d-flex gap-4 my-3">
-      <span 
-        @click=changePage(0)
-        :class="[ selectedPage === 0 ? 'current' : 'rest']"
-      >게시물</span>
-      <span 
-        @click=changePage(1)
-        :class="[ selectedPage === 1 ? 'current' : 'rest']"
-      >서재</span>
-      <span 
-        @click=changePage(2)
-        :class="[ selectedPage === 2 ? 'current' : 'rest']"
-      >북카트</span>
+  <div>
+    <div
+      v-if="moveTarget"
+      class="backdrop"
+    ></div>
+    <ProfileBookRating
+      v-if="moveTarget"
+      class="alert-center"
+      data-bs-backdrop="static"
+      tabindex="-1"
+      aria-hidden="true"
+      :book=moveTarget
+      @close="closeRating"
+      @ok="completeRating"
+    />
+    <div id="profile" class="profile d-flex flex-column align-items-center">
+      <ProfileHeader/>
+      <div class="tabs d-flex gap-4 my-3">
+        <span 
+          @click=changePage(0)
+          :class="[ selectedPage === 0 ? 'current' : 'rest']"
+        >게시물</span>
+        <span 
+          @click=changePage(1)
+          :class="[ selectedPage === 1 ? 'current' : 'rest']"
+        >서재</span>
+        <span 
+          @click=changePage(2)
+          :class="[ selectedPage === 2 ? 'current' : 'rest']"
+        >북카트</span>
+      </div>
+      <ProfileFeeds
+        v-if="selectedPage === 0"
+      />
+      <ProfileLibrary
+        v-else-if="selectedPage === 1"
+      />
+      <ProfileBookcart
+        v-else-if="selectedPage === 2"
+      />
     </div>
-    <ProfileFeeds
-      v-if="selectedPage === 0"
-    />
-    <ProfileLibrary
-      v-else-if="selectedPage === 1"
-    />
-    <ProfileBookcart
-      v-else-if="selectedPage === 2"
-    />
   </div>
 </template>
 
 <script>
-import { mapActions } from "vuex";
+import { mapActions, mapState } from "vuex";
 import ProfileHeader from "@/components/user/profile/ProfileHeader"
 import ProfileFeeds from "@/components/user/profile/ProfileFeeds"
 import ProfileLibrary from "@/components/user/profile/ProfileLibrary"
 import ProfileBookcart from "@/components/user/profile/ProfileBookcart"
+import ProfileBookRating from "@/components/user/profile/ProfileBookRating"
 
 export default {
   name: "Profile",
@@ -40,24 +57,43 @@ export default {
     ProfileHeader,
     ProfileFeeds,
     ProfileLibrary,
-    ProfileBookcart
+    ProfileBookcart,
+    ProfileBookRating
   },
   data() {
     return {
       selectedPage: 0,
+      rateBook: false,
+      userId: null
     }
   },
   methods: {
     ...mapActions('user', ['getUserInfo', 'getUserFeed', 'getBookShelf', 'getBookCart']),
     changePage (val) {
       this.selectedPage = val
+    },
+    closeRating () {
+      this.$store.commit('user/SET_MOVE_TARGET', null)
+    },
+    completeRating () {
+      this.$store.commit('user/SET_MOVE_TARGET', null)
+      this.getUserInfo(this.userId)
+      this.getBookShelf(this.userId)
+      this.getBookCart(this.userId)
+    },
+    getProfileInfo () {
+    this.getUserInfo(this.userId)
+    this.getUserFeed({id: this.userId, page: 0})
+    this.getBookShelf(this.userId)
+    this.getBookCart(this.userId)
     }
   },
+  computed: {
+    ...mapState('user', ['moveTarget'])
+  },
   created() {
-    this.getUserInfo(this.$route.params.id)
-    this.getUserFeed({id: this.$route.params.id, page: 0})
-    this.getBookShelf(this.$route.params.id)
-    this.getBookCart(this.$route.params.id)
+    this.userId = this.$route.params.id
+    this.getProfileInfo ()
   },
 };
 </script>

@@ -141,7 +141,7 @@ const routes = [
     component: Report
   },
   {
-    path: '/select',
+    path: '/select/:flag',
     name: 'SelectBook',
     component: SelectBook
   },

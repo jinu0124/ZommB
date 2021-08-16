@@ -6,18 +6,47 @@
       <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
     </div>
     <button 
+      v-if="code === 0"
       class="btn-65 btn-yellow right-fix"
       @click="$router.push({ name: 'Write', params: { id: book.id }})"
     >글쓰기</button>
+    <button 
+      v-if="code === 1"
+      class="btn-70 btn-yellow right-fix"
+      @click="addLibrary"
+    >서재에 추가</button>
+    <button 
+      v-if="code === 2"
+      class="btn-70 btn-yellow right-fix"
+      @click="addBookcart"
+    >북카트 추가</button>
   </div>
 </template>
 
 <script>
 import _ from 'lodash'
+import { mapActions } from 'vuex'
 export default {
   name: 'SelectBookListItem',
   props: {
-    book: Object
+    book: Object,
+    code: Number
+  },
+  methods: {
+    ...mapActions('book', ['addBook']),
+    ...mapActions('user', ['getMyBookShelf', 'getMyBookCart']),
+    addLibrary () {
+      this.$store.commit('user/SET_MOVE_TARGET', this.book)
+    },
+    async addBookcart () {
+      const bookData = {
+        id: this.book.id, 
+        isRead : 0,
+        rate: 0
+      }
+      await this.addBook(bookData)
+      await this.getMyBookCart()
+    }
   },
   computed: {
     author () {
@@ -35,7 +64,7 @@ export default {
   .info-box {
     position: relative;
     min-height: 70px;
-    height: 100%;
+    height: fit-content;
     width: 270px;
     padding: 10px 10px 10px 75px;
     background: #f1f1f1;
@@ -74,6 +103,15 @@ export default {
     outline: none;
     font-size: 12px;
     font-weight: 500;
+  }
+  .btn-70 {
+    border: none;
+    width: 70px;
+    height: 25px;
+    border-radius: 13px;
+    outline: none;
+    font-size: 11px;
+    font-weight: 700;
   }
   .right-fix {
     position: absolute;
