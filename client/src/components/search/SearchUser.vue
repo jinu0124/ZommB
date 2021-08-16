@@ -1,26 +1,28 @@
 <template>
-  <div class="search-feed">
+  <div class="user-list-item">
     <div
       id="select"
       class="search-body d-flex flex-column mt-2 align-self-center"
     >
-      <SearchFeedBar @search="onInputChange" />
+      <SearchUserBar @search="onInputChange" />
     </div>
-    <SearchFeedList class="mt-3" @last="addResult" />
-    <!-- 검색한 피드 리스트 부분 -->
+    <SearchDefault />
+    <SearchUserList class="mt-3" @last="addResult" />
   </div>
 </template>
 
 <script>
-import SearchFeedBar from "@/components/search/searchFeed/SearchFeedBar";
-import SearchFeedList from "@/components/search/searchFeed/SearchFeedList";
+import SearchUserBar from "@/components/search/searchUser/SearchUserBar";
+import SearchUserList from "@/components/search/searchUser/SearchUserList";
+import SearchDefault from "@/components/search/recommend/SearchDefault";
 import { mapActions } from "vuex";
 
 export default {
-  name: "SearchFeed",
+  name: "SearchUser",
   components: {
-    SearchFeedBar,
-    SearchFeedList,
+    SearchUserBar,
+    SearchUserList,
+    SearchDefault,
   },
   data() {
     return {
@@ -29,13 +31,13 @@ export default {
     };
   },
   methods: {
-    ...mapActions("search", ["searchFeedHashtag"]),
+    ...mapActions("search", ["searchUserNickname"]),
     onInputChange(word) {
       this.word = word;
       this.page = 2;
     },
     addResult() {
-      this.searchFeedHashtag(this.searchWord);
+      this.searchUserNickname(this.searchWord);
       this.page++;
     },
   },
@@ -50,7 +52,7 @@ export default {
 </script>
 
 <style scoped>
-.search-feed {
+.user-list-item {
   text-align: center;
 }
 </style>

@@ -1,7 +1,6 @@
 <template>
   <div class="feed-list">
     <FeedListItem v-for="(feed, idx) in feedInfo" :key="idx" :feed="feed" />
-    <!-- FeedListItem for문으로 뿌려주기 -->
   </div>
 </template>
 

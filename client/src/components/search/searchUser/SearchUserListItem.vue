@@ -44,15 +44,9 @@
 import { mapState } from "vuex";
 
 export default {
-  name: "UserListItem",
-  computed: {
-    ...mapState("user", ["myInfo"]),
-  },
-  data() {
-    return {
-      isFollow: true,
-      nickname: "Nickname",
-    };
+  name: "SearchUserListItem",
+  props: {
+    user: Object,
   },
   methods: {
     follow() {
@@ -63,6 +57,9 @@ export default {
       this.isFollow = true;
       console.log("팔로우 취소");
     },
+  },
+  computed: {
+    ...mapState("user", ["myInfo"]),
   },
 };
 </script>

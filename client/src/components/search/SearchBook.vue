@@ -26,26 +26,55 @@
         >키워드</span
       >
     </div>
-    <BookListItem class="book-list-item" />
+    <div
+      id="search"
+      class="search-body d-flex flex-column mt-2 align-self-center"
+    >
+      <SearchBookBar @search="onInputChange" />
+    </div>
+    <SearchBookList class="mt-3" @last="addResult" />
   </div>
 </template>
 
 <script>
-import BookListItem from "@/components/book/BookListItem";
+import { mapActions } from "vuex";
+import SearchBookBar from "@/components/search/searchBook/SearchBookBar";
+import SearchBookList from "@/components/search/searchBook/SearchBookList";
 
 export default {
   name: "SearchBook",
   components: {
-    BookListItem,
+    SearchBookBar,
+    SearchBookList,
   },
   data() {
     return {
       selectedPage: 0,
+      page: 2,
+      word: null,
     };
   },
   methods: {
+    ...mapActions("search", ["searchBookTitle"]),
     changePage(val) {
       this.selectedPage = val;
+    },
+    onInputChange(word) {
+      this.word = word;
+      this.page = 2;
+    },
+    addResult() {
+      this.searchBookTitle(this.searchData);
+      this.page++;
+    },
+  },
+  computed: {
+    searchData() {
+      return {
+        searchType: "title",
+        searchWord: this.word,
+        page: this.page,
+      };
     },
   },
 };
@@ -71,8 +100,5 @@ export default {
 .tabs .rest {
   background: #7b60f1;
   color: #fff;
-}
-.book-list-item {
-  color: #111;
 }
 </style>
