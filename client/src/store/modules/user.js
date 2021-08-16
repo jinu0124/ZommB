@@ -89,7 +89,7 @@ const actions = {
         console.log(err.response)
       })
   },
-  async onLogin ({ commit }, userData) {
+  async onLogin({ commit }, userData) {
     await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
       .then((token) => {
         console.log(token)
