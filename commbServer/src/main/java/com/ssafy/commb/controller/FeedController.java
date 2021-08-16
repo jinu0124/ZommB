@@ -167,9 +167,13 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 취소")
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        thumbService.deleteLikeFeed(feedId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "피드 좋아요 취소 권한 없음");
+
+        thumbService.deleteLikeFeed(feedId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -253,9 +257,13 @@ public class FeedController {
     @ApiOperation(value = "댓글 좋아요 취소")
     public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        commentService.deleteLikeComment(feedId, commentId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 좋아요 취소 권한 없음");
+
+        commentService.deleteLikeComment(feedId, commentId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
