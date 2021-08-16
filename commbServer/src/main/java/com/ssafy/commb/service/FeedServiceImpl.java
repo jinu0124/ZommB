@@ -8,9 +8,6 @@ import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -519,7 +516,7 @@ public class FeedServiceImpl implements FeedService {
 
     public Date[] transformDay(Date date) {
         // Date -> LocalDate
-        LocalDate feedCreate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate feedCreate = date.toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDate();
 
         // feed createAt 기준 0시 0분 0초 ~ 23시 59분 59초
         LocalDateTime startDateTime = LocalDateTime.of(feedCreate, LocalTime.of(0, 0, 0));
@@ -538,7 +535,7 @@ public class FeedServiceImpl implements FeedService {
 
     public Date[] transformWeek(Date date) {
         // Date -> LocalDate
-        LocalDate feedCreate = date.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate feedCreate = date.toInstant().atZone(ZoneId.of("Asia/Seoul")).toLocalDate();
 
         int year = feedCreate.getYear();
         int month = feedCreate.getMonthValue();
