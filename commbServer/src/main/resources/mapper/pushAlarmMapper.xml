@@ -10,30 +10,41 @@
     </insert>
 
     <select id="getNewAlarm" parameterType="Integer" resultMap="FcmInfo">
-        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body
-        FROM push_alarm p LEFT OUTER JOIN user u
-                                          ON p.user_id = u.id AND p.target_user_id = #{userId} and p.is_read = 0
+        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body, p.is_read, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
+        FROM push_alarm p INNER JOIN user u
+                                     ON p.user_id = u.id AND p.target_user_id = #{userId} AND p.is_read = 0
                           LEFT OUTER JOIN feed f
                                           ON p.feed_id = f.id
                           LEFT OUTER JOIN comment c
                                           ON p.comment_id = c.id
+                          LEFT OUTER JOIN follow
+                                          ON follower = #{userId} AND following = p.user_id
         ORDER BY create_at DESC
         LIMIT 20 OFFSET #{page}
     </select>
 
     <select id="getAllAlarm" parameterType="Integer" resultMap="FcmInfo">
-        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body
-        FROM push_alarm p LEFT OUTER JOIN user u
-                                          ON p.user_id = u.id AND p.target_user_id = #{userId}
+        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body, p.is_read, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
+        FROM push_alarm p INNER JOIN user u
+                                     ON p.user_id = u.id AND p.target_user_id = #{userId}
                           LEFT OUTER JOIN feed f
                                           ON p.feed_id = f.id
                           LEFT OUTER JOIN comment c
                                           ON p.comment_id = c.id
+                          LEFT OUTER JOIN follow
+                                          ON follower = #{userId} AND following = p.user_id
+
         ORDER BY create_at DESC
-            LIMIT 20 OFFSET #{page}
+        LIMIT 20 OFFSET #{page}
     </select>
 
+    <update id="updateIsRead" parameterType="Integer">
+        update push_alarm set is_read = 1 where target_user_id = #{userId}
+    </update>
+
     <resultMap id="FcmInfo" type="Fcm">
+        <result column="isFollow" property="message.data.isFollow" />
+        <result column="is_read" property="message.data.isRead" />
         <result column="title" property="message.notification.title" />
         <result column="body" property="message.notification.body" />
         <result column="uid" property="message.data.userId" />

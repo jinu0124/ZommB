@@ -19,6 +19,7 @@ import com.ssafy.commb.model.QUser;
 import com.ssafy.commb.model.User;
 import com.ssafy.commb.model.follow.Follow;
 import com.ssafy.commb.repository.ConfirmationTokenRepository;
+import com.ssafy.commb.repository.FirebaseTokenRepository;
 import com.ssafy.commb.repository.FollowRepository;
 import com.ssafy.commb.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -364,6 +365,7 @@ public class UserServiceImpl implements UserService {
     public List<FcmDto> getAlarms(Integer page, HttpServletRequest request) {
 
         List<FcmDto> fcms = pushAlarmDao.getNewAlarm(page, (int) request.getAttribute("userId"));
+        if(fcms.size() >= 1) pushAlarmDao.updateIsRead((int) request.getAttribute("userId"));
 
         return fcms;
     }
@@ -372,6 +374,7 @@ public class UserServiceImpl implements UserService {
     public List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request) {
 
         List<FcmDto> fcms = pushAlarmDao.getAllAlarm(page, (int) request.getAttribute("userId"));
+        if(fcms.size() >= 1) pushAlarmDao.updateIsRead((int) request.getAttribute("userId"));
 
         return fcms;
     }

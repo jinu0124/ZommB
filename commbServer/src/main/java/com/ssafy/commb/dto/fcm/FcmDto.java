@@ -57,6 +57,7 @@ public class FcmDto {
         private String content;
         private LocalDateTime createAt;
         private Integer isRead;
+        private Boolean isFollow;
 
         @JsonIgnore
         private Integer targetUserId;

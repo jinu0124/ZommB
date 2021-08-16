@@ -13,4 +13,6 @@ public interface PushAlarmDao {
     List<FcmDto> getNewAlarm(Integer page, int userId);
 
     List<FcmDto> getAllAlarm(Integer page, int userId);
+
+    void updateIsRead(Integer userId);
 }
