@@ -116,6 +116,19 @@ export default {
       method: 'get',
     })
   },
+  addBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar`,
+      method: 'post',
+      data: {id: bookId}
+    })
+  },
+  removeBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar/${bookId}`,
+      method: 'delete'
+    })
+  },
   //isRead : false(북카트), true(서재)
   getBookList(userId, data) {
     return _axios({

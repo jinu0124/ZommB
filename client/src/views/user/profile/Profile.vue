@@ -68,7 +68,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['getUserInfo', 'getUserFeed', 'getBookShelf', 'getBookCart']),
+    ...mapActions('user', ['getUserInfo', 'getUserFeed', 'getBookShelf', 'getBookCart', 'getCollections']),
     changePage (val) {
       this.selectedPage = val
     },
@@ -86,6 +86,7 @@ export default {
     this.getUserFeed({id: this.userId, page: 0})
     this.getBookShelf(this.userId)
     this.getBookCart(this.userId)
+    this.getCollections(this.userId)
     }
   },
   computed: {

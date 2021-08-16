@@ -1,10 +1,15 @@
 <template>
   <div class="profile-library">
-    <div  v-if="profileInfo.bookCollection">
-      <div class="title mb-2">{{ profileInfo.user.nickname }}'s Collection</div>
+    <div class="title mb-2">{{ profileInfo.user.nickname }}'s Collection</div>
+    <div v-if="profileInfo.bookCollection.length > 0">
       <ProfileLibraryTop/>
     </div>
-    <div class="d-flex flex-column align-items-center">
+    <div v-else>
+      <div class="no-collection py-2">
+        아직 {{ profileInfo.user.nickname }} 님이<br/>
+        Collect한 책이 없습니다.</div>
+    </div>
+    <div class="d-flex flex-column align-items-center mt-2">
       <div class="d-flex gap-2 align-items-center">
         <input
           class="search-input"
@@ -61,6 +66,11 @@ export default {
   .profile-library .title {
     font-size: 16px;
     font-weight: 700;
+  }
+  .no-collection {
+    font-size: 14px;
+    color: #c4c4c4;
+    text-align: center;
   }
   .search-input {
     width: 240px;
