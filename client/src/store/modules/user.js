@@ -12,6 +12,7 @@ const state = {
   notification: [],
   notiCnt: 0,
   myInfo: null,
+  stopRequest: false,
   myBookShelves: {
     library: null,
     bookcart: null
@@ -194,12 +195,25 @@ const actions = {
     commit('SET_CNT', cntInfo)
   },
   // 2. 해당 유저 피드 리스트
-  async getUserFeed({ commit }, userData) {
-    await userApi.getUserFeed(userData.id, userData.page)
-      .then((res) => {
-        console.log(res)
-        commit('SET_USER_FEED', res.data.data)
-      })
+  async getUserFeed({ state, commit }, userData) {
+    if (!userData.page || !state.stopRequest) {
+      await userApi.getUserFeed(userData.id, userData.page)
+        .then((res) => {
+          if (res.status === 200) {
+            if (!userData.page) {
+              commit('SET_USER_FEED', res.data.data)
+            } else {
+              commit('ADD_USER_FEED', res.data.data)
+            }
+            commit('SET_STOP', false)
+          } else if (res.status === 204) {
+            if (!userData.page) {
+              commit('SET_USER_FEED', null)
+            }
+            commit('SET_STOP', true)
+          }
+        })
+    }
   },
   //  3. 서재 관련
   async getCollections({ commit }, userId) {
@@ -300,6 +314,11 @@ const mutations = {
   SET_USER_FEED(state, payload) {
     state.profileInfo.feed = payload
   },
+  ADD_USER_FEED(state, payload) {
+    payload.forEach(data => {
+      state.profileInfo.feed.push(data)
+    })
+  },
   SET_COLLECTION(state, payload) {
     state.profileInfo.bookCollection = payload
   },
@@ -327,6 +346,9 @@ const mutations = {
   },
   RESET_MY_INFO(state) {
     state.myInfo = null
+  },
+  SET_STOP(state, payload) {
+    state.stopRequest = payload
   },
 
 }

@@ -32,6 +32,7 @@
       </div>
       <ProfileFeeds
         v-if="selectedPage === 0"
+        @last="addFeed"
       />
       <ProfileLibrary
         v-else-if="selectedPage === 1"
@@ -64,7 +65,8 @@ export default {
     return {
       selectedPage: 0,
       rateBook: false,
-      userId: null
+      userId: null,
+      feedpage: 1
     }
   },
   methods: {
@@ -80,6 +82,13 @@ export default {
       this.getUserInfo(this.userId)
       this.getBookShelf(this.userId)
       this.getBookCart(this.userId)
+    },
+    addFeed () {
+      this.getUserFeed({
+        id: this.userId, 
+        page: this.feedpage
+      })
+      this.feedpage ++
     },
     getProfileInfo () {
     this.getUserInfo(this.userId)
