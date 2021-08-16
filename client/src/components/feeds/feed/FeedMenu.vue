@@ -1,15 +1,19 @@
 <template>
   <div class="dropdown-menu">
     <div class="dropdown-item" @click="editContent()">수정하기</div>
-    <div><a class="dropdown-item" @click="deleteFeed()">삭제하기</a></div>
+    <div><a class="dropdown-item" @click="deleteMyFeed()">삭제하기</a></div>
     <div><a class="dropdown-item" @click="moveToReport()">신고하기</a></div>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+
 export default {
   name: "FeedMenu",
-  methods: {},
+  computed: {
+    ...mapActions("feed", ["deleteMyFeed"]),
+  },
 };
 </script>
 

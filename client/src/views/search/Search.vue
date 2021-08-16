@@ -24,7 +24,6 @@
       </div>
     </div>
     <div class="align-self-center">
-      <SearchDefault v-if="selectPage === 0 && this.isDefault" />
       <SearchUser v-if="selectedPage === 0" />
       <SearchBook v-if="selectedPage === 1" />
       <SearchFeed v-if="selectedPage === 2" />
@@ -33,7 +32,6 @@
 </template>
 
 <script>
-import SearchDefault from "@/components/search/SearchDefault";
 import SearchUser from "@/components/search/SearchUser";
 import SearchBook from "@/components/search/SearchBook";
 import SearchFeed from "@/components/search/SearchFeed";
@@ -41,7 +39,6 @@ import SearchFeed from "@/components/search/SearchFeed";
 export default {
   name: "Search",
   components: {
-    SearchDefault,
     SearchUser,
     SearchBook,
     SearchFeed,

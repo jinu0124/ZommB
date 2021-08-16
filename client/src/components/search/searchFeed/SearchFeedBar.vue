@@ -3,7 +3,7 @@
     <input
       class="search-input"
       type="text"
-      placeholder="검색어를 입력하세요"
+      placeholder="검색어를 입력하세요."
       :value="searchInput"
       @input="insertInput"
     />
@@ -21,10 +21,10 @@ export default {
     };
   },
   methods: {
-    ...mapActions("search", ["searchFeed"]),
+    ...mapActions("search", ["searchFeedHashtag"]),
     insertInput(event) {
       this.searchInput = event.target.value;
-      this.searchBookTitle(this.searchData);
+      this.searchBookTitle(this.searchWord);
       this.$emit("search", this.searchInput);
     },
     clean() {
@@ -34,15 +34,13 @@ export default {
   computed: {
     searchData() {
       return {
-        searchType: "title",
         searchWord: this.searchInput,
-        page: 1,
       };
     },
   },
   watch: {
     searchData() {
-      if (!this.searchData.length) {
+      if (!this.searchWord.length) {
         this.clean();
       }
     },

@@ -1,10 +1,10 @@
 <template>
-  <div v-if="searchResult" class="toptag">
-    <SearchBookListItem
-      v-for="(book, idx) in searchResult"
+  <div v-if="searchResult">
+    <SearchFeedListItem
+      v-for="(feed, idx) in searchResult"
       class="up-on-scroll"
       :key="idx"
-      :book="book"
+      :feed="feed"
     />
     <div v-if="!searchResult.length" class="no-result mt-5">
       검색 결과가 없습니다.
@@ -17,12 +17,15 @@
 
 <script>
 import { mapState } from "vuex";
-import SearchBookListItem from "./SearchBookListItem";
+import SearchFeedListItem from "./SearchFeedListItem";
 
 export default {
-  name: "SearchBookList",
+  name: "SearchFeedList",
   components: {
-    SearchBookListItem,
+    SearchFeedListItem,
+  },
+  computed: {
+    ...mapState("search", ["searchResult"]),
   },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {
@@ -56,7 +59,7 @@ export default {
       const { bottom } = document
         .getElementsByClassName("search-input")[0]
         .getBoundingClientRect();
-      const currentTop = document.getElementById("search").scrollTop;
+      const currentTop = document.getElementById("select").scrollTop;
       const btn = document.querySelector(".top-btn");
       if (currentTop > bottom) {
         btn.style.opacity = "1";
@@ -65,14 +68,11 @@ export default {
       }
     },
     goToTop() {
-      document.getElementById("search").scrollTop = 0;
+      document.getElementById("select").scrollTop = 0;
     },
   },
-  computed: {
-    ...mapState("search", ["searchResult"]),
-  },
   mounted() {
-    const select = document.getElementById("search");
+    const select = document.getElementById("select");
     select.addEventListener("scroll", this.handleScroll);
     select.addEventListener("scroll", this.checkLast);
     select.addEventListener("scroll", this.needTopBtn);
@@ -81,14 +81,5 @@ export default {
 };
 </script>
 
-<style scoped>
-.up-on-scroll {
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
-  transition: transform 1s, opacity 1s;
-  width: 270px;
-  margin: 0px auto;
-}
-.no-result {
-  color: #c4c4c4;
-}
+<style>
 </style>

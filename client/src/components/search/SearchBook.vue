@@ -26,7 +26,10 @@
         >키워드</span
       >
     </div>
-    <div class="mt-2 align-self-center">
+    <div
+      id="search"
+      class="search-body d-flex flex-column mt-2 align-self-center"
+    >
       <SearchBookBar @search="onInputChange" />
     </div>
     <SearchBookList class="mt-3" @last="addResult" />
@@ -34,6 +37,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SearchBookBar from "@/components/search/searchBook/SearchBookBar";
 import SearchBookList from "@/components/search/searchBook/SearchBookList";
 
@@ -51,6 +55,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions("search", ["searchBookTitle"]),
     changePage(val) {
       this.selectedPage = val;
     },

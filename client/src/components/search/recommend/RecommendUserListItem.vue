@@ -2,27 +2,27 @@
   <div class="user-list-item">
     <span class="user-images">
       <img
-        v-if="myInfo.userFileUrl"
+        v-if="user.userFileUrl"
         class="user-profile"
         type="button"
         id="UserProfile"
-        :src="myInfo.userFileUrl"
+        :src="user.userFileUrl"
         alt="user-profile"
       />
       <img
         v-else
         src="@/assets/image/common/profileDefault.svg"
-        alt="defalut-profile"
+        alt="디폴트 회원 이미지"
         class="default-user-image user-profile"
-        type="button"
+        id="UserProfile"
       />
     </span>
-    <span class="user-nickname">{{ nickname }}</span>
+    <span class="user-nickname">{{ user.nickname }}</span>
     <span>
       <button
         class="follow btn-5 btn-yellow"
         @click="follow()"
-        v-show="isFollow"
+        v-show="!user.follow.follow"
       >
         팔로우
       </button>
@@ -32,7 +32,7 @@
         class="follow btn-5 btn-grey"
         type="button"
         @click="unfollow()"
-        v-show="!isFollow"
+        v-show="user.follow.follow"
       >
         팔로우 취소
       </button>
@@ -41,25 +41,20 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
-  name: "SearchUserListItem",
+  name: "RecommendUserListItem",
   props: {
     user: Object,
   },
   methods: {
     follow() {
-      this.isFollow = false;
+      this.user.follow = false;
       console.log("팔로우");
     },
     unfollow() {
-      this.isFollow = true;
+      this.user.follow = true;
       console.log("팔로우 취소");
     },
-  },
-  computed: {
-    ...mapState("user", ["myInfo"]),
   },
 };
 </script>
@@ -67,7 +62,8 @@ export default {
 <style scoped>
 .user-list-item {
   text-align: center;
-  margin-top: 20px;
+  align-items: center;
+  margin-top: 10px;
   font-size: 15px;
 }
 .user-profile {

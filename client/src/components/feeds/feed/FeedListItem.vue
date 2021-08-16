@@ -113,7 +113,7 @@
       </p>
       <p class="content-duration">{{ feed.createAt }}시간 전</p>
       <!-- 시간 계산 필요 -->
-      <div class="hashtagdiv">
+      <div>
         <span
           v-for="(tag, idx) in feed.hashTags"
           :key="idx"
@@ -170,7 +170,7 @@ export default {
       if (this.moreContent) {
         return content;
       } else {
-        return _.truncate(content, { length: 80 });
+        return _.truncate(content, { length: 100 });
       }
     },
   },

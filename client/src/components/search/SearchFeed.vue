@@ -1,89 +1,56 @@
 <template>
   <div class="search-feed">
-    <span
-      class="feed-list flex-column align-items-center justify-content-center"
+    <div
+      id="select"
+      class="search-body d-flex flex-column mt-2 align-self-center"
     >
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelSmile.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-      <span>
-        <img
-          class="default-feed-image"
-          src="@/assets/image/camel/camelRotate.svg"
-          alt="웃는 낙타"
-        />
-      </span>
-    </span>
+      <SearchFeedBar @search="onInputChange" />
+    </div>
+    <SearchFeedList class="mt-3" @last="addResult" />
+    <!-- 검색한 피드 리스트 부분 -->
   </div>
 </template>
 
 <script>
+import SearchFeedBar from "@/components/search/searchFeed/SearchFeedBar";
+import SearchFeedList from "@/components/search/searchFeed/SearchFeedList";
+import { mapActions } from "vuex";
+
 export default {
   name: "SearchFeed",
+  components: {
+    SearchFeedBar,
+    SearchFeedList,
+  },
+  data() {
+    return {
+      page: 2,
+      word: null,
+    };
+  },
+  methods: {
+    ...mapActions("search", ["searchFeedHashtag"]),
+    onInputChange(word) {
+      this.word = word;
+      this.page = 2;
+    },
+    addResult() {
+      this.searchFeedHashtag(this.searchWord);
+      this.page++;
+    },
+  },
+  computed: {
+    searchData() {
+      return {
+        searchWord: this.word,
+      };
+    },
+  },
 };
 </script>
 
 <style scoped>
-.feed-list {
-  display: grid;
-  grid-template-rows: 90px 90px 90px;
-  grid-template-columns: 90px 90px 90px;
-  margin-top: 5px;
+.search-feed {
   text-align: center;
-}
-.default-feed-image {
-  width: 80px;
-  height: 80px;
-  background: #ffffff;
-}
-.image-back {
-  width: 80px;
-  height: 80px;
 }
 </style>
