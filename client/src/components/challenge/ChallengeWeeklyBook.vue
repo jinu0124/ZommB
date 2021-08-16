@@ -51,6 +51,7 @@ export default {
     width: 100px;
     border-radius: 10px;
     box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
   }
   .weekly-book .title {
     width: 80%;
