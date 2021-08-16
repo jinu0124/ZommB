@@ -66,9 +66,6 @@ export default {
   margin-top: 10px;
   font-size: 15px;
 }
-.user-profile {
-  align-self: center;
-}
 .default-user-image,
 .user-profile {
   width: 35px;

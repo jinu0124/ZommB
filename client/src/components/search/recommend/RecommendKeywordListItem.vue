@@ -1,6 +1,6 @@
 <template>
   <div class="recommend-keyword-list-item">
-    <span class="tag rounded-pill">#{{}}</span>
+    <span class="tag rounded-pill">#{{ keyword.keyword }}</span>
   </div>
 </template>
 

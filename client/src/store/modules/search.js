@@ -43,11 +43,11 @@ const actions = {
         console.log(err.response)
       })
   },
-  async searchUserNickname({ commit }, searchWord) {
-    if (searchWord.length < 2) {
+  async searchUserNickname({ commit }, searchData) {
+    if (searchData.searchWord.length < 2) {
       return
     }
-    await searchApi.searchUserNickname(searchWord)
+    await searchApi.searchUserNickname(searchData)
       .then((res) => {
         console.log(res)
         commit('SET_SEARCH_RESULT', res.data.data)

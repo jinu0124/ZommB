@@ -2,11 +2,11 @@
   <div class="user-list-item">
     <span class="user-images">
       <img
-        v-if="myInfo.userFileUrl"
+        v-if="user.userFileUrl"
         class="user-profile"
         type="button"
         id="UserProfile"
-        :src="myInfo.userFileUrl"
+        :src="user.userFileUrl"
         alt="user-profile"
       />
       <img
@@ -41,8 +41,6 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   name: "SearchUserListItem",
   props: {
@@ -58,9 +56,7 @@ export default {
       console.log("팔로우 취소");
     },
   },
-  computed: {
-    ...mapState("user", ["myInfo"]),
-  },
+  computed: {},
 };
 </script>
 

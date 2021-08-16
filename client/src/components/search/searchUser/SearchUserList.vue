@@ -24,9 +24,6 @@ export default {
   components: {
     SearchUserListItem,
   },
-  computed: {
-    ...mapState("search", ["searchResult"]),
-  },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {
       const { top } = elem.getBoundingClientRect();
@@ -59,7 +56,7 @@ export default {
       const { bottom } = document
         .getElementsByClassName("search-input")[0]
         .getBoundingClientRect();
-      const currentTop = document.getElementById("select").scrollTop;
+      const currentTop = document.getElementById("search").scrollTop;
       const btn = document.querySelector(".top-btn");
       if (currentTop > bottom) {
         btn.style.opacity = "1";
@@ -68,11 +65,14 @@ export default {
       }
     },
     goToTop() {
-      document.getElementById("select").scrollTop = 0;
+      document.getElementById("search").scrollTop = 0;
     },
   },
+  computed: {
+    ...mapState("search", ["searchResult"]),
+  },
   mounted() {
-    const select = document.getElementById("select");
+    const select = document.getElementById("search");
     select.addEventListener("scroll", this.handleScroll);
     select.addEventListener("scroll", this.checkLast);
     select.addEventListener("scroll", this.needTopBtn);
@@ -81,5 +81,14 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.up-on-scroll {
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+  transition: transform 1s, opacity 1s;
+  width: 270px;
+  margin: 0px auto;
+}
+.no-result {
+  color: #c4c4c4;
+}
 </style>

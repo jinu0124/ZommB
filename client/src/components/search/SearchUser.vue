@@ -1,7 +1,7 @@
 <template>
   <div class="user-list-item">
     <div
-      id="select"
+      id="search"
       class="search-body d-flex flex-column mt-2 align-self-center"
     >
       <SearchUserBar @search="onInputChange" />

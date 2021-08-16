@@ -18,7 +18,7 @@ export default {
     RecommendKeywordListItem,
   },
   computed: {
-    ...mapState("keyword", ["keywordInfo"]),
+    ...mapState("s", ["keywordInfo"]),
   },
 };
 </script>
