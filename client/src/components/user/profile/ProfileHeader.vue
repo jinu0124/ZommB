@@ -39,21 +39,43 @@
       class="btn-box mt-2">
       <button 
         v-if="profileInfo.user.follow.follow" 
-        class="follow-btn btn-grey">언팔로우</button>
+        class="follow-btn btn-grey"
+        @click="unfollow"
+      >언팔로우</button>
       <button 
         v-else
-        class="follow-btn btn-primary1">팔로우</button>
+        class="follow-btn btn-primary1"
+        @click="follow"
+      >팔로우</button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapActions, mapState } from 'vuex'
+import userApi from '@/api/user'
 
 export default {
   name: 'ProfileHeader',
   computed: {
     ...mapState('user', ['profileInfo', 'myInfo'])
+  },
+  methods: {
+    ...mapActions('user', ['getUserInfo']),
+    async follow () {
+      this.isFollow = true
+      await userApi.follow(this.$route.params.id)
+        .then(() => {
+          this.getUserInfo(this.$route.params.id)
+        })
+    },
+    async unfollow () {
+      this.isFollow = false
+      await userApi.unfollow(this.$route.params.id)
+        .then(() => {
+          this.getUserInfo(this.$route.params.id)
+        })
+    }
   }
 }
 </script>
