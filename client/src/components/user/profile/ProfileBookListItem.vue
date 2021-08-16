@@ -1,6 +1,11 @@
 <template>
   <div class="info-box my-4 d-flex align-items-center gap-2">
-    <img class="book-cover" :src="book.bookFileUrl" alt="">
+    <img 
+      class="book-cover" 
+      :src="book.bookFileUrl" 
+      alt=""
+      @click="$router.push({ name: 'BookInfo', params: {id: book.id} })"
+    >
     <div>
       <div class="title">{{ bookName }}</div>
       <div class="subtitle mt-1">{{ author }} | {{ book.publisher }}</div>
@@ -10,9 +15,15 @@
       class="d-flex flex-column right-fix gap-2"
     >
       <button 
+        v-if="from === 'library'"
         class="btn-65 btn-yellow"
         @click="$router.push({ name: 'Write', params: { id: book.id }})"
       >글쓰기</button>
+      <button 
+        v-else-if="from === 'bookcart'"
+        class="btn-65 btn-yellow"
+        @click="onMoveBook"
+      >완독</button>
       <button 
         class="btn-65 btn-grey"
         @click="onDeleteBook"
@@ -27,7 +38,8 @@ import _ from 'lodash'
 export default {
   name: 'ProfileBookListItem',
   props: {
-    book: Object
+    book: Object,
+    from: String
   },
   methods: {
     ...mapActions('book', ['deleteBook']),
@@ -35,6 +47,9 @@ export default {
       this.deleteBook(this.book.id)
       this.$emit('delete', this.book.id) 
     },
+    onMoveBook () {
+      this.$store.commit('user/SET_MOVE_TARGET', this.book)
+    }
   },
   computed: {
     ...mapState('user', ['profileInfo', 'myInfo']),
@@ -73,6 +88,12 @@ export default {
     width: auto;
     border-radius: 10px;
     box-shadow: 0px 4px 5px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+  }
+  .book-cover:hover {
+    height: 95px;
+    width: auto;
+
   }
   .info-box .title {
     width: 100%;

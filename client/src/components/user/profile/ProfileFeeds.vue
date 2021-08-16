@@ -1,6 +1,6 @@
 <template>
   <div class="profile-feeds">
-    <div class="row row-cols-3 g-2 feed-list">
+    <div class="row row-cols-3 g-1 feed-list">
       <div 
         v-for="(feed, idx) in profileInfo.feed"
         :key=idx

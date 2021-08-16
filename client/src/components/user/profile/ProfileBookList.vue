@@ -6,6 +6,7 @@
         class="up-on-scroll"
         :key=book.id
         :book=book
+        :from=from
         @delete="onDeleteBook"
       />
       <button
@@ -29,7 +30,8 @@ export default {
     ProfileBookListItem
   },
   props: {
-    books: Array
+    books: Array,
+    from: String
   },
   methods: {
     onDeleteBook (bookId) {
