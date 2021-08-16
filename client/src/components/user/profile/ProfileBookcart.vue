@@ -15,10 +15,14 @@
         >+</button>
       </div>
       <ProfileBookList
-        :books=profileInfo.bookCart
+        v-if="books.length > 0"
+        :books=books
         :from=from
         @delete="deleteBook"
       />
+      <div v-else class="my-4 no-result">
+        검색된 책이 없습니다.
+      </div>
     </div>
   </div>
 </template>
@@ -46,7 +50,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['profileInfo'])
+    ...mapState('user', ['profileInfo']),
+    books () {
+      if (this.searchInput.length > 1) {
+        return this.profileInfo.bookCart.filter((book) => {
+          return book.bookName.includes(this.searchInput)
+        })
+      } else {
+        return this.profileInfo.bookCart
+      }
+    }
   },
 }
 </script>
@@ -76,5 +89,10 @@ export default {
     background: #7540EE;
     color: #fff;
     font-weight: 900;
+  }
+  .no-result {
+    font-size: 14px;
+    color: #c4c4c4;
+    text-align: center;
   }
 </style>

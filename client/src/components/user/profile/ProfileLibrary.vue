@@ -5,7 +5,7 @@
       <ProfileLibraryTop/>
     </div>
     <div v-else>
-      <div class="no-collection py-2">
+      <div class="no-result py-2">
         아직 {{ profileInfo.user.nickname }} 님이<br/>
         Collect한 책이 없습니다.</div>
     </div>
@@ -24,10 +24,14 @@
         >+</button>
       </div>
       <ProfileBookList
-        :books=profileInfo.bookShelf
+        v-if="books.length > 0"
+        :books=books
         :from=from
         @delete="deleteBook"
       />
+      <div v-else class="my-4 no-result">
+        검색된 책이 없습니다.
+      </div>
     </div>
   </div>
 </template>
@@ -57,7 +61,16 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['profileInfo'])
+    ...mapState('user', ['profileInfo']),
+    books () {
+      if (this.searchInput.length > 1) {
+        return this.profileInfo.bookShelf.filter((book) => {
+          return book.bookName.includes(this.searchInput)
+        })
+      } else {
+        return this.profileInfo.bookShelf
+      }
+    }
   },
 }
 </script>
@@ -67,7 +80,7 @@ export default {
     font-size: 16px;
     font-weight: 700;
   }
-  .no-collection {
+  .no-result {
     font-size: 14px;
     color: #c4c4c4;
     text-align: center;
