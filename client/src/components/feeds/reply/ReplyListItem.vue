@@ -2,8 +2,8 @@
   <div class="reply-list-item">
     <!-- user<img> -->
     <div class="reply-content">
-      <p class="replier">{{ feed.comments.nickname }}</p>
-      <p class="reply">{{ shortenContent }}</p>
+      <p class="replier">{{ this.replier }}</p>
+      <p class="reply">{{ this.reply }}</p>
       <div class="reply-like-num">좋아요 {{ this.replyLikeNum }}개</div>
     </div>
     <!-- <ReplyMenu/> -->

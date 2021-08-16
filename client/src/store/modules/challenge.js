@@ -57,6 +57,9 @@ const actions = {
             }
             commit('SET_STOP', false)
           } else if (res.status === 204) {
+            if (!page) {
+              commit('SET_WEEKLY_FEEDS', null)
+            }
             commit('SET_STOP', true)
           }
         })
@@ -95,6 +98,9 @@ const actions = {
             }
             commit('SET_STOP', false)
           } else if (res.status === 204) {
+            if (!page) {
+              commit('SET_DAILY_FEEDS', null)
+            }
             commit('SET_STOP', true)
           }
         })
@@ -103,7 +109,7 @@ const actions = {
   async getMyChallenge ({ commit }, data) {
     await challengeApi.getMyChallenge(data)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         commit('SET_MY_CHALLENGE', res.data.data)
       })
   },

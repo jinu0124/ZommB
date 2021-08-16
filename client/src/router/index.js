@@ -78,6 +78,18 @@ const routes = [
     component: Notification,
     meta: { requireAuth: true }
   },
+  {
+    path: '/profile/:id',
+    name: 'Profile',
+    component: Profile,
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/follow/:id/:flag',
+    name: 'Follow',
+    component: Follow,
+    meta: { requireAuth: true }
+  },
   // social login
   {
     path: '/oauth/redirect',
@@ -119,14 +131,9 @@ const routes = [
       // meta: { requireAuth: true }
   },
   {
-    path: '/reply',
+    path: '/reply/:feedId',
     name: 'Reply',
     component: Reply
-  },
-  {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile
   },
   {
     path: '/report',
@@ -134,7 +141,7 @@ const routes = [
     component: Report
   },
   {
-    path: '/select',
+    path: '/select/:flag',
     name: 'SelectBook',
     component: SelectBook
   },
@@ -142,12 +149,6 @@ const routes = [
     path: '/write/:id',
     name: 'Write',
     component: Write
-  },
-  {
-    path: '/follow',
-    name: 'Follow',
-    component: Follow,
-    // meta: { requireAuth: true }
   },
   // challenge
   {

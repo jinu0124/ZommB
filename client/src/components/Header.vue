@@ -8,7 +8,7 @@
         aria-controls="offcanvasWithBothOptions"
       ></i>
       <span class="header-logo pt-1" @click="moveHome">CommB</span>
-      <div class="dropdown">
+      <div class="dropdown user-nav">
         <img
           v-if="myInfo.userFileUrl"
           class="user-profile dropdown-toggle"
@@ -27,6 +27,10 @@
           data-bs-toggle="dropdown"
           aria-expanded="false"
         />
+        <div
+          v-if="notiCnt"
+          class="my-alert"
+        ></div>
         <HeaderUserMenu />
       </div>
     </div>
@@ -62,7 +66,7 @@ export default {
     HeaderUserMenu,
   },
   computed: {
-    ...mapState("user", ["myInfo"]),
+    ...mapState("user", ["myInfo", 'notiCnt']),
   },
 };
 </script>
@@ -88,10 +92,22 @@ export default {
   height: 2rem;
   margin: 0 10px 0 -42px;
 }
+.user-nav {
+  position: relative;
+}
 .user-profile {
   width: 2rem;
   height: 2rem;
   border-radius: 100%;
   cursor: pointer;
+}
+.my-alert {
+  position: absolute;
+  right: 0;
+  bottom:1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 100%;
+  background: #FF7777;
 }
 </style>

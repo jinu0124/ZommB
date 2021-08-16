@@ -11,7 +11,10 @@
       <div class="user d-flex align-items-center gap-1">
         <img v-if="feed.user.userFileUrl" class="profile" :src="feed.user.userFileUrl" alt="">
         <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="">
-        <span class="name">{{ feed.user.nickname }}</span>
+        <span
+          class="name"
+          @click="$router.push({ name: 'Profile', params: {id: feed.user.id} })"
+        >{{ feed.user.nickname }}</span>
       </div>
       <div class="content">{{ shortenContent }}</div>
       <div class="hashtags mt-1">

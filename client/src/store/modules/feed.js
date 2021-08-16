@@ -5,12 +5,7 @@ const state = {
   feedInfo: null,
   feedId: null,
   bookId: null,
-  isFollow: null,
-  isLike: false,
-  likeCnt: null,
   commentCnt: null,
-  hashTags: [],
-  tag: null,
 }
 const actions = {
   moveToFeed() {
@@ -33,7 +28,7 @@ const actions = {
   },
   //게시물 좋아요 목록
   async getLikeInfo({ rootState, commit }, page) {
-    await feedApi.feedLikeList(rootState.feed.myInfo.id, page)
+    await feedApi.feedLikeList(rootState.feed.fed, page)
       .then((res) => {
         console.log(res)
         commit('SET_LIKE_INFO', res.data.data)
@@ -48,11 +43,11 @@ const actions = {
       })
   },
   //게시물 좋아요 취소
-  async dislikeFeed({ dispatch }, feedId) {
+  async dislikeFeed({ commit }, feedId) {
     await feedApi.dislikeFeed(feedId)
       .then(() => {
         //console.log(res)
-        dispatch('getFeedInfo', feedId)
+        commit('SET_FEED_DISLIKE', feedId)
       })
   },
   //게시물 삭제
@@ -63,6 +58,10 @@ const actions = {
         dispatch('getFeedInfo', feedId)
       })
   },
+  // //게시물 신고
+  // async reportFeed({ commit }, feedId) {
+  //   await feedApi.reportFeed(feedId, data)
+  // },
 }
 const mutations = {
   SET_FEED_INFO(state, payload) {
@@ -70,9 +69,6 @@ const mutations = {
   },
   SET_LIKE_INFO(state, payload) {
     state.likeInfo = payload
-  },
-  SET_FEED_LIKE(state, payload) {
-    state.feedInfo = payload
   },
 }
 const getters = {

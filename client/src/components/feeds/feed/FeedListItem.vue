@@ -15,17 +15,20 @@
             alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
-            type="button"
             id="UserProfile"
         /></span>
         <span class="nick-title">
-          <div class="owner">{{ feed.user.nickname }}</div>
+          <div class="owner" type="button" @click="moveToUserDetail()">
+            {{ feed.user.nickname }}
+          </div>
           <img
             alt="미니북"
             class="minibook"
             src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
           />
-          <span class="book-title">{{ feed.book.bookName }}</span>
+          <span class="book-title" type="button" @click="moveToBookDetail()">{{
+            feed.book.bookName
+          }}</span>
         </span>
         <span
           ><img
@@ -39,7 +42,7 @@
         /></span>
         <FeedMenu />
       </div>
-      
+
       <img
         v-if="feed.feedFileUrl"
         class="feed-image"
@@ -58,20 +61,20 @@
     <div class="like-reply">
       <span>
         <img
-          alt="좋아요버튼안눌림"
-          class="dislike btn-like"
-          type="button"
-          @click="likeFee()"
-          src="@/assets/image/deco/heartEmpty.svg"
-          v-show="!feed.isThumb"
-        />
-        <img
           alt="좋아요버튼눌림"
           class="like btn-like"
           type="button"
-          @click="dislike()"
+          @click="dislikeFeed(feed.id)"
           src="@/assets/image/deco/heartFill.svg"
           v-show="feed.isThumb"
+        />
+        <img
+          alt="좋아요버튼안눌림"
+          class="dislike btn-like"
+          type="button"
+          @click="likeFeed(feed.id)"
+          src="@/assets/image/deco/heartEmpty.svg"
+          v-show="!feed.isThumb"
         />
       </span>
       <span class="like-num" type="button" @click="moveToLike">{{
@@ -91,7 +94,7 @@
       }}</span>
     </div>
     <div class="content">
-      <p class="content-detail">{{ feed.content }}</p>
+      <p class="content-detail">{{ shortenContent }}</p>
       <p
         class="content-more"
         type="button"
@@ -111,17 +114,16 @@
       <p class="content-duration">{{ feed.createAt }}시간 전</p>
       <!-- 시간 계산 필요 -->
       <div>
-        <!-- <span
-          v-for="(feed, idx) in feedInfo"
+        <span
+          v-for="(tag, idx) in feed.hashTags"
           :key="idx"
-          class="tag rounded-pill me-1"
-          :feed="feed"
-          >#{{ feed.hashTags }}</span
-        > -->
+          class="tag rounded-pill"
+          >#{{ tag.tag }}</span
+        >
       </div>
       <hr />
     </div>
-    <ReplyListItem />
+
     <div class="reply-more">
       <span type="button" @click="moveToReply">더보기</span>
     </div>
@@ -131,47 +133,44 @@
 <script>
 import { mapActions, mapState } from "vuex";
 import FeedMenu from "@/components/feeds/feed/FeedMenu";
-import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
 import _ from "lodash";
 
 export default {
   name: "FeedListItem",
   components: {
     FeedMenu,
-    ReplyListItem,
-  },
-  data() {
-    return {
-      likeNum: 0,
-      replyNum: 0,
-      moreContent: false,
-      duration: "3",
-    };
   },
   props: {
     feed: Object,
   },
+  data() {
+    return {
+      moreContent: false,
+    };
+  },
   methods: {
-    ...mapActions("feed", ["moveToReply", "moveToLike", "likeFeed"]),
-    like() {
-      this.feed.thumbCnt += 1;
-      this.feed.isThumb = true;
-    },
-    dislike() {
-      this.feed.isThumb = false;
-      this.feed.thumbCnt -= 1;
-    },
+    ...mapActions("feed", [
+      "moveToReply",
+      "moveToLike",
+      "likeFeed",
+      "dislikeFeed",
+    ]),
     showMoreContent(flag) {
       this.moreContent = flag;
+    },
+    moveToBookDetail() {
+      let bookid = this.feed.book.id;
+      this.$router.push("/book/" + bookid);
     },
   },
   computed: {
     ...mapState("user", ["myInfo"]),
     shortenContent() {
+      let content = this.feed.content;
       if (this.moreContent) {
-        return this.content;
+        return content;
       } else {
-        return _.truncate(this.content, { length: 50 });
+        return _.truncate(content, { length: 100 });
       }
     },
   },
@@ -179,6 +178,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.feed-list-item {
+  margin-top: 20px;
+}
 .feed-header {
   height: 60px;
   display: flex;
@@ -234,7 +236,8 @@ export default {
 .tag {
   color: #585858;
   background: #ffdc7c;
-  padding: 5px;
+  padding: 0px 5px;
+  margin: 5px;
 }
 .reply-more {
   margin: 0px auto;
@@ -247,5 +250,29 @@ export default {
   font-weight: 400;
   line-height: normal;
   color: rgba(164, 164, 164, 1);
+}
+.reply-list-item {
+  margin-top: 10px;
+  display: flex;
+}
+.reply-content {
+  width: 100%;
+  flex-direction: column;
+  align-items: flex-start;
+  font-family: "Noto Sans KR";
+  margin: 0px 5px;
+}
+.replier {
+  font-family: noto-sans-kr-10-bold;
+}
+.reply-like-num {
+  font-family: "Noto Sans KR";
+  font-size: 9px;
+  color: rgba(164, 164, 164, 1);
+}
+.reply {
+  background: #fff;
+  color: rgba(33, 33, 33, 1);
+  margin-bottom: 2px;
 }
 </style>

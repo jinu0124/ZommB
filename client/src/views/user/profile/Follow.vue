@@ -1,98 +1,98 @@
 <template>
-  <div class="follow">
-    <SimpleHeader class="follow-header" :title="title" />
-    <div class="tabs fixed-top">
-      <input id="follower-tab" type="radio" name="tab-item" checked />
-      <label class="tab-item" for="follower-tab" @click="changePage(0)"
-        >{{ follower }} 팔로워</label
-      >
-      <input id="following-tab" type="radio" name="tab-item" />
-      <label class="tab-item" for="following-tab" @click="changePage(1)"
-        >{{ following }} 팔로잉</label
-      >
-      <div class="tab-content" id="follower-content">
-        <Follower v-if="selectedPage === 0" />
+  <div>
+    <SimpleHeader 
+      class="follow-header" 
+      :title="title"
+    />
+    <div class="follow d-flex flex-column align-items-center">
+      <div class="tabs d-flex gap-5 my-3">
+        <span 
+          @click=changePage(0)
+          :class="[ selectedPage === 0 ? 'current' : 'rest']"
+        >{{ followInfo.follower.length }} 팔로워</span>
+        <span 
+          @click=changePage(1)
+          :class="[ selectedPage === 1 ? 'current' : 'rest']"
+        >{{ followInfo.following.length }} 팔로잉</span>
       </div>
-      <div class="tab-content" id="following-content">
-        <Following v-if="selectedPage === 1" />
-      </div>
+      <FollowerList
+        v-if="selectedPage === 0"
+      />
+      <FollowingList
+        v-if="selectedPage === 1"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import SimpleHeader from "@/components/SimpleHeader";
-import Follower from "@/components/profile/Follower";
-import Following from "@/components/profile/Following";
+import { mapState, mapActions } from 'vuex'
+import SimpleHeader from "@/components/SimpleHeader"
+import FollowerList from "@/components/user/FollowerList"
+import FollowingList from "@/components/user/FollowingList"
 
 export default {
   name: "Follow",
   components: {
     SimpleHeader,
-    Follower,
-    Following,
+    FollowerList,
+    FollowingList,
   },
   data() {
     return {
       title: "팔로우",
       selectedPage: 0,
-      follower: 0,
-      following: 0,
-    };
+    }
+  },
+  computed: {
+    ...mapState('user', ['followInfo'])
   },
   methods: {
+    ...mapActions('user', ['getFollower', 'getFollowing']),
     changePage(val) {
       this.selectedPage = val;
     },
   },
-};
+  created () {
+    if (this.$route.params.flag === 'following') {
+      this.selectedPage = 1
+    }
+    this.getFollower(this.$route.params.id)
+    this.getFollowing(this.$route.params.id)
+  }
+}
 </script>
 
 <style scoped>
 .follow-header {
-  background: #7b60f1;
-  color: #fff;
+  background-color: #f1f1f1;
+  color: #212121;
+}
+.follow {
+  width: 100%;
+  background: #ffffff;
+  margin-top: 60px;
+  height: 100vh;
+  border-radius: 30px 0px 0px 0px;
+  padding: 5px 20px 80px;
+  position: fixed;
+  overflow-y: scroll;
+  color: #212121;
 }
 .tabs {
-  margin: 60px auto;
-  padding-bottom: 40px;
-  background-color: #7b60f1;
-}
-.tab-item {
-  width: calc(100% / 2);
-  height: 50px;
-  background-color: #f8f8f8;
-  border-radius: 20px 20px 0px 0px;
-  line-height: 50px;
-  font-size: 16px;
+  color: #212121;
+  font-size: 15px;
   text-align: center;
-  color: #000000;
-  display: block;
-  float: left;
-  text-align: center;
-  font-weight: bold;
-  transition: all 0.2s ease;
+  vertical-align: middle;
 }
-.tab-item:hover {
-  opacity: 0.75;
+.tabs .current {  
+  pointer-events: none;
+  font-weight: 700;
+  padding: 3px 10px;
+  border-bottom: 3px solid #FFDC7C;
 }
-input[name="tab-item"] {
-  display: none;
-}
-.tab-content {
-  display: none;
-  clear: both;
-  height: 100vh;
-  overflow: hidden;
-  background: #fff;
-}
-#follower-tab:checked ~ #follower-content,
-#following-tab:checked ~ #following-content {
-  display: block;
-}
-.tabs input:checked + .tab-item {
-  background-color: #ffdc7c;
-  color: #7540ee;
-  border-radius: 20px 20px 0px 0px;
+.tabs .rest {
+  padding: 3px 10px;
+  border-bottom: 3px solid #C4C4C4;
 }
 </style>
