@@ -5,8 +5,10 @@ import com.querydsl.core.Tuple;
 import com.querydsl.core.support.QueryBase;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.ssafy.commb.dao.PushAlarmDao;
 import com.ssafy.commb.dao.UserDao;
 import com.ssafy.commb.dto.encode.Encoder;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.dto.user.level.LevelDto;
@@ -49,6 +51,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserDao userDao;
+
+    @Autowired
+    private PushAlarmDao pushAlarmDao;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -353,6 +358,22 @@ public class UserServiceImpl implements UserService {
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.BAD_REQUEST, "존재하지 않는 사용자");
 
         return user.get().getRole();
+    }
+
+    @Override
+    public List<FcmDto> getAlarms(Integer page, HttpServletRequest request) {
+
+        List<FcmDto> fcms = pushAlarmDao.getNewAlarm(page, (int) request.getAttribute("userId"));
+
+        return fcms;
+    }
+
+    @Override
+    public List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request) {
+
+        List<FcmDto> fcms = pushAlarmDao.getAllAlarm(page, (int) request.getAttribute("userId"));
+
+        return fcms;
     }
 
     /**

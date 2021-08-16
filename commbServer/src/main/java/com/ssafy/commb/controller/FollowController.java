@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.List;
 
 @RestController
@@ -46,8 +48,7 @@ public class FollowController {
 
         List<FirebaseToken> firebaseTokens = fcmService.getUserToken(following);
 
-
-        fcmService.sends(firebaseTokens, FcmDto.builder()
+        FcmDto fcm = FcmDto.builder()
                 .message(FcmDto.Message.builder()
                         .notification(FcmDto.Notification.builder()
                                 .title("follow")
@@ -57,9 +58,15 @@ public class FollowController {
                                 .userId(follower)
                                 .nickname(user.getData().getNickname())
                                 .userFileUrl(user.getData().getUserFileUrl())
+                                .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                .isRead(firebaseTokens.size() == 0 ? 0 : 1)
+                                .targetUserId(following)
                                 .build())
                         .build())
-                .build());
+                .build();
+
+        if(firebaseTokens.size() >= 1) fcmService.sends(firebaseTokens, fcm);
+        fcmService.savePushAlarm(fcm);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }

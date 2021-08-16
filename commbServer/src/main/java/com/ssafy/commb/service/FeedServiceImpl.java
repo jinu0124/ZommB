@@ -3,6 +3,7 @@ package com.ssafy.commb.service;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.*;
@@ -324,7 +325,11 @@ public class FeedServiceImpl implements FeedService {
         feed.ifPresent(select -> {
             feedDto.set(FeedDto.builder()
                     .book(BookDto.builder()
-                            .id(select.getBook().getId()).build())
+                            .id(select.getBook().getId())
+                            .build())
+                    .user(UserDto.builder()
+                            .id(select.getUser().getId())
+                            .build())
                     .feedFileUrl(select.getFileUrl())
                     .id(select.getId())
                     .content(select.getContent())
