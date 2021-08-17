@@ -135,6 +135,15 @@ export default {
   text-align: center;
   vertical-align: middle;
 }
+.tabs {
+  color: #212121;
+  font-size: 13px;
+  text-align: center;
+  vertical-align: middle;
+}
+.tabs span {
+  cursor: pointer;
+}
 .tabs .current {  
   pointer-events: none;
   font-weight: 700;

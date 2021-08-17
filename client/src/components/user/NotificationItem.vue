@@ -31,13 +31,14 @@
         <strong>{{ note.data.nickname }}</strong>님이 회원님을 팔로우하기 시작했습니다.
         <span v-if="pubDate" class="time ms-1">{{ pubDate }}</span>
       </span>
-      <!-- <button class="btn-follow btn-grey">언팔로우</button> -->
-      <button class="btn-follow btn-yellow">팔로우</button>
+      <button v-if="isFollow" class="btn-follow btn-grey">언팔로우</button>
+      <button v-else class="btn-follow btn-yellow">팔로우</button>
     </div>
   </div>
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import moment from 'moment'
 moment.locale("ko")
 
@@ -47,11 +48,18 @@ export default {
     note: Object
   },
   computed: {
+    ...mapState('user', ['followInfo']),
     pubDate () {
       if (this.note.data.createAt) {
         return moment(this.note.data.createAt).fromNow()
       }
       else return ''
+    },
+    isFollow () {
+      const followings = this.followInfo.following.map((user) => {
+        return user.id
+      })
+      return followings.includes(this.note.data.userId)
     }
   }
 }
