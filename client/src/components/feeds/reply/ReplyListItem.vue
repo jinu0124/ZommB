@@ -63,12 +63,12 @@ export default {
     like() {
       this.Like = true;
       this.disLike = false;
-      this.replyLikeNum += 1;
+      this.reply.thumbCnt += 1;
     },
     dislike() {
       this.Like = false;
       this.disLike = true;
-      this.replyLikeNum -= 1;
+      this.reply.thumbCnt -= 1;
     },
   },
   computed: {

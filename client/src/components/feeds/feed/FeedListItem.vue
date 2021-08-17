@@ -91,16 +91,13 @@
           alt=""
           class="btn-reply"
           type="button"
-          @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
+          @click="onMoveToComment"
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span
-        class="reply-num"
-        type="button"
-        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
-        >{{ feed.comments.length }}</span
-      >
+      <span class="reply-num" type="button" @click="onMoveToComment">{{
+        feed.comments.length
+      }}</span>
     </div>
     <div class="content">
       <p class="content-detail">{{ shortenContent }}</p>
@@ -133,10 +130,10 @@
       </div>
       <hr />
     </div>
-    <div class="reply-list-item" v-if="feed.comments.length > 0">
+    <!-- <div class="reply-list-item" v-if="feed.comments.length > 0">
       <div class="reply-content">
-        <!-- <span class="replier">{{ feed.comments[0].nickname }}</span>
-        <span class="reply">{{ feed.comments[0].content }}</span> -->
+        <span class="replier">{{ feed.comments[0].nickname }}</span>
+        <span class="reply">{{ feed.comments[0].content }}</span>
         <span
           ><img
             alt="좋아요버튼안눌림"
@@ -154,9 +151,9 @@
           />
         </span>
       </div>
-    </div>
+    </div> -->
     <div class="reply-more">
-      <span type="button" @click="onMoveToComment">더보기</span>
+      <span type="button" @click="onMoveToComment">댓글보기</span>
     </div>
   </div>
 </template>

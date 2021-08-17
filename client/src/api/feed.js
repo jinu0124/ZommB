@@ -51,10 +51,11 @@ export default {
       })
     },
   //게시물 수정
-  updateFeed(feedId) {
+  updateFeed(feedId, contents) {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'put',
+      data: {contents: contents}
     })
   },
   //게시물 삭제
@@ -93,11 +94,11 @@ export default {
     })
   },
   //게시물 신고
-  reportFeed(feedId, data) {
+  reportFeed(feedId, reason) {
     return _axios({
       url: `feeds/${feedId}/reports`,
       method: 'post',
-      params: {data: data}
+      data: reason
     })
   },
 }

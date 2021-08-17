@@ -6,7 +6,6 @@ const state = {
   feedId: null,
   bookId: null,
   likeInfo: null,
-  commentCnt: null,
   reportInfo: null,
   comments: null,
 }
@@ -49,15 +48,15 @@ const actions = {
   async deleteFeed({ dispatch }, feedId) {
     await feedApi.deleteFeed(feedId)
       .then(() => {
-        dispatch('getFeedInfo', feedId)
+        dispatch('getFeedInfo', 0)
       })
   },
   //게시물 신고
-  async reportFeed({ commit }, feedId, data) {
+  async reportFeed({ dispatch }, feedId, data) {
     await feedApi.reportFeed(feedId, data)
       .then((res) => {
         console.log(res)
-        commit('SET_REPORT_FEED', feedId)
+        dispatch('getFeedInfo', 0)
       })
   },
   //댓글 작성
@@ -65,9 +64,16 @@ const actions = {
     await feedApi.writeComment(feedId, comment)
       .then((res) => {
         console.log(res)
-        commit('SET_COMMENT_DATA', feedId)
+        commit('SET_COMMENT_WRITE', feedId)
       })
-  }
+  },
+  async updateFeed({ commit }, feedId, contents) {
+    await feedApi.updateFeed(feedId, contents)
+    .then((res) => {
+      console.log(res)
+      commit('SET_UPDATE_FEED', feedId)
+    })
+  },
 }
 const mutations = {
   SET_FEED_INFO(state, payload) {
