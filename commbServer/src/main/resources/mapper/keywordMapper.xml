@@ -9,6 +9,7 @@
         WHERE bs.user_id = #{userId} AND bs.book_id = bk.book_id AND k.id = bk.keyword_id
         GROUP BY keyword
         ORDER BY COUNT(keyword) DESC
+        LIMIT 6
     </select>
 
     <insert id="getAndSetRandomKeyword">
