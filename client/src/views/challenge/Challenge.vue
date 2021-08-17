@@ -61,12 +61,21 @@ export default {
   methods: {
     changePage (val) {
       this.selectedPage = val
+      this.$router.push({ name: 'Challenge', params: { page: val }}).catch(()=>{})
     }
   },
   computed: {
     month () {
       return moment().format('MMMM')
     }
+  },
+  watch: {
+    '$route'() {
+      this.selectedPage = Number(this.$route.params.page)
+    }
+  },
+  created() {
+    this.selectedPage = Number(this.$route.params.page)
   },
 }
 </script>

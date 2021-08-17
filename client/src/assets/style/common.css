@@ -65,3 +65,6 @@ input, textarea, button, router-link {
   display: none;
   transition: all 0.2s;
 }
+.mono {
+  filter: grayscale(90%);
+}

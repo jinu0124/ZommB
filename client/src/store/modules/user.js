@@ -89,10 +89,10 @@ const actions = {
         console.log(err.response)
       })
   },
-  async onLogin({ commit }, userData) {
+  async onLogin({ commit, dispatch }, userData) {
     await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
       .then((token) => {
-        console.log(token)
+        // console.log(token)
         userData.firebaseToken = token
         commit('SET_FIREBASE_TOKEN', token)
       })
@@ -100,13 +100,20 @@ const actions = {
       .then((res) => {
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
-        router.push({ name: 'Feed' })
       })
       .catch((err) => {
         if (err.response.status === 403) {
           commit('SET_MY_INFO', err.response.data.data)
         }
         return Promise.reject(err.response)
+      })
+    await userApi.getNotification()
+      .then((res) => {
+        console.log(res)
+        res.data.forEach((alarm) => {
+          dispatch('onNotification', alarm.message)
+        })
+        router.push({ name: 'Feed' })
       })
   },
   async onLogout({ state, commit, dispatch }) {
@@ -121,6 +128,7 @@ const actions = {
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
     commit('SET_FIREBASE_TOKEN', null)
+    commit('RESET_NOTIFICATION')
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
@@ -347,10 +355,13 @@ const mutations = {
   RESET_MY_INFO(state) {
     state.myInfo = null
   },
+  RESET_NOTIFICATION(state) {
+    state.notification = []
+    state.notiCnt = 0
+  },
   SET_STOP(state, payload) {
     state.stopRequest = payload
   },
-
 }
 
 const getters = {

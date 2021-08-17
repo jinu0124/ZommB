@@ -259,9 +259,9 @@ public class FeedController {
     }
 
     // /feeds/5/following/feeds
-    // 내가 팔로잉하는 사람들의 피드 목록
+    // 내가 팔로잉하는 사람들의 피드 목록(내 피드 포함)
     @GetMapping("/{userId}/following/feeds")
-    @ApiOperation(value = "내가 팔로잉 하는 사람들의 피드 리스트", response = FeedDto.Response.class)
+    @ApiOperation(value = "내가 팔로잉 하는 사람들의 피드 리스트(내 피드 포함)", response = FeedDto.Response.class)
     public ResponseEntity<FeedDto.ResponseList> getFollowingFeeds(@PathVariable Integer userId,
                                                                   @RequestParam Integer page,
                                                                   HttpServletRequest request) {

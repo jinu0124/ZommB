@@ -9,6 +9,13 @@ export default {
       data: userData
     })
   },
+  getNotification() {
+    return _axios({
+      url: '/users/alarms',
+      method: 'get',
+      params: { page: 0 }
+    })
+  },
   logout(userData) {
     return _axios({
       url: '/users/login',

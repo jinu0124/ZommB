@@ -8,13 +8,13 @@
     >
     <img v-else class="article-img" :src="feed.feedFileUrl" alt="">
     <div class="article-info">
-      <div class="user d-flex align-items-center gap-1">
+      <div 
+        class="user d-flex align-items-center gap-1"
+        @click="$router.push({ name: 'Profile', params: {id: feed.user.id, page: 0} })"
+      >
         <img v-if="feed.user.userFileUrl" class="profile" :src="feed.user.userFileUrl" alt="">
         <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="">
-        <span
-          class="name"
-          @click="$router.push({ name: 'Profile', params: {id: feed.user.id} })"
-        >{{ feed.user.nickname }}</span>
+        <span class="name">{{ feed.user.nickname }}</span>
       </div>
       <div class="content">{{ shortenContent }}</div>
       <div class="hashtags mt-1">
@@ -107,10 +107,12 @@ export default {
     width: 16px;
     height: 16px;
     border-radius: 100%;
+    cursor: pointer;
   }
   .user .name {
    font-size: 12px;
    font-weight: 500;
+   cursor: pointer;
   }
   .badge {
     font-size: 8px;

@@ -15,7 +15,7 @@
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import SimpleHeader from '@/components/SimpleHeader'
 import NotificationItem from '@/components/user/NotificationItem'
 
@@ -30,8 +30,14 @@ export default {
       title: '알림'
     }
   },
+  methods: {
+    ...mapActions('user', ['getFollowing']),
+  },
   computed: {
-    ...mapState('user', ['notification', 'notiCnt'])
+    ...mapState('user', ['notification', 'notiCnt', 'myInfo'])
+  },
+  created () {
+    this.getFollowing(this.myInfo.id)
   }
 }
 </script>
@@ -47,7 +53,7 @@ export default {
     width: 100vw;
     border-radius: 30px 0px 0px 0px;
     margin-top: 60px;
-    padding: 20px 20px 40px;
+    padding: 30px 20px 40px;
     color: #212121;
     position: fixed;
     overflow-y: scroll;
