@@ -8,6 +8,7 @@ const state = {
   likeInfo: null,
   commentCnt: null,
   reportInfo: null,
+  comments: null,
 }
 const actions = {
   moveToFeed() {
@@ -82,7 +83,7 @@ const mutations = {
     state.likeInfo = payload
   },
   SET_COMMENT_DATA(state, payload) {
-    state.commentInfo = payload
+    state.comments = payload
   },
   SET_REPORT_FEED(state, payload) {
     state.reportInfo = payload

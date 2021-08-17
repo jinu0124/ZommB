@@ -1,7 +1,7 @@
 <template>
   <div class="reply-list-item">
-    <img
-      v-if="feed.user.userFileUrl"
+    <!-- <img
+      v-if="reply.userFileUrl"
       class="user-profile"
       type="button"
       id="UserProfile"
@@ -14,11 +14,11 @@
       class="default-user-image user-profile"
       src="@/assets/image/common/profileDefault.svg"
       id="UserProfile"
-    />
+    /> -->
     <div class="reply-content">
-      <p class="replier">{{ feed.comments[0].nickname }}</p>
-      <p class="reply">{{ feed.comments[0].content }}</p>
-      <div class="reply-like-num">좋아요 {{ feed.comments[0].thumbCnt }}개</div>
+      <p class="replier">{{ reply.nickname }}</p>
+      <p class="reply">{{ reply.content }}</p>
+      <div class="reply-like-num">좋아요 {{ reply.thumbCnt }}개</div>
     </div>
     <!-- <ReplyMenu/> -->
     <img
@@ -50,7 +50,7 @@ export default {
     // ReplyMenu,
   },
   props: {
-    feed: Object,
+    reply: Object,
   },
   data() {
     return {

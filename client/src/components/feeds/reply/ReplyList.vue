@@ -1,10 +1,6 @@
 <template>
   <div class="reply-list">
-    <ReplyListItem
-      v-for="(reply, idx) in replyInfo"
-      :key="idx"
-      :reply="reply"
-    />
+    <ReplyListItem v-for="(reply, idx) in comments" :key="idx" :reply="reply" />
   </div>
 </template>
 
@@ -18,7 +14,7 @@ export default {
     ReplyListItem,
   },
   computed: {
-    ...mapState("feed", ["replyInfo"]),
+    ...mapState("feed", ["comments"]),
   },
 };
 </script>

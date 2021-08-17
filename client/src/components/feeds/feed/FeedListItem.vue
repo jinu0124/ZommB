@@ -156,11 +156,7 @@
       </div>
     </div>
     <div class="reply-more">
-      <span
-        type="button"
-        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
-        >더보기</span
-      >
+      <span type="button" @click="onMoveToComment">더보기</span>
     </div>
   </div>
 </template>
@@ -230,6 +226,10 @@ export default {
       }
 
       return `${Math.floor(betweenTimeDay / 365)}년전`;
+    },
+    onMoveToComment() {
+      this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
     },
   },
   computed: {
