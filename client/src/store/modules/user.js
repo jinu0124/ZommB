@@ -11,6 +11,7 @@ const state = {
   firebaseToken: null,
   notification: [],
   notiCnt: 0,
+  newAlert: null,
   myInfo: null,
   stopRequest: false,
   myBookShelves: {
@@ -158,6 +159,16 @@ const actions = {
     commit('SET_NOTIFICATION', notiData)
     commit('SET_NOTI_CNT')
   },
+  newAlert({ commit }, payload) {
+    const notiData = {
+      type: payload.notification.title,
+      data: payload.data
+    }
+    commit('SET_NEW_ALERT', notiData)
+    setTimeout(() => {
+      commit('SET_NEW_ALERT', null)
+    }, 2000)
+  },
   async onSocialLogin ({ commit }, userData) {
     await userApi.socialLogin(userData)
       .then((res) => {
@@ -299,6 +310,9 @@ const mutations = {
   },
   SET_NOTI_CNT(state) {
     state.notiCnt ++
+  },
+  SET_NEW_ALERT(state, payload) {
+    state.newAlert = payload
   },
   SET_TEMP_NICKNAME(state, payload) {
     state.tempNickname = payload
