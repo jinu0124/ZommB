@@ -21,6 +21,7 @@
         <button 
           v-if="isMine"
           class="add-btn"
+          title="서재에 책 추가"
           @click="$router.push({ name: 'SelectBook', params: { flag: 'library' }})"
         >+</button>
       </div>
