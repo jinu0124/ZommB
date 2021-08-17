@@ -10,7 +10,11 @@
       v-else
       class="profile-img"
       src="@/assets/image/common/profileDefault.svg" alt="no profile image">
-    <div class="nickname mt-2">{{ profileInfo.user.nickname }}</div>
+    <div class="mt-2 d-flex align-items-center gap-1">
+      <span class="nickname">{{ profileInfo.user.nickname }}</span>
+      <img v-if="profileInfo.user.level.bookmarkOn" class="level-badge" :src="bookmarkBadge" alt="">
+      <img v-if="profileInfo.user.level.pencilOn" class="level-badge" :src="penBadge" alt="">
+    </div>
     <div class="d-flex follow-info">
       <span
         @click="$router.push({ name: 'Follow', params: {id: profileInfo.user.id, flag: 'follower'}})"
@@ -58,7 +62,26 @@ import userApi from '@/api/user'
 export default {
   name: 'ProfileHeader',
   computed: {
-    ...mapState('user', ['profileInfo', 'myInfo'])
+    ...mapState('user', ['profileInfo', 'myInfo']),
+    penLevel () {
+      const cnt = this.profileInfo.user.level.pencil
+      if (cnt < 5) {
+        return 0
+      } else if (cnt < 10) {
+        return 1
+      } else if (cnt < 15) {
+        return 2
+      }
+      return 3
+    },
+    penBadge () {
+      const badge = require(`@/assets/image/pen/${this.penLevel}.svg`)
+      return badge
+    },
+    bookmarkBadge () {
+      const badge = require(`@/assets/image/bookmark/${this.profileInfo.user.level.bookmark}.svg`)
+      return badge
+    }
   },
   methods: {
     ...mapActions('user', ['getUserInfo']),
@@ -119,5 +142,8 @@ export default {
     font-size: 14px;
     font-weight: 500;
   }
-
+  .level-badge {
+    height: 18px;
+    width: auto;
+  }
 </style>

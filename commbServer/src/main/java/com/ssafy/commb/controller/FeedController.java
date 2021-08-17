@@ -129,6 +129,7 @@ public class FeedController {
                         .data(FcmDto.PayData.builder()
                                 .userId(userId)
                                 .nickname(user.getData().getNickname())
+                                .userFileUrl(user.getData().getUserFileUrl())
                                 .feedId(feed.getId())
                                 .feedFileUrl(feed.getFeedFileUrl())
                                 .content(feed.getContent())
@@ -265,7 +266,7 @@ public class FeedController {
                                                                   @RequestParam Integer page,
                                                                   HttpServletRequest request) {
 
-        int myUserId = Integer.parseInt((String)request.getAttribute("userId"));
+        int myUserId = (int) request.getAttribute("userId");
 
         FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(page * 20, myUserId);
 

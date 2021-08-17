@@ -11,6 +11,7 @@ const state = {
   firebaseToken: null,
   notification: [],
   notiCnt: 0,
+  newAlert: null,
   myInfo: null,
   stopRequest: false,
   myBookShelves: {
@@ -61,7 +62,7 @@ const actions = {
     console.log(userData)
     await userApi.signup(userData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_TEMP_NICKNAME', userData.nickname)
 
         // 인증 메일 발송을 위한 데이터 준비
@@ -74,25 +75,18 @@ const actions = {
         // 페이지 이동
         dispatch('moveToSignupEmail')
       })
-      .catch((err) => {
-        // 실패 > 왜 실패할까..
-        console.log(err.response)
-      })
   },
   async sendEmail ({ commit }, userData) {
     await userApi.sendEmail(userData)
-      .then((res) => {
-        console.log(res)
+      .then(() => {
+        // console.log(res)
         commit('SET_ISRESISTER', true)
       })
-      .catch((err) => {
-        console.log(err.response)
-      })
   },
-  async onLogin({ commit }, userData) {
+  async onLogin({ commit, dispatch }, userData) {
     await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
       .then((token) => {
-        console.log(token)
+        // console.log(token)
         userData.firebaseToken = token
         commit('SET_FIREBASE_TOKEN', token)
       })
@@ -100,7 +94,6 @@ const actions = {
       .then((res) => {
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
-        router.push({ name: 'Feed' })
       })
       .catch((err) => {
         if (err.response.status === 403) {
@@ -108,26 +101,29 @@ const actions = {
         }
         return Promise.reject(err.response)
       })
+    await userApi.getNotification()
+      .then((res) => {
+        // console.log(res)
+        res.data.forEach((alarm) => {
+          dispatch('onNotification', alarm.message)
+        })
+        router.push({ name: 'Feed' })
+      })
   },
   async onLogout({ state, commit, dispatch }) {
     await userApi.logout(state.firebaseToken)
-      .then((res) => {
-        console.log(res)
-      })
-      .catch((err) => {
-        console.log(err)
-      })
     commit('SET_ISLOGIN', false)
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
     commit('SET_FIREBASE_TOKEN', null)
+    commit('RESET_NOTIFICATION')
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
   async withdrawal ({ dispatch }) {
     await userApi.withdrawal()
-      .then((res) => {
-        console.log(res)
+      .then(() => {
+        // console.log(res)
         dispatch('onLogout')
       })
   },
@@ -150,6 +146,16 @@ const actions = {
     commit('SET_NOTIFICATION', notiData)
     commit('SET_NOTI_CNT')
   },
+  newAlert({ commit }, payload) {
+    const notiData = {
+      type: payload.notification.title,
+      data: payload.data
+    }
+    commit('SET_NEW_ALERT', notiData)
+    setTimeout(() => {
+      commit('SET_NEW_ALERT', null)
+    }, 2000)
+  },
   async onSocialLogin ({ commit }, userData) {
     await userApi.socialLogin(userData)
       .then((res) => {
@@ -171,8 +177,12 @@ const actions = {
     // 유저 정보 > 닉네임, 사진, 팔로우, 뱃지
     await userApi.getUserInfo(userId)
       .then((res) => {
-        console.log(res)
-        commit('SET_USER_INFO', res.data.data)
+        if (res.data.data) {
+          console.log(res)
+          commit('SET_USER_INFO', res.data.data)
+        } else {
+          router.push({name: 'PageNotFound'})
+        }
       })
     const cntInfo = {
       feed: null,
@@ -182,13 +192,13 @@ const actions = {
     // 게시물 갯수
     await userApi.getFeedCnt(userId)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         cntInfo.feed = res.data.cnt
       })
     // 서재/북카트 갯수
     await userApi.getBookCnt(userId)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         cntInfo.read = res.data.data.libraryCnt
         cntInfo.wish = res.data.data.bookcartCnt
       })
@@ -219,7 +229,7 @@ const actions = {
   async getCollections({ commit }, userId) {
     await userApi.getBookCollection(userId)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_COLLECTION', res.data.data)
       })
   },
@@ -227,7 +237,7 @@ const actions = {
   async getBookShelf ({ commit }, userId) {
     await userApi.getBookList(userId, 1)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_BOOKSHELF', res.data.data)
       })
   },
@@ -235,7 +245,7 @@ const actions = {
   async getBookCart ({ commit }, userId) {
     await userApi.getBookList(userId, 0)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_BOOKCART', res.data.data)
       })
   },
@@ -243,7 +253,7 @@ const actions = {
   async getMyBookShelf ({ state, commit }) {
     await userApi.getBookList(state.myInfo.id, 1)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_MY_BOOKSHELF', res.data.data)
       })
   },
@@ -251,7 +261,7 @@ const actions = {
   async getMyBookCart ({ state, commit }) {
     await userApi.getBookList(state.myInfo.id, 0)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_MY_BOOKCART', res.data.data)
       })
   },
@@ -287,10 +297,21 @@ const mutations = {
     state.refreshToken = payload
   },
   SET_NOTIFICATION(state, payload) {
-    state.notification.push(payload)
+    const newNoti = state.notification.filter((note) => {
+      return (
+        payload.type != note.type || 
+        payload.data.userId != note.data.userId || 
+        payload.data.feedId != note.data.feedId || 
+        payload.data.commentId != note.data.commentId)
+    })
+    newNoti.push(payload)
+    state.notification = newNoti
   },
   SET_NOTI_CNT(state) {
     state.notiCnt ++
+  },
+  SET_NEW_ALERT(state, payload) {
+    state.newAlert = payload
   },
   SET_TEMP_NICKNAME(state, payload) {
     state.tempNickname = payload
@@ -347,10 +368,13 @@ const mutations = {
   RESET_MY_INFO(state) {
     state.myInfo = null
   },
+  RESET_NOTIFICATION(state) {
+    state.notification = []
+    state.notiCnt = 0
+  },
   SET_STOP(state, payload) {
     state.stopRequest = payload
   },
-
 }
 
 const getters = {

@@ -21,14 +21,10 @@
 
 <script>
 import _ from 'lodash'
-import moment from 'moment'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ChallengeWeeklyBook',
-  methods: {
-    ...mapActions('challenge', ['getWeeklyBook']),
-  },
   computed: {
     ...mapState('challenge', ['weeklyBook']),
     author () {
@@ -38,10 +34,7 @@ export default {
       }
       return this.weeklyBook.author
     }
-  },
-  created () {
-    this.getWeeklyBook(moment().format('YYYY-MM-DD'))
-  },
+  }
 }
 </script>
 
@@ -51,6 +44,7 @@ export default {
     width: 100px;
     border-radius: 10px;
     box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
   }
   .weekly-book .title {
     width: 80%;

@@ -11,18 +11,21 @@
     }"
   >
     <Header v-if="needHeader"/>
+    <NotificationAlert/>
     <router-view />
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header"
 import messaging from '@/api/firebase.js'
+import Header from "@/components/Header"
+import NotificationAlert from '@/components/user/NotificationAlert'
 
 export default {
   name: "App",
   components: {
     Header,
+    NotificationAlert
   },
   computed: {
     // Header 표시 여부 계산
@@ -107,6 +110,7 @@ export default {
   created(){
     messaging.onMessage((payload) => {
       this.$store.dispatch('user/onNotification', payload)
+      this.$store.dispatch('user/newAlert', payload)
     })
   },
 }

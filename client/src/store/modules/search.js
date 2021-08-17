@@ -18,7 +18,7 @@ const actions = {
     }
     await searchApi.searchBookTitle(searchData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         // 첫 페이지는 무조건 저장
         if (searchData.page === 1) {
           commit('SET_SEARCH_RESULT', res.data.data)
@@ -39,8 +39,8 @@ const actions = {
           commit('SET_STOP', false)
         }
       })
-      .catch((err) => {
-        console.log(err.response)
+      .catch(() => {
+        commit('SET_STOP', true)
       })
   },
   async searchBookAuthor({ state, commit }, searchData) {

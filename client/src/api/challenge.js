@@ -50,4 +50,16 @@ export default {
       method: 'get',
     })
   },
+  changeBookmarkOn() {
+    return _axios({
+      url: `/users/bookmark`,
+      method: 'put',
+    })
+  },
+  changePencilOn() {
+    return _axios({
+      url: `/users/pencil`,
+      method: 'put',
+    })
+  },
 }

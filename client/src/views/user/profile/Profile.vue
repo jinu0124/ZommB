@@ -73,6 +73,7 @@ export default {
     ...mapActions('user', ['getUserInfo', 'getUserFeed', 'getBookShelf', 'getBookCart', 'getCollections']),
     changePage (val) {
       this.selectedPage = val
+      this.$router.push({ name: 'Profile', params: { id: this.userId, page: val }}).catch(()=>{})
     },
     closeRating () {
       this.$store.commit('user/SET_MOVE_TARGET', null)
@@ -103,12 +104,16 @@ export default {
   },
   watch: {
     '$route'() {
-      this.userId = this.$route.params.id
-      this.getProfileInfo()
+      if (this.userId != this.$route.params.id) {
+        this.userId = this.$route.params.id
+        this.getProfileInfo()
+      }
+      this.selectedPage = Number(this.$route.params.page)
     }
   },
   created() {
     this.userId = this.$route.params.id
+    this.selectedPage = Number(this.$route.params.page)
     this.getProfileInfo ()
   },
 };
@@ -134,6 +139,15 @@ export default {
   font-size: 13px;
   text-align: center;
   vertical-align: middle;
+}
+.tabs {
+  color: #212121;
+  font-size: 13px;
+  text-align: center;
+  vertical-align: middle;
+}
+.tabs span {
+  cursor: pointer;
 }
 .tabs .current {  
   pointer-events: none;

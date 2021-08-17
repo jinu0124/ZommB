@@ -109,7 +109,7 @@ const actions = {
   async getMyChallenge ({ commit }, data) {
     await challengeApi.getMyChallenge(data)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_MY_CHALLENGE', res.data.data)
       })
   },
