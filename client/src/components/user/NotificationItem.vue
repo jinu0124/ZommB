@@ -59,7 +59,7 @@ export default {
       const followings = this.followInfo.following.map((user) => {
         return user.id
       })
-      return followings.includes(this.note.data.userId)
+      return followings.includes(Number(this.note.data.userId))
     }
   }
 }
