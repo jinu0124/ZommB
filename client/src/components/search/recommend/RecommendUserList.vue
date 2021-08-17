@@ -18,7 +18,7 @@ export default {
     RecommendUserListItem,
   },
   computed: {
-    ...mapState("user", ["userInfo"]),
+    ...mapState("search", ["userInfo"]),
   },
 };
 </script>

@@ -24,7 +24,7 @@ export default {
     ...mapActions("search", ["searchUserNickname"]),
     insertInput(event) {
       this.searchInput = event.target.value;
-      this.searchUserNickname(this.searchWord);
+      this.searchUserNickname(this.searchData);
       this.$emit("search", this.searchInput);
     },
     clean() {
@@ -35,12 +35,13 @@ export default {
     searchData() {
       return {
         nickname: this.searchInput,
+        page: 0,
       };
     },
   },
   watch: {
     searchData() {
-      if (!this.searchWord.length) {
+      if (!this.searchData.length) {
         this.clean();
       }
     },

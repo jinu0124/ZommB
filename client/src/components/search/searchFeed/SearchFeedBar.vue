@@ -24,7 +24,7 @@ export default {
     ...mapActions("search", ["searchFeedHashtag"]),
     insertInput(event) {
       this.searchInput = event.target.value;
-      this.searchBookTitle(this.searchWord);
+      this.searchFeedHashtag(this.searchData);
       this.$emit("search", this.searchInput);
     },
     clean() {
@@ -35,12 +35,13 @@ export default {
     searchData() {
       return {
         searchWord: this.searchInput,
+        page: 0,
       };
     },
   },
   watch: {
     searchData() {
-      if (!this.searchWord.length) {
+      if (!this.searchData.length) {
         this.clean();
       }
     },

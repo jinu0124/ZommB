@@ -1,8 +1,8 @@
 <template>
-  <div v-if="searchResult">
+  <span v-if="searchResult" class="feed-list">
     <SearchFeedListItem
       v-for="(feed, idx) in searchResult"
-      class="up-on-scroll"
+      class="feed-list-item"
       :key="idx"
       :feed="feed"
     />
@@ -12,7 +12,7 @@
     <button class="top-btn" @click="goToTop">
       <i class="fi-sr-caret-up"></i>
     </button>
-  </div>
+  </span>
 </template>
 
 <script>
@@ -23,9 +23,6 @@ export default {
   name: "SearchFeedList",
   components: {
     SearchFeedListItem,
-  },
-  computed: {
-    ...mapState("search", ["searchResult"]),
   },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {
@@ -59,7 +56,7 @@ export default {
       const { bottom } = document
         .getElementsByClassName("search-input")[0]
         .getBoundingClientRect();
-      const currentTop = document.getElementById("select").scrollTop;
+      const currentTop = document.getElementById("search").scrollTop;
       const btn = document.querySelector(".top-btn");
       if (currentTop > bottom) {
         btn.style.opacity = "1";
@@ -68,11 +65,14 @@ export default {
       }
     },
     goToTop() {
-      document.getElementById("select").scrollTop = 0;
+      document.getElementById("search").scrollTop = 0;
     },
   },
+  computed: {
+    ...mapState("search", ["searchResult"]),
+  },
   mounted() {
-    const select = document.getElementById("select");
+    const select = document.getElementById("search");
     select.addEventListener("scroll", this.handleScroll);
     select.addEventListener("scroll", this.checkLast);
     select.addEventListener("scroll", this.needTopBtn);
@@ -81,5 +81,10 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.feed-list {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  grid-template-rows: auto auto auto;
+}
 </style>

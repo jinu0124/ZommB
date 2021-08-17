@@ -3,26 +3,26 @@
     <div class="tabs mt-2">
       <span
         type="button"
-        @click="changePage(0)"
-        :class="[selectedPage === 0 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(0)"
+        :class="[selectedTab === 0 ? 'current' : 'rest', 'badge']"
         >전체</span
       >
       <span
         type="button"
-        @click="changePage(1)"
-        :class="[selectedPage === 1 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(1)"
+        :class="[selectedTab === 1 ? 'current' : 'rest', 'badge']"
         >제목</span
       >
       <span
         type="button"
-        @click="changePage(2)"
-        :class="[selectedPage === 2 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(2)"
+        :class="[selectedTab === 2 ? 'current' : 'rest', 'badge']"
         >작가</span
       >
       <span
         type="button"
-        @click="changePage(3)"
-        :class="[selectedPage === 3 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(3)"
+        :class="[selectedTab === 3 ? 'current' : 'rest', 'badge']"
         >키워드</span
       >
     </div>
@@ -49,15 +49,15 @@ export default {
   },
   data() {
     return {
-      selectedPage: 0,
+      selectedTab: 0,
       page: 2,
       word: null,
     };
   },
   methods: {
     ...mapActions("search", ["searchBookTitle"]),
-    changePage(val) {
-      this.selectedPage = val;
+    changeTab(val) {
+      this.selectedTab = val;
     },
     onInputChange(word) {
       this.word = word;
