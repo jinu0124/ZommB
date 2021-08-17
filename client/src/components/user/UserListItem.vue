@@ -45,12 +45,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['getFollowing']),
+    ...mapActions('user', ['getFollowing', 'getFollower']),
     async follow () {
       this.isFollow = true
       await userApi.follow(this.user.id)
         .then(() => {
           this.getFollowing(this.$route.params.id)
+          this.getFollower(this.$route.params.id)
         })
     },
     async unfollow () {
@@ -58,6 +59,7 @@ export default {
       await userApi.unfollow(this.user.id)
         .then(() => {
           this.getFollowing(this.$route.params.id)
+          this.getFollower(this.$route.params.id)
         })
     }
   },
