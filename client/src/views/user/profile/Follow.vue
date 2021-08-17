@@ -7,10 +7,12 @@
     <div class="follow d-flex flex-column align-items-center">
       <div class="tabs d-flex gap-5 my-3">
         <span 
+          v-if="followInfo.follower"
           @click=changePage(0)
           :class="[ selectedPage === 0 ? 'current' : 'rest']"
         >{{ followInfo.follower.length }} 팔로워</span>
         <span 
+          v-if="followInfo.following"
           @click=changePage(1)
           :class="[ selectedPage === 1 ? 'current' : 'rest']"
         >{{ followInfo.following.length }} 팔로잉</span>
