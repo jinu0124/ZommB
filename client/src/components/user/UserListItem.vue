@@ -5,18 +5,18 @@
       :src="user.userFileUrl" 
       alt=""
       class="profile"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })" 
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })" 
     >
     <img 
       v-else 
       src="@/assets/image/common/profileDefault.svg" 
       alt=""
       class="profile"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >
     <span 
       class="nickname"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >{{ user.nickname }}</span>
     <button 
       v-if="isFollow" 
