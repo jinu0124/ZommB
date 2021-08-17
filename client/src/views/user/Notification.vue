@@ -53,7 +53,7 @@ export default {
     width: 100vw;
     border-radius: 30px 0px 0px 0px;
     margin-top: 60px;
-    padding: 30px 20px 40px;
+    padding: 30px 20px 100px;
     color: #212121;
     position: fixed;
     overflow-y: scroll;
