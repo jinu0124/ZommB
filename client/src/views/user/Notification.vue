@@ -4,8 +4,12 @@
       class="notification-header"
       :title=title
     />
-    <div class="notification-body">
-      알림이 들어갈 예정
+    <div class="notification-body d-flex flex-column align-items-center gap-3">
+      <NotificationItem
+        v-for="(note, idx) in notification"
+        :key=idx
+        :note=note
+      />
     </div>
   </div>
 </template>
@@ -13,11 +17,13 @@
 <script>
 import { mapState } from 'vuex'
 import SimpleHeader from '@/components/SimpleHeader'
+import NotificationItem from '@/components/user/NotificationItem'
 
 export default {
   name: 'Notification',
   components: {
-    SimpleHeader
+    SimpleHeader,
+    NotificationItem
   },
   data () {
     return {

@@ -81,60 +81,85 @@ export default {
       params: userData
     })
   },
-  //회원 정보 조회(닉네임,프로필,팔로잉/팔로워 수,책갈피,연필)
+  // 회원 정보 조회
   getUserInfo(userId) {
     return _axios({
       url: `users/${userId}`,
       method: 'get'
     })
   },
-  //isRead : false(북카트), true(서재)
-  getMyBookList(userId, data) {
-    return _axios({
-      url: `users/${userId}/bookshelves`,
-      method: 'get',
-      params: { isRead: data }
-    })
-  },
-  //특정 회원의 게시물 목록 불러오기
-  getFeedList(userId) {
-    return _axios({
-      url: `users/${userId}/feeds`,
-      method: 'get',
-    })
-  },
-  //특정 회원의 게시물 수
+  // 회원 게시물 cnt
   getFeedCnt(userId) {
     return _axios({
       url: `users/${userId}/feeds/cnt`,
       method: 'get'
     })
   },
-  //특정 회원의 북카트 및 서재의 책 수
-  getBookCnt(userId, data) {
+  // 회원 북카트-서재 cnt
+  getBookCnt(userId) {
     return _axios({
       url: `users/${userId}/bookshelves/cnt`,
+      method: 'get'
+    })
+  },
+  // 1인 게시물 조회 
+  getUserFeed(userId, page) {
+    return _axios({
+      url: `users/${userId}/feeds`,
       method: 'get',
-      params: {isRead: data}
+      params: { page : page }
+    })
+  },
+  getBookCollection(userId) {
+    return _axios({
+      url: `users/${userId}/top-bar`,
+      method: 'get',
+    })
+  },
+  addBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar`,
+      method: 'post',
+      data: {id: bookId}
+    })
+  },
+  removeBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar/${bookId}`,
+      method: 'delete'
+    })
+  },
+  //isRead : false(북카트), true(서재)
+  getBookList(userId, data) {
+    return _axios({
+      url: `users/${userId}/bookshelves/all`,
+      method: 'get',
+      params: { isRead: data }
+    })
+  },
+  //isRead : false(북카트), true(서재)
+  getMyBookSearch(userId, data) {
+    return _axios({
+      url: `users/${userId}/bookshelves`,
+      method: 'get',
+      params: data
     })
   },
   //팔로우
-  postFollow(userId) {
+  follow(userId) {
     return _axios({
       url: `follows/${userId}`,
       method: 'post',
     })
   },
   //팔로우 취소
-  deleteFollow(userId) {
+  unfollow(userId) {
     return _axios({
       url: `follows/${userId}`,
       method: 'delete',
     })
   },
-  //특정 회원의 팔로워, 팔로잉 페이지에서 확인할 수 있는 회원 목록
-  //팔로워 목록과 팔로잉 목록을 서로 다른 탭으로 구분
-  //(userId는 특정 회원의 id)
+  // 팔로우 리스트 조회
   getFollowingList(userId) {
     return _axios({
       url: `follows/${userId}/following`,

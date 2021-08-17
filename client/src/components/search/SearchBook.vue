@@ -3,49 +3,78 @@
     <div class="tabs mt-2">
       <span
         type="button"
-        @click="changePage(0)"
-        :class="[selectedPage === 0 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(0)"
+        :class="[selectedTab === 0 ? 'current' : 'rest', 'badge']"
         >전체</span
       >
       <span
         type="button"
-        @click="changePage(1)"
-        :class="[selectedPage === 1 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(1)"
+        :class="[selectedTab === 1 ? 'current' : 'rest', 'badge']"
         >제목</span
       >
       <span
         type="button"
-        @click="changePage(2)"
-        :class="[selectedPage === 2 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(2)"
+        :class="[selectedTab === 2 ? 'current' : 'rest', 'badge']"
         >작가</span
       >
       <span
         type="button"
-        @click="changePage(3)"
-        :class="[selectedPage === 3 ? 'current' : 'rest', 'badge']"
+        @click="changeTab(3)"
+        :class="[selectedTab === 3 ? 'current' : 'rest', 'badge']"
         >키워드</span
       >
     </div>
-    <BookListItem class="book-list-item" />
+    <div
+      id="search"
+      class="search-body d-flex flex-column mt-2 align-self-center"
+    >
+      <SearchBookBar @search="onInputChange" />
+    </div>
+    <SearchBookList class="mt-3" @last="addResult" />
   </div>
 </template>
 
 <script>
-import BookListItem from "@/components/book/BookListItem";
+import { mapActions } from "vuex";
+import SearchBookBar from "@/components/search/searchBook/SearchBookBar";
+import SearchBookList from "@/components/search/searchBook/SearchBookList";
 
 export default {
   name: "SearchBook",
   components: {
-    BookListItem,
+    SearchBookBar,
+    SearchBookList,
   },
   data() {
     return {
-      selectedPage: 0,
+      selectedTab: 0,
+      page: 2,
+      word: null,
     };
   },
   methods: {
-    changePage(val) {
-      this.selectedPage = val;
+    ...mapActions("search", ["searchBookTitle"]),
+    changeTab(val) {
+      this.selectedTab = val;
+    },
+    onInputChange(word) {
+      this.word = word;
+      this.page = 2;
+    },
+    addResult() {
+      this.searchBookTitle(this.searchData);
+      this.page++;
+    },
+  },
+  computed: {
+    searchData() {
+      return {
+        searchType: "title",
+        searchWord: this.word,
+        page: this.page,
+      };
     },
   },
 };
@@ -71,8 +100,5 @@ export default {
 .tabs .rest {
   background: #7b60f1;
   color: #fff;
-}
-.book-list-item {
-  color: #111;
 }
 </style>

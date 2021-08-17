@@ -1,9 +1,13 @@
 package com.ssafy.commb.dto.fcm;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.ssafy.commb.dto.event.MyEventDto;
 import lombok.*;
+import org.apache.ibatis.type.Alias;
 import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
 
 @Component
 @Getter
@@ -11,12 +15,15 @@ import org.springframework.stereotype.Component;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Alias("Fcm")
 public class FcmDto {
     private boolean validate_only;
     private Message message;
 
     @Builder
     @Getter
+    @Setter
+    @NoArgsConstructor                          // 기본 생성자
     @AllArgsConstructor
     public static class Message{
         private Notification notification;
@@ -26,6 +33,8 @@ public class FcmDto {
 
     @Builder
     @Getter
+    @Setter
+    @NoArgsConstructor                          // 기본 생성자
     @AllArgsConstructor
     public static class Notification{
         private String title;
@@ -34,6 +43,8 @@ public class FcmDto {
 
     @Builder
     @Getter
+    @Setter
+    @NoArgsConstructor                          // 기본 생성자
     @AllArgsConstructor
     public static class PayData{
         private Integer userId;
@@ -44,6 +55,13 @@ public class FcmDto {
         private Integer commentId;
         private String comment;
         private String content;
+        private LocalDateTime createAt;
+        private Integer isRead;
+        private Boolean isFollow;
+
+        @JsonIgnore
+        private Integer targetUserId;
+
     }
 
 

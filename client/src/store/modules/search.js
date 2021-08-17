@@ -3,7 +3,10 @@ import searchApi from '@/api/search'
 
 const state = {
   searchResult: null,
-  stopRequest: false
+  stopRequest: false,
+  userInfo: null,
+  keywordInfo: null,
+  follow: false,
 }
 const actions = {
   async searchBookTitle({ state, commit }, searchData) {
@@ -40,17 +43,38 @@ const actions = {
         console.log(err.response)
       })
   },
-  async searchUserNickname({ commit }, searchWord) {
-    if (searchWord.length < 2) {
-      return
-    }
-    await searchApi.searchUserNickname(searchWord)
+  async searchUserNickname({ commit }, searchData, page) {
+    await searchApi.searchUserNickname(searchData, page)
       .then((res) => {
         console.log(res)
         commit('SET_SEARCH_RESULT', res.data.data)
       })
     .catch((err) => {
         console.log(err.response)
+      })
+  },
+  async searchFeedHashtag({ commit }, searchData, page) {
+    await searchApi.searchFeedHashtag(searchData, page)
+      .then((res) => {
+        console.log(res)
+        commit('SET_SEARCH_RESULT', res.data.data)
+      })
+        .catch((err) => {
+        console.log(err.response)
+      })
+    },
+  async recommendUser({ rootState, commit }, page) {
+    await searchApi.recommendUser(rootState.user.myInfo.id, page)
+      .then((res) => {
+        console.log(res)
+        commit('SET_USER_INFO', res.data.data)
+      })
+  },
+  async recommendKeyword({ rootState, commit }) {
+    await searchApi.recommendKeyword(rootState.user.myInfo.id)
+      .then((res) => {
+        console.log(res)
+        commit('SET_KEYWORD_INFO', res.data.data)
       })
   },
 }
@@ -65,6 +89,12 @@ const mutations = {
   },
   SET_STOP(state, payload) {
     state.stopRequest = payload
+  },
+  SET_USER_INFO(state, payload) {
+    state.userInfo = payload
+  },
+  SET_KEYWORD_INFO(state, payload) {
+    state.keywordInfo = payload
   },
 }
 const getters = {

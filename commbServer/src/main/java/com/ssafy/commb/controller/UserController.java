@@ -12,14 +12,12 @@ import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.jwt.SecurityService;
-import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.web.ReactiveSortHandlerMethodArgumentResolver;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,13 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
+import java.util.stream.Collectors;
 
 /**
  * @ User, Bookshelves, Keyword/Follow Recommend Function Controller
@@ -284,7 +280,15 @@ public class UserController {
     public ResponseEntity deleteUser(HttpServletRequest request) {
         int userId = (int) request.getAttribute("userId");
         s3Service.deleteS3(userRepository.findUserById(userId).get().getFileUrl(), "profile");
+
+        int p = 0;
+        List<FeedDto> feeds = new ArrayList<>();
+        while(feeds.size() >= 20 || p == 0){
+            feeds = feedService.getUserFeed((int) request.getAttribute("userId"), p++, request).getData();
+            s3Service.deleteS3(feeds.stream().map(FeedDto::getFeedFileUrl).collect(Collectors.toList()), "feed");
+        }
         userService.deleteUser(userId);
+
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -455,6 +459,24 @@ public class UserController {
         KeywordDto.ResponseList keyResList =  keywordService.keywordRecommend(request);
 
         return new ResponseEntity<KeywordDto.ResponseList>(keyResList, HttpStatus.OK);
+    }
+
+    @GetMapping("/alarms")
+    @ApiOperation(value = "쌓인 알림 목록 요청")
+    public ResponseEntity getAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @GetMapping("/alarms/all")
+    @ApiOperation(value = "전체 알림 목록 요청")
+    public ResponseEntity getAllAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAllAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
     }
 
 }

@@ -25,34 +25,15 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping(value = "/api/feeds")
 @Api("Feed Controller API V1")
 public class FeedController {
-
-    // Dummy Data Set----------------------------------------------------------------------------
-    static final int id = 1;
-    static final String nickname = "크루엘라";
-    static final String url = "https://search1.kakaocdn.net/thumb/R120x174.q85/?fname=http%3A%2F%2Ft1.daumcdn.net%2Flbook%2Fimage%2F484319%3Ftimestamp%3D20201124225204";
-    static final String tag = "#오늘도 힘내세요";
-    static final String content = "이것은 글입니다.";
-    static final int cnt = 134;
-    static Date date;
-    static final boolean bool = true;
-
-    static {
-        try {
-            date = new SimpleDateFormat("yyyy-MM-dd HH:MM:SS").parse("2021-07-31 10:12:15");
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-    }
-    // Dummy Data Set----------------------------------------------------------------------------
 
     @Autowired
     private FeedService feedService;
@@ -143,20 +124,27 @@ public class FeedController {
         UserDto.Response user = userService.getUserInfo(userId, request);
         FeedDto feed = feedService.getFeedInfo(feedId);
 
-        fcmService.sends(firebaseToken, FcmDto.builder()
+        FcmDto fcm = FcmDto.builder()
                 .message(FcmDto.Message.builder()
                         .data(FcmDto.PayData.builder()
+                                .userId(userId)
                                 .nickname(user.getData().getNickname())
                                 .feedId(feed.getId())
                                 .feedFileUrl(feed.getFeedFileUrl())
                                 .content(feed.getContent())
+                                .targetUserId(feed.getUser().getId())
+                                .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                .isRead(firebaseToken.size() == 0 ? 0 : 1)
                                 .build())
                         .notification(FcmDto.Notification.builder()
                                 .title("like")
                                 .body("")
                                 .build())
                         .build())
-                .build());
+                .build();
+
+        if(firebaseToken.size() >= 1) fcmService.sends(firebaseToken, fcm);
+        fcmService.savePushAlarm(fcm);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -167,9 +155,13 @@ public class FeedController {
     @ApiOperation(value = "피드 좋아요 취소")
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        thumbService.deleteLikeFeed(feedId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "피드 좋아요 취소 권한 없음");
+
+        thumbService.deleteLikeFeed(feedId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -193,17 +185,18 @@ public class FeedController {
     public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
 
         int userId = (Integer) request.getAttribute("userId");
-        System.out.println(userId);
-        commentService.uploadComment(feedId, userId, content);
+        int commentId = commentService.uploadComment(feedId, userId, content);
 
-        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content);
+        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content, commentId);
         List<FirebaseToken> tokens = new ArrayList<>();
-        List<String> tokenStr = new ArrayList<>();
 
-        for(FcmDto fcm : fcms) tokenStr.add(fcm.getMessage().getToken());
-        for (String token : tokenStr) tokens.add(FirebaseToken.builder().token(token).build());
+        for (String token : fcms.stream().map(FcmDto::getMessage).map(FcmDto.Message::getToken).collect(Collectors.toList())) tokens.add(FirebaseToken.builder().token(token).build());
 
-        fcmService.sends(tokens, fcms.get(0));
+        if(fcms.size() >= 1) {
+            fcms.get(0).getMessage().getData().setIsRead(1);
+            fcmService.sends(tokens, fcms.get(0));
+        }
+        fcmService.savePushAlarm(fcms.get(0));
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -253,9 +246,13 @@ public class FeedController {
     @ApiOperation(value = "댓글 좋아요 취소")
     public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
 
-        int userId = (Integer) request.getAttribute("userId");
+        int myUserId = (Integer) request.getAttribute("userId");
+        int userId = feedService.getUserId(feedId);
 
-        commentService.deleteLikeComment(feedId, commentId, userId);
+        if (myUserId != userId)
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 좋아요 취소 권한 없음");
+
+        commentService.deleteLikeComment(feedId, commentId, myUserId);
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -268,7 +265,7 @@ public class FeedController {
                                                                   @RequestParam Integer page,
                                                                   HttpServletRequest request) {
 
-        int myUserId = (Integer) request.getAttribute("userId");
+        int myUserId = Integer.parseInt((String)request.getAttribute("userId"));
 
         FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(page * 20, myUserId);
 

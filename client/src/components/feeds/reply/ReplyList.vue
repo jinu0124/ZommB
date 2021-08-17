@@ -12,6 +12,7 @@ export default {
   components: {
     ReplyListItem,
   },
+  computed: {},
 };
 </script>
 <style scoped>

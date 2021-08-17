@@ -27,13 +27,21 @@ export default {
     return _axios({
       url: 'users/info',
       method: 'get',
-      params: { nickname : searchData }
+      params: searchData
     })
   },
-  recommendUser(userId) {
+  searchFeedHashtag(searchData) {
+    return _axios({
+      url: 'feeds',
+      method: 'get',
+      params: searchData
+    })
+  },
+  recommendUser(userId, page) {
     return _axios({
       url: `users/${userId}/follow-recommend`,
       method: 'get',
+      params: { page: page },
     })
   },
   recommendKeyword(userId) {

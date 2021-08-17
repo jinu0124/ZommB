@@ -37,7 +37,7 @@ export default {
   methods: {
     calScore (event) {
       if (!this.isRated) {
-        if (event.layerX < 12) {
+        if (event.offsetX < 12) {
           this.score = event.target.dataset.val - 0.5
         } else {
           this.score = event.target.dataset.val

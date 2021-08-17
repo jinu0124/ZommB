@@ -1,11 +1,5 @@
 <template>
   <div v-if="searchResult">
-    <SelectBookListItem
-      v-for="(book, idx) in searchResult"
-      class="up-on-scroll"
-      :key=idx
-      :book=book
-    />
     <div
       v-if="!searchResult.length"
       class="no-result mt-5"
@@ -14,6 +8,13 @@
       class="top-btn"
       @click="goToTop"
     ><i class="fi-sr-caret-up"></i></button>
+    <SelectBookListItem
+      v-for="(book, idx) in books"
+      class="book-item up-on-scroll"
+      :key=idx
+      :code=code
+      :book=book
+    />
   </div>
 </template>
 
@@ -26,6 +27,9 @@ export default {
   components: {
     SelectBookListItem
   },
+  props: {
+    code: Number
+  },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {
       const { top } = elem.getBoundingClientRect()
@@ -33,7 +37,7 @@ export default {
       return top > innerHeight + (triggerDiff)
     },
     handleScroll() {
-      const elems = document.querySelectorAll('.up-on-scroll')
+      const elems = document.querySelectorAll('.book-item')
       if (elems) {
         elems.forEach(elem => {
           if (this.isElementUnderBottom(elem, -60)) {
@@ -70,6 +74,25 @@ export default {
   },
   computed: {
     ...mapState('search', ['searchResult']),
+    ...mapState('user', ['myBookShelves']),
+    books () {
+      if (this.code === 1) {
+        const mine = this.myBookShelves.library.map((book) => {
+          return book.id
+        })
+        return this.searchResult.filter((book) => {
+          return !mine.includes(book.id)
+        })
+      } else if (this.code === 2) {
+        const mine = this.myBookShelves.bookcart.map((book) => {
+          return book.id
+        })
+        return this.searchResult.filter((book) => {
+          return !mine.includes(book.id)
+        })
+      }
+      return this.searchResult
+    },
   },
   mounted () {
     const select = document.getElementById('select')
@@ -82,8 +105,7 @@ export default {
 </script>
 
 <style scoped>
-  .up-on-scroll {
-    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.25);
+  .book-item {
     transition: transform 1s, opacity 1s;
   }
   .no-result {

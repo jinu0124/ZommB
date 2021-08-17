@@ -1,11 +1,13 @@
 package com.ssafy.commb.service;
 
 import com.amazonaws.services.dynamodbv2.xspec.M;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
@@ -42,7 +44,7 @@ public interface UserService {
 
     public String getUserRole(int userId);
 
+    public List<FcmDto> getAlarms(Integer page, HttpServletRequest request);
 
-
-
+    List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request);
 }

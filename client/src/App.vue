@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import Header from "@/components/Header";
+import Header from "@/components/Header"
 import messaging from '@/api/firebase.js'
 
 export default {
@@ -71,7 +71,7 @@ export default {
     isFeed() {
       if (
         this.$route.name === "Feed" ||
-        this.$route.name === "SelectBook" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag === 'write') ||
         this.$route.name === "Write"||
         this.$route.name === "Reply") {
         return true;
@@ -81,7 +81,9 @@ export default {
     isProfile() {
       if (
         this.$route.name === "Notification" ||
-        this.$route.name === "Profile"
+        this.$route.name === "Profile" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag != 'write') ||
+        this.$route.name === "Follow"
       ) {
         return true
       }
@@ -107,7 +109,7 @@ export default {
       this.$store.dispatch('user/onNotification', payload)
     })
   },
-};
+}
 </script>
 
 <style src="@/assets/style/accounts.css"></style>
