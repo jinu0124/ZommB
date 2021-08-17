@@ -102,12 +102,12 @@ export default {
     height: 24.8px;
     border-radius: 13px;
     opacity: 0;
-    transition: all 0.5s ease-in-out;
+    transition: all 0.7s ease-in-out;
   }
   .delete-alert:hover .del-btn {
     color: #FFDC7C;
   }
   .delete-alert:hover .del-text {
     opacity: 1;
-  }
+  } 
 </style>
