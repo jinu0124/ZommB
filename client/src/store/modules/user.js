@@ -92,7 +92,7 @@ const actions = {
   async onLogin({ commit, dispatch }, userData) {
     await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
       .then((token) => {
-        console.log(token)
+        // console.log(token)
         userData.firebaseToken = token
         commit('SET_FIREBASE_TOKEN', token)
       })
