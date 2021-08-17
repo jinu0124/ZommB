@@ -21,15 +21,8 @@ services:
       - client
     volumes:
       - .nginx/conf.d:/etc/nginx/conf.d
-      - .nginx/certbot/conf:/etc/nginx/ssl
-      - .nginx/certbot/data:/var/www/certbot
+      - .nginx/zerossl:/var/www/zerossl/.well-known/pki-validation
+      - .nginx/cert:/cert
     ports:
       - 80:80
       - 443:443
-  certbot:
-    image: certbot/certbot:latest
-    command: certonly --webroot --webroot-path=/var/www/certbot --eamil anstjd9115@gamil.com --agree-tos --no-eff-email -d i5a602.p.ssafy.io
-    volumes:
-      - .nginx/certbot/conf:/etc/letsencrypt
-      - .nginx/certbot/logs:/var/log/letsencrypt
-      - .nginx/certbot/data:/var/www/certbot
