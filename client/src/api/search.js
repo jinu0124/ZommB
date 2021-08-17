@@ -27,14 +27,14 @@ export default {
     return _axios({
       url: 'users/info',
       method: 'get',
-      params: { nickname: searchData }
+      params: searchData
     })
   },
   searchFeedHashtag(searchData) {
     return _axios({
       url: 'feeds',
       method: 'get',
-      params: {searchWord: searchData}
+      params: searchData
     })
   },
   recommendUser(userId, page) {

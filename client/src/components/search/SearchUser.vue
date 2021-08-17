@@ -1,21 +1,21 @@
 <template>
   <div class="user-list-item">
     <div
-      id="select"
+      id="search"
       class="search-body d-flex flex-column mt-2 align-self-center"
     >
       <SearchUserBar @search="onInputChange" />
     </div>
-    <SearchDefault />
+    <SearchDefault v-if="searchNone" />
     <SearchUserList class="mt-3" @last="addResult" />
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SearchUserBar from "@/components/search/searchUser/SearchUserBar";
 import SearchUserList from "@/components/search/searchUser/SearchUserList";
 import SearchDefault from "@/components/search/recommend/SearchDefault";
-import { mapActions } from "vuex";
 
 export default {
   name: "SearchUser",
@@ -28,6 +28,7 @@ export default {
     return {
       page: 2,
       word: null,
+      searchNone: true,
     };
   },
   methods: {
@@ -35,16 +36,21 @@ export default {
     onInputChange(word) {
       this.word = word;
       this.page = 2;
+      this.searchNone = false;
+      if (word.length == 0) {
+        this.searchNone = true;
+      }
     },
     addResult() {
-      this.searchUserNickname(this.searchWord);
+      this.searchUserNickname(this.searchData);
       this.page++;
     },
   },
   computed: {
     searchData() {
       return {
-        searchWord: this.word,
+        nickname: this.word,
+        page: this.page,
       };
     },
   },

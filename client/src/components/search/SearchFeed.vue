@@ -1,20 +1,19 @@
 <template>
   <div class="search-feed">
     <div
-      id="select"
+      id="search"
       class="search-body d-flex flex-column mt-2 align-self-center"
     >
       <SearchFeedBar @search="onInputChange" />
     </div>
-    <SearchFeedList class="mt-3" @last="addResult" />
-    <!-- 검색한 피드 리스트 부분 -->
+    <SearchFeedList class="mt-5 list" @last="addResult" />
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
 import SearchFeedBar from "@/components/search/searchFeed/SearchFeedBar";
 import SearchFeedList from "@/components/search/searchFeed/SearchFeedList";
-import { mapActions } from "vuex";
 
 export default {
   name: "SearchFeed",
@@ -35,7 +34,7 @@ export default {
       this.page = 2;
     },
     addResult() {
-      this.searchFeedHashtag(this.searchWord);
+      this.searchFeedHashtag(this.searchData);
       this.page++;
     },
   },
@@ -43,6 +42,7 @@ export default {
     searchData() {
       return {
         searchWord: this.word,
+        page: this.page,
       };
     },
   },

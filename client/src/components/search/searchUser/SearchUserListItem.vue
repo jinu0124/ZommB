@@ -2,11 +2,11 @@
   <div class="user-list-item">
     <span class="user-images">
       <img
-        v-if="myInfo.userFileUrl"
+        v-if="user.userFileUrl"
         class="user-profile"
         type="button"
         id="UserProfile"
-        :src="myInfo.userFileUrl"
+        :src="user.userFileUrl"
         alt="user-profile"
       />
       <img
@@ -17,12 +17,12 @@
         type="button"
       />
     </span>
-    <span class="user-nickname">{{ nickname }}</span>
+    <span class="user-nickname">{{ user.nickname }}</span>
     <span>
       <button
         class="follow btn-5 btn-yellow"
         @click="follow()"
-        v-show="isFollow"
+        v-show="!user.isFollow"
       >
         팔로우
       </button>
@@ -32,7 +32,7 @@
         class="follow btn-5 btn-grey"
         type="button"
         @click="unfollow()"
-        v-show="!isFollow"
+        v-show="user.isFollow"
       >
         팔로우 취소
       </button>
@@ -41,25 +41,10 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
 export default {
   name: "SearchUserListItem",
   props: {
     user: Object,
-  },
-  methods: {
-    follow() {
-      this.isFollow = false;
-      console.log("팔로우");
-    },
-    unfollow() {
-      this.isFollow = true;
-      console.log("팔로우 취소");
-    },
-  },
-  computed: {
-    ...mapState("user", ["myInfo"]),
   },
 };
 </script>

@@ -44,7 +44,7 @@ export default {
 
 <style scoped>
 .half-hr {
-  width: 70px;
+  width: 60px;
   margin: auto 10px;
   border-bottom: 3px solid #ffffff;
 }
@@ -57,7 +57,7 @@ export default {
   text-align: center;
 }
 .half-hr2 {
-  width: 60px;
+  width: 50px;
   margin: auto 10px;
   border-bottom: 3px solid #ffffff;
 }
