@@ -13,14 +13,14 @@ export default {
     return _axios({
       url: 'books',
       method: 'get',
-      params: {searchType: 'author', searchWord: searchData}
+      params: searchData
     })
   },
   searchBookKeyword(searchData) {
     return _axios({
       url: 'books',
       method: 'get',
-      params: {searchType: 'keyword', searchWord: searchData}
+      params: searchData
     })
   },
   searchUserNickname(searchData) {
