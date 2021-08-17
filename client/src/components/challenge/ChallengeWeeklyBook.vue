@@ -7,7 +7,7 @@
         alt="weeklyBookCover"
         @click="$router.push({ name: 'BookInfo', params: {id: weeklyBook.id} })"
       >
-      <div class="title my-2">{{ weeklyBook.bookName }}</div>
+      <div class="title mt-3 mb-2">{{ weeklyBook.bookName }}</div>
       <div class="info d-flex">
         <div>{{ author }}</div>
         <div class="mx-1">|</div>
@@ -40,11 +40,14 @@ export default {
 
 <style scoped>
   .weekly-book .book {
-    height: 150px;
     width: 100px;
+    height: auto;
     border-radius: 10px;
     box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
     cursor: pointer;
+  }
+  .weekly-book .book:hover {
+    width: 105px;
   }
   .weekly-book .title {
     width: 80%;
