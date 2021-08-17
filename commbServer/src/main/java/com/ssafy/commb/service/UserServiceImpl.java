@@ -385,6 +385,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById((int) request.getAttribute("userId"));
         user.ifPresent(select -> {
             select.setPencilOn(Math.abs(select.getPencilOn() - 1));
+            userRepository.save(select);
         });
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "해당 사용자는 존재하지 않습니다.");
     }
@@ -394,6 +395,7 @@ public class UserServiceImpl implements UserService {
         Optional<User> user = userRepository.findById((int) request.getAttribute("userId"));
         user.ifPresent(select -> {
             select.setBookmarkOn(Math.abs(select.getBookmarkOn() - 1));
+            userRepository.save(select);
         });
         if(!user.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "해당 사용자는 존재하지 않습니다.");
     }
