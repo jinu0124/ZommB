@@ -10,7 +10,6 @@ const state = {
   refreshToken: null,
   firebaseToken: null,
   notification: [],
-  notiCnt: 0,
   newAlert: null,
   myInfo: null,
   stopRequest: false,
@@ -144,7 +143,6 @@ const actions = {
       data: payload.data
     }
     commit('SET_NOTIFICATION', notiData)
-    commit('SET_NOTI_CNT')
   },
   newAlert({ commit }, payload) {
     const notiData = {
@@ -370,7 +368,6 @@ const mutations = {
   },
   RESET_NOTIFICATION(state) {
     state.notification = []
-    state.notiCnt = 0
   },
   SET_STOP(state, payload) {
     state.stopRequest = payload
@@ -378,6 +375,9 @@ const mutations = {
 }
 
 const getters = {
+  notiCnt: (state) => {
+    return state.notification.length
+  }
 }
 
 export default {
