@@ -46,5 +46,9 @@ public interface UserService {
 
     public List<FcmDto> getAlarms(Integer page, HttpServletRequest request);
 
-    List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request);
+    public List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request);
+
+    public void updatePencil(HttpServletRequest request);
+
+    public void updateBookmark(HttpServletRequest request);
 }
