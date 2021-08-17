@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { mapState, mapActions } from 'vuex'
 import ChallengeDailyKeyword from './ChallengeDailyKeyword'
 import ChallengeFeedList from './ChallengeFeedList'
@@ -29,7 +30,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('challenge', ['getDailyFeeds', 'getDailyParticipate']),
+    ...mapActions('challenge', ['getDailyKeyword', 'getDailyFeeds', 'getDailyParticipate']),
     addFeed () {
       this.getDailyFeeds(this.page)
       this.page ++
@@ -38,7 +39,8 @@ export default {
   computed: {
     ...mapState('challenge', ['dailyCnt', 'dailyFeed'])
   },
-  created () {
+  async created () {
+    await this.getDailyKeyword(moment().format('YYYY-MM-DD'))
     this.getDailyFeeds(0)
     this.getDailyParticipate()
   }

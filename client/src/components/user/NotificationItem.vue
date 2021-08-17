@@ -31,14 +31,23 @@
         <strong>{{ note.data.nickname }}</strong>님이 회원님을 팔로우하기 시작했습니다.
         <span v-if="pubDate" class="time ms-1">{{ pubDate }}</span>
       </span>
-      <button v-if="isFollow" class="btn-follow btn-grey">언팔로우</button>
-      <button v-else class="btn-follow btn-yellow">팔로우</button>
+      <button 
+        v-if="isFollow" 
+        class="btn-follow btn-grey"
+        @click="unfollow"
+      >언팔로우</button>
+      <button 
+        v-else 
+        class="btn-follow btn-yellow"
+        @click="follow"
+      >팔로우</button>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
+import userApi from '@/api/user.js'
 import moment from 'moment'
 moment.locale("ko")
 
@@ -47,8 +56,25 @@ export default {
   props: {
     note: Object
   },
+  methods: {
+    ...mapActions('user', ['getFollowing', 'getFollower']),
+    async follow () {
+      this.isFollow = true
+      await userApi.follow(this.note.data.userId)
+        .then(() => {
+          this.getFollowing(this.myInfo.id)
+        })
+    },
+    async unfollow () {
+      this.isFollow = false
+      await userApi.unfollow(this.note.data.userId)
+        .then(() => {
+          this.getFollowing(this.myInfo.id)
+        })
+    }
+  },
   computed: {
-    ...mapState('user', ['followInfo']),
+    ...mapState('user', ['followInfo', 'myInfo']),
     pubDate () {
       if (this.note.data.createAt) {
         return moment(this.note.data.createAt).fromNow()
@@ -59,7 +85,7 @@ export default {
       const followings = this.followInfo.following.map((user) => {
         return user.id
       })
-      return followings.includes(this.note.data.userId)
+      return followings.includes(Number(this.note.data.userId))
     }
   }
 }
