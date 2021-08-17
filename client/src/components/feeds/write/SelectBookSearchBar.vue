@@ -49,7 +49,7 @@ export default {
     }
   },
   created () {
-    this.$store.commit('search/SET_SEARCH_RESULT', null)
+    this.$store.commit('search/SET_BOOK_RESULT', null)
   }
 }
 </script>
