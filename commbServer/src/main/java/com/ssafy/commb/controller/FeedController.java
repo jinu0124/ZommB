@@ -129,6 +129,7 @@ public class FeedController {
                         .data(FcmDto.PayData.builder()
                                 .userId(userId)
                                 .nickname(user.getData().getNickname())
+                                .userFileUrl(user.getData().getUserFileUrl())
                                 .feedId(feed.getId())
                                 .feedFileUrl(feed.getFeedFileUrl())
                                 .content(feed.getContent())
