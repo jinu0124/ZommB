@@ -23,7 +23,7 @@
           >Challenge</router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'Search' }" class="menu-item" data-bs-dismiss="offcanvas"
+        <router-link :to="{ name: 'Search', params: { flag: 'users'} }" class="menu-item" data-bs-dismiss="offcanvas"
           >Search</router-link>
       </div>
       <div>
