@@ -41,7 +41,7 @@
 <script>
 import HeaderSideNav from "./HeaderSideNav.vue";
 import HeaderUserMenu from "./HeaderUserMenu.vue";
-import { mapState } from "vuex";
+import { mapState, mapGetters } from "vuex";
 
 export default {
   name: "Header",
@@ -66,7 +66,8 @@ export default {
     HeaderUserMenu,
   },
   computed: {
-    ...mapState("user", ["myInfo", 'notiCnt']),
+    ...mapState("user", ["myInfo"]),
+    ...mapGetters('user', ['notiCnt'])
   },
 };
 </script>
