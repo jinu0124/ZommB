@@ -120,21 +120,21 @@ const routes = [
     path: '/feed',
       name : 'Feed',
       component : Feed,
-      // meta: { requireAuth: true }
+      meta: { requireAuth: true }
   },
   {
-    path: '/like',
+    path: '/like/:id',
       name : 'Like',
       component : Like,
-      // meta: { requireAuth: true }
+      meta: { requireAuth: true }
   },
   {
-    path: '/reply/:feedId',
+    path: '/reply/:id',
     name: 'Reply',
     component: Reply
   },
   {
-    path: '/report',
+    path: '/report/:id',
     name: 'Report',
     component: Report
   },

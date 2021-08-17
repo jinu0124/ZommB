@@ -2,13 +2,14 @@
   <div class="feed">
     <div class="fd-header d-flex flex-column">
       <div class="title" style="float: left">
-        NewsFeed<img
+        NewsFeed
+        <!-- <img
           src="@/assets/image/test/write-btn.svg"
           class="write-btn"
           style="float: right"
           type="button"
           @click="moveToSelectBook()"
-        />
+        /> -->
       </div>
     </div>
     <div>
@@ -28,9 +29,9 @@ export default {
   },
   methods: {
     ...mapActions("feed", ["getFeedInfo"]),
-    moveToSelectBook() {
-      this.$router.push("/select");
-    },
+    // moveToSelectBook() {
+    //   this.$router.push("select/true");
+    // },
   },
   //페이지 렌더링 시 피드 정보를 0페이지부터 가져온다.
   created() {

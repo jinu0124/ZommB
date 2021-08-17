@@ -1,6 +1,6 @@
 <template>
   <div class="like-list">
-    <LikeListItem v-for="(like, idx) in likeInfo" :key="idx" :like="like" />
+    <LikeListItem v-for="(feed, idx) in likeInfo" :key="idx" :feed="feed" />
   </div>
 </template>
 
@@ -14,7 +14,7 @@ export default {
     LikeListItem,
   },
   computed: {
-    ...mapState("like", ["likeInfo"]),
+    ...mapState("feed", ["likeInfo"]),
   },
 };
 </script>
