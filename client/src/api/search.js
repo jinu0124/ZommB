@@ -1,53 +1,42 @@
 import _axios from "./Default"
 
 export default {
-  // 책 제목으로 검색
-  searchBookTitle(searchData) {
+  // 책 검색
+  searchBook(searchData) {
     return _axios({
       url: 'books',
       method: 'get',
       params: searchData
     })
   },
-  searchBookAuthor(searchData) {
-    return _axios({
-      url: 'books',
-      method: 'get',
-      params: searchData
-    })
-  },
-  searchBookKeyword(searchData) {
-    return _axios({
-      url: 'books',
-      method: 'get',
-      params: searchData
-    })
-  },
-  searchUserNickname(searchData) {
+  // 유저 검색
+  searchUser(searchData) {
     return _axios({
       url: 'users/info',
       method: 'get',
       params: searchData
     })
   },
-  searchFeedHashtag(searchData) {
+  // 피드 검색
+  searchFeed(searchData) {
     return _axios({
       url: 'feeds',
       method: 'get',
       params: searchData
     })
   },
-  recommendUser(userId, page) {
+  // Search Default
+  getRecommendKW(userId) {
+    return _axios({
+      url: `users/${userId}/keyword-recommend`,
+      method: 'get',
+    })
+  },
+  getRecommendUSR(userId, page) {
     return _axios({
       url: `users/${userId}/follow-recommend`,
       method: 'get',
       params: { page: page },
-    })
-  },
-  recommendKeyword(userId) {
-    return _axios({
-      url: `users/${userId}/keyword-recommend`,
-      method: 'get',
     })
   },
 }
