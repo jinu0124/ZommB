@@ -25,7 +25,6 @@ public class FcmInitializer {
     public void initializer() throws IOException {
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream()))
-                .setDatabaseUrl("https://commb-43e85-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .build();
 
         FirebaseApp.initializeApp(options);                                 // SDK

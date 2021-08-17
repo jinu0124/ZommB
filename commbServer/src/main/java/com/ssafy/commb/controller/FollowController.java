@@ -50,6 +50,7 @@ public class FollowController {
 
         FcmDto fcm = FcmDto.builder()
                 .message(FcmDto.Message.builder()
+                        .token(firebaseTokens.get(0).getToken())
                         .notification(FcmDto.Notification.builder()
                                 .title("follow")
                                 .body("")
@@ -64,8 +65,9 @@ public class FollowController {
                                 .build())
                         .build())
                 .build();
-
-        if(firebaseTokens.size() >= 1) fcmService.sends(firebaseTokens, fcm);
+//        fcmService.send(fcm);
+//
+        if(firebaseTokens.size() >= 1)  fcmService.sends(firebaseTokens, fcm);
         fcmService.savePushAlarm(fcm);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
