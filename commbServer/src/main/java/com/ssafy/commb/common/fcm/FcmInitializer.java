@@ -27,10 +27,10 @@ public class FcmInitializer {
                 .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream()))
                 .build();
 
-        FirebaseApp.initializeApp(options);                                 // SDK
+        FirebaseApp.initializeApp(options);                                 // admin SDK
 
 
-        GoogleCredentials googleCredentials = GoogleCredentials
+        GoogleCredentials googleCredentials = GoogleCredentials             // HTTP V1 API
                 .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH)
                         .getInputStream()).createScoped(Collections.singleton("https://www.googleapis.com/auth/cloud-platform")); // credential 키 인증
 
