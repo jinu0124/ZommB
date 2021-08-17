@@ -12,19 +12,12 @@
 </template>
 
 <script>
-import moment from 'moment'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ChallengeDailyKeyword',
-  methods: {
-    ...mapActions('challenge', ['getDailyKeyword']),
-  },
   computed: {
     ...mapState('challenge', ['dailyKeyword']),
-  },
-  created () {
-    this.getDailyKeyword(moment().format('YYYY-MM-DD'))
   },
 }
 </script>
