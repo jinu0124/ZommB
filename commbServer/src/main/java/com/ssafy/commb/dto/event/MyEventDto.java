@@ -20,6 +20,8 @@ public class MyEventDto {
     private Integer id;
     private Integer bookmark;
     private Integer dailyParticipate;
+    private Boolean pencilOn;
+    private Boolean bookmarkOn;
 
     private List<WeeklyEventDto> weekly;
 
