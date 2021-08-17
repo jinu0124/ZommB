@@ -11,7 +11,8 @@
         />
         <button 
           v-if="isMine"
-          class="add-btn"
+          class="add-btn" 
+          title="북카트에 책 추가"
           @click="$router.push({ name: 'SelectBook', params: { flag: 'bookcart' }})"
         >+</button>
       </div>

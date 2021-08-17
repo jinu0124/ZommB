@@ -204,10 +204,6 @@ public class UserController {
 
         fcmService.save(myRes, myReq.getFirebaseToken());
 
-//        fcmService.send(myReq.getFirebaseToken(), "제목", "내용");
-//        String token = "BJF9g6SsclFA3hxLFj8YgBgT4vhAaUXL6Mzsad7Dh2nESKkS1cm1jURzUA9hactgtLe9-HGh_uEX4WIGl3D1YPk";
-//        fcmService.register(myRes.getData().getId(), token);
-
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
@@ -479,6 +475,21 @@ public class UserController {
         return ResponseEntity.ok().body(alarms);
     }
 
+    @PutMapping("/pencil")
+    @ApiOperation(value = "pencil 표시 여부 변경")
+    public ResponseEntity pencil(HttpServletRequest request){
+        userService.updatePencil(request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/bookmark")
+    @ApiOperation(value = "bookmark 표시 여부 변경")
+    public ResponseEntity bookmark(HttpServletRequest request){
+        userService.updateBookmark(request);
+
+        return ResponseEntity.ok().build();
+    }
 }
 
 

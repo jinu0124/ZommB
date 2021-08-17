@@ -3,7 +3,13 @@
     <div class="my-weekly-header">
       <div class="title d-flex align-items-center">  
         <span>Weekly Books</span>
-        <span class="badge rounded-pill ms-2 mt-1 d-flex align-items-center gap-1 px-2">
+        <span 
+          :class="[
+            myChallenge.bookmarkOn ? '' : 'mono', 
+            'badge rounded-pill ms-2 mt-1 d-flex align-items-center gap-1 px-2'
+          ]"
+          @click="toggleBookmark"
+        >
           <img class="level-badge" :src="bookmarkBadge" alt="">
           <span>{{ bookmark[myChallenge.bookmark] }}</span>
         </span>
@@ -41,6 +47,7 @@
 
 <script>
 import moment from 'moment'
+import challengeApi from '@/api/challenge.js'
 import { mapState } from 'vuex'
 
 export default {
@@ -56,9 +63,16 @@ export default {
       let start = document.getElementById('star1').getBoundingClientRect().right
       let end = document.getElementById('star4').getBoundingClientRect().left
       this.lineWidth = Math.ceil(end - start) + 7
+    },
+    async toggleBookmark () {
+      await challengeApi.changeBookmarkOn()
+        .then(() => {
+          this.$store.dispatch('challenge/getMyChallenge', this.myInfo.id)
+        })
     }
   },
   computed: {
+    ...mapState('user', ['myInfo']),
     ...mapState('challenge', ['myChallenge', 'bookmark']),
     weeklyTotal () {
       const day = moment().format('D')
@@ -117,9 +131,6 @@ export default {
   .level-badge {
     width: 12px;
   }
-  .mono {
-    filter: grayscale(90%);
-  }
   .blur {
     opacity: 100%;
     filter: brightness(0.1);
@@ -140,5 +151,6 @@ export default {
     font-size: 10px;
     color: #585858;
     background: #FFDC7C;
+    cursor: pointer;
   }
 </style>

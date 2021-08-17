@@ -1,6 +1,6 @@
 <template>
   <ul v-if="isLogin" class="dropdown-menu" aria-labelledby="UserMenuDropdown">
-    <li><router-link class="dropdown-item" :to="{ name: 'Profile', params: {id: myInfo.id} }">내 프로필</router-link></li>
+    <li><router-link class="dropdown-item" :to="{ name: 'Profile', params: {id: myInfo.id, page: 0} }">내 프로필</router-link></li>
     <li>
       <router-link class="dropdown-item" :to="{ name: 'Notification' }">
         <span>알림</span>
@@ -15,12 +15,13 @@
 </template>
 
 <script>
-import { mapState, mapActions } from "vuex"
+import { mapState, mapActions, mapGetters } from "vuex"
 
 export default {
   name: 'HeaderUserMenu',
   computed: {
-    ...mapState('user', ['myInfo', 'isLogin', 'notiCnt'])
+    ...mapState('user', ['myInfo', 'isLogin']),
+    ...mapGetters('user', ['notiCnt'])
   },
   methods: {
     ...mapActions('user', ['onLogout']),

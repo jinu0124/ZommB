@@ -3,7 +3,13 @@
     <div class="my-daily-header">
       <div class="title d-flex align-items-center">
         <span>Daily Keywords</span>
-        <span class="badge rounded-pill ms-2 mt-1 d-flex align-items-center gap-1 px-2">
+        <span 
+          :class="[
+            myChallenge.pencilOn ? '' : 'mono', 
+            'badge rounded-pill ms-2 mt-1 d-flex align-items-center gap-1 px-2'
+          ]"
+          @click="togglePencil"
+        >
           <img class="level-badge" :src="penBadge" alt="">
           <span>{{ pen[penLevel] }}</span>
         </span>
@@ -32,6 +38,7 @@
 
 <script>
 import moment from 'moment'
+import challengeApi from '@/api/challenge.js'
 import { mapState, mapGetters } from 'vuex'
 
 export default {
@@ -49,9 +56,16 @@ export default {
   methods: {
     stamp (num) {
       return require(`@/assets/image/dailyStamp/${num}.svg`)
+    },
+    async togglePencil () {
+      await challengeApi.changePencilOn()
+        .then(() => {
+          this.$store.dispatch('challenge/getMyChallenge', this.myInfo.id)
+        })
     }
   },
   computed: {
+    ...mapState('user', ['myInfo']),
     ...mapState('challenge', ['myChallenge', 'pen']),
     ...mapGetters('challenge', ['penLevel']),
     dailyTotal () {
@@ -89,6 +103,7 @@ export default {
     font-size: 10px;
     color: #585858;
     background: #FFDC7C;
+    cursor: pointer;
   }
   .level-badge {
     width: 12px;

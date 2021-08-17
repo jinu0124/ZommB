@@ -25,13 +25,12 @@ public class FcmInitializer {
     public void initializer() throws IOException {
         FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredentials(GoogleCredentials.fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH).getInputStream()))
-                .setDatabaseUrl("https://commb-43e85-default-rtdb.asia-southeast1.firebasedatabase.app")
                 .build();
 
-        FirebaseApp.initializeApp(options);                                 // SDK
+        FirebaseApp.initializeApp(options);                                 // admin SDK
 
 
-        GoogleCredentials googleCredentials = GoogleCredentials
+        GoogleCredentials googleCredentials = GoogleCredentials             // HTTP V1 API
                 .fromStream(new ClassPathResource(FIREBASE_CONFIG_PATH)
                         .getInputStream()).createScoped(Collections.singleton("https://www.googleapis.com/auth/cloud-platform")); // credential 키 인증
 

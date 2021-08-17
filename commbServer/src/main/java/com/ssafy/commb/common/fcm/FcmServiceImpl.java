@@ -25,7 +25,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class FcmServiceImpl implements FcmService{
 
-    private final String API_URL = "https://fcm.googleapis.com/v1/projects/commb-43e85/messages:send";
+    private final String API_URL = "https://fcm.googleapis.com/v1/projects/commbfcm/messages:send";
 
     @Autowired
     private FcmInitializer fcmInitializer;
@@ -36,6 +36,7 @@ public class FcmServiceImpl implements FcmService{
     @Autowired
     private PushAlarmDao pushAlarmDao;
 
+    // HTTP V1, Firebase Admin SDK 모두 엣지 브라우저로 푸시 요청 시 파이어베이스 서버 INTERNAL 에러 발생 -> 일단 크롬으로 진행
     /**
      * Firebase 서버에 Push 알림 1:1 발송 요청(가장 최근 접속한 클라이언트 브라우저) : FcmDto 데이터 모두 발송(notification, data)
      * @Param : FcmDto
@@ -74,11 +75,10 @@ public class FcmServiceImpl implements FcmService{
             List<String> failedTokens = new ArrayList<>();
             for (int i = 0; i < responses.size(); i++) {
                 if (!responses.get(i).isSuccessful()) {
-                    System.out.println(responses.get(i).getMessageId());
+                    System.out.println(responses.get(i).getException());
                     failedTokens.add(tokens.get(i).getToken());
                 }
             }
-
             System.out.println("List of tokens that caused failures: " + failedTokens);
         }
     }

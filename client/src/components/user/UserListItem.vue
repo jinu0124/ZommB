@@ -5,18 +5,18 @@
       :src="user.userFileUrl" 
       alt=""
       class="profile"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })" 
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })" 
     >
     <img 
       v-else 
       src="@/assets/image/common/profileDefault.svg" 
       alt=""
       class="profile"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >
     <span 
       class="nickname"
-      @click="$router.push({ name: 'Profile', params: {id: user.id} })"
+      @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >{{ user.nickname }}</span>
     <button 
       v-if="isFollow" 
@@ -45,12 +45,13 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['getFollowing']),
+    ...mapActions('user', ['getFollowing', 'getFollower']),
     async follow () {
       this.isFollow = true
       await userApi.follow(this.user.id)
         .then(() => {
           this.getFollowing(this.$route.params.id)
+          this.getFollower(this.$route.params.id)
         })
     },
     async unfollow () {
@@ -58,6 +59,7 @@ export default {
       await userApi.unfollow(this.user.id)
         .then(() => {
           this.getFollowing(this.$route.params.id)
+          this.getFollower(this.$route.params.id)
         })
     }
   },

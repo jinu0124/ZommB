@@ -94,14 +94,14 @@ cloud:
       auto: false
 
 dynamic:
-  path: http://127.0.0.1:8080/
+  path: https://i5a602.p.ssafy.io/
   front:
-    path: http://127.0.0.1:8000/
+    path: https://i5a602.p.ssafy.io/
 
 # Backend Local : http://127.0.0.1:8080/
 # Frontend Local : http://127.0.0.1:8000/
-# Backend Server : i5a602.p.ssafy.io:8080/
+# Backend Server : i5a602.p.ssafy.io/
 # Frontend Server : i5a602.p.ssafy.io/
 
 fcm:
-  service-account-file: /config/commb-43e85-firebase-adminsdk-q0km7-396da64733.json
+  service-account-file: /config/commbfcm-firebase-adminsdk-qnpb7-60b98fb49e.json

@@ -23,8 +23,6 @@ import Write from '@/views/feed/write/Write'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
-import AddBookcart from '@/components/profile/AddBookcart'
-import AddLibrary from '@/components/profile/AddLibrary'
 import OAuthRedirect from '@/views/user/OAuthRedirect'
 
 Vue.use(VueRouter)
@@ -79,7 +77,7 @@ const routes = [
     meta: { requireAuth: true }
   },
   {
-    path: '/profile/:id',
+    path: '/profile/:id/:page',
     name: 'Profile',
     component: Profile,
     meta: { requireAuth: true }
@@ -152,20 +150,10 @@ const routes = [
   },
   // challenge
   {
-    path: '/challenge',
+    path: '/challenge/:page',
     name : 'Challenge',
     component : Challenge,
-    // meta: { requireAuth: true }
-  },
-  {
-    path: '/addBookcart',
-    name: 'AddBookcart',
-    component: AddBookcart
-  },
-  {
-    path: '/addLibrary',
-    name: 'AddLibrary',
-    component: AddLibrary
+    meta: { requireAuth: true }
   },
   {
     path: '/search',

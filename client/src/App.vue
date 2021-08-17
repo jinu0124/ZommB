@@ -11,18 +11,21 @@
     }"
   >
     <Header v-if="needHeader"/>
+    <NotificationAlert/>
     <router-view />
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header"
 import messaging from '@/api/firebase.js'
+import Header from "@/components/Header"
+import NotificationAlert from '@/components/user/NotificationAlert'
 
 export default {
   name: "App",
   components: {
     Header,
+    NotificationAlert
   },
   computed: {
     // Header 표시 여부 계산
@@ -105,8 +108,19 @@ export default {
     },
   },
   created(){
+    Notification.requestPermission()
+    .then((permission) => {
+      console.log('permission ', permission)
+      if (permission !== 'granted') {
+        alert('알림을 허용해주세요')
+      }
+    })
+
+    messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY)
+
     messaging.onMessage((payload) => {
       this.$store.dispatch('user/onNotification', payload)
+      this.$store.dispatch('user/newAlert', payload)
     })
   },
 }

@@ -1,5 +1,5 @@
 <template>
-  <div class="withdraw">
+  <div class="withdraw d-flex flex-column align-items-center">
     <SimpleHeader
       class="withdraw-header"
       :title=title

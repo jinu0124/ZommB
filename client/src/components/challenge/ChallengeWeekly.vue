@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 import { mapState, mapActions } from 'vuex'
 import ChallengeWeeklyBook from './ChallengeWeeklyBook'
 import ChallengeFeedList from './ChallengeFeedList'
@@ -29,7 +30,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('challenge', ['getWeeklyFeeds', 'getWeeklyParticipate']),
+    ...mapActions('challenge', ['getWeeklyBook', 'getWeeklyFeeds', 'getWeeklyParticipate']),
     addFeed () {
       this.getWeeklyFeeds(this.page)
       this.page ++
@@ -38,7 +39,8 @@ export default {
   computed: {
     ...mapState('challenge', ['weeklyCnt', 'weeklyFeed'])
   },
-  created () {
+  async created () {
+    await this.getWeeklyBook(moment().format('YYYY-MM-DD'))
     this.getWeeklyFeeds(0)
     this.getWeeklyParticipate()
   }
