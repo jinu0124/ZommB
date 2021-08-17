@@ -42,6 +42,14 @@ export default {
       },
     })
   },
+    //댓글 comment 작성
+    writeComment(feedId, comment) {
+      return _axios({
+        url: `feeds/${feedId}/comments`,
+        method: 'post',
+        data: { comment: comment }
+      })
+    },
   //게시물 수정
   updateFeed(feedId) {
     return _axios({
@@ -54,13 +62,6 @@ export default {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'delete',
-    })
-  },
-  //댓글 comment 작성
-  writeComment(feedId, commentId) {
-    return _axios({
-      url: `feeds/${feedId}/comments/${commentId}`,
-      method: 'post',
     })
   },
   //댓글 수정

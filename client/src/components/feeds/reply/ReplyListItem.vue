@@ -1,10 +1,24 @@
 <template>
   <div class="reply-list-item">
-    <!-- user<img> -->
+    <img
+      v-if="feed.user.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="feed.user.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
+      id="UserProfile"
+    />
     <div class="reply-content">
-      <p class="replier">{{ this.replier }}</p>
-      <p class="reply">{{ this.reply }}</p>
-      <div class="reply-like-num">좋아요 {{ this.replyLikeNum }}개</div>
+      <p class="replier">{{ feed.comments[0].nickname }}</p>
+      <p class="reply">{{ feed.comments[0].content }}</p>
+      <div class="reply-like-num">좋아요 {{ feed.comments[0].thumbCnt }}개</div>
     </div>
     <!-- <ReplyMenu/> -->
     <img
@@ -35,12 +49,11 @@ export default {
   components: {
     // ReplyMenu,
   },
+  props: {
+    feed: Object,
+  },
   data() {
     return {
-      replier: "User1",
-      reply:
-        "댓글입니다. 댓글이에여. 이것도 길게 써볼게요 한번 근데 무슨 말을 써야 할 지 모르겠네여 하 하 하...CSS 넘나 어렵고 힘든것...계속써볼까여...어떻게 ㅎㄹ까여",
-      replyLikeNum: 0,
       Like: false,
       disLike: true,
       moreReply: true,
@@ -91,5 +104,12 @@ export default {
   background: #fff;
   color: rgba(33, 33, 33, 1);
   margin-bottom: 2px;
+}
+.default-user-image,
+.user-profile {
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 100%;
+  margin: 0px 5px;
 }
 </style>

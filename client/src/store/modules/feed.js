@@ -5,20 +5,13 @@ const state = {
   feedInfo: null,
   feedId: null,
   bookId: null,
+  likeInfo: null,
   commentCnt: null,
+  reportInfo: null,
 }
 const actions = {
   moveToFeed() {
     router.push({ name: 'Feed' })
-  },
-  moveToLike(feedId) {
-    this.$router.push("/like/" + feedId);
-  },
-  moveToReply() {
-    router.push({ name: 'Reply' })
-  },
-  moveToReport(feedId) {
-    this.$router.push("/report/" + feedId);
   },
   //api 요청
   //게시물 목록
@@ -30,30 +23,30 @@ const actions = {
       })
   },
   //게시물 좋아요 목록
-  // async getLikeInfo({ rootState, commit }, page) {
-  //   await feedApi.feedLikeList(rootState.feed.feed, page)
-  //     .then((res) => {
-  //       console.log(res)
-  //       commit('SET_LIKE_INFO', res.data.data)
-  //     })
-  // },
+  async getLikeInfo({ commit }, data) {
+    await feedApi.feedLikeList(data.id, data.page)
+      .then((res) => {
+        console.log(res)
+        commit('SET_LIKE_INFO', res.data.data)
+      })
+  },
   //게시물 좋아요
   async likeFeed({ dispatch }, feedId) {
     await feedApi.likeFeed(feedId)
       .then(() => {
-        dispatch('getFeedInfo')
+        dispatch('getFeedInfo', 0)
       })
   },
   //게시물 좋아요 취소
   async dislikeFeed({ dispatch }, feedId) {
     await feedApi.dislikeFeed(feedId)
       .then(() => {
-        dispatch('getFeedInfo', feedId)
+        dispatch('getFeedInfo', 0)
       })
   },
   //게시물 삭제
-  async deleteFeed({ dispatch }, feedId, page) {
-    await feedApi.deleteFeed(feedId, page)
+  async deleteFeed({ dispatch }, feedId) {
+    await feedApi.deleteFeed(feedId)
       .then(() => {
         dispatch('getFeedInfo', feedId)
       })
@@ -66,6 +59,14 @@ const actions = {
         commit('SET_REPORT_FEED', feedId)
       })
   },
+  //댓글 작성
+  async writeComment({ commit }, feedId, comment) {
+    await feedApi.writeComment(feedId, comment)
+      .then((res) => {
+        console.log(res)
+        commit('SET_COMMENT_DATA', feedId)
+      })
+  }
 }
 const mutations = {
   SET_FEED_INFO(state, payload) {
@@ -80,9 +81,13 @@ const mutations = {
   SET_LIKE_INFO(state, payload) {
     state.likeInfo = payload
   },
-  SET_REPORT_FEED(state, payload) {
-    state.likeInfo = payload
+  SET_COMMENT_DATA(state, payload) {
+    state.commentInfo = payload
   },
+  SET_REPORT_FEED(state, payload) {
+    state.reportInfo = payload
+  },
+
 }
 const getters = {
 

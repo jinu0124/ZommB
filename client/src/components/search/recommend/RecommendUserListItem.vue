@@ -19,32 +19,28 @@
     </span>
     <span class="user-nickname">{{ user.nickname }}</span>
     <span>
-      <button
-        class="follow btn-5 btn-yellow"
-        @click="follow()"
-        v-show="!user.follow.follow"
-      >
-        팔로우
-      </button>
+      <button class="follow btn-5 btn-yellow" @click="follow">팔로우</button>
     </span>
   </div>
 </template>
 
 <script>
+import { mapActions } from "vuex";
+import userApi from "@/api/user";
+
 export default {
   name: "RecommendUserListItem",
+  methods: {
+    ...mapActions("user", ["getUserInfo"]),
+    async follow() {
+      this.follow.follow = true;
+      await userApi.follow(this.user.id).then(() => {
+        this.getUserInfo(this.user.id);
+      });
+    },
+  },
   props: {
     user: Object,
-  },
-  methods: {
-    follow() {
-      this.user.follow = false;
-      console.log("팔로우");
-    },
-    unfollow() {
-      this.user.follow = true;
-      console.log("팔로우 취소");
-    },
   },
 };
 </script>

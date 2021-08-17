@@ -1,11 +1,15 @@
 <template>
   <div class="dropdown-menu" :aria-labelledby="'FeedMenuDropdown' + feed.id">
-    <div class="dropdown-item" @click="editContent()">수정하기</div>
+    <div class="dropdown-item" @click="editContent(feed.id)">수정하기</div>
     <div>
       <a class="dropdown-item" @click="deleteFeed(feed.id)">삭제하기</a>
     </div>
     <div>
-      <a class="dropdown-item" @click="moveToReport(feed.id)">신고하기</a>
+      <a
+        class="dropdown-item"
+        @click="$router.push({ name: 'Report', params: { id: feed.id } })"
+        >신고하기</a
+      >
     </div>
   </div>
 </template>

@@ -9,12 +9,14 @@
             type="button"
             id="UserProfile"
             :src="feed.user.userFileUrl"
+            @click="moveToUserDetail()"
             alt="user-profile" />
           <img
             v-else
             alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
+            @click="moveToUserDetail()"
             id="UserProfile"
         /></span>
         <span class="nick-title">
@@ -78,21 +80,27 @@
           src="@/assets/image/deco/heartEmpty.svg"
         />
       </span>
-      <span class="like-num" type="button" @click="moveToLike">{{
-        feed.thumbCnt
-      }}</span>
+      <span
+        class="like-num"
+        type="button"
+        @click="$router.push({ name: 'Like', params: { id: feed.id } })"
+        >{{ feed.thumbCnt }}</span
+      >
       <span>
         <img
           alt=""
           class="btn-reply"
           type="button"
-          @click="moveToReply"
+          @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span class="reply-num" type="button" @click="moveToReply">{{
-        feed.comments.length
-      }}</span>
+      <span
+        class="reply-num"
+        type="button"
+        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
+        >{{ feed.comments.length }}</span
+      >
     </div>
     <div class="content">
       <p class="content-detail">{{ shortenContent }}</p>
@@ -112,7 +120,7 @@
       >
         접기
       </p>
-      <p class="content-duration">{{ this.timeCal }}시간 전</p>
+      <p class="content-duration">{{ timeForToday(this.feed.createAt) }}</p>
       <!-- 시간 계산 필요 -->
       <div>
         <span
@@ -127,14 +135,13 @@
     </div>
     <div class="reply-list-item" v-if="feed.comments.length > 0">
       <div class="reply-content">
-        <!-- <span class="replier">{{ feed.comments.nickname }}</span> -->
-        <!-- <span class="reply">{{ feed.comments.content }}</span> -->
+        <!-- <span class="replier">{{ feed.comments[0].nickname }}</span>
+        <span class="reply">{{ feed.comments[0].content }}</span> -->
         <span
           ><img
             alt="좋아요버튼안눌림"
             class="dislike btn-like"
             type="button"
-            @click="like()"
             src="@/assets/image/deco/heartEmpty.svg"
             v-show="disLike"
           />
@@ -142,7 +149,6 @@
             alt="좋아요버튼눌림"
             class="like btn-like"
             type="button"
-            @click="dislike()"
             src="@/assets/image/deco/heartFill.svg"
             v-show="Like"
           />
@@ -150,7 +156,11 @@
       </div>
     </div>
     <div class="reply-more">
-      <span type="button" @click="moveToReply(feed.id)">더보기</span>
+      <span
+        type="button"
+        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
+        >더보기</span
+      >
     </div>
   </div>
 </template>
@@ -173,17 +183,12 @@ export default {
       moreContent: false,
       Like: false,
       disLike: true,
-      timeCal: this.feed.createAt,
       falseLike: !this.feed.isThumb,
+      idx: null,
     };
   },
   methods: {
-    ...mapActions("feed", [
-      "moveToReply",
-      "moveToLike",
-      "likeFeed",
-      "dislikeFeed",
-    ]),
+    ...mapActions("feed", ["likeFeed", "dislikeFeed"]),
     like() {
       this.feed.isThumb = true;
       this.feed.thumbCnt += 1;
@@ -199,14 +204,33 @@ export default {
       let bookid = this.feed.book.id;
       this.$router.push("/book/" + bookid);
     },
-    // like() {
-    //   this.Like = true;
-    //   this.disLike = false;
-    // },
-    // dislike() {
-    //   this.Like = false;
-    //   this.disLike = true;
-    // },
+    moveToUserDetail() {
+      let userid = this.feed.user.id;
+      this.$router.push("/profile/" + userid + "/0");
+    },
+    timeForToday(value) {
+      const today = new Date();
+      const timeValue = new Date(value);
+
+      const betweenTime = Math.floor(
+        (today.getTime() - timeValue.getTime()) / 1000 / 60
+      );
+      if (betweenTime < 1) return "방금전";
+      if (betweenTime < 60) {
+        return `${betweenTime}분전`;
+      }
+      const betweenTimeHour = Math.floor(betweenTime / 60);
+      if (betweenTimeHour < 24) {
+        return `${betweenTimeHour}시간전`;
+      }
+
+      const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+      if (betweenTimeDay < 365) {
+        return `${betweenTimeDay}일전`;
+      }
+
+      return `${Math.floor(betweenTimeDay / 365)}년전`;
+    },
   },
   computed: {
     ...mapState("user", ["myInfo"]),
