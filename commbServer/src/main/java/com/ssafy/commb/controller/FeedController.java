@@ -265,7 +265,7 @@ public class FeedController {
                                                                   @RequestParam Integer page,
                                                                   HttpServletRequest request) {
 
-        int myUserId = Integer.parseInt((String)request.getAttribute("userId"));
+        int myUserId = (Integer) request.getAttribute("userId");
 
         FeedDto.ResponseList feedResList = feedService.getFollowingFeeds(page * 20, myUserId);
 
