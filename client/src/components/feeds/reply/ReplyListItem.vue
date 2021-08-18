@@ -100,7 +100,7 @@ export default {
       this.contentNew = this.reply.content
     },
     async onUpdate () {
-      await this.updateFeed({ id: this.feed.id, content: this.contentNew })
+      await this.updateComment({ feedId: this.$route.params.id, commentId: this.reply.id, content: this.contentNew })
       this.isEditMode = false
       this.contentNew = this.reply.content
     },

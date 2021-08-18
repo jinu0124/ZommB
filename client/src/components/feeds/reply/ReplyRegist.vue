@@ -58,8 +58,8 @@ export default {
       this.content = event.target.value;
     },
     onWrite() {
-      this.content = ''
       this.writeComment(this.replyData)
+      this.content = ''
     }
   },
 };

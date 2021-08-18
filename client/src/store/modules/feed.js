@@ -130,11 +130,11 @@ const actions = {
     })
   },
   //댓글 수정
-  async updateComment({ commit }, feedId, commentId, content) {
-    await feedApi.updateFeed(feedId, commentId, content)
+  async updateComment({ dispatch }, commentData) {
+    await feedApi.updateComment(commentData.feedId, commentData.commentId, commentData.content)
     .then((res) => {
       console.log(res)
-      commit('SET_UPDATE_COMMENT', feedId)
+      dispatch('getFeedDetail', commentData.feedId)
     })
   },
 
