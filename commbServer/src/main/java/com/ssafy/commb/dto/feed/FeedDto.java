@@ -44,6 +44,14 @@ public class FeedDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RequestContent {                // 요청
+
+        private String content;
+    }
+
+    @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor

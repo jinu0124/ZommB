@@ -1,12 +1,16 @@
 <template>
-  <div class="reply-list">
-    <ReplyListItem v-for="(reply, idx) in comments" :key="idx" :reply="reply" />
+  <div class="reply-list d-flex flex-column align-items-center gap-2">
+    <ReplyListItem 
+      v-for="reply in targetFeed.comments" 
+      :key=reply.id
+      :reply=reply
+    />
   </div>
 </template>
 
 <script>
 import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
-import { mapState } from "vuex";
+import { mapGetters } from "vuex";
 
 export default {
   name: "ReplyList",
@@ -14,7 +18,7 @@ export default {
     ReplyListItem,
   },
   computed: {
-    ...mapState("feed", ["comments"]),
+    ...mapGetters('feed', ['targetFeed'])
   },
 };
 </script>

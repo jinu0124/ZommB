@@ -2,23 +2,22 @@
   <div class="feed-list-item">
     <div class="item-body d-flex flex-column align-items-center">
       <div class="feed-header align-items-center">
-        <span
-          ><img
+        <span>
+          <img
             v-if="feed.user.userFileUrl"
             class="user-profile"
-            type="button"
-            id="UserProfile"
             :src="feed.user.userFileUrl"
+            alt="user-profile"
             @click="moveToUserDetail()"
-            alt="user-profile" />
+          />
           <img
             v-else
-            alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
+            alt="디폴트 회원 이미지"
             @click="moveToUserDetail()"
-            id="UserProfile"
-        /></span>
+          />
+        </span>
         <span class="nick-title">
           <div class="owner" type="button" @click="moveToUserDetail()">
             {{ feed.user.nickname }}
@@ -41,7 +40,10 @@
             type="button"
             :id="'FeedMenuDropdown' + feed.id"
           />
-          <FeedMenu :feed="feed" />
+          <FeedMenu 
+            :feed="feed"
+            @edit="turnIntoEditMode"
+          />
         </span>
       </div>
 
@@ -49,7 +51,6 @@
         v-if="feed.feedFileUrl"
         class="feed-image"
         type="button"
-        id="FeedImage"
         :src="feed.feedFileUrl"
         alt="feed-image"
       />
@@ -98,7 +99,25 @@
         feed.comments.length
       }}</span>
     </div>
-    <div class="content">
+    <div v-if="isEditMode" class="edit-box d-flex align-items-center">
+      <textarea
+        class="form-control edit-input" 
+        type="text"
+        @input="editContent"
+        :value="contentNew"
+      ></textarea>
+      <div class="d-flex flex-column me-2 gap-1">
+        <button 
+          class="btn-edit btn-yellow"
+          @click="onUpdate"
+        >수정</button>
+        <button 
+          class="btn-edit btn-grey"
+          @click="cancelUpdate"
+        >취소</button>
+      </div>
+    </div>
+    <div v-else class="content">
       <p class="content-detail">{{ shortenContent }}</p>
       <p
         class="content-more"
@@ -156,10 +175,13 @@ export default {
       disLike: true,
       idx: null,
       isThumb: this.feed.isThumb,
+      // 수정 관련 데이터
+      isEditMode: false,
+      contentNew: ''
     };
   },
   methods: {
-    ...mapActions("feed", ["likeFeed", "dislikeFeed"]),
+    ...mapActions("feed", ["likeFeed", "dislikeFeed", 'updateFeed']),
     like() {
       this.isThumb = true;
       this.feed.thumbCnt += 1;
@@ -167,6 +189,21 @@ export default {
     dislike() {
       this.isThumb = false;
       this.feed.thumbCnt -= 1;
+    },
+    turnIntoEditMode () {
+      this.isEditMode = true
+    },
+    editContent (event) {
+      this.contentNew = event.target.value
+    },
+    cancelUpdate () {
+      this.isEditMode = false
+      this.contentNew = this.feed.content
+    },
+    async onUpdate () {
+      await this.updateFeed({ id: this.feed.id, content: this.contentNew })
+      this.isEditMode = false
+      this.contentNew = this.feed.content
     },
     showMoreContent(flag) {
       this.moreContent = flag;
@@ -203,8 +240,8 @@ export default {
       return `${Math.floor(betweenTimeDay / 365)}년전`;
     },
     onMoveToComment() {
-      this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
-      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
+      this.$store.commit("feed/SET_TARGET_FEED", this.feed.id)
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } })
     },
     searchTag(keyword) {
       this.$router.push({
@@ -225,6 +262,9 @@ export default {
       }
     },
   },
+  mounted () {
+    this.contentNew = this.feed.content
+  }
 };
 </script>
 
@@ -253,6 +293,38 @@ export default {
   margin-bottom: 10px;
   font-size: 14px;
   width: 160px;
+}
+.edit-box {
+  background: #F1F1F1;
+  width: 280px;
+  height: fit-content;
+  border-radius: 10px;
+}
+.edit-input {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  word-spacing: 1px;
+  line-height: 18px;
+  outline: none;
+  padding: 10px 20px;
+  height: 80px;
+  word-wrap: break-word;
+}
+.edit-input::-webkit-scrollbar {
+  display: none;
+}
+.btn-edit {
+  border: none;
+  width: 50px;
+  height: 25px;
+  border-radius: 13px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 500;
 }
 .book-title {
   width: 160px;

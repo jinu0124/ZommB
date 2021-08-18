@@ -19,6 +19,9 @@
       <module name="com.ssafy.commbServer.test" target="1.8" />
       <module name="commbServer.aot" target="1.8" />
       <module name="commbServer.aotTest" target="1.8" />
+      <module name="commbServer.main" target="1.8" />
+      <module name="commbServer.querydsl" target="1.8" />
+      <module name="commbServer.test" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
