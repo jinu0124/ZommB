@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="com.ssafy" externalSystemModuleType="sourceSet" externalSystemModuleVersion="0.0.1-SNAPSHOT" linkedProjectId="commbServer:main" linkedProjectPath="$MODULE_DIR$/../../commbServer" rootProjectPath="$MODULE_DIR$/../../commbServer" />
+  <component name="FacetManager">
+    <facet type="jpa" name="JPA">
+      <configuration>
+        <setting name="validation-enabled" value="true" />
+        <setting name="provider-name" value="Hibernate" />
+        <datasource-mapping>
+          <factory-entry name="Entities" />
+          <factory-entry name="entityManagerFactory" />
+        </datasource-mapping>
+        <naming-strategy-map />
+      </configuration>
+    </facet>
+    <facet type="Spring" name="Spring">
+      <configuration />
+    </facet>
+    <facet type="web" name="Web">
+      <configuration>
+        <webroots />
+        <sourceRoots>
+          <root url="file://$MODULE_DIR$/../../commbServer/src/main/resources" />
+          <root url="file://$MODULE_DIR$/../../commbServer/src/main/java" />
+          <root url="file://$MODULE_DIR$/../../commbServer/build/generated/querydsl" />
+        </sourceRoots>
+      </configuration>
+    </facet>
+  </component>
+</module>

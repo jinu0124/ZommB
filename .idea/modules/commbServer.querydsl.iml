@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module version="4">
+  <component name="ExternalSystem" externalSystem="GRADLE" externalSystemModuleGroup="com.ssafy" externalSystemModuleType="sourceSet" externalSystemModuleVersion="0.0.1-SNAPSHOT" linkedProjectId="commbServer:querydsl" linkedProjectPath="$MODULE_DIR$/../../commbServer" rootProjectPath="$MODULE_DIR$/../../commbServer" />
+</module>

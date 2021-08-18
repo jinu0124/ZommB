@@ -7,9 +7,12 @@ const state = {
   bookId: null,
   likeInfo: null,
   reportInfo: null,
-  comments: null,
+  // comments: null,
   updateFeedInfo: null,
   undateCommentInfo: null,
+  comments: null,
+  targetFeed: null,
+  stopFeed: false
 }
 const actions = {
   moveToFeed() {
@@ -18,10 +21,36 @@ const actions = {
   //게시물api 요청
   //게시물 목록
   async getFeedInfo({ rootState, commit }, page) {
-    await feedApi.getNewsFeed(rootState.user.myInfo.id, page)
+    if (!page || !state.stopFeed) {
+      await feedApi.getNewsFeed(rootState.user.myInfo.id, page)
+        .then((res) => {
+          // console.log(res)
+          if (res.status === 200) {
+            if (!page) {
+              commit('SET_FEED_INFO', res.data.data)
+            } else {
+              commit('ADD_FEED_INFO', res.data.data)
+            }
+            commit('SET_STOP', false)
+          } else if (res.status === 204) {
+            if (!page) {
+              commit('SET_FEED_INFO', null)
+            }
+            commit('SET_STOP', true)
+          }
+        })
+    }
+  },
+  // 단일 게시물 조회
+  async getFeedDetail ({ commit }, feedId) {
+    await feedApi.getFeedInfo(feedId)
       .then((res) => {
         console.log(res)
-        commit('SET_FEED_INFO', res.data.data)
+        const payload = {
+          id: feedId,
+          data: res.data.data
+        }
+        commit('CHANGE_FEED_INFO', payload)
       })
   },
   //게시물 좋아요 목록
@@ -62,20 +91,21 @@ const actions = {
       })
   },
   //게시글 수정
-  async updateFeed({ commit }, feedId, contents) {
-    await feedApi.updateFeed(feedId, contents)
+  async updateFeed({ dispatch }, feedData) {
+    await feedApi.updateFeed(feedData.id, feedData.content)
     .then((res) => {
       console.log(res)
-      commit('SET_UPDATE_FEED', feedId)
+      dispatch('getFeedDetail', feedData.id)
     })
   },
   //댓글 api 요청
   //댓글 작성
-  async writeComment({ commit }, replyData) {
+  async writeComment({ dispatch }, replyData) {
     await feedApi.writeComment(replyData.id, replyData.cont)
       .then((res) => {
         console.log(res)
-        commit('SET_COMMENT_DATA', null)
+        dispatch('getFeedDetail', replyData.id)
+        // commit('SET_COMMENT_DATA', null)
       })
     },
   //댓글 삭제
@@ -100,19 +130,35 @@ const actions = {
     })
   },
   //댓글 수정
-  async updateComment({ commit }, feedId, commentId, content) {
-    await feedApi.updateFeed(feedId, commentId, content)
+  async updateComment({ dispatch }, commentData) {
+    await feedApi.updateComment(commentData.feedId, commentData.commentId, commentData.content)
     .then((res) => {
       console.log(res)
-      commit('SET_UPDATE_COMMENT', feedId)
+      dispatch('getFeedDetail', commentData.feedId)
     })
   },
 
   
 }
 const mutations = {
+  // 피드 리스트 조회
   SET_FEED_INFO(state, payload) {
     state.feedInfo = payload
+  },
+  ADD_FEED_INFO(state, payload) {
+    payload.forEach(data => {
+      state.feedInfo.push(data)
+    })
+  },
+  CHANGE_FEED_INFO(state, payload) {
+    const target = state.feedInfo.find((feed) => {
+      return feed.id === Number(payload.id)
+    })
+    Object.assign(target, payload.data)
+  },
+  // 댓글 세팅
+  SET_TARGET_FEED(state, payload) {
+    state.targetFeed = payload
   },
   SET_FEED_LIKE(state, payload) {
     state.feedInfo = payload
@@ -123,9 +169,6 @@ const mutations = {
   SET_LIKE_INFO(state, payload) {
     state.likeInfo = payload
   },
-  SET_COMMENT_DATA(state, payload) {
-    state.comments = payload
-  },
   SET_REPORT_FEED(state, payload) {
     state.reportInfo = payload
   },
@@ -135,9 +178,16 @@ const mutations = {
   SET_UPDATE_COMMENT(state, payload) {
     state.updateCommentInfo = payload
   },
+  SET_STOP(state, payload) {
+    state.stopFeed = payload
+  }
 }
 const getters = {
-
+  targetFeed (state) {
+    return state.feedInfo.find((feed) => {
+      return feed.id === state.targetFeed
+    })
+  }
 }
 export default {
   namespaced: true,
