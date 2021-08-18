@@ -240,7 +240,7 @@ export default {
       return `${Math.floor(betweenTimeDay / 365)}년전`;
     },
     onMoveToComment() {
-      this.$store.commit("feed/SET_COMMENTS", this.feed)
+      this.$store.commit("feed/SET_TARGET_FEED", this.feed.id)
       this.$router.push({ name: "Reply", params: { id: this.feed.id } })
     },
     searchTag(keyword) {

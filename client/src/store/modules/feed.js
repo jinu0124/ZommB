@@ -11,6 +11,7 @@ const state = {
   updateFeedInfo: null,
   undateCommentInfo: null,
   comments: null,
+  targetFeed: null,
   stopFeed: false
 }
 const actions = {
@@ -99,11 +100,12 @@ const actions = {
   },
   //댓글 api 요청
   //댓글 작성
-  async writeComment({ commit }, replyData) {
+  async writeComment({ dispatch }, replyData) {
     await feedApi.writeComment(replyData.id, replyData.cont)
       .then((res) => {
         console.log(res)
-        commit('SET_COMMENT_DATA', null)
+        dispatch('getFeedDetail', replyData.id)
+        // commit('SET_COMMENT_DATA', null)
       })
     },
   //댓글 삭제
@@ -150,13 +152,13 @@ const mutations = {
   },
   CHANGE_FEED_INFO(state, payload) {
     const target = state.feedInfo.find((feed) => {
-      return feed.id === payload.id
+      return feed.id === Number(payload.id)
     })
     Object.assign(target, payload.data)
   },
   // 댓글 세팅
-  SET_COMMENTS(state, payload) {
-    state.comments = payload
+  SET_TARGET_FEED(state, payload) {
+    state.targetFeed = payload
   },
   SET_FEED_LIKE(state, payload) {
     state.feedInfo = payload
@@ -166,9 +168,6 @@ const mutations = {
   },
   SET_LIKE_INFO(state, payload) {
     state.likeInfo = payload
-  },
-  SET_COMMENT_DATA(state, payload) {
-    state.comments = payload
   },
   SET_REPORT_FEED(state, payload) {
     state.reportInfo = payload
@@ -184,7 +183,11 @@ const mutations = {
   }
 }
 const getters = {
-
+  targetFeed (state) {
+    return state.feedInfo.find((feed) => {
+      return feed.id === state.targetFeed
+    })
+  }
 }
 export default {
   namespaced: true,

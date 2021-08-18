@@ -54,7 +54,7 @@ export default {
       return _axios({
         url: `feeds/${feedId}/comments`,
         method: 'post',
-        data: comment
+        data: {comment: comment}
       })
     },
   //게시물 수정
