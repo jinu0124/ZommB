@@ -112,7 +112,7 @@ export default {
     },
   },
   created() {
-    // messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY)
+    messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY);
 
     messaging.onMessage((payload) => {
       this.$store.dispatch("user/onNotification", payload);
