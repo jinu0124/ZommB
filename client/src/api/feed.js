@@ -49,14 +49,14 @@ export default {
       },
     })
   },
-    //댓글 comment 작성
-    writeComment(feedId, comment) {
-      return _axios({
-        url: `feeds/${feedId}/comments`,
-        method: 'post',
-        data: {comment: comment}
-      })
-    },
+  //댓글 comment 작성
+  writeComment(feedId, content) {
+    return _axios({
+      url: `feeds/${feedId}/comments`,
+      method: 'post',
+      data: { content: content }
+    })
+  },
   //게시물 수정
   updateFeed(feedId, content) {
     return _axios({
