@@ -11,17 +11,21 @@
     }"
   >
     <Header v-if="needHeader"/>
+    <NotificationAlert/>
     <router-view />
   </div>
 </template>
 
 <script>
-import Header from "@/components/Header";
+import messaging from '@/api/firebase.js'
+import Header from "@/components/Header"
+import NotificationAlert from '@/components/user/NotificationAlert'
 
 export default {
   name: "App",
   components: {
     Header,
+    NotificationAlert
   },
   computed: {
     // Header 표시 여부 계산
@@ -33,6 +37,8 @@ export default {
         this.$route.name === "SignupEmail" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Notification" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
@@ -55,6 +61,7 @@ export default {
         this.$route.name === "Signup" ||
         this.$route.name === "FindPassword" ||
         this.$route.name === "ResetPassword" ||
+        this.$route.name === "Withdraw" ||
         this.$route.name === "UpdateInfo"
       ) {
         return true;
@@ -67,7 +74,7 @@ export default {
     isFeed() {
       if (
         this.$route.name === "Feed" ||
-        this.$route.name === "SelectBook" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag === 'write') ||
         this.$route.name === "Write"||
         this.$route.name === "Reply") {
         return true;
@@ -75,7 +82,15 @@ export default {
       return false;
     },
     isProfile() {
-      return this.$route.name === "Profile";
+      if (
+        this.$route.name === "Notification" ||
+        this.$route.name === "Profile" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag != 'write') ||
+        this.$route.name === "Follow"
+      ) {
+        return true
+      }
+      return false
     },
     isSearch() {
       if (this.$route.name === "BookInfo" || this.$route.name === "Search") {
@@ -92,7 +107,23 @@ export default {
       return false
     },
   },
-};
+  created(){
+    Notification.requestPermission()
+    .then((permission) => {
+      console.log('permission ', permission)
+      if (permission !== 'granted') {
+        alert('알림을 허용해주세요')
+      }
+    })
+
+    messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY)
+
+    messaging.onMessage((payload) => {
+      this.$store.dispatch('user/onNotification', payload)
+      this.$store.dispatch('user/newAlert', payload)
+    })
+  },
+}
 </script>
 
 <style src="@/assets/style/accounts.css"></style>

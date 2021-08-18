@@ -5,7 +5,6 @@
         <div class="modal-header d-flex align-items-center">
           <i 
             class="back-btn fi-rr-angle-small-left"
-            type="button"
             data-bs-dismiss="modal"
           ></i>
           <span class="modal-title" id="profileCropModalLabel">프로필 변경</span>
@@ -116,6 +115,7 @@ export default {
     padding-top: 5px;
     font-size: 1.5rem;
     color: #683EC9;
+    cursor: pointer;
   }
   .modal-footer {
     background: #fff;

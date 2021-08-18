@@ -30,7 +30,6 @@
         
         <div class="btn-text-primary mt-1">
           <span
-            type="button" 
             data-bs-toggle="modal" 
             data-bs-target="#profileCropModal"
           >프로필 변경</span>
@@ -39,7 +38,6 @@
           />
           <span class="mx-1">•</span>
           <span
-            type="button"
             @click="onFileDelete"
           >프로필 삭제</span>
         </div>
@@ -63,7 +61,6 @@
 
         <div 
           class="btn-text-primary mt-1 text-center mt-3"
-          type="button"
           @click="passwordToggle"
         >비밀번호 변경</div>
         <div 
@@ -187,6 +184,7 @@ export default {
       this.preview = null
       this.profilePath = null
       this.myCroppa = null
+      this.makeFormData()
     },
     makeFormData () {
       if (this.profileUpdate === 1) {

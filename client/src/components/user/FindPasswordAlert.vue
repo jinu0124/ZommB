@@ -1,7 +1,6 @@
 <template>
   <div class="email-check d-flex flex-column align-items-center justify-content-center">
     <i 
-      type="button"
       class="fi-sr-cross-circle close-btn"
       @click="requestClose"
     ></i>
@@ -72,6 +71,7 @@ export default {
     left: 10px;
     font-size: 1.2rem;
     color: #585858;
+    cursor: pointer;
   }
   .image-deco {
     position: fixed;

@@ -2,33 +2,25 @@
   <div class="feed">
     <div class="fd-header d-flex flex-column">
       <div class="title" style="float: left">
-        NewsFeed<img
+        NewsFeed
+        <!-- <img
           src="@/assets/image/test/write-btn.svg"
           class="write-btn"
           style="float: right"
           type="button"
-          @click="moveToWrite()"
-        />
+          @click="moveToSelectBook()"
+        /> -->
       </div>
     </div>
     <div>
       <FeedList />
-    </div>
-    <div>
-      Scroll Test 입니다. <br />
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam
-      quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus
-      aliquam eum beatae assumenda officia quo odit optio! Lorem ispsum, dolor
-      sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
-      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
-      assumenda officia quo odit optio!
     </div>
   </div>
 </template>
 
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Feed",
@@ -36,19 +28,21 @@ export default {
     FeedList,
   },
   methods: {
-    ...mapActions("feed", ["getFeedList"]),
-    moveToWrite() {
-      this.$router.push("/write");
-    },
+    ...mapActions("feed", ["getFeedInfo"]),
+    // moveToSelectBook() {
+    //   this.$router.push("select/true");
+    // },
   },
-  computed: {
-    ...mapState("feed", ["userInfo"]),
+  //페이지 렌더링 시 피드 정보를 0페이지부터 가져온다.
+  created() {
+    this.getFeedInfo(0);
   },
 };
 </script>
 
 <style scoped>
 .feed {
+  width: 100%;
   background: #ffffff;
   height: 100vh;
   border-radius: 30px 0px 0px 0px;
@@ -64,6 +58,7 @@ export default {
 .fd-header .title {
   font-size: 1.5rem;
   font-weight: 700;
+  margin-bottom: 10px;
 }
 .write-btn {
   width: 24px;

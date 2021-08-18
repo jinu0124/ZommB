@@ -1,5 +1,5 @@
 <template>
-  <div class="like-list">
+  <div>
     <div
       class="like-list-item"
       @mouseover="currentItem(true)"
@@ -8,11 +8,11 @@
     >
       <span class="user-images">
         <img
-          v-if="myInfo.userFileUrl"
+          v-if="feed.userFileUrl"
           class="user-profile"
           type="button"
           id="UserProfile"
-          :src="myInfo.userFileUrl"
+          :src="feed.userFileUrl"
           alt="user-profile"
         />
         <img
@@ -23,13 +23,22 @@
           type="button"
         />
       </span>
-      <span class="user-nickname">{{ nickname }}</span>
+      <span class="user-nickname">{{ feed.nickname }}</span>
       <span>
-        <button class="follow btn-5 btn-yellow" @click="follow()" v-show="Follow">팔로우</button>
-      </span>
-      <span>
-        <button class="follow btn-5 btn-grey" type="button" @click="unfollow()" v-show="unFollow">
-          팔로우 취소
+        <button
+          class="follow btn-5 btn-grey"
+          @click="unfollow"
+          v-if="feed.isFollow"
+        >
+          언팔로우
+        </button>
+        <button
+          class="follow btn-5 btn-yellow"
+          type="button"
+          @click="follow"
+          v-else
+        >
+          팔로우
         </button>
       </span>
     </div>
@@ -37,8 +46,8 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
+import { mapActions } from "vuex";
+import userApi from "@/api/user";
 export default {
   name: "LikeListItem",
   data() {
@@ -50,26 +59,27 @@ export default {
     };
   },
   props: {
-    like: Object,
+    feed: Object,
   },
   methods: {
+    ...mapActions("user", ["getUserInfo"]),
     currentItem(flag) {
       this.isColor = flag;
     },
-    follow() {
-      this.Follow = false;
-      this.unFollow = true;
-      console.log("팔로우");
+    async follow() {
+      this.isFollow = true;
+      await userApi.follow(this.id).then(() => {
+        this.getUserInfo(this.id);
+      });
     },
-    unfollow() {
-      this.Follow = true;
-      this.unFollow = false;
-      console.log("팔로우 취소");
+    async unfollow() {
+      this.isFollow = false;
+      await userApi.unfollow(this.id).then(() => {
+        this.getUserInfo(this.id);
+      });
     },
   },
-  computed: {
-    ...mapState("user", ["myInfo"]),
-  },
+  computed: {},
 };
 </script>
 
@@ -96,11 +106,11 @@ div {
 }
 .default-user-image,
 .user-profile {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 100%;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
-/* .user-profile {
-  align-self: center;
-} */
+.like-list-item {
+  margin: 10px 0px;
+}
 </style>

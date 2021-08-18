@@ -4,11 +4,12 @@
 <mapper namespace="com.ssafy.commb.dao.KeywordDao">
 
     <select id="getKeywordRecommend" parameterType="Integer" resultType="Keyword">
-        SELECT distinct k.id, k.keyword, uk.cnt
-        FROM user_keyword uk, keyword k
-        WHERE uk.user_id = #{userId} AND uk.keyword_id = k.id
-        ORDER BY uk.cnt DESC
-        LIMIT 5
+        SELECT keyword
+        FROM book_shelves bs, book_keyword bk, keyword k
+        WHERE bs.user_id = #{userId} AND bs.book_id = bk.book_id AND k.id = bk.keyword_id
+        GROUP BY keyword
+        ORDER BY COUNT(keyword) DESC
+        LIMIT 6
     </select>
 
     <insert id="getAndSetRandomKeyword">

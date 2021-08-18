@@ -36,6 +36,7 @@ public class BookDto {
     private List<KeywordDto> keywords;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class BookSearchRequest{                // 요청

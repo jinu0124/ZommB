@@ -7,10 +7,12 @@ import com.ssafy.commb.model.DailyEvent;
 import com.ssafy.commb.model.Keyword;
 import com.ssafy.commb.repository.DailyEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -42,9 +44,7 @@ public class KeywordServiceImpl implements KeywordService{
      * @ Scheduler
      */
     @Override
-    public void updateKeywordEvent() {
-        if( keywordDao.getAndSetRandomKeyword() != 1){
-            throw new ApplicationException(HttpStatus.INTERNAL_SERVER_ERROR, "일일 키워드 업데이트 배치작업 실패");
-        };
+    public void updateKeywordEvent() throws DuplicateKeyException {
+        keywordDao.getAndSetRandomKeyword();
     }
 }

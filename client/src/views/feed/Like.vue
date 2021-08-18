@@ -4,17 +4,30 @@
       <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
       <span class="logo">{{ this.Logo }}</span>
     </div>
-    <LikeListItem />
+    <div>
+      <LikeList class="like-list" />
+    </div>
   </div>
 </template>
 
 <script>
-import LikeListItem from "@/components/feeds/like/LikeListItem.vue";
+import LikeList from "@/components/feeds/like/LikeList.vue";
+import { mapActions } from "vuex";
 
 export default {
   name: "Like",
   components: {
-    LikeListItem,
+    LikeList,
+  },
+  methods: {
+    ...mapActions("feed", ["getLikeInfo"]),
+  },
+  created() {
+    const likeData = {
+      id: this.$route.params.id,
+      page: 0,
+    };
+    this.getLikeInfo(likeData);
   },
   data() {
     return {
@@ -41,5 +54,8 @@ export default {
   font-size: 1rem;
   color: #fff;
   margin: auto;
+}
+.like-list {
+  margin-top: 60px;
 }
 </style>

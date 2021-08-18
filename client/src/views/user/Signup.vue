@@ -29,7 +29,7 @@
               >사용가능</button>
               <button
                 v-else
-                :class="[ error.email ? 'btn-disabled' : 'btn-yellow', 'btn-6', 'email-check']"
+                :class="[ error.email || !email.length ? 'btn-disabled' : 'btn-yellow', 'btn-6', 'email-check']"
                 @click="checkEmail"
               >중복확인</button>
               <label>이메일 계정</label>

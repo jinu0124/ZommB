@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssafy.commb.dao.PushAlarmDao">
+
+    <insert id="save" parameterType="Fcm">
+        INSERT INTO push_alarm(user_id, feed_id, comment_id, title, body, target_user_id, is_read)
+        VALUES(#{message.data.userId}, #{message.data.feedId}, #{message.data.commentId}, #{message.notification.title}, #{message.notification.body},
+               #{message.data.targetUserId}, #{message.data.isRead})
+    </insert>
+
+    <select id="getNewAlarm" parameterType="Integer" resultMap="FcmInfo">
+        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body, p.is_read, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
+        FROM push_alarm p INNER JOIN user u
+                                     ON p.user_id = u.id AND p.target_user_id = #{userId} AND p.is_read = 0
+                          LEFT OUTER JOIN feed f
+                                          ON p.feed_id = f.id
+                          LEFT OUTER JOIN comment c
+                                          ON p.comment_id = c.id
+                          LEFT OUTER JOIN follow
+                                          ON follower = #{userId} AND following = p.user_id
+        ORDER BY create_at DESC
+        LIMIT 20 OFFSET #{page}
+    </select>
+
+    <select id="getAllAlarm" parameterType="Integer" resultMap="FcmInfo">
+        SELECT distinct p.user_id AS uid, u.nickname, u.file_url AS userFileUrl, f.id AS fid, f.file_url AS feedFileUrl, c.id AS cid, c.content AS comment, f.content, p.create_at, p.title, p.body, p.is_read, IF(IFNULL(following, 0) = 0, 0, 1) AS isFollow
+        FROM push_alarm p INNER JOIN user u
+                                     ON p.user_id = u.id AND p.target_user_id = #{userId}
+                          LEFT OUTER JOIN feed f
+                                          ON p.feed_id = f.id
+                          LEFT OUTER JOIN comment c
+                                          ON p.comment_id = c.id
+                          LEFT OUTER JOIN follow
+                                          ON follower = #{userId} AND following = p.user_id
+
+        ORDER BY create_at DESC
+        LIMIT 20 OFFSET #{page}
+    </select>
+
+    <update id="updateIsRead" parameterType="Integer">
+        update push_alarm set is_read = 1 where target_user_id = #{userId}
+    </update>
+
+    <resultMap id="FcmInfo" type="Fcm">
+        <result column="isFollow" property="message.data.isFollow" />
+        <result column="is_read" property="message.data.isRead" />
+        <result column="title" property="message.notification.title" />
+        <result column="body" property="message.notification.body" />
+        <result column="uid" property="message.data.userId" />
+        <result column="nickname" property="message.data.nickname" />
+        <result column="userFileUrl" property="message.data.userFileUrl" />
+        <result column="fid" property="message.data.feedId" />
+        <result column="feedFileUrl" property="message.data.feedFileUrl" />
+        <result column="cid" property="message.data.commentId" />
+        <result column="comment" property="message.data.comment" />
+        <result column="content" property="message.data.content" />
+        <result column="create_at" property="message.data.createAt" />
+    </resultMap>
+
+</mapper>

@@ -12,6 +12,14 @@
         <module name="commbServer.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="1.8" />
+    <bytecodeTargetLevel target="1.8">
+      <module name="com.ssafy.commbServer.aot" target="1.8" />
+      <module name="com.ssafy.commbServer.aotTest" target="1.8" />
+      <module name="com.ssafy.commbServer.main" target="1.8" />
+      <module name="com.ssafy.commbServer.querydsl" target="1.8" />
+      <module name="com.ssafy.commbServer.test" target="1.8" />
+      <module name="commbServer.aot" target="1.8" />
+      <module name="commbServer.aotTest" target="1.8" />
+    </bytecodeTargetLevel>
   </component>
 </project>

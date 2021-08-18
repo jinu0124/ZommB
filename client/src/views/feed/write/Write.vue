@@ -52,6 +52,7 @@ export default {
     saveImage (croppa) {
       this.preview = croppa.generateDataUrl('image/jpeg')
       this.myCroppa = croppa
+      this.makeFormData()
     },
     insertContent (content) {
       this.content = content
@@ -70,6 +71,7 @@ export default {
       await feedApi.postFeed(this.feedFD)
         .then((res) => {
           console.log(res)
+          this.$router.push({ name: 'Feed'})
         })
         .catch((err) => {
           console.log(err)

@@ -1,18 +1,19 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dao.BookDao;
 import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.book.GenreDto;
+import com.ssafy.commb.dto.book.KakaoSearchBookResponseDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.exception.book.NotFoundBookException;
 import com.ssafy.commb.model.*;
-import com.ssafy.commb.repository.BookShelvesRepository;
-import com.ssafy.commb.dto.book.KakaoSearchBookResponseDto;
 import com.ssafy.commb.repository.BookRepository;
+import com.ssafy.commb.repository.BookShelvesRepository;
+import com.ssafy.commb.repository.KeywordRepository;
 import com.ssafy.commb.repository.WeeklyEventRepository;
 import com.ssafy.commb.util.KakaoSearchAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,12 @@ import org.springframework.stereotype.Service;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
-import java.time.*;
-import java.time.format.DateTimeFormatter;
-import java.util.*;
+import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.time.*;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -57,15 +60,17 @@ public class BookServiceImpl implements BookService{
      * @return : 서재/북카트 내 도서 검색 결과
      */
     @Override
-    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, HttpServletRequest request) {
+    public BookDto.ResponseList getBooksByName(BookDto.BookShelfSearchRequest bookReq, int page, HttpServletRequest request) {
 
         bookReq.setUserId((int) request.getAttribute("userId"));
         Map<String, Object> map = new HashMap<>();
         map.put("userId", bookReq.getUserId());
         map.put("bookName", bookReq.getBookName());
         map.put("isRead", bookReq.getIsRead());
+        map.put("page", page);
         List<BookDto> books = bookDao.getBooksByName(map);
 
+        if(books.size() == 0) throw new ApplicationException(HttpStatus.valueOf(204), "end of page");
         BookDto.ResponseList bookResList = new BookDto.ResponseList();
 //        GenreDto genre = new GenreDto();
 //        for(BookDto book : books){
@@ -185,9 +190,7 @@ public class BookServiceImpl implements BookService{
     public BookDto.ResponseList getTopBooks(int userId) {
         List<BookDto> books = bookDao.getTopBooks(userId);
 
-        BookDto.ResponseList bookResList = new BookDto.ResponseList();
-        bookResList.setData(books);
-        return bookResList;
+        return BookDto.ResponseList.builder().data(books).build();
     }
 
     /**
@@ -235,29 +238,39 @@ public class BookServiceImpl implements BookService{
      */
     public BookDto.ResponseList findBookList(BookDto.BookSearchRequest bookReq) throws IOException {
 
-        // 카카오 책 검색 API
-        KakaoSearchBookResponseDto kakaoSearchBookResponseDto = kakaoSearchAPI.search(bookReq);
+        List<Book> books;
 
-        List<Book> existBooks = new ArrayList<>();
-        Set<Book> saveBooks = kakaoSearchBookResponseDto.getDocuments()
-                .stream()
-                .filter(document -> {
-                    Optional<Book> book =bookRepository.findByIsbn(document.getIsbn13());
-                    // 이미 존재하는 책인 경우
-                    if(book.isPresent()){
-                        existBooks.add(book.get());
-                    }
-                    return !book.isPresent();
-                })
-                .map(KakaoSearchBookResponseDto.Document::convertBook)
-                .collect(Collectors.toSet());
-        
-        // DB 저장
-        List<Book> books = new ArrayList<>(saveBooks);
-        books = bookRepository.saveAllAndFlush(new ArrayList<>(books));
+        // 키워드 검색
+        if(bookReq.getSearchType()!=null && bookReq.getSearchType().equals("keyword")){
+            // 카카오 검색은 페이징이 1부터 키워드는 0부터 시작
+            bookReq.setPage(bookReq.getPage()-1);
+            books = findKeywordBookList(bookReq);
+        }else {
+            // 카카오 책 검색 API
+            KakaoSearchBookResponseDto kakaoSearchBookResponseDto = kakaoSearchAPI.search(bookReq);
 
-        books.addAll(existBooks);
+            List<Book> existBooks = new ArrayList<>();
+            Set<Book> saveBooks = kakaoSearchBookResponseDto.getDocuments()
+                    .stream()
+                    .filter(document -> {
+                        Optional<Book> book = bookRepository.findByIsbn(document.getIsbn13());
+                        // 이미 존재하는 책인 경우
+                        if (book.isPresent()) {
+                            existBooks.add(book.get());
+                        }
+                        return !book.isPresent();
+                    })
+                    .map(KakaoSearchBookResponseDto.Document::convertBook)
+                    .collect(Collectors.toSet());
 
+            // DB 저장
+            books = new ArrayList<>(saveBooks);
+            books = bookRepository.saveAllAndFlush(new ArrayList<>(books));
+
+            books.addAll(existBooks);
+        }
+
+        if(books == null) return null;
         // 반환 평점 및 읽은 사람 수 반환
         return BookDto.ResponseList.builder()
                 .data(books.stream()
@@ -337,7 +350,7 @@ public class BookServiceImpl implements BookService{
      * @ Scheduler
      */
     @Override
-    public void updateBookEvent() {
+    public void updateBookEvent() throws Exception {
         BookDto bookDto = bookDao.getRandomBook();
         Book book = new Book();
         book.setId(bookDto.getId());
@@ -357,6 +370,55 @@ public class BookServiceImpl implements BookService{
         else dateTime = dateTime.plusDays(7);
         weekly.setEndDate(Date.from(Instant.from(dateTime)));
 
-        weeklyEventRepository.save(weekly);
+            weeklyEventRepository.save(weekly);
+
+    }
+
+    /**
+     * 서재/북카트 도서 전체 목록 불러오기
+     * @param userId : 유저 ID
+     * @param isRead : 0 : 북카트, 1 : 서재
+     * @return 도서 리스트 BookDto List
+     */
+    @Override
+    public List<BookDto> getBookshelfAll(Integer userId, Integer isRead) {
+        List<BookShelves> bookShelves = bookShelvesRepository.findByUserIdAndIsRead(userId, isRead);
+
+        Optional<List<Book>> books = bookRepository.findByIdIn(bookShelves.stream()
+                .map(BookShelves::getBook)
+                .map(Book::getId)
+                .collect(Collectors.toList()));
+
+        List<BookDto> bookDtoList = new ArrayList<>();
+        books.ifPresent(select -> {
+            for(Book book1 :select) bookDtoList.add(book1.convertBookDto());
+        });
+
+        return bookDtoList;
+    }
+
+    /**
+     *
+     * @param bookReq : 검색조건
+     * @return 키워드에 해당하는 도서 리스트
+     * @throws UnsupportedEncodingException
+     */
+    public List<Book> findKeywordBookList(BookDto.BookSearchRequest bookReq) throws UnsupportedEncodingException {
+
+        QBook qBook = QBook.book;
+        QKeyword qKeyword = QKeyword.keyword1;
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+
+        BooleanBuilder builder = new BooleanBuilder();
+        // 키워드 % % 검색
+        builder.and(qKeyword.keyword.contains(bookReq.getSearchWord()));
+        List<Book> books = qf.selectFrom(qBook)
+                .leftJoin(qBook.keywords, qKeyword)
+                .where(builder)
+                .offset(bookReq.getPage())
+                .limit(10)
+                .fetch();
+
+        return books;
     }
 }

@@ -9,6 +9,20 @@ export default {
       data: userData
     })
   },
+  getNotification() {
+    return _axios({
+      url: '/users/alarms',
+      method: 'get',
+      params: { page: 0 }
+    })
+  },
+  logout(userData) {
+    return _axios({
+      url: '/users/login',
+      method: 'delete',
+      params: { firebaseToken: userData }
+    })
+  },
   signup(userData) {
     return _axios({
       url: '/users',
@@ -74,17 +88,95 @@ export default {
       params: userData
     })
   },
+  // 회원 정보 조회
   getUserInfo(userId) {
     return _axios({
       url: `users/${userId}`,
       method: 'get'
     })
   },
-  getMyBookList(userId, data) {
+  // 회원 게시물 cnt
+  getFeedCnt(userId) {
+    return _axios({
+      url: `users/${userId}/feeds/cnt`,
+      method: 'get'
+    })
+  },
+  // 회원 북카트-서재 cnt
+  getBookCnt(userId) {
+    return _axios({
+      url: `users/${userId}/bookshelves/cnt`,
+      method: 'get'
+    })
+  },
+  // 1인 게시물 조회 
+  getUserFeed(userId, page) {
+    return _axios({
+      url: `users/${userId}/feeds`,
+      method: 'get',
+      params: { page : page }
+    })
+  },
+  getBookCollection(userId) {
+    return _axios({
+      url: `users/${userId}/top-bar`,
+      method: 'get',
+    })
+  },
+  addBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar`,
+      method: 'post',
+      data: {id: bookId}
+    })
+  },
+  removeBookCollection(userId, bookId) {
+    return _axios({
+      url: `users/${userId}/top-bar/${bookId}`,
+      method: 'delete'
+    })
+  },
+  //isRead : false(북카트), true(서재)
+  getBookList(userId, data) {
+    return _axios({
+      url: `users/${userId}/bookshelves/all`,
+      method: 'get',
+      params: { isRead: data }
+    })
+  },
+  //isRead : false(북카트), true(서재)
+  getMyBookSearch(userId, data) {
     return _axios({
       url: `users/${userId}/bookshelves`,
       method: 'get',
-      params: { isRead: data }
+      params: data
+    })
+  },
+  //팔로우
+  follow(userId) {
+    return _axios({
+      url: `follows/${userId}`,
+      method: 'post',
+    })
+  },
+  //팔로우 취소
+  unfollow(userId) {
+    return _axios({
+      url: `follows/${userId}`,
+      method: 'delete',
+    })
+  },
+  // 팔로우 리스트 조회
+  getFollowingList(userId) {
+    return _axios({
+      url: `follows/${userId}/following`,
+      method: 'get',
+    })
+  },
+  getFollowerList(userId) {
+    return _axios({
+      url: `follows/${userId}/follower`,
+      method: 'get',
     })
   }
 }

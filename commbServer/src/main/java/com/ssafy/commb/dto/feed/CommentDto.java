@@ -39,6 +39,13 @@ public class CommentDto {
     }
 
     @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class RequestComment {                // 요청
+        private String comment;
+    }
+
+    @Getter
     @Setter
     @AllArgsConstructor
     @NoArgsConstructor

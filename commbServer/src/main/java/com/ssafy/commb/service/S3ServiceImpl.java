@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.internal.Mimetypes;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.ssafy.commb.exception.ApplicationException;
@@ -20,7 +21,9 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.Part;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -64,7 +67,27 @@ public class S3ServiceImpl implements S3Service{
      */
     public void deleteS3(String url, String dir){
         if(url == null) return;
-        s3Client.deleteObject(this.bucket, dir + "/" + url);
+        String[] tmp = url.split("/");
+        s3Client.deleteObject(this.bucket, dir + "/" + tmp[tmp.length - 1]);
+    }
+
+    /**
+     * S3 파일 다중 삭제
+     * @param urls
+     * @param dir
+     */
+    @Override
+    public void deleteS3(List<String> urls, String dir) {
+        if(urls == null) return;
+
+        DeleteObjectsRequest deleteObjectsRequest = new DeleteObjectsRequest(this.bucket);
+        List<DeleteObjectsRequest.KeyVersion> keyList = new ArrayList<>();
+        for(String url : urls) {
+            String[] tmp = url.split("/");
+            keyList.add(new DeleteObjectsRequest.KeyVersion(dir + "/" + tmp[tmp.length - 1]));
+        }
+        deleteObjectsRequest.setKeys(keyList);
+        s3Client.deleteObjects(deleteObjectsRequest);
     }
 
     /**
@@ -88,7 +111,8 @@ public class S3ServiceImpl implements S3Service{
         s3Client.putObject(new PutObjectRequest(bucket,  dir + "/" + fileName, byteArrayIs, objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));                                                        // public read 권한 주기
 
-        return fileName;
+
+        return "http://" + s3Client.getUrl(this.bucket, dir + "/" + fileName).toString().substring(8);
     }
 
     public Part extractFile(Collection<Part> parts) throws IOException {

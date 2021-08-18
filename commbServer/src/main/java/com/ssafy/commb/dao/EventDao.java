@@ -18,18 +18,18 @@ public interface EventDao {
 
     public WeeklyEventDto bookRecommend(int year, int month, int day);
 
-    public List<FeedDto> weeklyFeeds(int weeklyId, int userId);
+    public List<FeedDto> weeklyFeeds(int weeklyId, int page, int userId);
 
     public Integer getWeeklyParticipantsCnt(int weeklyId);
 
-    public List<MyDto> getWeeklyParticipants(int weeklyId, int userId);
+    public List<MyDto> getWeeklyParticipants(int weeklyId, int page, int userId);
 
 
     public DailyEventDto keywordRecommend(String param);
 
-    public List<FeedDto> dailyFeeds(int dailyId, int userId);
+    public List<FeedDto> dailyFeeds(int dailyId, int page, int userId);
 
-    public List<MyDto> getDailyParticipants(int dailyId, int userId);
+    public List<MyDto> getDailyParticipants(int dailyId, int page, int userId);
 
     public Integer getDailyParticipantsCnt(int dailyId);
 

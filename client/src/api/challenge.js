@@ -2,43 +2,45 @@ import _axios from "./Default"
 
 export default {
   // Weekly
-  getWeeklyBook(data) {
+  getWeeklyBook(date) {
     return _axios({
       url: '/weekly-events',
       method: 'get',
-      params: { today: data }
+      params: { today: date }
     })
   },
-  getWeeklyParticipants(data) {
+  getWeeklyParticipants(weeklyId) {
     return _axios({
-      url: `/weekly-events/${data}/users/cnt`,
+      url: `/weekly-events/${weeklyId}/users/cnt`,
       method: 'get'
     })
   },
-  getWeeklyFeeds(data) {
+  getWeeklyFeeds(weeklyId, page) {
     return _axios({
-      url: `/weekly-events/${data}/feeds`,
-      method: 'get'
+      url: `/weekly-events/${weeklyId}/feeds`,
+      method: 'get',
+      params: {page: page}
     })
   },
   // Daily
-  getDailyKeyword(data) {
+  getDailyKeyword(date) {
     return _axios({
       url: '/daily-events',
       method: 'get',
-      params: { today: data }
+      params: { today: date }
     })
   },
-  getDailyParticipants(data) {
+  getDailyParticipants(dailyId) {
     return _axios({
-      url: `/daily-events/${data}/users/cnt`,
+      url: `/daily-events/${dailyId}/users/cnt`,
       method: 'get'
     })
   },
-  getDailyFeeds(data) {
+  getDailyFeeds(dailyId, page) {
     return _axios({
-      url: `/daily-events/${data}/feeds`,
-      method: 'get'
+      url: `/daily-events/${dailyId}/feeds`,
+      method: 'get',
+      params: {page: page}
     })
   },
   // My
@@ -46,6 +48,18 @@ export default {
     return _axios({
       url: `/my-events/${userId}`,
       method: 'get',
+    })
+  },
+  changeBookmarkOn() {
+    return _axios({
+      url: `/users/bookmark`,
+      method: 'put',
+    })
+  },
+  changePencilOn() {
+    return _axios({
+      url: `/users/pencil`,
+      method: 'put',
     })
   },
 }

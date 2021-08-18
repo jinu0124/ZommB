@@ -1,10 +1,12 @@
 package com.ssafy.commb.controller;
 
 import com.ssafy.commb.common.QueryStringArgResolver;
+import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfDto;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
@@ -29,8 +31,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @ User, Bookshelves, Keyword/Follow Recommend Function Controller
@@ -67,7 +72,10 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    RedisService redisService;
+    private RedisService redisService;
+
+    @Autowired
+    private FcmService fcmService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -81,20 +89,23 @@ public class UserController {
     @Value("${dynamic.front.path}")
     private String dynamicFrontPath;
 
-    @Value("${cloud.profile}")
-    private String awsProfilePath;
-
-    @GetMapping("")
+    @GetMapping("/info")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
-    public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
+    public ResponseEntity findUserList(@RequestParam String nickname,
+                                                             @RequestParam Integer page,
+                                                             HttpServletRequest request) {
 
-        UserDto.ResponseList userResList = userService.getUsers(nickname);
+        switch (userService.getUserRole((int) request.getAttribute("userId"))) {
+            case "USR":
+                return ResponseEntity.ok().body(userService.getUsers(nickname, page * 50, request));
+            case "ADM":
+                UserDto.ResponseList userResList = userService.getUsers(nickname, page * 50);
+                return ResponseEntity.ok().body(userResList);
+        }
 
-        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
+        return ResponseEntity.status(401).build();
     }
 
-    // 일반 회원 검색 만들기
-//    @GetMapping(value="")
 
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제
@@ -174,15 +185,24 @@ public class UserController {
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
+    @DeleteMapping("/login")
+    @ApiOperation(value = "로그아웃")
+    public ResponseEntity logout(@RequestParam String firebaseToken){
+        fcmService.del(firebaseToken);
+        return ResponseEntity.status(204).build();
+    }
+
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
+    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) throws InterruptedException, IOException {
         MyDto.Response myRes = userService.login(myReq);
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        fcmService.save(myRes, myReq.getFirebaseToken());
 
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
@@ -191,7 +211,7 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
         UserDto.Response userRes = userService.getUserInfo(userId, request);
-        userRes.getData().setUserFileUrl(awsProfilePath + userRes.getData().getUserFileUrl());
+
         return ResponseEntity.ok().body(userRes);
     }
 
@@ -256,7 +276,15 @@ public class UserController {
     public ResponseEntity deleteUser(HttpServletRequest request) {
         int userId = (int) request.getAttribute("userId");
         s3Service.deleteS3(userRepository.findUserById(userId).get().getFileUrl(), "profile");
+
+        int p = 0;
+        List<FeedDto> feeds = new ArrayList<>();
+        while(feeds.size() >= 20 || p == 0){
+            feeds = feedService.getUserFeed((int) request.getAttribute("userId"), p++, request).getData();
+            s3Service.deleteS3(feeds.stream().map(FeedDto::getFeedFileUrl).collect(Collectors.toList()), "feed");
+        }
         userService.deleteUser(userId);
+
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
@@ -265,9 +293,10 @@ public class UserController {
     @ApiOperation(value = "1인(특정 사람) 피드 리스트 조회", response = FeedDto.Response.class)
     public ResponseEntity<FeedDto.ResponseList> findUserFeed(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, request);
+        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, page * 20, request);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
@@ -283,14 +312,27 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
+    //서재, 북카트
+    // users/{userId}/bookshelves/all
+    @GetMapping("/{userId}/bookshelves/all")
+    @ApiOperation(value = "북카트/서재 도서 목록 불러오기")
+    public ResponseEntity getBookshelfAll(@PathVariable Integer userId,
+                                         @RequestParam Integer isRead){
+
+        List<BookDto> books = bookService.getBookshelfAll(userId, isRead);
+
+        return ResponseEntity.ok().body(BookDto.ResponseList.builder().data(books).build());
+    }
+
     @GetMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
             @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, request);
+        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, page * 20, request);
 
         return ResponseEntity.ok().body(bookResList);
     }
@@ -396,9 +438,10 @@ public class UserController {
     @ApiOperation(value = "친구 추천 목록 조회", response = UserDto.Response.class)
     public ResponseEntity<UserDto.ResponseList> findFollowRecommend(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        UserDto.ResponseList userResList = userService.followRecommend(request);
+        UserDto.ResponseList userResList = userService.followRecommend(page * 50, request);
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
@@ -414,4 +457,92 @@ public class UserController {
         return new ResponseEntity<KeywordDto.ResponseList>(keyResList, HttpStatus.OK);
     }
 
+    @GetMapping("/alarms")
+    @ApiOperation(value = "쌓인 알림 목록 요청")
+    public ResponseEntity getAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @GetMapping("/alarms/all")
+    @ApiOperation(value = "전체 알림 목록 요청")
+    public ResponseEntity getAllAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAllAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @PutMapping("/pencil")
+    @ApiOperation(value = "pencil 표시 여부 변경")
+    public ResponseEntity pencil(HttpServletRequest request){
+        userService.updatePencil(request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/bookmark")
+    @ApiOperation(value = "bookmark 표시 여부 변경")
+    public ResponseEntity bookmark(HttpServletRequest request){
+        userService.updateBookmark(request);
+
+        return ResponseEntity.ok().build();
+    }
 }
+
+
+
+/*
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBBx4cBxQU_YDA4IWx11dT6UXwtvrQgdE4",
+    authDomain: "commb-27f77.firebaseapp.com",
+    projectId: "commb-27f77",
+    storageBucket: "commb-27f77.appspot.com",
+    messagingSenderId: "1096431511822",
+    appId: "1:1096431511822:web:8098fb0674c582d68acf5f"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+
+
+AAAA_0hpKQ4:APA91bFyxBKgfKFJwtQCKfodjXI5ANsC6srfmShL3vjDVxAQKIbuqCVvml5dbzdvcuFe6OJhEHiEcXJUmFwvjicOvqhptiWhOQacPX1Gi8AqPP59tiU452lXJR_lSjN5g4LAsGUTZkuQ
+
+BJF9g6SsclFA3hxLFj8YgBgT4vhAaUXL6Mzsad7Dh2nESKkS1cm1jURzUA9hactgtLe9-HGh_uEX4WIGl3D1YPk
+
+
+
+ */
+
+
+//<!-- The core Firebase JS SDK is always required and must be listed first -->
+//<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+//
+//<!-- TODO: Add SDKs for Firebase products that you want to use
+//        https://firebase.google.com/docs/web/setup#available-libraries -->
+//
+//<script>
+//// Your web app's Firebase configuration
+//  var firebaseConfig = {
+//          apiKey: "AIzaSyBi-CjUpqtPjDFgo8jLiwxwpcm0KhWI31g",
+//          authDomain: "commb-43e85.firebaseapp.com",
+//          projectId: "commb-43e85",
+//          storageBucket: "commb-43e85.appspot.com",
+//          messagingSenderId: "366820301866",
+//          appId: "1:366820301866:web:ef81fde40aeda933d63753"
+//          };
+//          // Initialize Firebase
+//          firebase.initializeApp(firebaseConfig);
+//</script>

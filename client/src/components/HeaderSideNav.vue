@@ -7,33 +7,32 @@
     aria-labelledby="offcanvasWithBothOptionsLabel"
   >
     <div class="offcanvas-header">
-      <button
-        type="button"
-        class="btn-close text-reset"
+      <i
+        class="nav-toggle fas fa-water"
         data-bs-dismiss="offcanvas"
         aria-label="Close"
-      ></button>
+      ></i>
     </div>
-    <div class="offcanvas-body ms-4 d-flex flex-column gap-3">
+    <div class="offcanvas-body ms-4 mt-3 d-flex flex-column gap-3">
       <div>
         <router-link :to="{ name: 'Feed' }" class="menu-item" data-bs-dismiss="offcanvas"
-          >NewsFeed</router-link
-        >
+          >NewsFeed</router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'Challenge' }" class="menu-item" data-bs-dismiss="offcanvas"
-          >Challenge</router-link
-        >
+        <router-link :to="{ name: 'Challenge', params: { page: 0 } }" class="menu-item" data-bs-dismiss="offcanvas"
+          >Challenge</router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'Search' }" class="menu-item" data-bs-dismiss="offcanvas"
-          >Search</router-link
-        >
+        <router-link :to="{ name: 'Search', params: { flag: 'users'} }" class="menu-item" data-bs-dismiss="offcanvas"
+          >Search</router-link>
       </div>
       <div>
-        <router-link :to="{ name: 'Profile' }" class="menu-item" data-bs-dismiss="offcanvas"
-          >MyProfile</router-link
-        >
+        <router-link :to="{ name: 'Profile', params: { id: myInfo.id, page: 0 } }" class="menu-item" data-bs-dismiss="offcanvas"
+          >MyProfile</router-link>
+      </div>
+      <div>
+        <router-link :to="{ name: 'SelectBook', params: {flag: 'write'} }" class="menu-item" data-bs-dismiss="offcanvas"
+          >Write</router-link>
       </div>
     </div>
     <img class="offcanvas-deco" src="@/assets/image/camel/camelRotate.svg" alt="" />
@@ -47,14 +46,18 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: "HeaderSideNav",
-};
+  computed: {
+    ...mapState('user', ['myInfo'])
+  }
+}
 </script>
 
 <style scoped>
 .offcanvas {
-  background: rgba(117, 64, 238, 0.9);
+  background: rgba(104, 62, 201, 0.9);
   border: none;
 }
 .menu-item {
@@ -73,5 +76,13 @@ export default {
   width: 10rem;
   right: 0;
   bottom: 7rem;
+}
+.nav-toggle {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
 }
 </style>

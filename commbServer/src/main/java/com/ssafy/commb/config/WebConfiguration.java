@@ -39,7 +39,9 @@ public class WebConfiguration implements WebMvcConfigurer {
                 , "/api/users", "/api/users/email", "/api/users/confirm-email", "/api/users/checkEmailComplete",
                         "/api/users/social/login", "/api/users/find-password", "/api/users/update-password", "/api/swagger-ui.html"
                 ,"/api/v2/api-docs", "/api/swagger-resources/**",
-                "/api/swagger-resources" ,"/api/webjars/springfox-swagger-ui/**");
+                "/api/swagger-resources" ,"/api/webjars/springfox-swagger-ui/**", "/api/login/oauth2/**",
+                        "/api/oauth2/authorization/**"
+                );
     }
 
     @Override

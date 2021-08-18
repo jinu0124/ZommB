@@ -1,32 +1,29 @@
 <template>
-  <div class="challenge d-flex flex-column align-items-center">
-    <div style="max-width: 450px;">
-      <div class="ch-header d-flex flex-column">
-        <div class="title">
-          Challenge
-          <span 
-            v-if="selectedPage === 2"
-            class="month"
-          >in {{ month }}</span>
-        </div>
-        <div class="tabs d-flex gap-2 mt-2">
-          <span 
-            type="button"
-            @click=changePage(0)
-            :class="[ selectedPage === 0 ? 'current' : 'rest', 'badge']"
-          >Weekly Books</span>
-          <span 
-            type="button"
-            @click=changePage(1)
-            :class="[ selectedPage === 1 ? 'current' : 'rest', 'badge']"
-          >Daily Keyword</span>
-          <span 
-            type="button"
-            @click=changePage(2)
-            :class="[ selectedPage === 2 ? 'current' : 'rest', 'badge']"
-          >My</span>
-        </div>
+  <div id="challenge" class="challenge d-flex flex-column">
+    <div class="ch-header d-flex flex-column">
+      <div class="title">
+        Challenge
+        <span 
+          v-if="selectedPage === 2"
+          class="month"
+        >in {{ month }}</span>
       </div>
+      <div class="tabs d-flex gap-2 mt-2">
+        <span 
+          @click=changePage(0)
+          :class="[ selectedPage === 0 ? 'current' : 'rest', 'badge']"
+        >Weekly Books</span>
+        <span 
+          @click=changePage(1)
+          :class="[ selectedPage === 1 ? 'current' : 'rest', 'badge']"
+        >Daily Keyword</span>
+        <span 
+          @click=changePage(2)
+          :class="[ selectedPage === 2 ? 'current' : 'rest', 'badge']"
+        >My</span>
+      </div>
+    </div>
+    <div class="align-self-center mt-2" style="max-width: 450px;">
       <ChallengeWeekly
         id="weekly"
         v-if="selectedPage === 0"
@@ -64,13 +61,22 @@ export default {
   methods: {
     changePage (val) {
       this.selectedPage = val
+      this.$router.push({ name: 'Challenge', params: { page: val }}).catch(()=>{})
     }
   },
   computed: {
     month () {
       return moment().format('MMMM')
     }
-  }
+  },
+  watch: {
+    '$route'() {
+      this.selectedPage = Number(this.$route.params.page)
+    }
+  },
+  created() {
+    this.selectedPage = Number(this.$route.params.page)
+  },
 }
 </script>
 
@@ -104,6 +110,7 @@ export default {
     padding: 5px 12px;
     vertical-align: middle;
     border-radius: .5rem;
+    cursor: pointer;
   }
   .tabs .current {
     background: #97DFFC;

@@ -1,16 +1,16 @@
 <template>
   <div class="follower-list">
-    <UserListItem />
+    <SearchUser />
   </div>
 </template>
 
 <script>
-import UserListItem from "@/components/search/UserListItem";
+import SearchUser from "@/components/search/SearchUser";
 
 export default {
   name: "Follower",
   components: {
-    UserListItem,
+    SearchUser,
   },
 };
 </script>

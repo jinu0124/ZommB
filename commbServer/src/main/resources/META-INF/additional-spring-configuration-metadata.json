@@ -26,16 +26,6 @@
       "description": "Description for security.refreshtoken."
     },
     {
-      "name": "cloud.profile",
-      "type": "java.lang.String",
-      "description": "Description for cloud.profile."
-    },
-    {
-      "name": "cloud.feed",
-      "type": "java.lang.String",
-      "description": "Description for cloud.feed."
-    },
-    {
       "name": "cloud.aws.credentials.accessKey",
       "type": "java.lang.String",
       "description": "Description for cloud.aws.credentials.accessKey."
@@ -64,5 +54,10 @@
       "name": "dynamic.front.path",
       "type": "java.lang.String",
       "description": "Description for dynamic.front.path."
+    },
+    {
+      "name": "fcm.service-account-file",
+      "type": "java.lang.String",
+      "description": "Description for fcm.service-account-file."
     }
   ] }

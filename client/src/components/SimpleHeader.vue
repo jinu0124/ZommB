@@ -3,7 +3,6 @@
     <div class="d-flex align-items-center">
       <i 
         class="back-btn fi-rr-angle-small-left"
-        type="button"
         @click="$router.go(-1)"
       ></i>
       <span class="header-logo">{{ this.title }}</span>
@@ -28,6 +27,7 @@ export default {
   }
   .back-btn {
     font-size: 1.5rem;
+    cursor: pointer;
   }
   .header-logo {
     font-weight: 700;
