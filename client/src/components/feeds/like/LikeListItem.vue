@@ -14,17 +14,25 @@
           id="UserProfile"
           :src="feed.userFileUrl"
           alt="user-profile"
+          @click="
+            $router.push({ name: 'Profile', params: { id: feed.id, page: 0 } })
+          "
         />
         <img
           v-else
           src="@/assets/image/common/profileDefault.svg"
           alt="default-user-image user-profile"
-          class="user-image"
+          class="user-profile"
           type="button"
         />
-      </span>
-      <span class="user-nickname">{{ feed.nickname }}</span>
-      <span>
+        <span
+          class="user-nickname"
+          type="button"
+          @click="
+            $router.push({ name: 'Profile', params: { id: feed.id, page: 0 } })
+          "
+          >{{ feed.nickname }}</span
+        >
         <button
           class="follow btn-5 btn-grey"
           @click="unfollow"
@@ -52,34 +60,31 @@ export default {
   name: "LikeListItem",
   data() {
     return {
+      isFollow: null,
       isColor: false,
-      Follow: true,
-      unFollow: false,
-      nickname: "Nickname",
     };
   },
   props: {
     feed: Object,
   },
   methods: {
-    ...mapActions("user", ["getUserInfo"]),
+    ...mapActions("user", ["myInfo", "getFollowing", "getUserInfo"]),
     currentItem(flag) {
       this.isColor = flag;
     },
     async follow() {
-      this.isFollow = true;
-      await userApi.follow(this.id).then(() => {
-        this.getUserInfo(this.id);
+      this.feed.isFollow = true;
+      await userApi.follow(this.feed.id).then(() => {
+        this.getFollowing(this.myInfo.id);
       });
     },
     async unfollow() {
-      this.isFollow = false;
-      await userApi.unfollow(this.id).then(() => {
-        this.getUserInfo(this.id);
+      this.feed.isFollow = false;
+      await userApi.unfollow(this.feed.id).then(() => {
+        this.getFollowing(this.myInfo.id);
       });
     },
   },
-  computed: {},
 };
 </script>
 
@@ -93,22 +98,24 @@ div {
   width: 100%;
   margin: 20px auto;
 }
-.user-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-}
 .follow {
-  align-self: right;
+  align-self: center;
 }
 .user-nickname {
-  margin: 0 50px 0 3px;
+  text-align: center;
+  align-self: center;
+  margin-left: 20px;
+  width: 150px;
 }
 .default-user-image,
 .user-profile {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+}
+.user-images {
+  margin-right: 10px;
+  align-content: center;
 }
 .like-list-item {
   margin: 10px 0px;

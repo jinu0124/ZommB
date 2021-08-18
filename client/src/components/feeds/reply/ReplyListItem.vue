@@ -1,20 +1,5 @@
 <template>
   <div class="reply-list-item">
-    <!-- <img
-      v-if="reply.userFileUrl"
-      class="user-profile"
-      type="button"
-      id="UserProfile"
-      :src="feed.user.userFileUrl"
-      alt="user-profile"
-    />
-    <img
-      v-else
-      alt="디폴트 회원 이미지"
-      class="default-user-image user-profile"
-      src="@/assets/image/common/profileDefault.svg"
-      id="UserProfile"
-    /> -->
     <div class="reply-content">
       <p class="replier">{{ reply.nickname }}</p>
       <p class="reply">{{ reply.content }}</p>
@@ -63,12 +48,12 @@ export default {
     like() {
       this.Like = true;
       this.disLike = false;
-      this.replyLikeNum += 1;
+      this.reply.thumbCnt += 1;
     },
     dislike() {
       this.Like = false;
       this.disLike = true;
-      this.replyLikeNum -= 1;
+      this.reply.thumbCnt -= 1;
     },
   },
   computed: {

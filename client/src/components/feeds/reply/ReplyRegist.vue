@@ -16,18 +16,47 @@
       type="button"
       id="UserProfile"
     />
-    <input class="reply-input" type="text" placeholder="댓글을 작성하세요." />
-    <button class="btn-5 reply-regist-btn" type="button">등록</button>
+    <textarea
+      class="reply-input"
+      type="text"
+      placeholder="댓글을 작성하세요."
+      @input="insertContent"
+      :value="content"
+    />
+    <button
+      class="btn-5 reply-regist-btn"
+      type="button"
+      @click="writeComment(replyData)"
+    >
+      등록
+    </button>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "ReplyRegist",
+  data() {
+    return {
+      content: "",
+    };
+  },
   computed: {
     ...mapState("user", ["myInfo"]),
+    replyData() {
+      return {
+        id: this.$route.params.id,
+        cont: this.content,
+      };
+    },
+  },
+  methods: {
+    ...mapActions("feed", ["writeComment"]),
+    insertContent(event) {
+      this.content = event.target.value;
+    },
   },
 };
 </script>

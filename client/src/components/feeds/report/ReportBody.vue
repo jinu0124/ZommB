@@ -8,26 +8,39 @@
     <div class="before-report" v-if="!isReported">
       <h1 class="title1">이 게시물을 신고하는 이유</h1>
       <h4 class="title2">
-        회원님의 신고는 익명으로 처리됩니다.<br />해당 게시물을 신고하는 이유를 선택해주세요.
+        회원님의 신고는 익명으로 처리됩니다.<br />해당 게시물을 신고하는 이유를
+        선택해주세요.
       </h4>
       <div class="reasons">
         <div>
-          <button class="btn-2 btn-grey" @click="submit(1)">{{ this.lie }}</button>
+          <button class="btn-2 btn-grey" @click="submit(1)">
+            {{ this.lie }}
+          </button>
         </div>
         <div>
-          <button class="btn-2 btn-grey" @click="submit(2)">{{ this.spam }}</button>
+          <button class="btn-2 btn-grey" @click="submit(2)">
+            {{ this.spam }}
+          </button>
         </div>
         <div>
-          <button class="btn-2 btn-grey" @click="submit(3)">{{ this.abusive }}</button>
+          <button class="btn-2 btn-grey" @click="submit(3)">
+            {{ this.abusive }}
+          </button>
         </div>
         <div>
-          <button class="btn-2 btn-grey" @click="submit(4)">{{ this.aversion }}</button>
+          <button class="btn-2 btn-grey" @click="submit(4)">
+            {{ this.aversion }}
+          </button>
         </div>
         <div>
-          <button class="btn-2 btn-grey" @click="submit(5)">{{ this.property }}</button>
+          <button class="btn-2 btn-grey" @click="submit(5)">
+            {{ this.property }}
+          </button>
         </div>
         <div>
-          <button class="btn-2 btn-grey" @click="submit(6)">{{ this.badimage }}</button>
+          <button class="btn-2 btn-grey" @click="submit(6)">
+            {{ this.badimage }}
+          </button>
         </div>
       </div>
     </div>
@@ -42,7 +55,7 @@
         <button class="btn-2 btn-grey btn-reason">{{ this.reason }}</button>
       </div>
       <div>
-        <button class="btn-2 btn-primary1" type="button" @click="moveToFeed()">
+        <button class="btn-2 btn-primary1" type="button" @click="moveToFeed">
           NewsFeed로 돌아가기
         </button>
       </div>
@@ -51,6 +64,7 @@
 </template>
 
 <script>
+import { mapActions } from "vuex";
 export default {
   name: "ReportBody",
   data() {
@@ -85,8 +99,16 @@ export default {
       }
     },
     moveToFeed() {
+      const reportData = {
+        feedId: this.$route.params.id,
+        reason: this.reason,
+      };
+      this.reportFeed(reportData);
+      console.log(this.$route.params.id);
+      console.log(this.reason);
       this.$router.push("/feed");
     },
+    ...mapActions("feed", ["reportFeed"]),
   },
 };
 </script>
