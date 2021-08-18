@@ -7,7 +7,6 @@ const state = {
   bookId: null,
   likeInfo: null,
   reportInfo: null,
-  // comments: null,
   updateFeedInfo: null,
   undateCommentInfo: null,
   comments: null,
@@ -105,28 +104,27 @@ const actions = {
       .then((res) => {
         console.log(res)
         dispatch('getFeedDetail', replyData.id)
-        // commit('SET_COMMENT_DATA', null)
       })
     },
   //댓글 삭제
-  async deleteComment({ dispatch }, feedId, commentId) {
-    await feedApi.deleteComment(feedId, commentId)
+  async deleteComment({ dispatch }, commentData) {
+    await feedApi.deleteComment(commentData.feedId, commentData.commentId)
       .then(() => {
-      dispatch('getFeedInfo', 0)
+      dispatch('getFeedDetail',commentData.feedId)
     })
   },
   //댓글 좋아요
-  async likeComment({ dispatch }, feedId, commentId) {
-    await feedApi.likeComment(feedId, commentId) 
+  async likeComment({ dispatch }, commentData) {
+    await feedApi.likeComment(commentData.feedId, commentData.commentId) 
       .then(() => {
-      dispatch('getFeedInfo', 0)
+      dispatch('getFeedDetail', commentData.feedId)
     })
   },
   //댓글 좋아요 취소
-  async dislikeComment({ dispatch }, feedId, commentId) {
-    await feedApi.dislikeComment(feedId, commentId)
+  async dislikeComment({ dispatch }, commentData) {
+    await feedApi.dislikeComment(commentData.feedId, commentData.commentId)
       .then(() => {
-        dispatch('getFeedInfo', 0)
+        dispatch('getFeedDetail', commentData.feedId)
     })
   },
   //댓글 수정

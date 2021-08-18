@@ -53,7 +53,7 @@ public class FollowController {
                         .token(firebaseTokens.get(0).getToken())
                         .notification(FcmDto.Notification.builder()
                                 .title("follow")
-                                .body("")
+                                .body(user.getData().getNickname())
                                 .build())
                         .data(FcmDto.PayData.builder()
                                 .userId(follower)
