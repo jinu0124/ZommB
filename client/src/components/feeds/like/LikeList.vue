@@ -19,5 +19,8 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
+.like-list {
+  margin: 0 auto;
+}
 </style>
