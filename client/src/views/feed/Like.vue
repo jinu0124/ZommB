@@ -1,10 +1,7 @@
 <template>
   <div class="like">
-    <div class="d-flex justify-content-between align-items-center">
-      <i class="back-btn fi-rr-angle-small-left" @click="$router.go(-1)"></i>
-      <span class="logo">{{ this.Logo }}</span>
-    </div>
-    <div>
+    <SimpleHeader class="like-header" :title="title" />
+    <div class="like-box">
       <LikeList class="like-list" />
     </div>
   </div>
@@ -12,12 +9,14 @@
 
 <script>
 import LikeList from "@/components/feeds/like/LikeList.vue";
+import SimpleHeader from "@/components/SimpleHeader";
 import { mapActions } from "vuex";
 
 export default {
   name: "Like",
   components: {
     LikeList,
+    SimpleHeader,
   },
   methods: {
     ...mapActions("feed", ["getLikeInfo"]),
@@ -31,31 +30,37 @@ export default {
   },
   data() {
     return {
-      Logo: "좋아요",
+      title: "좋아요",
     };
   },
 };
 </script>
 
 <style scoped>
-.like {
+.like-header {
+  color: #fff;
   background: #7b60f1;
-  height: 60px;
 }
-.d-flex {
-  padding: 12px;
+.like {
+  margin: 0 auto;
+  align-items: center;
+  height: 100vh;
+  overflow: scroll;
 }
-.back-btn {
-  font-size: 1.5rem;
-  color: #fff;
-}
-.logo {
-  font-family: "Noto Sans KR", sans-serif;
-  font-size: 1rem;
-  color: #fff;
-  margin: auto;
-}
-.like-list {
+.like-box {
+  background: #fff;
+  color: #212121;
+  height: 100%;
+  min-height: 100vh;
+  width: 100vw;
+  border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
+  padding: 20px 20px 100px;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.like-box::-webkit-scrollbar {
+  display: none;
 }
 </style>

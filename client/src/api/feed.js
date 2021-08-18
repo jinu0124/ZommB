@@ -47,7 +47,7 @@ export default {
       return _axios({
         url: `feeds/${feedId}/comments`,
         method: 'post',
-        data: { comment: comment }
+        data: comment
       })
     },
   //게시물 수정
@@ -66,10 +66,11 @@ export default {
     })
   },
   //댓글 수정
-  updateComment(feedId, commentId) {
+  updateComment(feedId, commentId, content) {
     return _axios({
       url: `feeds/${feedId}/comments/${commentId}`,
       method: 'put',
+      data: {content: content}
     })
   },
   //댓글 삭제

@@ -8,12 +8,14 @@ const state = {
   likeInfo: null,
   reportInfo: null,
   comments: null,
+  updateFeedInfo: null,
+  undateCommentInfo: null,
 }
 const actions = {
   moveToFeed() {
     router.push({ name: 'Feed' })
   },
-  //api 요청
+  //게시물api 요청
   //게시물 목록
   async getFeedInfo({ rootState, commit }, page) {
     await feedApi.getNewsFeed(rootState.user.myInfo.id, page)
@@ -52,21 +54,14 @@ const actions = {
       })
   },
   //게시물 신고
-  async reportFeed({ dispatch }, feedId, data) {
-    await feedApi.reportFeed(feedId, data)
+  async reportFeed({ dispatch }, reportData) {
+    await feedApi.reportFeed(reportData.feedId, reportData.reason)
       .then((res) => {
         console.log(res)
         dispatch('getFeedInfo', 0)
       })
   },
-  //댓글 작성
-  async writeComment({ commit }, feedId, comment) {
-    await feedApi.writeComment(feedId, comment)
-      .then((res) => {
-        console.log(res)
-        commit('SET_COMMENT_WRITE', feedId)
-      })
-  },
+  //게시글 수정
   async updateFeed({ commit }, feedId, contents) {
     await feedApi.updateFeed(feedId, contents)
     .then((res) => {
@@ -74,6 +69,46 @@ const actions = {
       commit('SET_UPDATE_FEED', feedId)
     })
   },
+  //댓글 api 요청
+  //댓글 작성
+  async writeComment({ commit }, replyData) {
+    await feedApi.writeComment(replyData.id, replyData.cont)
+      .then((res) => {
+        console.log(res)
+        commit('SET_COMMENT_DATA', null)
+      })
+    },
+  //댓글 삭제
+  async deleteComment({ dispatch }, feedId, commentId) {
+    await feedApi.deleteComment(feedId, commentId)
+      .then(() => {
+      dispatch('getFeedInfo', 0)
+    })
+  },
+  //댓글 좋아요
+  async likeComment({ dispatch }, feedId, commentId) {
+    await feedApi.likeComment(feedId, commentId) 
+      .then(() => {
+      dispatch('getFeedInfo', 0)
+    })
+  },
+  //댓글 좋아요 취소
+  async dislikeComment({ dispatch }, feedId, commentId) {
+    await feedApi.dislikeComment(feedId, commentId)
+      .then(() => {
+        dispatch('getFeedInfo', 0)
+    })
+  },
+  //댓글 수정
+  async updateComment({ commit }, feedId, commentId, content) {
+    await feedApi.updateFeed(feedId, commentId, content)
+    .then((res) => {
+      console.log(res)
+      commit('SET_UPDATE_COMMENT', feedId)
+    })
+  },
+
+  
 }
 const mutations = {
   SET_FEED_INFO(state, payload) {
@@ -94,7 +129,12 @@ const mutations = {
   SET_REPORT_FEED(state, payload) {
     state.reportInfo = payload
   },
-
+  SET_UPDATE_FEED(state, payload) {
+    state.updateFeedInfo = payload
+  },
+  SET_UPDATE_COMMENT(state, payload) {
+    state.updateCommentInfo = payload
+  },
 }
 const getters = {
 

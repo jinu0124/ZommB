@@ -100,10 +100,10 @@ export default {
     },
     moveToFeed() {
       const reportData = {
-        id: this.$route.params.id,
+        feedId: this.$route.params.id,
         reason: this.reason,
       };
-      this.reportFeed(reportData.id, reportData.reason);
+      this.reportFeed(reportData);
       console.log(this.$route.params.id);
       console.log(this.reason);
       this.$router.push("/feed");

@@ -1,6 +1,11 @@
 <template>
   <div class="feed-list">
-    <FeedListItem v-for="(feed, idx) in feedInfo" :key="idx" :feed="feed" />
+    <FeedListItem
+      v-for="(feed, idx) in feedInfo"
+      class="feed-item up-on-scroll"
+      :key="idx"
+      :feed="feed"
+    />
   </div>
 </template>
 

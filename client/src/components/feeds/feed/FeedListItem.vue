@@ -23,14 +23,13 @@
           <div class="owner" type="button" @click="moveToUserDetail()">
             {{ feed.user.nickname }}
           </div>
-          <img
-            alt="미니북"
-            class="minibook"
-            src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
-          />
-          <span class="book-title" type="button" @click="moveToBookDetail()">{{
-            feed.book.bookName
-          }}</span>
+          <span class="book-title" type="button" @click="moveToBookDetail()"
+            ><img
+              alt="미니북"
+              class="minibook"
+              src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
+            />{{ feed.book.bookName }}</span
+          >
         </span>
         <span class="dropdown">
           <img
@@ -64,7 +63,7 @@
     <div class="like-reply">
       <span>
         <img
-          v-show="feed.isThumb"
+          v-show="this.isThumb"
           alt="좋아요버튼눌림"
           class="like btn-like"
           type="button"
@@ -72,7 +71,7 @@
           src="@/assets/image/deco/heartFill.svg"
         />
         <img
-          v-show="!feed.isThumb"
+          v-show="!this.isThumb"
           alt="좋아요버튼안눌림"
           class="dislike btn-like"
           type="button"
@@ -125,33 +124,12 @@
           :key="idx"
           class="tag rounded-pill"
           type="button"
+          @click="searchTag(tag.tag)"
           >#{{ tag.tag }}</span
         >
       </div>
       <hr />
     </div>
-    <!-- <div class="reply-list-item" v-if="feed.comments.length > 0">
-      <div class="reply-content">
-        <span class="replier">{{ feed.comments[0].nickname }}</span>
-        <span class="reply">{{ feed.comments[0].content }}</span>
-        <span
-          ><img
-            alt="좋아요버튼안눌림"
-            class="dislike btn-like"
-            type="button"
-            src="@/assets/image/deco/heartEmpty.svg"
-            v-show="disLike"
-          />
-          <img
-            alt="좋아요버튼눌림"
-            class="like btn-like"
-            type="button"
-            src="@/assets/image/deco/heartFill.svg"
-            v-show="Like"
-          />
-        </span>
-      </div>
-    </div> -->
     <div class="reply-more">
       <span type="button" @click="onMoveToComment">댓글보기</span>
     </div>
@@ -176,18 +154,18 @@ export default {
       moreContent: false,
       Like: false,
       disLike: true,
-      falseLike: !this.feed.isThumb,
       idx: null,
+      isThumb: this.feed.isThumb,
     };
   },
   methods: {
     ...mapActions("feed", ["likeFeed", "dislikeFeed"]),
     like() {
-      this.feed.isThumb = true;
+      this.isThumb = true;
       this.feed.thumbCnt += 1;
     },
     dislike() {
-      this.feed.isThumb = false;
+      this.isThumb = false;
       this.feed.thumbCnt -= 1;
     },
     showMoreContent(flag) {
@@ -228,6 +206,13 @@ export default {
       this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
       this.$router.push({ name: "Reply", params: { id: this.feed.id } });
     },
+    searchTag(keyword) {
+      this.$router.push({
+        name: "Search",
+        params: { flag: "feeds" },
+        query: { q: keyword },
+      });
+    },
   },
   computed: {
     ...mapState("user", ["myInfo"]),
@@ -265,6 +250,12 @@ export default {
 }
 .nick-title {
   margin-right: 40px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  width: 160px;
+}
+.book-title {
+  width: 160px;
 }
 .minibook {
   width: 1rem;
