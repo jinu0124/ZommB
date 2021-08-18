@@ -120,6 +120,9 @@ export default {
     font-size: 12px;
     color: #585858;
   }
+  .profile-header .follow-info span{
+    cursor: pointer;
+  }
   .cnt-info {
     width: 100%;
   }
