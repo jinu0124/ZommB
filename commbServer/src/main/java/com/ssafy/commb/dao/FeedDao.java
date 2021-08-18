@@ -22,4 +22,6 @@ public interface FeedDao {
     public List<FeedDto> getFeeds(Map<String, Object> map);
 
     public List<String> getFeedWriterToken(int feedId);
+
+    public FeedDto searchFeed(int feedId);
 }

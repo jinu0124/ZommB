@@ -536,4 +536,20 @@ public class FeedServiceImpl implements FeedService {
         }
     }
 
+    public FeedDto.Response searchFeed(int feedId, int userId){
+
+        Optional<Feed> feed = feedRepository.findById(feedId);
+        if(!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "피드가 존재하지 않습니다");
+
+        FeedDto feedDto = feedDao.searchFeed(feedId);
+
+        feedDto.setHashTags(feedDao.getHashTags(feedDto.getId()));
+        feedDto.setComments(feedDao.getComments(feedDto.getId(), userId));
+
+        FeedDto.Response feedRes = new FeedDto.Response();
+        feedRes.setData(feedDto);
+
+        return feedRes;
+    }
+
 }
