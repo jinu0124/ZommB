@@ -11,7 +11,7 @@
         >더보기</div>
       </div>
       <div v-else>
-        {{ bookInfo.contents }}
+        {{ contents }}
         <div 
           v-if="shortenContent"
           type="button"
@@ -58,13 +58,22 @@ export default {
   computed: {
     ...mapState('book', ['bookInfo']),
     shortenContent () {
-      if ( this.bookInfo.contents.length > 200) {
-        return _.truncate(this.bookInfo.contents, {
+      if ( this.contents > 200) {
+        return _.truncate(this.contents, {
           'length': 150,
           'omission': '...'
         })
       } else {
         return false
+      }
+    },
+    contents () {
+      if ( _.endsWith(this.bookInfo.contents, '.') ) {
+        return this.bookInfo.contents
+      } else {
+        const contents = _.split(this.bookInfo.contents, '.')
+        contents.pop()
+        return _.join(contents, '.') + '.'
       }
     }
   }
