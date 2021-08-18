@@ -35,14 +35,14 @@ public class CommentDto {
         private String feedId;
         private String userId;
 
-        private String comment;
+        private String content;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class RequestComment {                // 요청
-        private String comment;
+    public static class RequestContent {                // 요청
+        private String content;
     }
 
     @Getter
