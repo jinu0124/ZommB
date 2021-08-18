@@ -1,5 +1,8 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.core.Tuple;
+import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
@@ -217,13 +220,19 @@ public class FeedServiceImpl implements FeedService {
 
         reportRepository.save(report);
 
-        Optional<List<Feed>> feedReported = reportRepository.findByFeedId(feedId);              // 신고 4회부터는 블럭처리
-        feedReported.ifPresent(select -> {
-            if(select.size() > 3) {
-                feed.get().setBlocked(1);
-                feedRepository.save(feed.get());
-            }
-        });
+        JPAQueryFactory query = new JPAQueryFactory(entityManager);
+        QReport qReport = QReport.report;
+
+        JPAQuery<Long> ret = query.from(qReport)
+                .where(qReport.feed.id.eq(feedId))
+                .groupBy(qReport.user.id)
+                .select(qReport.user.id.count());
+
+        List<Long> reportCnt = ret.fetch();
+        if(reportCnt.size() >= 3){
+            feed.get().setBlocked(1);
+            feedRepository.save(feed.get());
+        }
     }
 
     public FeedDto.ResponseList getFollowingFeeds(int page, int userId) {

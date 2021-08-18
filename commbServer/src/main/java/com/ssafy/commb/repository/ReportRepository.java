@@ -10,6 +10,4 @@ import java.util.Optional;
 
 @Repository
 public interface ReportRepository extends JpaRepository<Report, Integer> {
-
-    Optional<List<Feed>> findByFeedId(int feedId);
 }
