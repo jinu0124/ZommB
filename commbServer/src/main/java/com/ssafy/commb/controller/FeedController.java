@@ -227,7 +227,7 @@ public class FeedController {
     // 댓글 수정
     @PutMapping("/{feedId}/comments/{commentId}")
     @ApiOperation(value = "댓글 수정")
-    public ResponseEntity modifyComment(@PathVariable Integer commentId, @PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) {
+    public ResponseEntity modifyComment(@PathVariable Integer commentId, @PathVariable Integer feedId, @RequestBody CommentDto.RequestComment comment, HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
         int userId = commentService.getUserId(commentId);
@@ -235,7 +235,7 @@ public class FeedController {
         if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "댓글 수정 권한 없음"); // 작성자한테만 수정 버튼 보이도록 front에서 막기
 
-        commentService.modifyComment(commentId, content, feedId);
+        commentService.modifyComment(commentId, comment.getComment(), feedId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
