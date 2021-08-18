@@ -176,7 +176,7 @@ const actions = {
     await userApi.getUserInfo(userId)
       .then((res) => {
         if (res.data.data) {
-          console.log(res)
+          // console.log(res)
           commit('SET_USER_INFO', res.data.data)
         } else {
           router.push({name: 'PageNotFound'})

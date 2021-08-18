@@ -49,7 +49,6 @@
 
 <script>
 import { mapState, mapActions } from "vuex";
-import feedApi from "@/api/feed.js";
 import ReplyMenu from "./ReplyMenu.vue";
 export default {
   name: "ReplyListItem",
@@ -70,15 +69,26 @@ export default {
     };
   },
   methods: {
-    ...mapActions("feed", ["updateComment", "deleteComment"]),
+    ...mapActions("feed", [
+      "updateComment",
+      "deleteComment",
+      "likeComment",
+      "dislikeComment",
+    ]),
     like() {
-      feedApi.likeComment(this.$route.params.id, this.reply.id);
+      this.likeComment({
+        feedId: this.$route.params.id,
+        commentId: this.reply.id,
+      });
       this.Like = true;
       this.disLike = false;
       this.reply.thumbCnt += 1;
     },
     dislike() {
-      feedApi.dislikeComment(this.$route.params.id, this.reply.id);
+      this.dislikeComment({
+        feedId: this.$route.params.id,
+        commentId: this.reply.id,
+      });
       this.Like = false;
       this.disLike = true;
       this.reply.thumbCnt -= 1;

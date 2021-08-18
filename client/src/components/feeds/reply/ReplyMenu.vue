@@ -18,7 +18,10 @@ export default {
       this.$emit("edit");
     },
     onDeleteComment() {
-      this.deleteComment(this.$route.params.id, this.reply.id);
+      this.deleteComment({
+        feedId: this.$route.params.id,
+        commentId: this.reply.id,
+      });
     },
   },
 };

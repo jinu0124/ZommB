@@ -6,7 +6,13 @@
       :src="bookCover" alt=""
       @click="$router.push({ name: 'BookInfo', params: { id: feed.book.id } })"
     >
-    <img v-else class="article-img" :src="feed.feedFileUrl" alt="">
+    <img 
+      v-else 
+      class="article-img" 
+      :src="feed.feedFileUrl" 
+      alt="feed image"
+      @click="moveToDetail(feed.id)"
+    >
     <div class="article-info">
       <div 
         class="user d-flex align-items-center gap-1"
@@ -16,7 +22,7 @@
         <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="">
         <span class="name">{{ feed.user.nickname }}</span>
       </div>
-      <div class="content">{{ shortenContent }}</div>
+      <div class="content" @click="moveToDetail(feed.id)">{{ shortenContent }}</div>
       <div class="hashtags mt-1">
         <span
           v-for="(hashtag, idx) in hashtagSlice"
@@ -26,6 +32,7 @@
         >#{{ hashtag.tag }}</span>
         <span
           v-if="feed.hashTags.length > 2"
+          @click="moveToDetail(feed.id)"
           class="badge and-more rounded-pill me-1">+{{feed.hashTags.length - 2}}</span>
       </div>
     </div>
@@ -48,6 +55,9 @@ export default {
     }
   },
   methods: {
+    moveToDetail (feedId) {
+      this.$router.push({ name: 'FeedView', params: { flag: this.flag, target: feedId }})
+    },
     searchTag (keyword) {
       this.$router.push({ 
         name: 'Search', 
@@ -57,6 +67,9 @@ export default {
     }
   },
   computed: {
+    flag () {
+      return this.needBook ? 'cd' : 'cw'
+    },
     shortenContent () {
       return _.truncate(this.feed.content, {
         'length': 50,
@@ -97,6 +110,7 @@ export default {
     width: 100px;
     border-radius: 0 0 0 15px;
     object-fit: cover;
+    cursor: pointer;
   }
   .article-info {
     padding-left: 110px;
@@ -112,6 +126,7 @@ export default {
     text-align: justify;
     margin: 2px 3px 0;
     white-space: pre-line;
+    cursor: pointer;
   }
   .user .profile {
     width: 16px;

@@ -23,11 +23,7 @@
           @input="insertContent"
           :value="content"
         />
-        <span
-          class="btn-submit me-3"
-          @click="onWrite"
-        >등록</span>
-
+        <span class="btn-submit me-3" @click="onWrite">등록</span>
       </div>
     </div>
   </div>
@@ -58,9 +54,9 @@ export default {
       this.content = event.target.value;
     },
     onWrite() {
-      this.writeComment(this.replyData)
-      this.content = ''
-    }
+      this.writeComment(this.replyData);
+      this.content = "";
+    },
   },
 };
 </script>
@@ -115,7 +111,7 @@ reply-regist {
 }
 .btn-submit {
   color: #683ec9;
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 500;
   cursor: pointer;
 }
