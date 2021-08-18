@@ -156,8 +156,6 @@ public class CommentServiceImpl implements CommentService {
             fcms.add(fcm);
         }
 
-        System.out.println("1" + fcms.get(0).getMessage().getNotification().getTitle());
-
         return fcms;
     }
 
