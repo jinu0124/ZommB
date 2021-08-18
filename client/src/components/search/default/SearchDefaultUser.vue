@@ -9,7 +9,6 @@
 </template>
 
 <script>
-// import RecommendUserListItem from "@/components/search/recommend/RecommendUserListItem";
 import SearchUserListItem from '../SearchUserListItem.vue'
 import { mapState } from "vuex";
 
@@ -17,7 +16,6 @@ export default {
   name: 'SearchDefaultUser',
   components: {
     SearchUserListItem
-    // RecommendUserListItem,
   },
   computed: {
     ...mapState("search", ["recommend"]),
