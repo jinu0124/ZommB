@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commbServer.iml" filepath="$PROJECT_DIR$/.idea/modules/commbServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commbServer.main.iml" filepath="$PROJECT_DIR$/.idea/modules/commbServer.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commbServer.querydsl.iml" filepath="$PROJECT_DIR$/.idea/modules/commbServer.querydsl.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/commbServer.test.iml" filepath="$PROJECT_DIR$/.idea/modules/commbServer.test.iml" />
+    </modules>
+  </component>
+</project>

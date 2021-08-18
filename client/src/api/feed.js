@@ -6,7 +6,14 @@ export default {
     return _axios({
       url: `feeds/${userId}/following/feeds`,
       method: 'get',
-      params: { page:page }
+      params: { page: page }
+    })
+  },
+  // 단일 게시물 상세 조회
+  getFeedInfo(feedId) {
+    return _axios({
+      url: `feeds/${feedId}`,
+      method: 'get',
     })
   },
   //게시물 좋아요 목록
@@ -47,14 +54,15 @@ export default {
       return _axios({
         url: `feeds/${feedId}/comments`,
         method: 'post',
-        data: { comment: comment }
+        data: comment
       })
     },
   //게시물 수정
-  updateFeed(feedId) {
+  updateFeed(feedId, content) {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'put',
+      data: {content: content}
     })
   },
   //게시물 삭제
@@ -65,10 +73,11 @@ export default {
     })
   },
   //댓글 수정
-  updateComment(feedId, commentId) {
+  updateComment(feedId, commentId, content) {
     return _axios({
       url: `feeds/${feedId}/comments/${commentId}`,
       method: 'put',
+      data: {content: content}
     })
   },
   //댓글 삭제
@@ -93,11 +102,11 @@ export default {
     })
   },
   //게시물 신고
-  reportFeed(feedId, data) {
+  reportFeed(feedId, reason) {
     return _axios({
       url: `feeds/${feedId}/reports`,
       method: 'post',
-      params: {data: data}
+      data: reason
     })
   },
 }

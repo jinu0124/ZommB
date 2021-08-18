@@ -2,35 +2,33 @@
   <div class="feed-list-item">
     <div class="item-body d-flex flex-column align-items-center">
       <div class="feed-header align-items-center">
-        <span
-          ><img
+        <span>
+          <img
             v-if="feed.user.userFileUrl"
             class="user-profile"
-            type="button"
-            id="UserProfile"
             :src="feed.user.userFileUrl"
+            alt="user-profile"
             @click="moveToUserDetail()"
-            alt="user-profile" />
+          />
           <img
             v-else
-            alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
+            alt="디폴트 회원 이미지"
             @click="moveToUserDetail()"
-            id="UserProfile"
-        /></span>
+          />
+        </span>
         <span class="nick-title">
           <div class="owner" type="button" @click="moveToUserDetail()">
             {{ feed.user.nickname }}
           </div>
-          <img
-            alt="미니북"
-            class="minibook"
-            src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
-          />
-          <span class="book-title" type="button" @click="moveToBookDetail()">{{
-            feed.book.bookName
-          }}</span>
+          <span class="book-title" type="button" @click="moveToBookDetail()"
+            ><img
+              alt="미니북"
+              class="minibook"
+              src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
+            />{{ feed.book.bookName }}</span
+          >
         </span>
         <span class="dropdown">
           <img
@@ -42,7 +40,10 @@
             type="button"
             :id="'FeedMenuDropdown' + feed.id"
           />
-          <FeedMenu :feed="feed" />
+          <FeedMenu 
+            :feed="feed"
+            @edit="turnIntoEditMode"
+          />
         </span>
       </div>
 
@@ -50,7 +51,6 @@
         v-if="feed.feedFileUrl"
         class="feed-image"
         type="button"
-        id="FeedImage"
         :src="feed.feedFileUrl"
         alt="feed-image"
       />
@@ -64,7 +64,7 @@
     <div class="like-reply">
       <span>
         <img
-          v-show="feed.isThumb"
+          v-show="this.isThumb"
           alt="좋아요버튼눌림"
           class="like btn-like"
           type="button"
@@ -72,7 +72,7 @@
           src="@/assets/image/deco/heartFill.svg"
         />
         <img
-          v-show="!feed.isThumb"
+          v-show="!this.isThumb"
           alt="좋아요버튼안눌림"
           class="dislike btn-like"
           type="button"
@@ -91,18 +91,33 @@
           alt=""
           class="btn-reply"
           type="button"
-          @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
+          @click="onMoveToComment"
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span
-        class="reply-num"
-        type="button"
-        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
-        >{{ feed.comments.length }}</span
-      >
+      <span class="reply-num" type="button" @click="onMoveToComment">{{
+        feed.comments.length
+      }}</span>
     </div>
-    <div class="content">
+    <div v-if="isEditMode" class="edit-box d-flex align-items-center">
+      <textarea
+        class="form-control edit-input" 
+        type="text"
+        @input="editContent"
+        :value="contentNew"
+      ></textarea>
+      <div class="d-flex flex-column me-2 gap-1">
+        <button 
+          class="btn-edit btn-yellow"
+          @click="onUpdate"
+        >수정</button>
+        <button 
+          class="btn-edit btn-grey"
+          @click="cancelUpdate"
+        >취소</button>
+      </div>
+    </div>
+    <div v-else class="content">
       <p class="content-detail">{{ shortenContent }}</p>
       <p
         class="content-more"
@@ -128,35 +143,14 @@
           :key="idx"
           class="tag rounded-pill"
           type="button"
+          @click="searchTag(tag.tag)"
           >#{{ tag.tag }}</span
         >
       </div>
       <hr />
     </div>
-    <div class="reply-list-item" v-if="feed.comments.length > 0">
-      <div class="reply-content">
-        <!-- <span class="replier">{{ feed.comments[0].nickname }}</span>
-        <span class="reply">{{ feed.comments[0].content }}</span> -->
-        <span
-          ><img
-            alt="좋아요버튼안눌림"
-            class="dislike btn-like"
-            type="button"
-            src="@/assets/image/deco/heartEmpty.svg"
-            v-show="disLike"
-          />
-          <img
-            alt="좋아요버튼눌림"
-            class="like btn-like"
-            type="button"
-            src="@/assets/image/deco/heartFill.svg"
-            v-show="Like"
-          />
-        </span>
-      </div>
-    </div>
     <div class="reply-more">
-      <span type="button" @click="onMoveToComment">더보기</span>
+      <span type="button" @click="onMoveToComment">댓글보기</span>
     </div>
   </div>
 </template>
@@ -179,19 +173,37 @@ export default {
       moreContent: false,
       Like: false,
       disLike: true,
-      falseLike: !this.feed.isThumb,
       idx: null,
+      isThumb: this.feed.isThumb,
+      // 수정 관련 데이터
+      isEditMode: false,
+      contentNew: ''
     };
   },
   methods: {
-    ...mapActions("feed", ["likeFeed", "dislikeFeed"]),
+    ...mapActions("feed", ["likeFeed", "dislikeFeed", 'updateFeed']),
     like() {
-      this.feed.isThumb = true;
+      this.isThumb = true;
       this.feed.thumbCnt += 1;
     },
     dislike() {
-      this.feed.isThumb = false;
+      this.isThumb = false;
       this.feed.thumbCnt -= 1;
+    },
+    turnIntoEditMode () {
+      this.isEditMode = true
+    },
+    editContent (event) {
+      this.contentNew = event.target.value
+    },
+    cancelUpdate () {
+      this.isEditMode = false
+      this.contentNew = this.feed.content
+    },
+    async onUpdate () {
+      await this.updateFeed({ id: this.feed.id, content: this.contentNew })
+      this.isEditMode = false
+      this.contentNew = this.feed.content
     },
     showMoreContent(flag) {
       this.moreContent = flag;
@@ -228,8 +240,15 @@ export default {
       return `${Math.floor(betweenTimeDay / 365)}년전`;
     },
     onMoveToComment() {
-      this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
-      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
+      this.$store.commit("feed/SET_COMMENTS", this.feed)
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } })
+    },
+    searchTag(keyword) {
+      this.$router.push({
+        name: "Search",
+        params: { flag: "feeds" },
+        query: { q: keyword },
+      });
     },
   },
   computed: {
@@ -243,6 +262,9 @@ export default {
       }
     },
   },
+  mounted () {
+    this.contentNew = this.feed.content
+  }
 };
 </script>
 
@@ -268,6 +290,44 @@ export default {
 }
 .nick-title {
   margin-right: 40px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  width: 160px;
+}
+.edit-box {
+  background: #F1F1F1;
+  width: 280px;
+  height: fit-content;
+  border-radius: 10px;
+}
+.edit-input {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  word-spacing: 1px;
+  line-height: 18px;
+  outline: none;
+  padding: 10px 20px;
+  height: 80px;
+  word-wrap: break-word;
+}
+.edit-input::-webkit-scrollbar {
+  display: none;
+}
+.btn-edit {
+  border: none;
+  width: 50px;
+  height: 25px;
+  border-radius: 13px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.book-title {
+  width: 160px;
 }
 .minibook {
   width: 1rem;

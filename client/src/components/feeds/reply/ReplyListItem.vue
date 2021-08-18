@@ -1,49 +1,35 @@
 <template>
   <div class="reply-list-item">
-    <!-- <img
-      v-if="reply.userFileUrl"
-      class="user-profile"
-      type="button"
-      id="UserProfile"
-      :src="feed.user.userFileUrl"
-      alt="user-profile"
-    />
-    <img
-      v-else
-      alt="디폴트 회원 이미지"
-      class="default-user-image user-profile"
-      src="@/assets/image/common/profileDefault.svg"
-      id="UserProfile"
-    /> -->
-    <div class="reply-content">
-      <p class="replier">{{ reply.nickname }}</p>
-      <p class="reply">{{ reply.content }}</p>
-      <div class="reply-like-num">좋아요 {{ reply.thumbCnt }}개</div>
+    <div class="reply-box d-flex justify-content-between align-items-center">
+      <div class="d-flex flex-column">
+        <div class="comment d-flex flex-column">
+          <strong>{{ reply.nickname }}</strong>
+          {{ reply.content }}
+          <div class="info d-flex gap-2 allign-items-center">
+            <span>좋아요 {{ reply.thumbCnt }}개</span>
+            <span v-if="reply.isMod">수정됨</span>
+            <i class="fi-sr-cross-small"></i>
+          </div>
+        </div>
+      </div>
+      <div v-if="!isMine">
+        <i 
+          v-if="reply.isThumb" 
+          class="fas fa-heart like"
+          @click="dislike()"
+        ></i>
+        <i 
+          v-else 
+          class="far fa-heart dislike"
+          @click="like()"
+        ></i>
+      </div>
     </div>
-    <!-- <ReplyMenu/> -->
-    <img
-      alt="좋아요버튼안눌림"
-      class="dislike btn-like"
-      type="button"
-      @click="like()"
-      src="@/assets/image/deco/heartEmpty.svg"
-      v-show="disLike"
-    />
-    <img
-      alt="좋아요버튼눌림"
-      class="like btn-like"
-      type="button"
-      @click="dislike()"
-      src="@/assets/image/deco/heartFill.svg"
-      v-show="Like"
-    />
   </div>
 </template>
 
 <script>
-import _ from "lodash";
-import { mapState } from "vuex";
-
+import { mapState } from 'vuex'
 export default {
   name: "ReplyListItem",
   components: {
@@ -63,25 +49,53 @@ export default {
     like() {
       this.Like = true;
       this.disLike = false;
-      this.replyLikeNum += 1;
+      this.reply.thumbCnt += 1;
     },
     dislike() {
       this.Like = false;
       this.disLike = true;
-      this.replyLikeNum -= 1;
+      this.reply.thumbCnt -= 1;
     },
   },
   computed: {
-    shortenContent() {
-      return _.truncate(this.reply, { length: 50 });
-    },
-    ...mapState("feed", ["feedInfo"]),
-  },
+    ...mapState('user', ['myInfo']),
+    isMine () {
+      return this.myInfo.id === this.reply.userId
+    }
+  }
 };
 </script>
 
 <style scoped>
-.reply-list-item {
+.reply-box {
+  font-size: 12px;
+  width: 260px;
+}
+.reply-box .comment {
+  width: 220px;
+  word-break: break-all;
+}
+.reply-box .user {
+  font-weight: 700;
+}
+
+.reply-box .like {
+  color: #FF7777;
+}
+.reply-box .dislike {
+  color: #C4C4C4;
+}
+.reply-box .info {
+  font-size: 10px;
+  color: #585858;
+}
+.comment-menu {
+  color: #585858;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+/* .reply-list-item {
   margin-top: 20px;
   display: flex;
 }
@@ -95,11 +109,7 @@ export default {
 .replier {
   font-family: noto-sans-kr-10-bold;
 }
-.reply-like-num {
-  font-family: "Noto Sans KR";
-  font-size: 9px;
-  color: rgba(164, 164, 164, 1);
-}
+
 .reply {
   background: #fff;
   color: rgba(33, 33, 33, 1);
@@ -111,5 +121,5 @@ export default {
   height: 2.5rem;
   border-radius: 100%;
   margin: 0px 5px;
-}
+} */
 </style>
