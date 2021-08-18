@@ -4,17 +4,19 @@
       <div class="feed-header align-items-center">
         <span
           ><img
-            v-if="myInfo.userFileUrl"
+            v-if="feed.user.userFileUrl"
             class="user-profile"
             type="button"
             id="UserProfile"
-            :src="myInfo.userFileUrl"
+            :src="feed.user.userFileUrl"
+            @click="moveToUserDetail()"
             alt="user-profile" />
           <img
             v-else
             alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
+            @click="moveToUserDetail()"
             id="UserProfile"
         /></span>
         <span class="nick-title">
@@ -30,17 +32,18 @@
             feed.book.bookName
           }}</span>
         </span>
-        <span
-          ><img
+        <span class="dropdown">
+          <img
             alt="피드 메뉴"
             class="feed-menu dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             src="@/assets/image/deco/feedMenu.svg"
             type="button"
-            id="FeedMenuDropdown"
-        /></span>
-        <FeedMenu />
+            :id="'FeedMenuDropdown' + feed.id"
+          />
+          <FeedMenu :feed="feed" />
+        </span>
       </div>
 
       <img
@@ -61,37 +64,43 @@
     <div class="like-reply">
       <span>
         <img
+          v-show="feed.isThumb"
           alt="좋아요버튼눌림"
           class="like btn-like"
           type="button"
-          @click="dislikeFeed(feed.id)"
+          @click="dislikeFeed(feed.id), dislike()"
           src="@/assets/image/deco/heartFill.svg"
-          v-show="feed.isThumb"
         />
         <img
+          v-show="!feed.isThumb"
           alt="좋아요버튼안눌림"
           class="dislike btn-like"
           type="button"
-          @click="likeFeed(feed.id)"
+          @click="likeFeed(feed.id), like()"
           src="@/assets/image/deco/heartEmpty.svg"
-          v-show="!feed.isThumb"
         />
       </span>
-      <span class="like-num" type="button" @click="moveToLike">{{
-        feed.thumbCnt
-      }}</span>
+      <span
+        class="like-num"
+        type="button"
+        @click="$router.push({ name: 'Like', params: { id: feed.id } })"
+        >{{ feed.thumbCnt }}</span
+      >
       <span>
         <img
           alt=""
           class="btn-reply"
           type="button"
-          @click="moveToReply"
+          @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span class="reply-num" type="button" @click="moveToReply">{{
-        feed.comments.length
-      }}</span>
+      <span
+        class="reply-num"
+        type="button"
+        @click="$router.push({ name: 'Reply', params: { id: feed.id } })"
+        >{{ feed.comments.length }}</span
+      >
     </div>
     <div class="content">
       <p class="content-detail">{{ shortenContent }}</p>
@@ -111,21 +120,43 @@
       >
         접기
       </p>
-      <p class="content-duration">{{ feed.createAt }}시간 전</p>
+      <p class="content-duration">{{ timeForToday(this.feed.createAt) }}</p>
       <!-- 시간 계산 필요 -->
       <div>
         <span
           v-for="(tag, idx) in feed.hashTags"
           :key="idx"
           class="tag rounded-pill"
+          type="button"
           >#{{ tag.tag }}</span
         >
       </div>
       <hr />
     </div>
-
+    <div class="reply-list-item" v-if="feed.comments.length > 0">
+      <div class="reply-content">
+        <!-- <span class="replier">{{ feed.comments[0].nickname }}</span>
+        <span class="reply">{{ feed.comments[0].content }}</span> -->
+        <span
+          ><img
+            alt="좋아요버튼안눌림"
+            class="dislike btn-like"
+            type="button"
+            src="@/assets/image/deco/heartEmpty.svg"
+            v-show="disLike"
+          />
+          <img
+            alt="좋아요버튼눌림"
+            class="like btn-like"
+            type="button"
+            src="@/assets/image/deco/heartFill.svg"
+            v-show="Like"
+          />
+        </span>
+      </div>
+    </div>
     <div class="reply-more">
-      <span type="button" @click="moveToReply">더보기</span>
+      <span type="button" @click="onMoveToComment">더보기</span>
     </div>
   </div>
 </template>
@@ -146,21 +177,59 @@ export default {
   data() {
     return {
       moreContent: false,
+      Like: false,
+      disLike: true,
+      falseLike: !this.feed.isThumb,
+      idx: null,
     };
   },
   methods: {
-    ...mapActions("feed", [
-      "moveToReply",
-      "moveToLike",
-      "likeFeed",
-      "dislikeFeed",
-    ]),
+    ...mapActions("feed", ["likeFeed", "dislikeFeed"]),
+    like() {
+      this.feed.isThumb = true;
+      this.feed.thumbCnt += 1;
+    },
+    dislike() {
+      this.feed.isThumb = false;
+      this.feed.thumbCnt -= 1;
+    },
     showMoreContent(flag) {
       this.moreContent = flag;
     },
     moveToBookDetail() {
       let bookid = this.feed.book.id;
       this.$router.push("/book/" + bookid);
+    },
+    moveToUserDetail() {
+      let userid = this.feed.user.id;
+      this.$router.push("/profile/" + userid + "/0");
+    },
+    timeForToday(value) {
+      const today = new Date();
+      const timeValue = new Date(value);
+
+      const betweenTime = Math.floor(
+        (today.getTime() - timeValue.getTime()) / 1000 / 60
+      );
+      if (betweenTime < 1) return "방금전";
+      if (betweenTime < 60) {
+        return `${betweenTime}분전`;
+      }
+      const betweenTimeHour = Math.floor(betweenTime / 60);
+      if (betweenTimeHour < 24) {
+        return `${betweenTimeHour}시간전`;
+      }
+
+      const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+      if (betweenTimeDay < 365) {
+        return `${betweenTimeDay}일전`;
+      }
+
+      return `${Math.floor(betweenTimeDay / 365)}년전`;
+    },
+    onMoveToComment() {
+      this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
     },
   },
   computed: {
@@ -253,17 +322,15 @@ export default {
 }
 .reply-list-item {
   margin-top: 10px;
-  display: flex;
 }
 .reply-content {
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
   font-family: "Noto Sans KR";
   margin: 0px 5px;
 }
 .replier {
-  font-family: noto-sans-kr-10-bold;
+  font-family: noto-sans-kr-10;
+  margin-right: 10px;
+  font-weight: bold;
 }
 .reply-like-num {
   font-family: "Noto Sans KR";

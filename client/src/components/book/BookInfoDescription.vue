@@ -11,7 +11,7 @@
         >더보기</div>
       </div>
       <div v-else>
-        {{ bookInfo.contents }}
+        {{ contents }}
         <div 
           v-if="shortenContent"
           type="button"
@@ -26,6 +26,7 @@
         v-for="(keyword, idx) in bookInfo.keywords"
         :key="idx"
         class="badge rounded-pill me-1 px-2"
+        @click="searchKeyword(keyword.keyword)"
       >#{{ keyword.keyword }}</span>
     </div>
   </div>
@@ -45,18 +46,34 @@ export default {
    methods: {
     changeContent () {
       this.viewShorten = !this.viewShorten
+    },
+    searchKeyword (keyword) {
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: 'books' },
+        query: { type: 'keyword', q: keyword }
+      })
     }
   },
   computed: {
     ...mapState('book', ['bookInfo']),
     shortenContent () {
-      if ( this.bookInfo.contents.length > 200) {
-        return _.truncate(this.bookInfo.contents, {
+      if ( this.contents > 200) {
+        return _.truncate(this.contents, {
           'length': 150,
           'omission': '...'
         })
       } else {
         return false
+      }
+    },
+    contents () {
+      if ( _.endsWith(this.bookInfo.contents, '.') ) {
+        return this.bookInfo.contents
+      } else {
+        const contents = _.split(this.bookInfo.contents, '.')
+        contents.pop()
+        return _.join(contents, '.') + '.'
       }
     }
   }
@@ -76,5 +93,6 @@ export default {
     font-size: 11px;
     color: #585858;
     background: #FFDC7C;
+    cursor: pointer;
   }
 </style>

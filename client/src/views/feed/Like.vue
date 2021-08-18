@@ -20,10 +20,14 @@ export default {
     LikeList,
   },
   methods: {
-    ...mapActions("like", ["getLikeInfo"]),
+    ...mapActions("feed", ["getLikeInfo"]),
   },
   created() {
-    this.getLikeInfo(0);
+    const likeData = {
+      id: this.$route.params.id,
+      page: 0,
+    };
+    this.getLikeInfo(likeData);
   },
   data() {
     return {

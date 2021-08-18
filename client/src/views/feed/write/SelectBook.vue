@@ -56,14 +56,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions('search', ['searchBookTitle']),
+    ...mapActions('search', ['searchBook']),
     ...mapActions('user', ['getMyBookShelf', 'getMyBookCart']),
     onInputChange(word) {
       this.word = word
       this.page = 2
     },
     addResult () {
-      this.searchBookTitle(this.searchData)
+      this.searchBook(this.searchData)
       this.page ++
     },
     closeRating () {
@@ -86,6 +86,7 @@ export default {
     }
   },
   created () {
+    this.$store.commit('search/SET_BOOK_RESULT', null)
     const flag = this.$route.params.flag
     if (flag === 'write') {
       this.title = '글쓰기'

@@ -4,7 +4,7 @@ import store from '@/store/index.js'
 
 const _axios = axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL,
-  timeout: 10000,
+  timeout: 20000,
 })
 
 _axios.interceptors.request.use(

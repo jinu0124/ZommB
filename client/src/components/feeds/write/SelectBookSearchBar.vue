@@ -21,14 +21,14 @@ export default {
     }
   },
   methods: {
-    ...mapActions('search', ['searchBookTitle']),
+    ...mapActions('search', ['searchBook']),
     insertInput (event) {
       this.searchInput = event.target.value
-      this.searchBookTitle(this.searchData)
+      this.searchBook(this.searchData)
       this.$emit('search', this.searchInput)
     },
     clean () {
-      this.$store.commit('search/SET_SEARCH_RESULT', null)
+      this.$store.commit('search/SET_BOOK_RESULT', null)
     },
     
   },
@@ -49,7 +49,7 @@ export default {
     }
   },
   created () {
-    this.$store.commit('search/SET_SEARCH_RESULT', null)
+    this.$store.commit('search/SET_BOOK_RESULT', null)
   }
 }
 </script>

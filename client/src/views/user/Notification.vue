@@ -5,7 +5,7 @@
       :title=title
     />
     <div class="notification-body d-flex flex-column align-items-center gap-3">
-      <div class="align-self-end delete-alert mb-2">
+      <div v-if="notifications" class="align-self-end delete-alert mb-2">
         <i 
           class="fi-sr-cross-circle del-btn"
           @click="resetAlert"
