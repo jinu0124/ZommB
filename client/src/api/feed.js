@@ -9,6 +9,13 @@ export default {
       params: { page: page }
     })
   },
+  // 단일 게시물 상세 조회
+  getFeedInfo(feedId) {
+    return _axios({
+      url: `feeds/${feedId}`,
+      method: 'get',
+    })
+  },
   //게시물 좋아요 목록
   feedLikeList(feedId, page) {
     return _axios({
@@ -51,11 +58,11 @@ export default {
       })
     },
   //게시물 수정
-  updateFeed(feedId, contents) {
+  updateFeed(feedId, content) {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'put',
-      data: {contents: contents}
+      data: {content: content}
     })
   },
   //게시물 삭제

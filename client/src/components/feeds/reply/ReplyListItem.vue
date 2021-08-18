@@ -2,17 +2,17 @@
   <div class="reply-list-item">
     <div class="reply-box d-flex justify-content-between align-items-center">
       <div class="d-flex flex-column">
-        <div class="comment d-flex flex-wrap">
-          <strong class="me-2">{{ reply.nickname }}</strong>{{ reply.content }} <br/>
-        </div>
-        <div class="info ms-2 d-flex gap-2 allign-items-center">
-          <span>좋아요 {{ reply.thumbCnt }}개</span>
-          <span v-if="reply.isMod">수정됨</span>
-          <i class="fas fa-ellipsis-h comment-menu"></i>
+        <div class="comment d-flex flex-column">
+          <strong>{{ reply.nickname }}</strong>
+          {{ reply.content }}
+          <div class="info d-flex gap-2 allign-items-center">
+            <span>좋아요 {{ reply.thumbCnt }}개</span>
+            <span v-if="reply.isMod">수정됨</span>
+            <i class="fi-sr-cross-small"></i>
+          </div>
         </div>
       </div>
-        
-      <div class="">
+      <div v-if="!isMine">
         <i 
           v-if="reply.isThumb" 
           class="fas fa-heart like"
@@ -29,6 +29,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 export default {
   name: "ReplyListItem",
   components: {
@@ -56,6 +57,12 @@ export default {
       this.reply.thumbCnt -= 1;
     },
   },
+  computed: {
+    ...mapState('user', ['myInfo']),
+    isMine () {
+      return this.myInfo.id === this.reply.userId
+    }
+  }
 };
 </script>
 
@@ -65,7 +72,7 @@ export default {
   width: 260px;
 }
 .reply-box .comment {
-  width: 200px;
+  width: 220px;
   word-break: break-all;
 }
 .reply-box .user {

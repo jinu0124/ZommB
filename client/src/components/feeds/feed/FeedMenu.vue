@@ -1,7 +1,7 @@
 <template>
   <div class="dropdown-menu" :aria-labelledby="'FeedMenuDropdown' + feed.id">
     <div v-show="feed.user.id == myInfo.id">
-      <a class="dropdown-item" @click="editContent(feed.id)">수정하기</a>
+      <a class="dropdown-item" @click="editContent()">수정하기</a>
     </div>
     <div v-show="feed.user.id == myInfo.id">
       <a class="dropdown-item" @click="deleteFeed(feed.id, 0)">삭제하기</a>
@@ -29,6 +29,9 @@ export default {
   },
   methods: {
     ...mapActions("feed", ["deleteFeed"]),
+    editContent () {
+      this.$emit('edit')
+    }
   },
 };
 </script>

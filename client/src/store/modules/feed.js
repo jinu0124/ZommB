@@ -40,6 +40,18 @@ const actions = {
         })
     }
   },
+  // 단일 게시물 조회
+  async getFeedDetail ({ commit }, feedId) {
+    await feedApi.getFeedInfo(feedId)
+      .then((res) => {
+        console.log(res)
+        const payload = {
+          id: feedId,
+          data: res.data.data
+        }
+        commit('CHANGE_FEED_INFO', payload)
+      })
+  },
   //게시물 좋아요 목록
   async getLikeInfo({ commit }, data) {
     await feedApi.feedLikeList(data.id, data.page)
@@ -78,11 +90,11 @@ const actions = {
       })
   },
   //게시글 수정
-  async updateFeed({ commit }, feedId, contents) {
-    await feedApi.updateFeed(feedId, contents)
+  async updateFeed({ dispatch }, feedData) {
+    await feedApi.updateFeed(feedData.id, feedData.content)
     .then((res) => {
       console.log(res)
-      commit('SET_UPDATE_FEED', feedId)
+      dispatch('getFeedDetail', feedData.id)
     })
   },
   //댓글 api 요청
@@ -135,6 +147,12 @@ const mutations = {
     payload.forEach(data => {
       state.feedInfo.push(data)
     })
+  },
+  CHANGE_FEED_INFO(state, payload) {
+    const target = state.feedInfo.find((feed) => {
+      return feed.id === payload.id
+    })
+    Object.assign(target, payload.data)
   },
   // 댓글 세팅
   SET_COMMENTS(state, payload) {
