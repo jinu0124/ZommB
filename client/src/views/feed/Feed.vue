@@ -1,7 +1,7 @@
 <template class="temp">
   <div class="feed">
     <div class="fd-header d-flex flex-column">
-      <div class="title" style="float: left">
+      <div class="title" style="float: left" id="feed">
         NewsFeed
         <!-- <img
           src="@/assets/image/test/write-btn.svg"

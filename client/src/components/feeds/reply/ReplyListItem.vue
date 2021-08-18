@@ -1,26 +1,25 @@
 <template>
   <div class="reply-list-item">
-    <!-- <img
-      v-if="reply.userFileUrl"
-      class="user-profile"
-      type="button"
-      id="UserProfile"
-      :src="feed.user.userFileUrl"
-      alt="user-profile"
-    />
-    <img
-      v-else
-      alt="디폴트 회원 이미지"
-      class="default-user-image user-profile"
-      src="@/assets/image/common/profileDefault.svg"
-      id="UserProfile"
-    /> -->
     <div class="reply-content">
       <p class="replier">{{ reply.nickname }}</p>
       <p class="reply">{{ reply.content }}</p>
       <div class="reply-like-num">좋아요 {{ reply.thumbCnt }}개</div>
     </div>
-    <!-- <ReplyMenu/> -->
+    <img
+      class="menu-image"
+      src="@/assets/image/deco/feedMenu.svg"
+      v-show="!clickMenu && reply.userId == myInfo.id"
+      @click="menuOn"
+    />
+    <div
+      v-show="clickMenu"
+      class="menu dropdown-reply-menu"
+      aria-labelledby="ReplyMenuDropdown"
+    >
+      <a class="dropdown-item" @click="updateComment">수정하기</a>
+      <a class="dropdown-item" @click="deleteComment">삭제하기</a>
+      <a class="dropdown-item" @click="menuOff">취소</a>
+    </div>
     <img
       alt="좋아요버튼안눌림"
       class="dislike btn-like"
@@ -42,13 +41,10 @@
 
 <script>
 import _ from "lodash";
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 
 export default {
   name: "ReplyListItem",
-  components: {
-    // ReplyMenu,
-  },
   props: {
     reply: Object,
   },
@@ -57,18 +53,26 @@ export default {
       Like: false,
       disLike: true,
       moreReply: true,
+      clickMenu: false,
     };
   },
   methods: {
+    ...mapActions("feed", ["updateComment", "deleteComment"]),
     like() {
       this.Like = true;
       this.disLike = false;
-      this.replyLikeNum += 1;
+      this.reply.thumbCnt += 1;
     },
     dislike() {
       this.Like = false;
       this.disLike = true;
-      this.replyLikeNum -= 1;
+      this.reply.thumbCnt -= 1;
+    },
+    menuOn() {
+      this.clickMenu = true;
+    },
+    menuOff() {
+      this.clickMenu = false;
     },
   },
   computed: {
@@ -76,6 +80,7 @@ export default {
       return _.truncate(this.reply, { length: 50 });
     },
     ...mapState("feed", ["feedInfo"]),
+    ...mapState("user", ["myInfo"]),
   },
 };
 </script>
@@ -111,5 +116,23 @@ export default {
   height: 2.5rem;
   border-radius: 100%;
   margin: 0px 5px;
+}
+.dropdown-reply-menu {
+  border: none;
+  background: rgba(0, 0, 0, 0.7);
+  border-radius: 10px 10px 10px 10px;
+  min-width: 3rem;
+}
+.dropdown-item {
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 300;
+  text-align: center;
+  margin-right: 20px;
+}
+.menu-image {
+  width: 20px;
+  height: auto;
+  margin-right: 10px;
 }
 </style>
