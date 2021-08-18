@@ -21,7 +21,7 @@ export default {
     return _axios({
       url: `feeds/${feedId}/feed-likes`,
       method: 'get',
-      params: { page:page }
+      params: { page: page }
     })
   },
   //게시물 좋아요
@@ -49,20 +49,20 @@ export default {
       },
     })
   },
-    //댓글 comment 작성
-    writeComment(feedId, comment) {
-      return _axios({
-        url: `feeds/${feedId}/comments`,
-        method: 'post',
-        data: {comment: comment}
-      })
-    },
+  //댓글 comment 작성
+  writeComment(feedId, comment) {
+    return _axios({
+      url: `feeds/${feedId}/comments`,
+      method: 'post',
+      data: { comment: comment }
+    })
+  },
   //게시물 수정
   updateFeed(feedId, content) {
     return _axios({
       url: `feeds/${feedId}`,
       method: 'put',
-      data: {content: content}
+      data: { content: content }
     })
   },
   //게시물 삭제
@@ -77,7 +77,7 @@ export default {
     return _axios({
       url: `feeds/${feedId}/comments/${commentId}`,
       method: 'put',
-      data: {content: content}
+      data: { content: content }
     })
   },
   //댓글 삭제
