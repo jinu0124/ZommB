@@ -1,5 +1,8 @@
-import { register } from 'register-service-worker'
+// import { register } from 'register-service-worker'
+// import firebase from 'firebase';
 
-register('firebase-messaging-sw.js')
+// if (firebase.messaging.isSupported()) {
+//     register('firebase-messaging-sw.js')
+// }
 
-export default register()
+// export default register()
