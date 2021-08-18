@@ -37,4 +37,5 @@ public interface BookService {
     public void updateBookEvent() throws Exception;
 
     public List<BookDto> getBookshelfAll(Integer userId, Integer isRead);
+
 }

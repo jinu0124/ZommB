@@ -24,7 +24,6 @@
         ON DATE(f.create_at) between DATE(T.start_date) AND DATE(T.end_date) and f.user_id = #{userId} AND T.bid = f.book_id
     </select>
 
-
     <select id="bookRecommend" parameterType="Integer" resultMap="WeeklyEventInfo">
         SELECT distinct b.id bid, b.file_url, w.id wid
         FROM weekly_event w, book b
