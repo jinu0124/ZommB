@@ -1,5 +1,6 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dao.BookDao;
@@ -240,7 +241,8 @@ public class BookServiceImpl implements BookService{
         List<Book> books;
 
         // 키워드 검색
-        if(bookReq.getSearchType().equals("keyword")){
+        if(bookReq.getSearchType()!=null && bookReq.getSearchType().equals("keyword")){
+            // 카카오 검색은 페이징이 1부터 키워드는 0부터 시작
             bookReq.setPage(bookReq.getPage()-1);
             books = findKeywordBookList(bookReq);
         }else {
@@ -395,28 +397,24 @@ public class BookServiceImpl implements BookService{
         return bookDtoList;
     }
 
-    @Autowired
-    KeywordRepository keywordRepository;
-
+    /**
+     *
+     * @param bookReq : 검색조건
+     * @return 키워드에 해당하는 도서 리스트
+     * @throws UnsupportedEncodingException
+     */
     public List<Book> findKeywordBookList(BookDto.BookSearchRequest bookReq) throws UnsupportedEncodingException {
-
-        System.out.println(bookReq.getSearchWord());
-        Optional<Keyword> keywordOp = keywordRepository.findByKeyword(bookReq.getSearchWord());
-//        Optional<Keyword> keywordOp = keywordRepository.findByKeyword("");
-
-        if(!keywordOp.isPresent()) return null;
-
-        System.out.println("키워드 찾음");
-        Keyword keyword = keywordOp.get();
-
-        keyword.getBooks();
 
         QBook qBook = QBook.book;
         QKeyword qKeyword = QKeyword.keyword1;
         JPAQueryFactory qf = new JPAQueryFactory(em);
 
+        BooleanBuilder builder = new BooleanBuilder();
+        // 키워드 % % 검색
+        builder.and(qKeyword.keyword.contains(bookReq.getSearchWord()));
         List<Book> books = qf.selectFrom(qBook)
-                .where(qBook.keywords.contains(keyword))
+                .leftJoin(qBook.keywords, qKeyword)
+                .where(builder)
                 .offset(bookReq.getPage())
                 .limit(10)
                 .fetch();
