@@ -1,7 +1,7 @@
 importScripts('https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js')
 importScripts('https://www.gstatic.com/firebasejs/8.9.1/firebase-messaging.js')
 
-import firebase from 'firebase/app';
+import firebase from 'firebase/app'
 
 // firebase 서버 연동을 위한 Config
 var firebaseConfig = {

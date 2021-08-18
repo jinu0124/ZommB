@@ -18,7 +18,7 @@
 
 <script>
 import messaging from "@/api/firebase.js";
-import firebase from "firebase";
+import firebase from "firebase/app";
 import Header from "@/components/Header";
 import NotificationAlert from "@/components/user/NotificationAlert";
 
