@@ -16,7 +16,13 @@
           :feed=feed
           class="col feed-item"
         >
-          <img :src="feed.feedFileUrl" class="img-fluid" alt="feed image">
+          <img
+            class="img-fluid" 
+            :id="'feed-' + feed.id"
+            :src="feed.feedFileUrl" 
+            alt="feed image"
+            @click="moveToDetail(feed.id)" 
+           >
         </div>
       </div>
     </div>
@@ -32,6 +38,9 @@ export default {
     ...mapState('search', ['feedResult']),
   },
   methods: {
+    moveToDetail (feedId) {
+      this.$router.push({ name: 'FeedView', params: { flag: 'sf', target: feedId }})
+    },
     isElementUnderBottom(elem, triggerDiff) {
       const { top } = elem.getBoundingClientRect()
       const { innerHeight } = window
@@ -72,5 +81,8 @@ export default {
 <style scoped>
   .no-result {
     color: #C4C4C4;
+  }
+  .feed-list img {
+    cursor: pointer;
   }
 </style>
