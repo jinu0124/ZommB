@@ -9,8 +9,10 @@
 
 FROM node:lts-alpine as build-stage
 WORKDIR /app
-ADD . .
+COPY package.json package-lock.json /app/
 RUN yarn install
+
+COPY . /app
 RUN yarn run build
 
 # production stage
