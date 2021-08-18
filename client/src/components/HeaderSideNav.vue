@@ -1,5 +1,6 @@
 <template>
   <div
+    v-if="myInfo"
     class="offcanvas offcanvas-start"
     data-bs-scroll="true"
     tabindex="-1"
