@@ -29,8 +29,10 @@ public class BookController {
     @ApiOperation(value="검색 책 리스트(searchType, Word)", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findBookList(@QueryStringArgResolver BookDto.BookSearchRequest bookReq) throws IOException {
 
+        BookDto.ResponseList res = bookService.findBookList(bookReq);
 
-        return new ResponseEntity<BookDto.ResponseList>(bookService.findBookList(bookReq), HttpStatus.OK);
+        if(res == null) return new ResponseEntity<BookDto.ResponseList>(HttpStatus.NO_CONTENT);
+        else return new ResponseEntity<BookDto.ResponseList>(res, HttpStatus.OK);
     }
 
     // 도서 상세 조회
