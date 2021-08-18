@@ -8,7 +8,7 @@
         aria-controls="offcanvasWithBothOptions"
       ></i>
       <span class="header-logo pt-1" @click="moveHome">CommB</span>
-      <div class="dropdown user-nav">
+      <div v-if="myInfo" class="dropdown user-nav">
         <img
           v-if="myInfo.userFileUrl"
           class="user-profile dropdown-toggle"
