@@ -89,7 +89,7 @@ const actions = {
     }
     await searchApi.searchFeed(searchData)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         if (res.status === 200) {
           if (!searchData.page) {
             commit('SET_FEED_RESULT', res.data.data)
@@ -111,14 +111,14 @@ const actions = {
   async recommendUser({ rootState, commit }, page) {
     await searchApi.getRecommendUSR(rootState.user.myInfo.id, page)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_RECOMMEND_USER', res.data.data)
       })
   },
   async recommendKeyword({ rootState, commit }) {
     await searchApi.getRecommendKW(rootState.user.myInfo.id)
       .then((res) => {
-        console.log(res)
+        // console.log(res)
         commit('SET_RECOMMEND_KEYWORD', res.data.data)
       })
   },

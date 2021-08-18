@@ -41,20 +41,6 @@ export default {
       const { innerHeight } = window
       return top > innerHeight + (triggerDiff)
     },
-    handleScroll() {
-      const elems = document.querySelectorAll('.user-item')
-      if (elems) {
-        elems.forEach(elem => {
-          if (this.isElementUnderBottom(elem, -60)) {
-            elem.style.opacity = "0";
-            elem.style.transform = 'translateY(30px)'
-          } else {
-            elem.style.opacity = "1";
-            elem.style.transform = 'translateY(0px)'
-          }
-        })
-      }
-    },
     checkLast() {
       const last = document.querySelector('.up-on-scroll:last-child')
       if (last) {
@@ -90,16 +76,13 @@ export default {
   },
   watch: {
     searchInput () {
-      // console.log('change')
       this.onSearch()
     }
   },
   mounted () {
     const search = document.getElementById('search')
-    search.addEventListener('scroll', this.handleScroll)
     search.addEventListener('scroll', this.checkLast)
     search.addEventListener('scroll', this.needTopBtn)
-    this.handleScroll()
   }
 };
 </script>

@@ -35,6 +35,13 @@ export default {
       this.onSearch()
       this.$store.commit('search/SET_INPUT', this.searchInput)
       this.$emit('search', this.searchInput)
+      if (this.searchInput) {
+        this.$router.push({ 
+          name: 'Search', 
+          params: { flag: this.$route.params.flag },
+          query: { q: this.searchInput }
+        })
+      }
     },
     onSearch () {
       // user 검색
@@ -47,6 +54,10 @@ export default {
     clean () {
       this.searchInput = ''
       this.$store.commit('search/RESET_RESULT')
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: this.$route.params.flag }
+      })
     }
   },
   computed: {

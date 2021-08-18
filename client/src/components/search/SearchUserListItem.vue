@@ -18,7 +18,8 @@
       class="nickname"
       @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >{{ user.nickname }}</span>
-    <div v-if="myInfo.id != user.id">
+    <button v-if="myAccount" class="block"></button>
+    <div v-else>
       <button 
         v-if="isFollow" 
         class="btn-follow btn-grey"
@@ -30,12 +31,12 @@
         @click="follow"
       >팔로우</button>
     </div>
-    <button v-else class="block"></button>
+    
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapActions, mapState } from 'vuex'
 import userApi from '@/api/user'
 export default {
   name: 'SearchUserListItem',
@@ -48,7 +49,7 @@ export default {
     }
   },
   methods: {
-    ...mapActions('user', ['myInfo', 'getFollowing']),
+    ...mapActions('user', ['getFollowing']),
     async follow () {
       this.isFollow = true
       await userApi.follow(this.user.id)
@@ -64,12 +65,14 @@ export default {
         })
     }
   },
-  created () {
-    if (this.user.isFollow) {
-      this.isFollow = this.user.isFollow
-    } else {
-      this.isFollow = false
+  computed: {
+    ...mapState('user', ['myInfo']),
+    myAccount () {
+      return this.myInfo.id === this.user.id
     }
+  },
+  created () {
+    this.isFollow = this.user.isFollow
   }
 }
 </script>
