@@ -2,7 +2,10 @@ version: '3'
 services:
   server:
     container_name: server
-    build: ./commbServer
+    build: 
+      context: ./commbServer
+      args:
+        DOMAIN: i5a602.p.ssafy.io
     ports:
       - "8080:8080"
   client:
