@@ -29,9 +29,9 @@ export default {
   },
   methods: {
     ...mapActions("feed", ["deleteFeed"]),
-    editContent () {
-      this.$emit('edit')
-    }
+    editContent() {
+      this.$emit("edit");
+    },
   },
 };
 </script>

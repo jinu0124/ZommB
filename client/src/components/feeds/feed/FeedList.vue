@@ -1,10 +1,9 @@
 <template>
   <div class="feed-list">
     <div v-if="feedInfo">
-      <button
-        class="top-btn"
-        @click="goToTop"
-      ><i class="fi-sr-caret-up"></i></button>
+      <button class="top-btn" @click="goToTop">
+        <i class="fi-sr-caret-up"></i>
+      </button>
       <FeedListItem
         v-for="feed in feedInfo"
         class="feed-item up-on-scroll"
@@ -31,38 +30,38 @@ export default {
   },
   methods: {
     isElementUnderBottom(elem, triggerDiff) {
-      const { top } = elem.getBoundingClientRect()
-      const { innerHeight } = window
-      return top > innerHeight + (triggerDiff)
+      const { top } = elem.getBoundingClientRect();
+      const { innerHeight } = window;
+      return top > innerHeight + triggerDiff;
     },
     checkLast() {
-      const last = document.querySelector('.feed-item:last-child')
+      const last = document.querySelector(".feed-item:last-child");
       if (last) {
         if (!this.isElementUnderBottom(last, 100)) {
-          this.$emit('last')
+          this.$emit("last");
         }
       }
     },
     needTopBtn() {
-      const currentTop = document.getElementById('feed').scrollTop
-      const btn = document.querySelector('.top-btn')
+      const currentTop = document.getElementById("feed").scrollTop;
+      const btn = document.querySelector(".top-btn");
       if (btn) {
         if (currentTop != 0) {
-          btn.style.opacity = "1"
+          btn.style.opacity = "1";
         } else {
-          btn.style.opacity = "0"
+          btn.style.opacity = "0";
         }
       }
     },
     goToTop() {
-      document.getElementById('feed').scrollTop = 0
-    }
+      document.getElementById("feed").scrollTop = 0;
+    },
   },
-  mounted () {
-    const feedPage = document.getElementById('feed')
-    feedPage.addEventListener('scroll', this.checkLast)
-    feedPage.addEventListener('scroll', this.needTopBtn)
-  }
+  mounted() {
+    const feedPage = document.getElementById("feed");
+    feedPage.addEventListener("scroll", this.checkLast);
+    feedPage.addEventListener("scroll", this.needTopBtn);
+  },
 };
 </script>
 

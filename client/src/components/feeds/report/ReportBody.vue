@@ -97,15 +97,13 @@ export default {
       } else if (num == 6) {
         this.reason = this.badimage;
       }
-    },
-    moveToFeed() {
       const reportData = {
         feedId: this.$route.params.id,
         reason: this.reason,
       };
       this.reportFeed(reportData);
-      console.log(this.$route.params.id);
-      console.log(this.reason);
+    },
+    moveToFeed() {
       this.$router.push("/feed");
     },
     ...mapActions("feed", ["reportFeed"]),

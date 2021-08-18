@@ -106,7 +106,7 @@ export default {
     return _axios({
       url: `feeds/${feedId}/reports`,
       method: 'post',
-      data: reason
+      data: { reason: reason }
     })
   },
 }

@@ -42,23 +42,19 @@
         </div>
       </div>
       <div v-if="!isMine">
-        <i 
-          v-if="reply.isThumb" 
+        <i
+          v-if="reply.isThumb"
           class="fas fa-heart like"
           @click="dislike()"
         ></i>
-        <i 
-          v-else 
-          class="far fa-heart dislike"
-          @click="like()"
-        ></i>
+        <i v-else class="far fa-heart dislike" @click="like()"></i>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import feedApi from '@/api/feed.js'
 import ReplyMenu from './ReplyMenu.vue'
 export default {
@@ -75,10 +71,12 @@ export default {
       disLike: true,
       moreReply: true,
       isEditMode: false,
-      contentNew: ''
+      contentNew: '',
+      clickMenu: false,
     };
   },
   methods: {
+    ...mapActions("feed", ["updateComment", "deleteComment"]),
     like() {
       feedApi.likeComment(this.$route.params.id, this.reply.id)
       this.Like = true;
@@ -105,6 +103,12 @@ export default {
       await this.updateFeed({ id: this.feed.id, content: this.contentNew })
       this.isEditMode = false
       this.contentNew = this.reply.content
+    },
+    menuOn() {
+      this.clickMenu = true;
+    },
+    menuOff() {
+      this.clickMenu = false;
     },
   },
   computed: {
