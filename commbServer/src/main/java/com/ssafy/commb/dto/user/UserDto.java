@@ -25,6 +25,7 @@ public class UserDto {
     private String name;
     private String nickname;
     private String role;
+    private Boolean isFollow;
 
     @Nullable
     private String userFileUrl;
