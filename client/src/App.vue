@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import messaging from "@/api/firebase.js";
+// import messaging from "@/api/firebase.js";
 import Header from "@/components/Header";
 import NotificationAlert from "@/components/user/NotificationAlert";
 
@@ -112,12 +112,11 @@ export default {
     },
   },
   created() {
-    // messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY)
-
-    messaging.onMessage((payload) => {
-      this.$store.dispatch("user/onNotification", payload);
-      this.$store.dispatch("user/newAlert", payload);
-    });
+    // messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY);
+    // messaging.onMessage((payload) => {
+    //   this.$store.dispatch("user/onNotification", payload);
+    //   this.$store.dispatch("user/newAlert", payload);
+    // });
   },
 };
 </script>
