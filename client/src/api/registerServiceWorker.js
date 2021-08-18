@@ -1,5 +1,5 @@
-// import { register } from 'register-service-worker'
+import { register } from 'register-service-worker'
 
-// register('firebase-messaging-sw.js')
+register('firebase-messaging-sw.js')
 
-// export default register() 
+export default register()
