@@ -2,4 +2,4 @@
 
 // register('firebase-messaging-sw.js')
 
-// export default register()
+export default register()
