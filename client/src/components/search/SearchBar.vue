@@ -29,19 +29,27 @@ export default {
     ...mapActions('search', ['searchUser', 'searchBook', 'searchFeed']),
     insertInput (event) {
       this.searchInput = event.target.value
+      if (this.searchInput) {
+        if (this.$route.params.flag === 'books') {
+          this.$router.push({ 
+            name: 'Search', 
+            params: { flag: this.$route.params.flag },
+            query: { type: this.bookType, q: this.searchInput }
+          }).catch(()=>{})
+        } else {
+          this.$router.push({ 
+            name: 'Search', 
+            params: { flag: this.$route.params.flag },
+            query: { q: this.searchInput }
+          }).catch(()=>{})
+        }
+      }
       this.registerInput()
     },
     registerInput () {
-      this.onSearch()
       this.$store.commit('search/SET_INPUT', this.searchInput)
       this.$emit('search', this.searchInput)
-      if (this.searchInput) {
-        this.$router.push({ 
-          name: 'Search', 
-          params: { flag: this.$route.params.flag },
-          query: { q: this.searchInput }
-        })
-      }
+      this.onSearch()
     },
     onSearch () {
       // user 검색
@@ -57,7 +65,7 @@ export default {
       this.$router.push({ 
         name: 'Search', 
         params: { flag: this.$route.params.flag }
-      })
+      }).catch(()=>{});
     }
   },
   computed: {
@@ -66,17 +74,16 @@ export default {
   watch: {
     searchInput () {
       if (!this.searchInput.trim().length) {
-        this.$store.commit('search/RESET_RESULT')
+        this.clean()
       }
     },
-    '$route' () {
-      if (this.$route.query && this.$route.query.q) {
-        this.searchInput = this.$route.query.q
-      }
-      this.registerInput()
-    }
   },
   mounted () {
+    if (this.$route.query && this.$route.query.type) {
+      this.$store.commit('search/SET_BOOK_TYPE', this.$route.query.type)
+    } else {
+      this.$store.commit('search/SET_BOOK_TYPE', null)
+    }
     if (this.$route.query && this.$route.query.q) {
       this.searchInput = this.$route.query.q
     }

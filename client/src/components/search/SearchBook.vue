@@ -63,6 +63,11 @@ export default {
       this.selectedTab = val
       this.type = this.tabs[val]
       this.$store.commit('search/SET_BOOK_TYPE', this.type)
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: this.$route.params.flag },
+        query: { type: this.type, q: this.searchInput }
+      }).catch(()=>{})
       this.onSearch()
     },
     onSearch () {
@@ -124,6 +129,11 @@ export default {
       return this.bookResult.filter((book) => {
         return book.bookFileUrl
       })
+    }
+  },
+  created () {
+    if (this.$route.query && this.$route.query.type) {
+      this.selectedTab = this.tabs.indexOf(this.$route.query.type)
     }
   },
   mounted () {

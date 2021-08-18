@@ -26,7 +26,7 @@
         v-for="(keyword, idx) in bookInfo.keywords"
         :key="idx"
         class="badge rounded-pill me-1 px-2"
-        @click="searchTag(keyword.keyword)"
+        @click="searchKeyword(keyword.keyword)"
       >#{{ keyword.keyword }}</span>
     </div>
   </div>
@@ -47,11 +47,11 @@ export default {
     changeContent () {
       this.viewShorten = !this.viewShorten
     },
-    searchTag (keyword) {
+    searchKeyword (keyword) {
       this.$router.push({ 
         name: 'Search', 
-        params: { flag: 'feeds' },
-        query: { q: keyword }  
+        params: { flag: 'books' },
+        query: { type: 'keyword', q: keyword }
       })
     }
   },
