@@ -7,6 +7,7 @@ import com.ssafy.commb.repository.UserRepository;
 import com.ssafy.commb.service.RedisService;
 import com.ssafy.commb.service.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
