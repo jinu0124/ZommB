@@ -1,9 +1,9 @@
 import axios from 'axios'
 import router from '@/router'
 import store from '@/store/index.js'
-
+// process.env.VUE_APP_SERVER_URL
 const _axios = axios.create({
-  baseURL: process.env.VUE_APP_SERVER_URL,
+  baseURL: "http://localhost:8080/api/",
   timeout: 20000,
 })
 

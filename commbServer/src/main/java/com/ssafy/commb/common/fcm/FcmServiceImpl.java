@@ -64,6 +64,7 @@ public class FcmServiceImpl implements FcmService{
     @Override
     public void sends(List<FirebaseToken> tokens, FcmDto fcm) throws InterruptedException, IOException, FirebaseMessagingException {
         if(tokens.size() == 0) return;
+        if(fcm.getMessage().getData().getUserId().equals(fcm.getMessage().getData().getTargetUserId())) return;
 
         MulticastMessage multicastMessage = makeMulticastMessage(tokens, fcm);
 

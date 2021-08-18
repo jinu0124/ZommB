@@ -142,7 +142,7 @@ public class FeedController {
                                 .build())
                         .notification(FcmDto.Notification.builder()
                                 .title("like")
-                                .body("")
+                                .body(user.getData().getNickname())
                                 .build())
                         .build())
                 .build();
