@@ -3,8 +3,11 @@ import App from './App.vue'
 import store from './store'
 import router from './router'
 import firebaseMessaging from './api/firebase'
+import firebase from 'firebase';
 
-Vue.prototype.$messaging = firebaseMessaging
+if (firebase.messaging.isSupported()) {
+  Vue.prototype.$messaging = firebaseMessaging
+}
 Vue.config.productionTip = false
 
 new Vue({
