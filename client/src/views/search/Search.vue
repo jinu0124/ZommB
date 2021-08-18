@@ -93,6 +93,13 @@ export default {
       }
       this.searchFeed(searchData)
       this.feedPage ++
+    },
+    findPage () {
+      const page = this.pages.indexOf(this.$route.params.flag)
+      if (page === -1) {
+        this.$router.push({ name: 'PageNotFound' })
+      } 
+      this.selectedPage = page
     }
   },
   computed: {
@@ -103,31 +110,14 @@ export default {
       this.bookPage = 2
     },
     '$route' () {
-      const flag = this.$route.params.flag
-      if (flag === 'users') {
-        this.selectedPage = 0
-      } else if (flag === 'books') {
-        this.selectedPage = 1
-      } else if (flag === 'feeds') {
-        this.selectedPage = 2
-      } else {
-        this.$router.push({ name: 'PageNotFound' })
-      }
+      this.findPage()
     }
   },
   created () {
-    this.$store.commit('search/RESET_RESULT')
-    this.$store.commit('search/SET_BOOK_TYPE', null)
-    const flag = this.$route.params.flag
-    if (flag === 'users') {
-      this.selectedPage = 0
-    } else if (flag === 'books') {
-      this.selectedPage = 1
-    } else if (flag === 'feeds') {
-      this.selectedPage = 2
-    } else {
-      this.$router.push({ name: 'PageNotFound' })
+    if (!this.$route.query) {
+      this.$store.commit('search/RESET_RESULT')
     }
+    this.findPage()
   }
 }
 </script>
