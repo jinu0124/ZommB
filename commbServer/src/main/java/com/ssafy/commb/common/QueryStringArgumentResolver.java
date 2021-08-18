@@ -6,10 +6,14 @@ import org.springframework.core.MethodParameter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
+import org.springframework.web.filter.CharacterEncodingFilter;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpServletRequest;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 // Annotation 비교 후 처리 로직 만들기
 @Component
@@ -30,7 +34,10 @@ public class QueryStringArgumentResolver implements HandlerMethodArgumentResolve
                                   final WebDataBinderFactory webDataBinderFactory) throws Exception {
 
         final HttpServletRequest request = (HttpServletRequest) nativeWebRequest.getNativeRequest();
-        final String json = qs2json(request.getQueryString());
+        String json = qs2json(request.getQueryString());
+
+        json = URLDecoder.decode(json, "UTF-8");
+
         final Object a = mapper.readValue(json, methodParameter.getParameterType());
         return a;
     }
