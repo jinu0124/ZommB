@@ -108,14 +108,6 @@ export default {
     },
   },
   created(){
-    Notification.requestPermission()
-    .then((permission) => {
-      console.log('permission ', permission)
-      if (permission !== 'granted') {
-        alert('알림을 허용해주세요')
-      }
-    })
-
     messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY)
 
     messaging.onMessage((payload) => {

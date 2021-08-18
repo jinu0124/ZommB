@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.Part;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -111,8 +112,7 @@ public class S3ServiceImpl implements S3Service{
         s3Client.putObject(new PutObjectRequest(bucket,  dir + "/" + fileName, byteArrayIs, objectMetadata)
                 .withCannedAcl(CannedAccessControlList.PublicRead));                                                        // public read 권한 주기
 
-
-        return "http://" + s3Client.getUrl(this.bucket, dir + "/" + fileName).toString().substring(8);
+        return "https://d12rrzx4zi7o7f.cloudfront.net/" + dir + File.separator + fileName;
     }
 
     public Part extractFile(Collection<Part> parts) throws IOException {
