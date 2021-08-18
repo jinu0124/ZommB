@@ -2,23 +2,20 @@
   <div class="reply-list-item">
     <div v-if="isEditMode" class="edit-box d-flex align-items-center">
       <textarea
-        class="form-control edit-input" 
+        class="form-control edit-input"
         type="text"
         @input="editContent"
         :value="contentNew"
       ></textarea>
       <div class="d-flex flex-column me-2 gap-1">
-        <button 
-          class="btn-edit btn-yellow"
-          @click="onUpdate"
-        >수정</button>
-        <button 
-          class="btn-edit btn-grey"
-          @click="cancelUpdate"
-        >취소</button>
+        <button class="btn-edit btn-yellow" @click="onUpdate">수정</button>
+        <button class="btn-edit btn-grey" @click="cancelUpdate">취소</button>
       </div>
     </div>
-    <div v-else class="reply-box d-flex justify-content-between align-items-center">
+    <div
+      v-else
+      class="reply-box d-flex justify-content-between align-items-center"
+    >
       <div class="d-flex flex-column">
         <div class="comment d-flex flex-column">
           <span class="user">{{ reply.nickname }}</span>
@@ -27,21 +24,18 @@
             <span class="like-cnt">좋아요 {{ reply.thumbCnt }}개</span>
             <span v-if="reply.isMod">수정됨</span>
             <span v-if="isMine" class="dropdown">
-              <i 
+              <i
                 class="fi-sr-menu-dots comment-menu dropdown-toggle"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
                 :id="'ReplyMenuDropdown' + reply.id"
               ></i>
-              <ReplyMenu
-                :reply=reply
-                @edit="turnIntoEditMode"
-              />
+              <ReplyMenu :reply="reply" @edit="turnIntoEditMode" />
             </span>
           </div>
         </div>
       </div>
-      <div v-if="!isMine">
+      <div>
         <i
           v-if="reply.isThumb"
           class="fas fa-heart like"
@@ -54,9 +48,9 @@
 </template>
 
 <script>
-import { mapState, mapActions } from 'vuex'
-import feedApi from '@/api/feed.js'
-import ReplyMenu from './ReplyMenu.vue'
+import { mapState, mapActions } from "vuex";
+import feedApi from "@/api/feed.js";
+import ReplyMenu from "./ReplyMenu.vue";
 export default {
   name: "ReplyListItem",
   components: {
@@ -71,38 +65,42 @@ export default {
       disLike: true,
       moreReply: true,
       isEditMode: false,
-      contentNew: '',
+      contentNew: "",
       clickMenu: false,
     };
   },
   methods: {
     ...mapActions("feed", ["updateComment", "deleteComment"]),
     like() {
-      feedApi.likeComment(this.$route.params.id, this.reply.id)
+      feedApi.likeComment(this.$route.params.id, this.reply.id);
       this.Like = true;
       this.disLike = false;
       this.reply.thumbCnt += 1;
     },
     dislike() {
-      feedApi.dislikeComment(this.$route.params.id, this.reply.id)
+      feedApi.dislikeComment(this.$route.params.id, this.reply.id);
       this.Like = false;
       this.disLike = true;
       this.reply.thumbCnt -= 1;
     },
-    turnIntoEditMode () {
-      this.isEditMode = true
+    turnIntoEditMode() {
+      this.isEditMode = true;
     },
-    editContent (event) {
-      this.contentNew = event.target.value
+    editContent(event) {
+      this.contentNew = event.target.value;
     },
-    cancelUpdate () {
-      this.isEditMode = false
-      this.contentNew = this.reply.content
+    cancelUpdate() {
+      this.isEditMode = false;
+      this.contentNew = this.reply.content;
     },
-    async onUpdate () {
-      await this.updateComment({ feedId: this.$route.params.id, commentId: this.reply.id, content: this.contentNew })
-      this.isEditMode = false
-      this.contentNew = this.reply.content
+    async onUpdate() {
+      await this.updateComment({
+        feedId: this.$route.params.id,
+        commentId: this.reply.id,
+        content: this.contentNew,
+      });
+      this.isEditMode = false;
+      this.contentNew = this.reply.content;
     },
     menuOn() {
       this.clickMenu = true;
@@ -112,14 +110,14 @@ export default {
     },
   },
   computed: {
-    ...mapState('user', ['myInfo']),
-    isMine () {
-      return this.myInfo.id === this.reply.userId
-    }
+    ...mapState("user", ["myInfo"]),
+    isMine() {
+      return this.myInfo.id === this.reply.userId;
+    },
   },
-  mounted () {
-    this.contentNew = this.reply.content
-  }
+  mounted() {
+    this.contentNew = this.reply.content;
+  },
 };
 </script>
 
@@ -136,11 +134,11 @@ export default {
   font-weight: 700;
 }
 .reply-box .like {
-  color: #FF7777;
+  color: #ff7777;
   cursor: pointer;
 }
 .reply-box .dislike {
-  color: #C4C4C4;
+  color: #c4c4c4;
   cursor: pointer;
 }
 .reply-box .info {
@@ -159,7 +157,7 @@ export default {
   display: none;
 }
 .edit-box {
-  background: #F1F1F1;
+  background: #f1f1f1;
   width: 280px;
   height: fit-content;
   border-radius: 10px;

@@ -7,7 +7,6 @@ const state = {
   bookId: null,
   likeInfo: null,
   reportInfo: null,
-  // comments: null,
   updateFeedInfo: null,
   undateCommentInfo: null,
   comments: null,
@@ -105,14 +104,13 @@ const actions = {
       .then((res) => {
         console.log(res)
         dispatch('getFeedDetail', replyData.id)
-        // commit('SET_COMMENT_DATA', null)
       })
     },
   //댓글 삭제
   async deleteComment({ dispatch }, feedId, commentId) {
     await feedApi.deleteComment(feedId, commentId)
       .then(() => {
-      dispatch('getFeedInfo', 0)
+      dispatch('getFeedDetail', feedId)
     })
   },
   //댓글 좋아요
