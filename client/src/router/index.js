@@ -2,6 +2,7 @@ import Vue from 'vue'
 import store from '@/store/'
 import VueRouter from 'vue-router'
 import Index from '@/views/Index'
+import FeedView from '@/views/FeedView'
 import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
@@ -32,6 +33,11 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index,
+  },
+  {
+    path: '/feed-detail/:flag/:target',
+    name: 'FeedView',
+    component: FeedView,
   },
   // accounts
   {

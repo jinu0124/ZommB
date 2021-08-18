@@ -65,7 +65,6 @@ public class FcmServiceImpl implements FcmService{
     public void sends(List<FirebaseToken> tokens, FcmDto fcm) throws InterruptedException, IOException, FirebaseMessagingException {
         if(tokens.size() == 0) return;
         if(fcm.getMessage().getData().getUserId().equals(fcm.getMessage().getData().getTargetUserId())) return;
-
         MulticastMessage multicastMessage = makeMulticastMessage(tokens, fcm);
 
         BatchResponse response = FirebaseMessaging.getInstance()
@@ -82,6 +81,7 @@ public class FcmServiceImpl implements FcmService{
             }
             System.out.println("List of tokens that caused failures: " + failedTokens);
         }
+        System.out.println("Success Push Alarm Count : " + response.getSuccessCount());
     }
 
     /**
