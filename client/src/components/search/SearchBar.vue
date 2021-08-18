@@ -44,7 +44,9 @@ export default {
           }).catch(()=>{})
         }
       }
-      this.registerInput()
+      if (this.searchInput) {
+        this.registerInput()
+      }
     },
     registerInput () {
       this.$store.commit('search/SET_INPUT', this.searchInput)
@@ -69,24 +71,34 @@ export default {
     }
   },
   computed: {
-    ...mapState('search', ['bookType'])
+    ...mapState('search', ['bookType']),
   },
   watch: {
     searchInput () {
-      if (!this.searchInput.trim().length) {
+      if (!this.searchInput.length) {
         this.clean()
       }
     },
+    '$route' () {
+      if (this.$route.query.q) {
+        this.searchInput = this.$route.query.q
+      }
+      this.registerInput()
+    }
   },
   mounted () {
-    if (this.$route.query && this.$route.query.type) {
-      this.$store.commit('search/SET_BOOK_TYPE', this.$route.query.type)
+    if (!Object.keys(this.$route.query).length) {
+      this.$store.commit('search/RESET_RESULT')
     } else {
-      this.$store.commit('search/SET_BOOK_TYPE', null)
+      if (this.$route.query.type) {
+        this.$store.commit('search/SET_BOOK_TYPE', this.$route.query.type)
+      } else {
+        this.$store.commit('search/SET_BOOK_TYPE', null)
+      }
     }
-    if (this.$route.query && this.$route.query.q) {
-      this.searchInput = this.$route.query.q
-    }
+    if (this.$route.query.q) {
+        this.searchInput = this.$route.query.q
+      }
     this.registerInput()
   }
 }

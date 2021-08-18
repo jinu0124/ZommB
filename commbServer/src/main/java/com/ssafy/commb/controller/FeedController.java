@@ -301,6 +301,7 @@ public class FeedController {
     @ApiOperation(value = "피드 신고")
     public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody ReasonDto reason, HttpServletRequest request) {
         int userId = (Integer) request.getAttribute("userId");
+        System.out.println(reason.getReason());
 
         feedService.reportFeed(feedId, reason.getReason(), userId);
 
