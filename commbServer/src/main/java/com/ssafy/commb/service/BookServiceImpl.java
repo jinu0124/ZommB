@@ -1,5 +1,6 @@
 package com.ssafy.commb.service;
 
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.ssafy.commb.dao.BookDao;
@@ -12,6 +13,7 @@ import com.ssafy.commb.exception.book.NotFoundBookException;
 import com.ssafy.commb.model.*;
 import com.ssafy.commb.repository.BookRepository;
 import com.ssafy.commb.repository.BookShelvesRepository;
+import com.ssafy.commb.repository.KeywordRepository;
 import com.ssafy.commb.repository.WeeklyEventRepository;
 import com.ssafy.commb.util.KakaoSearchAPI;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.swing.text.html.Option;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.time.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -234,29 +238,39 @@ public class BookServiceImpl implements BookService{
      */
     public BookDto.ResponseList findBookList(BookDto.BookSearchRequest bookReq) throws IOException {
 
-        // 카카오 책 검색 API
-        KakaoSearchBookResponseDto kakaoSearchBookResponseDto = kakaoSearchAPI.search(bookReq);
+        List<Book> books;
 
-        List<Book> existBooks = new ArrayList<>();
-        Set<Book> saveBooks = kakaoSearchBookResponseDto.getDocuments()
-                .stream()
-                .filter(document -> {
-                    Optional<Book> book =bookRepository.findByIsbn(document.getIsbn13());
-                    // 이미 존재하는 책인 경우
-                    if(book.isPresent()){
-                        existBooks.add(book.get());
-                    }
-                    return !book.isPresent();
-                })
-                .map(KakaoSearchBookResponseDto.Document::convertBook)
-                .collect(Collectors.toSet());
-        
-        // DB 저장
-        List<Book> books = new ArrayList<>(saveBooks);
-        books = bookRepository.saveAllAndFlush(new ArrayList<>(books));
+        // 키워드 검색
+        if(bookReq.getSearchType()!=null && bookReq.getSearchType().equals("keyword")){
+            // 카카오 검색은 페이징이 1부터 키워드는 0부터 시작
+            bookReq.setPage(bookReq.getPage()-1);
+            books = findKeywordBookList(bookReq);
+        }else {
+            // 카카오 책 검색 API
+            KakaoSearchBookResponseDto kakaoSearchBookResponseDto = kakaoSearchAPI.search(bookReq);
 
-        books.addAll(existBooks);
+            List<Book> existBooks = new ArrayList<>();
+            Set<Book> saveBooks = kakaoSearchBookResponseDto.getDocuments()
+                    .stream()
+                    .filter(document -> {
+                        Optional<Book> book = bookRepository.findByIsbn(document.getIsbn13());
+                        // 이미 존재하는 책인 경우
+                        if (book.isPresent()) {
+                            existBooks.add(book.get());
+                        }
+                        return !book.isPresent();
+                    })
+                    .map(KakaoSearchBookResponseDto.Document::convertBook)
+                    .collect(Collectors.toSet());
 
+            // DB 저장
+            books = new ArrayList<>(saveBooks);
+            books = bookRepository.saveAllAndFlush(new ArrayList<>(books));
+
+            books.addAll(existBooks);
+        }
+
+        if(books == null) return null;
         // 반환 평점 및 읽은 사람 수 반환
         return BookDto.ResponseList.builder()
                 .data(books.stream()
@@ -381,5 +395,30 @@ public class BookServiceImpl implements BookService{
         });
 
         return bookDtoList;
+    }
+
+    /**
+     *
+     * @param bookReq : 검색조건
+     * @return 키워드에 해당하는 도서 리스트
+     * @throws UnsupportedEncodingException
+     */
+    public List<Book> findKeywordBookList(BookDto.BookSearchRequest bookReq) throws UnsupportedEncodingException {
+
+        QBook qBook = QBook.book;
+        QKeyword qKeyword = QKeyword.keyword1;
+        JPAQueryFactory qf = new JPAQueryFactory(em);
+
+        BooleanBuilder builder = new BooleanBuilder();
+        // 키워드 % % 검색
+        builder.and(qKeyword.keyword.contains(bookReq.getSearchWord()));
+        List<Book> books = qf.selectFrom(qBook)
+                .leftJoin(qBook.keywords, qKeyword)
+                .where(builder)
+                .offset(bookReq.getPage())
+                .limit(10)
+                .fetch();
+
+        return books;
     }
 }

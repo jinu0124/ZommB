@@ -53,6 +53,7 @@ const routes = [
     path: '/updateinfo',
     name: 'UpdateInfo',
     component: UpdateInfo,
+    meta: { requireAuth: true }
   },
   {
     path: '/find-password',
@@ -113,40 +114,43 @@ const routes = [
   {
     path: '/book/:id',
     name : 'BookInfo',
-    component : BookInfo
+    component : BookInfo,
+    meta: { requireAuth: true }
   },
   //feed
   {
     path: '/feed',
-      name : 'Feed',
-      component : Feed,
-      // meta: { requireAuth: true }
+    name : 'Feed',
+    component : Feed,
+    meta: { requireAuth: true }
   },
   {
-    path: '/like',
-      name : 'Like',
-      component : Like,
-      // meta: { requireAuth: true }
+    path: '/like/:id',
+    name : 'Like',
+    component : Like,
+    meta: { requireAuth: true }
   },
   {
-    path: '/reply/:feedId',
+    path: '/reply/:id',
     name: 'Reply',
     component: Reply
   },
   {
-    path: '/report',
+    path: '/report/:id',
     name: 'Report',
     component: Report
   },
   {
     path: '/select/:flag',
     name: 'SelectBook',
-    component: SelectBook
+    component: SelectBook,
+    meta: { requireAuth: true }
   },
   {
     path: '/write/:id',
     name: 'Write',
-    component: Write
+    component: Write,
+    meta: { requireAuth: true }
   },
   // challenge
   {
@@ -156,9 +160,10 @@ const routes = [
     meta: { requireAuth: true }
   },
   {
-    path: '/search',
+    path: '/search/:flag',
     name: 'Search',
-    component: Search
+    component: Search,
+    meta: { requireAuth: true }
   },
 ]
 

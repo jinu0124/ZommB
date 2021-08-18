@@ -2,7 +2,7 @@
   <div class="reply">
     <SimpleHeader class="reply-header" :title="title" />
     <div class="reply-box">
-      <ReplyList />
+      <ReplyList class="reply-list" />
       <hr />
       <ReplyRegist />
     </div>

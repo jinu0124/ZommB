@@ -22,6 +22,7 @@
           v-for="(hashtag, idx) in hashtagSlice"
           :key=idx
           class="badge rounded-pill me-1"
+          @click="searchTag(hashtag.tag)"
         >#{{ hashtag.tag }}</span>
         <span
           v-if="feed.hashTags.length > 2"
@@ -44,6 +45,15 @@ export default {
   data () {
     return {
       bookCover: null
+    }
+  },
+  methods: {
+    searchTag (keyword) {
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: 'feeds' },
+        query: { q: keyword }  
+      })
     }
   },
   computed: {
@@ -118,6 +128,10 @@ export default {
     font-size: 8px;
     color: #585858;
     background: #FFDC7C;
+    cursor: pointer;
+  }
+  .badge:hover {
+    font-size: 9px;
   }
   .and-more {
     background:  rgba(255, 220, 124, 0.8);

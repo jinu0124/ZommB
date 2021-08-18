@@ -1,7 +1,7 @@
 <template>
-  <div v-if="searchResult">
+  <div v-if="bookResult">
     <div
-      v-if="!searchResult.length"
+      v-if="!bookResult.length"
       class="no-result mt-5"
     >검색 결과가 없습니다.</div>
     <button
@@ -73,25 +73,25 @@ export default {
     }
   },
   computed: {
-    ...mapState('search', ['searchResult']),
+    ...mapState('search', ['bookResult']),
     ...mapState('user', ['myBookShelves']),
     books () {
       if (this.code === 1) {
         const mine = this.myBookShelves.library.map((book) => {
           return book.id
         })
-        return this.searchResult.filter((book) => {
+        return this.bookResult.filter((book) => {
           return !mine.includes(book.id)
         })
       } else if (this.code === 2) {
         const mine = this.myBookShelves.bookcart.map((book) => {
           return book.id
         })
-        return this.searchResult.filter((book) => {
+        return this.bookResult.filter((book) => {
           return !mine.includes(book.id)
         })
       }
-      return this.searchResult
+      return this.bookResult
     },
   },
   mounted () {
