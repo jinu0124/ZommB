@@ -82,8 +82,9 @@ public class FeedController {
     // 게시물 수정
     @PutMapping("/{feedId}")
     @ApiOperation(value = "피드 수정")
-    public ResponseEntity modifyFeed(@RequestBody String content, @PathVariable Integer feedId, HttpServletRequest request) {
+    public ResponseEntity modifyFeed(@RequestBody FeedDto.RequestContent content, @PathVariable Integer feedId, HttpServletRequest request) {
 
+        System.out.println(content.getContent());
         if (content == null) return ResponseEntity.status(400).build();
 
         int myUserId = (Integer) request.getAttribute("userId");
@@ -92,7 +93,7 @@ public class FeedController {
         if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "게시물 수정 권한 없음"); // 작성자한테만 수정 버튼 보이도록 front에서 막기
 
-        feedService.modifyFeed(content, feedId);
+        feedService.modifyFeed(content.getContent(), feedId);
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
