@@ -307,4 +307,14 @@ public class FeedController {
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
+    @GetMapping("/{feedId}")
+    @ApiOperation(value = "해당 피드 상세 조회")
+    public ResponseEntity<FeedDto.Response> searchFeed(@PathVariable Integer feedId, HttpServletRequest request){
+        int userId = (Integer) request.getAttribute("userId");
+
+        FeedDto.Response response = feedService.searchFeed(feedId, userId);
+
+        return new ResponseEntity<FeedDto.Response>(response, HttpStatus.OK);
+    }
+
 }

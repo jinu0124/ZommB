@@ -32,4 +32,6 @@ public interface FeedService {
 
     public FeedDto getFeedInfo(int feedId);
 
+    public FeedDto.Response searchFeed(int feedId, int userId);
+
 }
