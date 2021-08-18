@@ -81,6 +81,6 @@ public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticat
         redisService.setStringValue(code, Integer.toString(user.getId()), expire);
 
         // getRedirectStrategy().sendRedirect(request, response, "/oauth/redirect?code="+code);
-        response.sendRedirect(dynamicFrontPath + "/oauth/redirect?code="+code);
+        response.sendRedirect(dynamicFrontPath + "oauth/redirect?code="+code);
     }
 }
