@@ -3,10 +3,13 @@ package com.ssafy.commb.controller;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.fcm.FcmDto;
+import com.ssafy.commb.dto.feed.CommentDto;
 import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.feed.ReasonDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import com.ssafy.commb.exception.ApplicationException;
+import com.ssafy.commb.model.Comment;
 import com.ssafy.commb.model.FirebaseToken;
 import com.ssafy.commb.service.CommentService;
 import com.ssafy.commb.service.FeedService;
@@ -183,12 +186,12 @@ public class FeedController {
     // 댓글 작성
     @PostMapping("/{feedId}/comments")
     @ApiOperation(value = "댓글 작성")
-    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody String content, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
+    public ResponseEntity uploadComment(@PathVariable Integer feedId, @RequestBody CommentDto.RequestComment comment, HttpServletRequest request) throws IOException, InterruptedException, FirebaseMessagingException {
 
         int userId = (Integer) request.getAttribute("userId");
-        int commentId = commentService.uploadComment(feedId, userId, content);
+        int commentId = commentService.uploadComment(feedId, userId, comment.getComment());
 
-        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, content, commentId);
+        List<FcmDto> fcms = commentService.getFeedWritersFirebaseToken(feedId, userId, comment.getComment(), commentId);
         List<FirebaseToken> tokens = new ArrayList<>();
 
         for (String token : fcms.stream().map(FcmDto::getMessage).map(FcmDto.Message::getToken).collect(Collectors.toList())) tokens.add(FirebaseToken.builder().token(token).build());
@@ -196,8 +199,27 @@ public class FeedController {
         if(fcms.size() >= 1) {
             fcms.get(0).getMessage().getData().setIsRead(1);
             fcmService.sends(tokens, fcms.get(0));
+            fcmService.savePushAlarm(fcms.get(0));
         }
-        fcmService.savePushAlarm(fcms.get(0));
+        else{
+            fcmService.savePushAlarm(FcmDto.builder()
+                    .message(FcmDto.Message
+                            .builder()
+                            .notification(FcmDto.Notification.builder()
+                                .title("comment")
+                                .body(comment.getComment())
+                                .build())
+                            .data(FcmDto.PayData.builder()
+                                .userId(userId)
+                                .feedId(feedId)
+                                .commentId(commentId)
+                                .targetUserId(feedService.getUserId(feedId))
+                                .isRead(0)
+                                .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                .build())
+                            .build())
+                    .build());
+        }
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -277,11 +299,10 @@ public class FeedController {
     // 피드 신고
     @PostMapping("/{feedId}/reports")
     @ApiOperation(value = "피드 신고")
-    public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody String reason, HttpServletRequest request) {
-
+    public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody ReasonDto reason, HttpServletRequest request) {
         int userId = (Integer) request.getAttribute("userId");
 
-        feedService.reportFeed(feedId, reason, userId);
+        feedService.reportFeed(feedId, reason.getReason(), userId);
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
