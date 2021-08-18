@@ -65,4 +65,14 @@ public class ThumbServiceImpl implements ThumbService {
 
         return false;
     }
+
+    public int getUserId(int feedId, int userId){
+        Optional<Feed> feed = feedRepository.findById(feedId);
+        Optional<User> user = userRepository.findById(userId);
+
+        Optional<Thumb> thumb = thumbRepository.findByFeedAndUser(feed.get(), user.get());
+        if(!thumb.isPresent()) throw new ApplicationException(HttpStatus.valueOf(404), "좋아요를 누른 피드가 없습니다!");
+
+        return thumb.get().getUser().getId();
+    }
 }

@@ -160,7 +160,7 @@ public class FeedController {
     public ResponseEntity deleteLikeFeed(@PathVariable Integer feedId, HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
-        int userId = feedService.getUserId(feedId);
+        int userId = thumbService.getUserId(feedId, myUserId);
 
         if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "피드 좋아요 취소 권한 없음");
