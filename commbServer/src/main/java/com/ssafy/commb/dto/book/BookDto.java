@@ -16,7 +16,8 @@ import java.util.List;
 @AllArgsConstructor                         // Builder pattern 사용 시 반드시 전체 인자를 포함하는 생성자 필수
 @NoArgsConstructor                          // 기본 생성자
 @Builder                                    // Builder 패턴 사용
-@Alias("Book")
+@Alias("Book")                              // DTO 별명
+@ToString
 public class BookDto {
     private Integer id;
     private String bookName;
@@ -32,9 +33,10 @@ public class BookDto {
     private Integer isRead;
     private Double rate;
 
-    private List<KeywordDto> keyword;
+    private List<KeywordDto> keywords;
 
     @Getter
+    @Setter
     @AllArgsConstructor
     @NoArgsConstructor
     public static class BookSearchRequest{                // 요청
@@ -79,6 +81,7 @@ public class BookDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Builder
     public static class Response{               // 반환
         private BookDto data;
         private String retMsg;

@@ -1,35 +1,59 @@
 <template>
   <div class="reply">
-    <Content/>
-    <ReplyList/>
-    <ReplyRegist class="regist"/>
+    <SimpleHeader class="reply-header" :title="title" />
+    <div class="reply-box">
+      <ReplyList class="reply-list" />
+      <hr />
+      <ReplyRegist />
+    </div>
   </div>
 </template>
 
 <script>
-import Content from '@/components/feeds/reply/Content.vue'
-import ReplyList from '@/components/feeds/reply/ReplyList.vue'
-import ReplyRegist from '@/components/feeds/reply/ReplyRegist.vue'
+import SimpleHeader from "@/components/SimpleHeader";
+import ReplyList from "@/components/feeds/reply/ReplyList";
+import ReplyRegist from "@/components/feeds/reply/ReplyRegist";
 
 export default {
-  name: 'Reply',
+  name: "Reply",
   components: {
-    Content,
+    SimpleHeader,
     ReplyList,
     ReplyRegist,
   },
   data() {
-    return {};
-  },
-  methods: {
-
+    return {
+      title: "댓글",
+    };
   },
 };
 </script>
 
 <style scoped>
+.reply-header {
+  color: #fff;
+  background: #7b60f1;
+}
 .reply {
   margin: 0 auto;
   align-items: center;
+  height: 100vh;
+  overflow: scroll;
+}
+.reply-box {
+  background: #fff;
+  color: #212121;
+  height: 100%;
+  min-height: 100vh;
+  width: 100vw;
+  border-radius: 30px 0px 0px 0px;
+  margin-top: 60px;
+  padding: 20px 20px 100px;
+  position: fixed;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+.reply-box::-webkit-scrollbar {
+  display: none;
 }
 </style>

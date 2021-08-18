@@ -1,10 +1,10 @@
 <template>
   <div class="daily-keyword">
-    <div class="d-flex flex-column align-items-center">
-      <div class="keyword my-3">#{{ keyword }}</div>
-      <div class="des1">#<strong>{{ keyword }}</strong>에 대한 글을 남겨보세요!</div>
+    <div v-if="dailyKeyword" class="d-flex flex-column align-items-center">
+      <div class="keyword my-3" @click="searchTag(dailyKeyword.word)">#{{ dailyKeyword.word }}</div>
+      <div class="des1">#<strong>{{ dailyKeyword.word }}</strong>에 대한 글을 남겨보세요!</div>
       <div class="des2 mt-1">
-        <strong>{{ keyword }}</strong> 하면 떠오르는 책이나 책 속의 문장,<br>
+        <strong>{{ dailyKeyword.word }}</strong> 하면 떠오르는 책이나 책 속의 문장,<br>
         그 무엇이든 좋아요 : - )
       </div>
     </div>
@@ -12,11 +12,20 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
+
 export default {
   name: 'ChallengeDailyKeyword',
-  data() {
-    return {
-      keyword: 'Test'
+  computed: {
+    ...mapState('challenge', ['dailyKeyword']),
+  },
+  methods: {
+    searchTag (keyword) {
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: 'feeds' },
+        query: { q: keyword }  
+      })
     }
   }
 }
@@ -34,6 +43,10 @@ export default {
     text-align: center;
     vertical-align: middle;
     box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+  }
+  .keyword:hover {
+    font-size: 25px;
   }
   .des1 {
     font-size: 15px;

@@ -1,14 +1,19 @@
 package com.ssafy.commb.service;
 
+import com.amazonaws.services.dynamodbv2.xspec.M;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-    public UserDto.ResponseList getUsers(String nickname);
+    public UserDto.ResponseList getUsers(String nickname, int page);
+
+    public MyDto.ResponseList getUsers(String nickname, int page, HttpServletRequest request);
 
     public int joinUser(MyDto.Request myReq);
 
@@ -31,8 +36,19 @@ public interface UserService {
 
     public UserDto.Response getUserInfo(int userId, HttpServletRequest request);
 
-    public UserDto.ResponseList followRecommend(HttpServletRequest request);
+    public UserDto.ResponseList followRecommend(int page, HttpServletRequest request);
 
     public int getUserInfoByEmail(String email);
 
+    public MyDto.Response socialLogin(int userId);
+
+    public String getUserRole(int userId);
+
+    public List<FcmDto> getAlarms(Integer page, HttpServletRequest request);
+
+    public List<FcmDto> getAllAlarms(Integer page, HttpServletRequest request);
+
+    public void updatePencil(HttpServletRequest request);
+
+    public void updateBookmark(HttpServletRequest request);
 }

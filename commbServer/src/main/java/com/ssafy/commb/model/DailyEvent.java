@@ -1,6 +1,8 @@
 package com.ssafy.commb.model;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
@@ -12,6 +14,8 @@ import java.util.List;
 @Table(name="Daily_Event")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DailyEvent {
 
     @Id

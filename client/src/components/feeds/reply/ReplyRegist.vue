@@ -1,24 +1,50 @@
 <template>
   <div class="reply-regist">
-    <div class="my-image"></div>
-    <div class="regist-btn">
-      <p class="reply-regist-btn" type="button">등록</p>
-    </div>
+    <img
+      v-if="myInfo.userFileUrl"
+      class="user-profile"
+      type="button"
+      id="UserProfile"
+      :src="myInfo.userFileUrl"
+      alt="user-profile"
+    />
+    <img
+      v-else
+      alt="디폴트 회원 이미지"
+      class="default-user-image user-profile"
+      src="@/assets/image/common/profileDefault.svg"
+      type="button"
+      id="UserProfile"
+    />
+    <input class="reply-input" type="text" placeholder="댓글을 작성하세요." />
+    <button class="btn-5 reply-regist-btn" type="button">등록</button>
   </div>
 </template>
 
 <script>
+import { mapState } from "vuex";
+
 export default {
-  name: 'ReplyRegist',
-}
+  name: "ReplyRegist",
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
+};
 </script>
 
+<style src="@/assets/style/button.css"></style>
 <style scoped>
+.user-profile {
+  align-self: center;
+}
+.default-user-image,
+.user-profile {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+}
 .reply-regist {
-  margin: 0 auto;
   display: flex;
-  align-items: flex-start;
-  width: 408px;
 }
 .my-image {
   width: 40px;
@@ -27,15 +53,24 @@ export default {
   margin-right: 6px;
   border-radius: 50%;
 }
-.regist-btn {
-  border-radius: 15px;
-  padding: 5px 8px 6px 193px;
-  display: flex;
-  align-items: center;
-  border: 1px solid rgba(88, 88, 88, 1);
-}
 .reply-regist-btn {
   color: rgba(117, 64, 238, 1);
+  width: 60px;
   font-family: noto-sans-kr-12-bord;
+  margin: auto 0;
+}
+.reply-input {
+  margin: 0px 10px;
+  width: 100%;
+  height: 35px;
+  background-color: #f1f1f1;
+  color: #212121;
+  border: none;
+  outline: none;
+  height: 35px;
+  padding-left: 20px;
+  font-size: 0.875rem;
+  border-radius: 20px;
+  transition: none;
 }
 </style>

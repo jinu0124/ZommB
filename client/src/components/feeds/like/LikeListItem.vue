@@ -1,35 +1,44 @@
 <template>
-  <div class="like-list">
+  <div>
     <div
       class="like-list-item"
       @mouseover="currentItem(true)"
       @mouseout="currentItem(false)"
       :class="{ 'mouse-over-bgcolor': isColor }"
-      >
+    >
       <span class="user-images">
         <img
+          v-if="feed.userFileUrl"
+          class="user-profile"
+          type="button"
+          id="UserProfile"
+          :src="feed.userFileUrl"
+          alt="user-profile"
+        />
+        <img
+          v-else
           src="@/assets/image/common/profileDefault.svg"
-          alt="defalut-profile"
+          alt="default-user-image user-profile"
           class="user-image"
-          type="button" 
-        >
+          type="button"
+        />
       </span>
-      <span class="user-nickname">{{nickname}}</span>
-      <span>
-        <button 
-          class="follow btn-5 btn-yellow"
-          @click="follow()"
-          v-show="Follow"
-        >팔로우
-        </button>
-      </span>
+      <span class="user-nickname">{{ feed.nickname }}</span>
       <span>
         <button
           class="follow btn-5 btn-grey"
+          @click="unfollow"
+          v-if="feed.isFollow"
+        >
+          언팔로우
+        </button>
+        <button
+          class="follow btn-5 btn-yellow"
           type="button"
-          @click="unfollow()"
-          v-show="unFollow"
-        >팔로우 취소
+          @click="follow"
+          v-else
+        >
+          팔로우
         </button>
       </span>
     </div>
@@ -37,35 +46,40 @@
 </template>
 
 <script>
-
+import { mapActions } from "vuex";
+import userApi from "@/api/user";
 export default {
-  name: 'LikeListItem',
+  name: "LikeListItem",
   data() {
-    return{
+    return {
       isColor: false,
       Follow: true,
       unFollow: false,
-      nickname: 'Nickname',
+      nickname: "Nickname",
     };
   },
   props: {
-    like: Object,
+    feed: Object,
   },
   methods: {
+    ...mapActions("user", ["getUserInfo"]),
     currentItem(flag) {
       this.isColor = flag;
     },
-    follow() {
-      this.Follow = false;
-      this.unFollow = true;
-      console.log("팔로우")
+    async follow() {
+      this.isFollow = true;
+      await userApi.follow(this.id).then(() => {
+        this.getUserInfo(this.id);
+      });
     },
-    unfollow() {
-      this.Follow = true;
-      this.unFollow = false;
-      console.log("팔로우 취소")
-    }
+    async unfollow() {
+      this.isFollow = false;
+      await userApi.unfollow(this.id).then(() => {
+        this.getUserInfo(this.id);
+      });
+    },
   },
+  computed: {},
 };
 </script>
 
@@ -88,6 +102,15 @@ div {
   align-self: right;
 }
 .user-nickname {
-  margin: 0 50px 0 3px; 
+  margin: 0 50px 0 3px;
+}
+.default-user-image,
+.user-profile {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.like-list-item {
+  margin: 10px 0px;
 }
 </style>

@@ -1,30 +1,23 @@
 <template>
-  <div>
-    <LikeListItem/>
+  <div class="like-list">
+    <LikeListItem v-for="(feed, idx) in likeInfo" :key="idx" :feed="feed" />
   </div>
-  <!-- <div class="likelist" v-if="likes && likes.length != 0">
-    <like-list-item v-for="(like, index) in likes" :key="index" :like="like" />
-  </div>
-  <div class="no-like-list" v-else>
-    <h2>좋아요를 표현한 회원이 없습니다.</h2>
-  </div> -->
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import LikeListItem from '@/components/feeds/like/LikeListItem.vue';
+import LikeListItem from "@/components/feeds/like/LikeListItem";
+import { mapState } from "vuex";
 
 export default {
-  name: 'LikeList',
+  name: "LikeList",
   components: {
     LikeListItem,
   },
   computed: {
-    ...mapState(['likes']),
+    ...mapState("feed", ["likeInfo"]),
   },
-}
+};
 </script>
 
 <style>
-
 </style>

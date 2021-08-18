@@ -1,24 +1,23 @@
 <template>
-  <div>
-    <FeedListItem/>
+  <div class="feed-list">
+    <FeedListItem v-for="(feed, idx) in feedInfo" :key="idx" :feed="feed" />
   </div>
 </template>
 
 <script>
-import FeedListItem from '@/components/feeds/feed/FeedListItem.vue';
+import FeedListItem from "@/components/feeds/feed/FeedListItem";
+import { mapState } from "vuex";
 
 export default {
-  name: 'FeedList',
+  name: "FeedList",
   components: {
     FeedListItem,
   },
-  data() {
-    return {
-    }
+  computed: {
+    //feed라는 이름으로 하나의 feedListItem 불러오기
+    ...mapState("feed", ["feedInfo"]),
   },
-}
+};
 </script>
 
-<style>
-
-</style>
+<style scoped></style>

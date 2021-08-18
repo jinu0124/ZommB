@@ -38,3 +38,9 @@ out/
 
 ### QueryDSL Q Class
 **/generated/querydsl/
+
+### indexl.html
+**/src/main/resources/static/
+
+# backup 파일
+*.bak

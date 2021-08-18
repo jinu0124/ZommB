@@ -1,5 +1,7 @@
 package com.ssafy.commb.service;
 
+import com.ssafy.commb.dao.FeedDao;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.exception.ApplicationException;
 import com.ssafy.commb.model.Comment;
 import com.ssafy.commb.model.CommentThumb;
@@ -13,7 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.swing.text.html.Option;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.util.*;
 
 @Service
 public class CommentServiceImpl implements CommentService {
@@ -30,7 +35,10 @@ public class CommentServiceImpl implements CommentService {
     @Autowired
     private CommentThumbRepository commentThumbRepository;
 
-    public void uploadComment(int feedId, int userId, String content) {
+    @Autowired
+    private FeedDao feedDao;
+
+    public int uploadComment(int feedId, int userId, String content) {
         Comment comment = new Comment();
 
         Optional<Feed> feed = feedRepository.findById(feedId);
@@ -40,7 +48,7 @@ public class CommentServiceImpl implements CommentService {
         comment.setUser(user.get());
         comment.setContent(content);
 
-        commentRepository.save(comment);
+        return commentRepository.save(comment).getId();
     }
 
     public void modifyComment(int commentId, String content, int feedId) {
@@ -72,7 +80,7 @@ public class CommentServiceImpl implements CommentService {
         if (comment.get().getUser().getId() == userId || comment.get().getFeed().getUser().getId() == userId)
             commentRepository.deleteById(commentId);
         else
-            throw new ApplicationException(HttpStatus.valueOf(400), "댓글 삭제 권한 없음");
+            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 삭제 권한 없음");
     }
 
     public void likeComment(int feedId, int commentId, int userId){
@@ -114,6 +122,43 @@ public class CommentServiceImpl implements CommentService {
         if(!commentThumb.isPresent()) throw new ApplicationException(HttpStatus.valueOf(404), "좋아요를 누른 댓글이 아닙니다!");
 
         commentThumbRepository.delete(commentThumb.get());
+    }
+
+    @Override
+    public List<FcmDto> getFeedWritersFirebaseToken(int feedId, int userId, String content, int commentId) {
+        List<FcmDto> fcms = new ArrayList<>();
+
+        List<String> tokens = feedDao.getFeedWriterToken(feedId);
+        Optional<User> user = userRepository.findById(userId);
+        Optional<Feed> feed = feedRepository.findById(feedId);
+
+        for(String token : tokens) {
+            FcmDto fcm = FcmDto.builder()
+                    .message(FcmDto.Message.builder().token(token)
+                            .notification(FcmDto.Notification.builder()
+                                    .title("comment")
+                                    .body(content)
+                                    .build())
+                            .data(FcmDto.PayData.builder()
+                                    .feedId(feedId)
+                                    .userId(userId)
+                                    .nickname(user.get().getNickname())
+                                    .userFileUrl(user.get().getFileUrl())
+                                    .comment(content)
+                                    .commentId(commentId)
+                                    .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                    .targetUserId(feed.get().getUser().getId())
+                                    .isRead(0)
+                                    .build())
+                            .build())
+                    .build();
+
+            fcms.add(fcm);
+        }
+
+        System.out.println("1" + fcms.get(0).getMessage().getNotification().getTitle());
+
+        return fcms;
     }
 
     public Boolean isExist(Comment comment, User user){

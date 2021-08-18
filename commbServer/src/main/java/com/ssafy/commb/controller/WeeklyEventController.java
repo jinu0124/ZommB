@@ -1,37 +1,71 @@
 package com.ssafy.commb.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.ssafy.commb.dto.event.WeeklyEventDto;
+import com.ssafy.commb.dto.feed.FeedDto;
+import com.ssafy.commb.dto.user.MyDto;
+import com.ssafy.commb.service.EventService;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * @ Weekly Event Function Controller
+ */
 @RestController
-@RequestMapping(value="/weekly-events")
+@RequestMapping(value="/api/weekly-events")
 public class WeeklyEventController {
 
+    @Autowired
+    private EventService eventService;
+
     @GetMapping("")
-    public Object findWeeklyEventList(){
-        return null;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @ApiOperation(value = "주간 이벤트 정보리스트")
+    public ResponseEntity<WeeklyEventDto.Response> findWeeklyEvent(@RequestParam String today){
+        WeeklyEventDto.Response weeklyEvent = eventService.bookRecommend(today);
+
+        return ResponseEntity.ok().body(weeklyEvent);
     }
 
     @GetMapping("/{weeklyId}/feeds")
-    public Object findWeeklyEventFeedList(
-            @PathVariable("weeklyId") Integer weeklyId
+    @ApiOperation(value = "주간 이벤트에 대한 게시물 리스트")
+    public ResponseEntity<FeedDto.ResponseList> findWeeklyEventFeedList(
+            @PathVariable("weeklyId") Integer weeklyId,
+            @RequestParam Integer page,
+            HttpServletRequest request
     ){
-        return null;
-    }
+        FeedDto.ResponseList feedRes = eventService.weeklyFeeds(weeklyId, page * 20, request);
 
-    @GetMapping("/{weeklyId}/users")
-    public Object findWeeklyEventUserList(
-            @PathVariable("weeklyId") Integer weeklyId
-    ){
-        return null;
+        return ResponseEntity.ok().body(feedRes);
     }
 
     @GetMapping("/{weeklyId}/users/cnt")
-    public Object findWeeklyEventUserCnt(
+
+    public ResponseEntity<Map<String, Integer>> findWeeklyEventUserCnt(
             @PathVariable("weeklyId") Integer weeklyId
     ){
-        return null;
+        Map<String, Integer> map = new HashMap<>();
+        int participants = eventService.getWeeklyParticipantsCnt(weeklyId);
+        map.put("participants", participants);
+
+        return ResponseEntity.ok().body(map);
+    }
+
+    @GetMapping("/{weeklyId}/users")
+    @ApiOperation(value = "주간 이벤트 참여자 목록")
+    public ResponseEntity<MyDto.ResponseList> findWeeklyEventUserList(
+            @PathVariable("weeklyId") Integer weeklyId,
+            @RequestParam Integer page,
+            HttpServletRequest request
+    ){
+        MyDto.ResponseList myResList = eventService.getWeeklyParticipants(weeklyId, page * 50, request);
+
+        return ResponseEntity.ok().body(myResList);
     }
 }

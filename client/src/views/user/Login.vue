@@ -62,13 +62,11 @@
       <div class="move-btns my-2">
         <span
           class="btn-text-s"
-          type="button"
           @click="moveToSignup"
         >회원가입</span>
         <span class="btn-text-s"> | </span>
         <span
           class="btn-text-s"
-          type="button"
           @click="moveToFindPassword"
         >비밀번호 찾기</span>
       </div>
@@ -76,11 +74,8 @@
       <div class="social-login">
         <img class="img-fluid my-3" src="@/assets/image/deco/or.svg" alt="">
         <div class="d-flex gap-3 justify-content-center">
-          <button class="kakao-btn">
-            <img src="@/assets/image/deco/kakao.png" alt="">
-          </button>
-          <button class="google-btn">
-            <img src="@/assets/image/deco/google.png" alt="">
+          <button class="kakao-btn" @click="kakaoLogin">
+            <img src="@/assets/image/deco/kakao.png" alt="kakao-login">
           </button>
         </div>
       </div>
@@ -159,6 +154,9 @@ export default {
       });
       this.isSubmit = isSubmit;
     },
+    kakaoLogin() {
+      window.location.href= process.env.VUE_APP_SERVER_URL + "/oauth2/authorization/kakao";
+    }
   },
   created() {
     this.passwordSchema
@@ -194,27 +192,17 @@ export default {
   .social-login {
     width: 210px;
   }
-
-  .social-login button {
+  .kakao-btn {
     width: 45px;
     height: 45px;
     border-radius: 100%;
     border: none;
     outline: none;
-  }
-
-  .kakao-btn {
     background-color: #FFD600;
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
-
-  .google-btn {
-    background-color: #fff;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  }
-  
-  .social-login button img {
-    max-width: 70%;
+  .kakao-btn img {
+    width: 70%;
     height: auto;
   }
 </style>
