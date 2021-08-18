@@ -141,6 +141,7 @@ public class CommentServiceImpl implements CommentService {
                                     .build())
                             .data(FcmDto.PayData.builder()
                                     .feedId(feedId)
+                                    .feedFileUrl(feed.get().getFileUrl())
                                     .userId(userId)
                                     .nickname(user.get().getNickname())
                                     .userFileUrl(user.get().getFileUrl())
@@ -155,8 +156,6 @@ public class CommentServiceImpl implements CommentService {
 
             fcms.add(fcm);
         }
-
-        System.out.println("1" + fcms.get(0).getMessage().getNotification().getTitle());
 
         return fcms;
     }

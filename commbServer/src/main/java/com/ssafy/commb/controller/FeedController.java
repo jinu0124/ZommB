@@ -199,8 +199,27 @@ public class FeedController {
         if(fcms.size() >= 1) {
             fcms.get(0).getMessage().getData().setIsRead(1);
             fcmService.sends(tokens, fcms.get(0));
+            fcmService.savePushAlarm(fcms.get(0));
         }
-        fcmService.savePushAlarm(fcms.get(0));
+        else{
+            fcmService.savePushAlarm(FcmDto.builder()
+                    .message(FcmDto.Message
+                            .builder()
+                            .notification(FcmDto.Notification.builder()
+                                .title("comment")
+                                .body(comment.getComment())
+                                .build())
+                            .data(FcmDto.PayData.builder()
+                                .userId(userId)
+                                .feedId(feedId)
+                                .commentId(commentId)
+                                .targetUserId(feedService.getUserId(feedId))
+                                .isRead(0)
+                                .createAt(LocalDateTime.now(ZoneId.of("+9")))
+                                .build())
+                            .build())
+                    .build());
+        }
 
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
@@ -281,7 +300,6 @@ public class FeedController {
     @PostMapping("/{feedId}/reports")
     @ApiOperation(value = "피드 신고")
     public ResponseEntity reportFeed(@PathVariable Integer feedId, @RequestBody ReasonDto reason, HttpServletRequest request) {
-        System.out.println(reason.getReason());
         int userId = (Integer) request.getAttribute("userId");
 
         feedService.reportFeed(feedId, reason.getReason(), userId);

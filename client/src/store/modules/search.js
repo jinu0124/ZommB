@@ -179,6 +179,7 @@ const mutations = {
     state.bookResult = null
     state.userResult = null
     state.feedResult = null
+    state.searchInput = ''
   }
 }
 const getters = {

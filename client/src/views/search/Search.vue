@@ -61,7 +61,11 @@ export default {
     ...mapActions('search', ['searchBook', 'searchUser', 'searchFeed']),
     changePage(val) {
       this.selectedPage = val;
-      this.$router.push({ name: 'Search', params: { flag: this.pages[this.selectedPage] }})
+      this.$router.push({ 
+        name: 'Search', 
+        params: { flag: this.pages[this.selectedPage] },
+        query: this.$route.query
+      })
     },
     onSearch(word) {
       this.searchWord = word
@@ -114,9 +118,6 @@ export default {
     }
   },
   created () {
-    if (!this.$route.query) {
-      this.$store.commit('search/RESET_RESULT')
-    }
     this.findPage()
   }
 }
