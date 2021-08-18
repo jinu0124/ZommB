@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import { mapState } from 'vuex'
 import SimpleHeader from "@/components/SimpleHeader";
 import ReplyList from "@/components/feeds/reply/ReplyList";
 import ReplyRegist from "@/components/feeds/reply/ReplyRegist";
@@ -26,6 +27,9 @@ export default {
       title: "댓글",
     };
   },
+  computed: {
+    ...mapState('feed', ['comments'])
+  }
 };
 </script>
 

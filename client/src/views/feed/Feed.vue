@@ -1,20 +1,13 @@
 <template class="temp">
-  <div class="feed">
-    <div class="fd-header d-flex flex-column">
+  <div id="feed" class="feed">
+    <!-- <div class="fd-header d-flex flex-column">
       <div class="title" style="float: left" id="feed">
         NewsFeed
-        <!-- <img
-          src="@/assets/image/test/write-btn.svg"
-          class="write-btn"
-          style="float: right"
-          type="button"
-          @click="moveToSelectBook()"
-        /> -->
       </div>
-    </div>
-    <div>
-      <FeedList />
-    </div>
+    </div> -->
+    <FeedList
+      @last="addFeed"
+    />
   </div>
 </template>
 
@@ -27,11 +20,17 @@ export default {
   components: {
     FeedList,
   },
+  data () {
+    return {
+      page: 1
+    }
+  },
   methods: {
     ...mapActions("feed", ["getFeedInfo"]),
-    // moveToSelectBook() {
-    //   this.$router.push("select/true");
-    // },
+    addFeed () {
+      this.getFeedInfo(this.page)
+      this.page ++
+    }
   },
   //페이지 렌더링 시 피드 정보를 0페이지부터 가져온다.
   created() {
@@ -42,9 +41,9 @@ export default {
 
 <style scoped>
 .feed {
-  width: 100%;
-  background: #ffffff;
   height: 100vh;
+  width: 100vw;
+  background: #ffffff;
   border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
   padding: 20px 20px 100px;

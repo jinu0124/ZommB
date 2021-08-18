@@ -2,23 +2,22 @@
   <div class="feed-list-item">
     <div class="item-body d-flex flex-column align-items-center">
       <div class="feed-header align-items-center">
-        <span
-          ><img
+        <span>
+          <img
             v-if="feed.user.userFileUrl"
             class="user-profile"
-            type="button"
-            id="UserProfile"
             :src="feed.user.userFileUrl"
+            alt="user-profile"
             @click="moveToUserDetail()"
-            alt="user-profile" />
+          />
           <img
             v-else
-            alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
+            alt="디폴트 회원 이미지"
             @click="moveToUserDetail()"
-            id="UserProfile"
-        /></span>
+          />
+        </span>
         <span class="nick-title">
           <div class="owner" type="button" @click="moveToUserDetail()">
             {{ feed.user.nickname }}
@@ -49,7 +48,6 @@
         v-if="feed.feedFileUrl"
         class="feed-image"
         type="button"
-        id="FeedImage"
         :src="feed.feedFileUrl"
         alt="feed-image"
       />
@@ -203,8 +201,8 @@ export default {
       return `${Math.floor(betweenTimeDay / 365)}년전`;
     },
     onMoveToComment() {
-      this.$store.commit("feed/SET_COMMENT_DATA", this.feed.comments);
-      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
+      this.$store.commit("feed/SET_COMMENTS", this.feed)
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } })
     },
     searchTag(keyword) {
       this.$router.push({

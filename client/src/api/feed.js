@@ -6,7 +6,7 @@ export default {
     return _axios({
       url: `feeds/${userId}/following/feeds`,
       method: 'get',
-      params: { page:page }
+      params: { page: page }
     })
   },
   //게시물 좋아요 목록
