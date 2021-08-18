@@ -25,7 +25,7 @@
     <div v-if="bookResult" class="pt-2">
       <div
         v-if="!bookResult.length"
-        class="no-result mt-5"
+        class="no-result mt-5 text-center"
       >검색 결과가 없습니다.</div>
       <button
         class="top-btn"
