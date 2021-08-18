@@ -1,48 +1,31 @@
 <template>
   <div class="reply-list-item">
-    <div class="reply-content">
-      <p class="replier">{{ reply.nickname }}</p>
-      <p class="reply">{{ reply.content }}</p>
-      <div class="reply-like-num">좋아요 {{ reply.thumbCnt }}개</div>
+    <div class="reply-box d-flex justify-content-between align-items-center">
+      <div class="d-flex flex-column">
+        <div class="comment d-flex flex-column">
+          <strong>{{ reply.nickname }}</strong>
+          {{ reply.content }}
+          <div class="info d-flex gap-2 allign-items-center">
+            <span>좋아요 {{ reply.thumbCnt }}개</span>
+            <span v-if="reply.isMod">수정됨</span>
+            <i class="fi-sr-cross-small"></i>
+          </div>
+        </div>
+      </div>
+      <div v-if="!isMine">
+        <i
+          v-if="reply.isThumb"
+          class="fas fa-heart like"
+          @click="dislike()"
+        ></i>
+        <i v-else class="far fa-heart dislike" @click="like()"></i>
+      </div>
     </div>
-    <img
-      class="menu-image"
-      src="@/assets/image/deco/feedMenu.svg"
-      v-show="!clickMenu && reply.userId == myInfo.id"
-      @click="menuOn"
-    />
-    <div
-      v-show="clickMenu"
-      class="menu dropdown-reply-menu"
-      aria-labelledby="ReplyMenuDropdown"
-    >
-      <a class="dropdown-item" @click="updateComment">수정하기</a>
-      <a class="dropdown-item" @click="deleteComment">삭제하기</a>
-      <a class="dropdown-item" @click="menuOff">취소</a>
-    </div>
-    <img
-      alt="좋아요버튼안눌림"
-      class="dislike btn-like"
-      type="button"
-      @click="like()"
-      src="@/assets/image/deco/heartEmpty.svg"
-      v-show="disLike"
-    />
-    <img
-      alt="좋아요버튼눌림"
-      class="like btn-like"
-      type="button"
-      @click="dislike()"
-      src="@/assets/image/deco/heartFill.svg"
-      v-show="Like"
-    />
   </div>
 </template>
 
 <script>
-import _ from "lodash";
-import { mapActions, mapState } from "vuex";
-
+import { mapState } from "vuex";
 export default {
   name: "ReplyListItem",
   props: {
@@ -76,17 +59,44 @@ export default {
     },
   },
   computed: {
-    shortenContent() {
-      return _.truncate(this.reply, { length: 50 });
-    },
-    ...mapState("feed", ["feedInfo"]),
     ...mapState("user", ["myInfo"]),
+    isMine() {
+      return this.myInfo.id === this.reply.userId;
+    },
   },
 };
 </script>
 
 <style scoped>
-.reply-list-item {
+.reply-box {
+  font-size: 12px;
+  width: 260px;
+}
+.reply-box .comment {
+  width: 220px;
+  word-break: break-all;
+}
+.reply-box .user {
+  font-weight: 700;
+}
+
+.reply-box .like {
+  color: #ff7777;
+}
+.reply-box .dislike {
+  color: #c4c4c4;
+}
+.reply-box .info {
+  font-size: 10px;
+  color: #585858;
+}
+.comment-menu {
+  color: #585858;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+/* .reply-list-item {
   margin-top: 20px;
   display: flex;
 }
@@ -100,11 +110,7 @@ export default {
 .replier {
   font-family: noto-sans-kr-10-bold;
 }
-.reply-like-num {
-  font-family: "Noto Sans KR";
-  font-size: 9px;
-  color: rgba(164, 164, 164, 1);
-}
+
 .reply {
   background: #fff;
   color: rgba(33, 33, 33, 1);
@@ -116,23 +122,5 @@ export default {
   height: 2.5rem;
   border-radius: 100%;
   margin: 0px 5px;
-}
-.dropdown-reply-menu {
-  border: none;
-  background: rgba(0, 0, 0, 0.7);
-  border-radius: 10px 10px 10px 10px;
-  min-width: 3rem;
-}
-.dropdown-item {
-  color: #fff;
-  font-size: 0.7rem;
-  font-weight: 300;
-  text-align: center;
-  margin-right: 20px;
-}
-.menu-image {
-  width: 20px;
-  height: auto;
-  margin-right: 10px;
-}
+} */
 </style>

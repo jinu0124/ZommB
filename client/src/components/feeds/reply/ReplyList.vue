@@ -1,6 +1,10 @@
 <template>
-  <div class="reply-list">
-    <ReplyListItem v-for="(reply, idx) in comments" :key="idx" :reply="reply" />
+  <div class="reply-list d-flex flex-column align-items-center gap-2">
+    <ReplyListItem 
+      v-for="reply in comments.comments" 
+      :key=reply.id
+      :reply=reply
+    />
   </div>
 </template>
 
