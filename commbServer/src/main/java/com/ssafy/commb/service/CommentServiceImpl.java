@@ -141,6 +141,7 @@ public class CommentServiceImpl implements CommentService {
                                     .build())
                             .data(FcmDto.PayData.builder()
                                     .feedId(feedId)
+                                    .feedFileUrl(feed.get().getFileUrl())
                                     .userId(userId)
                                     .nickname(user.get().getNickname())
                                     .userFileUrl(user.get().getFileUrl())
