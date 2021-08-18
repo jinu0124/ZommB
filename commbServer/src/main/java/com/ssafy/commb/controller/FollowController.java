@@ -65,7 +65,6 @@ public class FollowController {
                                 .build())
                         .build())
                 .build();
-//        fcmService.send(fcm);
 //
         if(firebaseTokens.size() >= 1)  fcmService.sends(firebaseTokens, fcm);
         fcmService.savePushAlarm(fcm);

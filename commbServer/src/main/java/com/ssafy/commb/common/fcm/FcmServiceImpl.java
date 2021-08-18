@@ -196,7 +196,6 @@ public class FcmServiceImpl implements FcmService{
         List<String> tokenList = new ArrayList<>();
         for(FirebaseToken token : tokens) tokenList.add(token.getToken());
         System.out.println(fcm.getMessage().getNotification().getTitle());
-        System.out.println(fcm.getMessage().getData().getFeedFileUrl());
         return MulticastMessage.builder()
                 .setNotification(new Notification(fcm.getMessage().getNotification().getTitle(), fcm.getMessage().getNotification().getBody()))
                 .putData("nickname", String.valueOf(fcm.getMessage().getData().getNickname() == null ? "" : fcm.getMessage().getData().getNickname() ))
