@@ -29,6 +29,8 @@ public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticat
     @Autowired
     UserRepository userRepository;
 
+    @Value("${dynamic.front.path}")
+    private String dynamicFrontPath;
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response
@@ -77,6 +79,7 @@ public class CustomOAuthLoginSuccessHandler extends SavedRequestAwareAuthenticat
         long expire = 60000;
         redisService.setStringValue(code, Integer.toString(user.getId()), expire);
 
-        getRedirectStrategy().sendRedirect(request, response, "/oauth/redirect?code="+code);
+        // getRedirectStrategy().sendRedirect(request, response, "/oauth/redirect?code="+code);
+        response.sendRedirect(dynamicFrontPath + "/oauth/redirect?code="+code);
     }
 }
