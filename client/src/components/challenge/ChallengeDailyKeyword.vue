@@ -5,7 +5,10 @@
       <div class="des1">#<strong>{{ dailyKeyword.word }}</strong>에 대한 글을 남겨보세요!</div>
       <div class="des2 mt-1">
         <strong>{{ dailyKeyword.word }}</strong> 하면 떠오르는 책이나 책 속의 문장,<br>
-        그 무엇이든 좋아요 : - )
+        그 무엇이든 좋아요 : - ) <br/>
+        <br/>
+        오늘, 게시물에 <strong>#{{ dailyKeyword.word }}</strong>라는 태그를 남기면<br/>
+        Daily Challenge에 참여할 수 있습니다!
       </div>
     </div>
   </div>
