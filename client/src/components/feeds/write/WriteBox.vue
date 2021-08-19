@@ -13,7 +13,7 @@
     <textarea 
       class="form-control content-input mt-2" 
       type="text" 
-      placeholder="Content"
+      :placeholder=placeholder
       @input="insertContent"
       :value="content"
     ></textarea>
@@ -36,7 +36,8 @@ export default {
   },
   data () {
     return {
-      content: ''
+      content: '',
+      placeholder: '글을 작성하고 우측 상단에 이미지 아이콘을 클릭해 사진을 추가해주세요!'
     }
   },
   methods: {
