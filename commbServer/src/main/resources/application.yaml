@@ -97,7 +97,7 @@ dynamic:
   path: https://i5a602.p.ssafy.io/
   front:
     path: https://i5a602.p.ssafy.io/
-
+ 
 # Backend Local : http://127.0.0.1:8080/
 # Frontend Local : http://127.0.0.1:8000/
 # Backend Server : i5a602.p.ssafy.io/
