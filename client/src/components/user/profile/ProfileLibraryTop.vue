@@ -1,6 +1,6 @@
 <template>
   <div class="collection-group">
-    <div v-if="isMine">
+    <div v-if="isMine" class="d-flex justify-content-center">
       <div 
         class="book-cover"
         v-for="book in profileInfo.bookCollection"
@@ -21,13 +21,14 @@
         </div>
       </div>
     </div>
-    <img 
-      v-else
-      class="book-cover"
-      v-for="book in profileInfo.bookCollection"
-      :key="book.id"
-      :src="book.bookFileUrl" 
-      alt="">
+    <div v-else>
+      <img 
+        class="book-cover"
+        v-for="book in profileInfo.bookCollection"
+        :key="book.id"
+        :src="book.bookFileUrl" 
+        alt="">
+    </div>
   </div>
 </template>
 
