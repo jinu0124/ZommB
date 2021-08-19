@@ -61,7 +61,9 @@ export default {
         this.$store.commit('feed/SET_FEED_INFO', this.feedResult)
       } else if (type === 2) {
         this.$store.commit('feed/SET_FEED_INFO', this.weeklyFeed)
-      } this.$store.commit('feed/SET_FEED_INFO', this.dailyFeed)
+      } else {
+        this.$store.commit('feed/SET_FEED_INFO', this.dailyFeed)
+      }
     }
   },
   computed: {
