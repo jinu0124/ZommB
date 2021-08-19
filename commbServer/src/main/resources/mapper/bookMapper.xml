@@ -4,7 +4,7 @@
 <mapper namespace="com.ssafy.commb.dao.BookDao">
 
     <select id="getBooksByName" parameterType="Map" resultMap="bookInformation">
-        SELECT T.id, T.book_name, T.author, T.publisher, T.year, T.isbn, T.file_url AS bookFileUrl, T.rate, COUNT(bs.book_id)
+        SELECT T.id, T.book_name, T.author, T.publisher, T.year, T.isbn, T.file_url AS bookFileUrl, ROUND(T.rate, 2) as rate, COUNT(bs.book_id)
         FROM
             (SELECT B.ID AS id, BOOK_NAME, AUTHOR, PUBLISHER, YEAR, ISBN, FILE_URL, AVG(RATE) AS rate
              FROM BOOK B, BOOK_SHELVES BS

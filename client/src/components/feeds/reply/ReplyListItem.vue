@@ -60,8 +60,6 @@ export default {
   },
   data() {
     return {
-      Like: false,
-      disLike: true,
       moreReply: true,
       isEditMode: false,
       contentNew: "",
@@ -80,16 +78,14 @@ export default {
         feedId: this.$route.params.id,
         commentId: this.reply.id,
       });
-      this.Like = true;
-      this.disLike = false;
+      this.reply.isThumb = true;
     },
     dislike() {
       this.dislikeComment({
         feedId: this.$route.params.id,
         commentId: this.reply.id,
       });
-      this.Like = false;
-      this.disLike = true;
+      this.reply.isThumb = false;
     },
     turnIntoEditMode() {
       this.isEditMode = true;
