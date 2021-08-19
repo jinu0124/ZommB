@@ -1,6 +1,6 @@
 <template>
   <div class="collection-group">
-    <div v-if="isMine" class="d-flex justify-content-center">
+    <div v-if="isMine">
       <div 
         class="book-cover"
         v-for="book in profileInfo.bookCollection"
@@ -65,7 +65,7 @@ export default {
   }
   .book-cover {
     height: 120px;
-    width: auto;
+    width: 82.75px;
     border-radius: 10px;
     display: inline-block;
     overflow: hidden;

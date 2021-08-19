@@ -9,7 +9,7 @@
         아직 {{ profileInfo.user.nickname }} 님이<br/>
         Collect한 책이 없습니다.</div>
     </div>
-    <div class="d-flex flex-column align-items-center mt-2">
+    <div class="d-flex flex-column align-items-center mt-3">
       <div class="d-flex gap-2 align-items-center">
         <input
           class="search-input"
