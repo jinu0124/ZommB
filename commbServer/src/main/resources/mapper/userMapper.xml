@@ -13,22 +13,23 @@
     </select>
 
     <select id="getMyFollowerExFollowing" parameterType="Integer" resultMap="userInformation">
-        SELECT distinct u.id, NAME, nickname, file_url, 0 AS isFollow, bookmark, pencil, 5 as cnt
-        FROM follow f2, user u
-        WHERE u.id = f2.follower and f2.following = #{userId} AND f2.follower NOT IN (
-            SELECT f1.following
-            FROM follow f1
-            WHERE f1.follower = #{userId})
+        (SELECT u.id, NAME, nickname, file_url, 0 AS isFollow, bookmark, pencil
+         FROM follow f2, user u
+         WHERE u.id = f2.follower and f2.following = #{userId} AND f2.follower NOT IN (
+             SELECT f1.following
+             FROM follow f1
+             WHERE f1.follower = #{userId})
+         ORDER BY u.nickname)
         UNION
-        SELECT u.id, NAME, nickname, file_url AS userFileUrl, 0 AS isFollow, bookmark, pencil, COUNT(f2.following) AS cnt
-        FROM follow f1, follow f2, user u
-        WHERE f1.following = f2.follower AND f1.follower = #{userId} AND f2.following != #{userId} AND u.id = f2.following AND f2.following NOT IN (
-            SELECT f3.following
-            FROM follow f3
-            WHERE f3.follower = #{userId})
-        GROUP BY f2.following
-        ORDER BY cnt DESC, nickname
-        LIMIT 50 OFFSET #{page}
+        (SELECT u.id, NAME, nickname, file_url AS userFileUrl, 0 AS isFollow, bookmark, pencil
+         FROM follow f1, follow f2, user u
+         WHERE f1.following = f2.follower AND f1.follower = #{userId} AND f2.following != #{userId} AND u.id = f2.following AND f2.following NOT IN (
+        SELECT f3.following
+        FROM follow f3
+        WHERE f3.follower = #{userId})
+         GROUP BY f2.following
+         ORDER BY COUNT(f2.following) DESC, nickname)
+        LIMIT 50 OFFSET 0
     </select>
 
     <select id="getUsers" parameterType="String" resultType="My">
