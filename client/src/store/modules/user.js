@@ -160,6 +160,14 @@ const actions = {
     }, 2000)
   },
   async onSocialLogin({ commit }, userData) {
+    if (firebase.messaging.isSupported()) {
+      await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
+        .then((token) => {
+          // console.log(token)
+          userData.firebaseToken = token
+          commit('SET_FIREBASE_TOKEN', token)
+        })
+    }
     await userApi.socialLogin(userData)
       .then((res) => {
         // console.log(res)

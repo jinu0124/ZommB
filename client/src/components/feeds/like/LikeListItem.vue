@@ -104,8 +104,7 @@ div {
 .user-nickname {
   text-align: center;
   align-self: center;
-  margin-left: 20px;
-  width: 150px;
+  width: 100px;
 }
 .default-user-image,
 .user-profile {

@@ -167,8 +167,9 @@ public class UserController {
 
     @GetMapping("/social/login")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code) {
-
+    public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code,
+                                                    @RequestParam(value="firebaseToken") String firebaseToken
+    ) {
         String userId = redisService.getStringValue(code);
 
         if(userId == null) throw new ApplicationException(HttpStatus.valueOf(401), "로그인 실패");
@@ -178,9 +179,12 @@ public class UserController {
         MyDto.Response myRes = userService.socialLogin(id);
         Map<String, Object> map = securityService.createToken(id);
 
+
         HttpHeaders resHeader = new HttpHeaders();
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
+
+        if(firebaseToken != null) fcmService.save(myRes, firebaseToken);
 
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }

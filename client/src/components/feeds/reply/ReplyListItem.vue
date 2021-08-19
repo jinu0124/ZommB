@@ -82,7 +82,6 @@ export default {
       });
       this.Like = true;
       this.disLike = false;
-      this.reply.thumbCnt += 1;
     },
     dislike() {
       this.dislikeComment({
@@ -91,7 +90,6 @@ export default {
       });
       this.Like = false;
       this.disLike = true;
-      this.reply.thumbCnt -= 1;
     },
     turnIntoEditMode() {
       this.isEditMode = true;

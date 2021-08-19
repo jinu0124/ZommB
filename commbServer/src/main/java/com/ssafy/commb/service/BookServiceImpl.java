@@ -417,6 +417,7 @@ public class BookServiceImpl implements BookService{
                 .where(builder)
                 .offset(bookReq.getPage())
                 .limit(10)
+                .distinct()
                 .fetch();
 
         return books;
