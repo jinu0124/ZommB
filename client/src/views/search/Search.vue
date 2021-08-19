@@ -64,7 +64,7 @@ export default {
       this.$router.push({ 
         name: 'Search', 
         params: { flag: this.pages[this.selectedPage] },
-        query: this.$route.query
+        query: this.nextQuery
       })
     },
     onSearch(word) {
@@ -74,29 +74,35 @@ export default {
       this.feedPage = 1
     },
     addUsers () {
-      const searchData = {
-        nickname: this.searchWord,
-        page: this.userPage,
+      if (!this.stop.user) {
+        const searchData = {
+          nickname: this.searchWord,
+          page: this.userPage,
+        }
+        this.searchUser(searchData)
+        this.userPage ++
       }
-      this.searchUser(searchData)
-      this.userPage ++
     },
     addBooks () {
-      const searchData = {
-        searchType: this.bookType,
-        searchWord: this.searchWord,
-        page: this.bookPage,
+      if (!this.stop.book) {
+        const searchData = {
+          searchType: this.bookType,
+          searchWord: this.searchWord,
+          page: this.bookPage,
+        }
+        this.searchBook(searchData)
+        this.bookPage ++
       }
-      this.searchBook(searchData)
-      this.bookPage ++
     },
     addFeeds () {
-      const searchData = {
-        searchWord: this.searchWord,
-        page: this.feedPage,
+      if (!this.stop.feed) {
+        const searchData = {
+          searchWord: this.searchWord,
+          page: this.feedPage,
+        }
+        this.searchFeed(searchData)
+        this.feedPage ++
       }
-      this.searchFeed(searchData)
-      this.feedPage ++
     },
     findPage () {
       const page = this.pages.indexOf(this.$route.params.flag)
@@ -107,7 +113,17 @@ export default {
     }
   },
   computed: {
-    ...mapState('search', ['bookType']),
+    ...mapState('search', ['bookType', 'stop']),
+    nextQuery () {
+      var current = this.$route.query
+      if ((this.selectedPage === 0 || this.selectedPage === 2)
+           && Object.keys(current).includes('type')) {
+             delete current.type
+          } else if (!current.type || !Object.keys(current).includes('type')) {
+        current.type = null
+      }
+      return current
+    }
   },
   watch: {
     bookType () {

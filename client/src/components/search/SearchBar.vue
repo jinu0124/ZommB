@@ -56,11 +56,17 @@ export default {
     },
     onSearch () {
       // user 검색
-      this.searchUser({nickname: this.searchFormat, page: 0})
-      // 책 전체 검색
-      this.searchBook({searchWord: this.searchFormat, searchType: this.bookType, page: 1})
-      // 피드 검색
-      this.searchFeed({searchWord: this.searchFormat, page: 0})
+      if (this.$route.params.flag === 'users') {
+        this.searchUser({nickname: this.searchFormat, page: 0})
+      }
+      if (this.$route.params.flag === 'books') {
+        // 책 전체 검색
+        this.searchBook({searchWord: this.searchFormat, searchType: this.bookType, page: 1})
+      }
+      if (this.$route.params.flag === 'feeds') {
+        // 피드 검색
+        this.searchFeed({searchWord: this.searchFormat, page: 0})
+      }
     },
     clean () {
       this.searchInput = ''

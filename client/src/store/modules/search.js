@@ -27,7 +27,7 @@ const actions = {
     }
     await searchApi.searchBook(searchData)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         if (res.status === 204) {
           commit('SET_STOP_BOOK', true)
           if (searchData.page === 1) {
@@ -72,7 +72,7 @@ const actions = {
     }
     await searchApi.searchUser(searchData)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         if (res.status === 200) {
           if (!searchData.page) {
             commit('SET_USER_RESULT', res.data.data)
@@ -94,42 +94,42 @@ const actions = {
   async searchFeed({ commit }, searchData) {
     if (
       !searchData.searchWord.trim().length ||
-      (searchData.page && state.stop.feed)
+      (searchData.page && state.stop.user)
     ) {
       return
     }
     await searchApi.searchFeed(searchData)
-      .then((res) => {
-        // console.log(res)
-        if (res.status === 200) {
-          if (!searchData.page) {
-            commit('SET_FEED_RESULT', res.data.data)
-          } else {
-            commit('ADD_FEED_RESULT', res.data.data)
-          }
-          commit('SET_STOP_FEED', false)
-        } else if (res.status === 204) {
-          if (!searchData.page) {
-            commit('SET_FEED_RESULT', [])
-          }
-          commit('SET_STOP_FEED', true)
-        }  
-      })
-      .catch(() => {
-          commit('SET_STOP_FEED', true)
-      })
-    },
+    .then((res) => {
+      console.log(res)
+      if (res.status === 200) {
+        if (!searchData.page) {
+          commit('SET_FEED_RESULT', res.data.data)
+        } else {
+          commit('ADD_FEED_RESULT', res.data.data)
+        }
+        commit('SET_STOP_FEED', false)
+      } else if (res.status === 204) {
+        if (!searchData.page) {
+          commit('SET_FEED_RESULT', [])
+        }
+        commit('SET_STOP_FEED', true)
+      }  
+    })
+    .catch(() => {
+        commit('SET_STOP_FEED', true)
+    })
+  },
   async recommendUser({ rootState, commit }, page) {
     await searchApi.getRecommendUSR(rootState.user.myInfo.id, page)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         commit('SET_RECOMMEND_USER', res.data.data)
       })
   },
   async recommendKeyword({ rootState, commit }) {
     await searchApi.getRecommendKW(rootState.user.myInfo.id)
       .then((res) => {
-        // console.log(res)
+        console.log(res)
         commit('SET_RECOMMEND_KEYWORD', res.data.data)
       })
   },
