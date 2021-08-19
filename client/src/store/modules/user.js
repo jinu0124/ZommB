@@ -358,6 +358,12 @@ const mutations = {
     })
     state.profileInfo.bookShelf = newBookShelf
   },
+  DELETE_BOOK_BOOKCART(state, payload) {
+    const newBookcart = state.profileInfo.bookCart.filter((book) => {
+      return book.id != payload
+    })
+    state.profileInfo.bookCart = newBookcart
+  },
   SET_MOVE_TARGET(state, payload) {
     state.moveTarget = payload
   },

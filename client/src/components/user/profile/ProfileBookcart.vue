@@ -48,7 +48,7 @@ export default {
       this.searchInput = event.target.value
     },
     deleteBook (bookId) {
-      this.$store.commit('user/DELETE_BOOK_LIBRARY', bookId)
+      this.$store.commit('user/DELETE_BOOK_BOOKCART', bookId)
     }
   },
   computed: {
