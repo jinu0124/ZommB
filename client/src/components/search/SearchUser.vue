@@ -74,10 +74,8 @@ export default {
       }
     },
   },
-  watch: {
-    searchInput () {
-      this.onSearch()
-    }
+  created () {
+    this.onSearch()
   },
   mounted () {
     const search = document.getElementById('search')
