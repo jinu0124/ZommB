@@ -42,7 +42,7 @@
       v-if="profileInfo.user.id != myInfo.id"
       class="btn-box mt-2">
       <button 
-        v-if="profileInfo.user.follow.follow" 
+        v-if="profileInfo.user.isFollow" 
         class="follow-btn btn-grey"
         @click="unfollow"
       >언팔로우</button>
