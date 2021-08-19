@@ -105,11 +105,12 @@ export default {
 
 <style scoped>
   .profile-header {
-    width: 160px;
+    width: 250px;
   }
   .profile-header .profile-img {
     width: 85px;
     height: 85px;
+    object-fit: cover;
     border-radius: 100%;
   }
   .profile-header .nickname {
@@ -124,7 +125,7 @@ export default {
     cursor: pointer;
   }
   .cnt-info {
-    width: 100%;
+    width: 150px;
   }
   .cnt-info .cnt {
     font-size: 20px;
