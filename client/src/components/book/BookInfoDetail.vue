@@ -13,7 +13,7 @@
         <!-- <div class="year">{{ book.year }}</div> -->
         <div class="rate d-flex align-items-center gap-1">
           <i class="fas fa-star deco"></i>
-          <span>{{ bookInfo.rate }}</span>({{ bookInfo.readCnt }})
+          <span>{{ bookRate }}</span>({{ bookInfo.readCnt }})
         </div>
       </div>
       <div class="my-rating mt-2">
@@ -41,6 +41,9 @@ export default {
         return authors[0] + ` 외 ${authors.length - 1}명`
       }
       return this.bookInfo.author
+    },
+    bookRate () {
+      return this.bookInfo.rate.toFixed(2)
     }
   },
 }
