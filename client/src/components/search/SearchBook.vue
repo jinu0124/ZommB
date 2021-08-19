@@ -2,22 +2,18 @@
   <div class="search-book">
     <div class="tabs mt-3">
       <span
-        type="button"
         @click="changeTab(0)"
         :class="[selectedTab === 0 ? 'current' : 'rest', 'badge']"
       >전체</span>
       <span
-        type="button"
         @click="changeTab(1)"
         :class="[selectedTab === 1 ? 'current' : 'rest', 'badge']"
       >제목</span>
       <span
-        type="button"
         @click="changeTab(2)"
         :class="[selectedTab === 2 ? 'current' : 'rest', 'badge']"
       >작가</span>
       <span
-        type="button"
         @click="changeTab(3)"
         :class="[selectedTab === 3 ? 'current' : 'rest', 'badge']"
       >키워드</span>
@@ -170,6 +166,7 @@ export default {
   .tabs .rest {
     background: #7b60f1;
     color: #fff;
+    cursor: pointer;
   }
   .book-item {
     transition: transform 1s, opacity 1s;
