@@ -33,7 +33,7 @@ const actions = {
             commit('SET_STOP', false)
           } else if (res.status === 204) {
             if (!page) {
-              commit('SET_FEED_INFO', null)
+              commit('RESET_FEED_INFO')
             }
             commit('SET_STOP', true)
           }
@@ -139,7 +139,12 @@ const actions = {
 const mutations = {
   // 피드 리스트 조회
   SET_FEED_INFO(state, payload) {
-    state.feedInfo = payload
+    if (payload) {
+      state.feedInfo = payload
+    }
+  },
+  RESET_FEED_INFO(state) {
+    state.feedInfo = null
   },
   ADD_FEED_INFO(state, payload) {
     payload.forEach(data => {

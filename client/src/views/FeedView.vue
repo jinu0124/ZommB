@@ -24,7 +24,7 @@
 <script>
 import FeedListItem from '@/components/feeds/feed/FeedListItem'
 import SimpleHeader from '@/components/SimpleHeader'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'FeedView',
@@ -34,15 +34,12 @@ export default {
   },
   data () {
     return {
-      title: 'temp',
-      page: 1,
       flags: ['pf', 'sf', 'cw', 'cd'],
       titles: ['프로필', '검색', '위클리', '데일리'],
       type: null,
     }
   },
   methods: {
-    ...mapActions("feed", ["getFeedInfo"]),
     needTopBtn() {
       const currentTop = document.getElementById("feed-detail").scrollTop;
       const btn = document.querySelector(".top-btn");
@@ -57,20 +54,21 @@ export default {
     goToTop() {
       document.getElementById("feed-detail").scrollTop = 0;
     },
+    setFeed (type) {
+      if (!type) {
+        this.$store.commit('feed/SET_FEED_INFO', this.profileInfo.feed)
+      } else if (type === 1) {
+        this.$store.commit('feed/SET_FEED_INFO', this.feedResult)
+      } else if (type === 2) {
+        this.$store.commit('feed/SET_FEED_INFO', this.weeklyFeed)
+      } this.$store.commit('feed/SET_FEED_INFO', this.dailyFeed)
+    }
   },
   computed: {
+    ...mapState('feed', ['feedInfo']),
     ...mapState('user', ['profileInfo']),
     ...mapState('search', ['feedResult']),
     ...mapState('challenge', ['weeklyFeed', 'dailyFeed']),
-    feedInfo () {
-      if (!this.type) {
-        return this.profileInfo.feed
-      } else if (this.type === 1) {
-        return this.feedResult
-      } else if (this.type === 2) {
-        return this.weeklyFeed
-      } return this.dailyFeed
-    },
   },
   created() {
     const flag = this.$route.params.flag
@@ -78,10 +76,12 @@ export default {
     if (this.type < 0) {
       this.$router.push({ name: 'PageNotFound' })
     }
+    this.setFeed(this.type)
   },
   mounted() {
     const feedPage = document.getElementById("feed-detail");
     feedPage.addEventListener("scroll", this.needTopBtn);
+    
     this.$nextTick(function() {
       const targetId= `feed${this.$route.params.target}`
       var target = document.getElementById(targetId)
