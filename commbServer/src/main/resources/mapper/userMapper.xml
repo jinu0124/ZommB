@@ -29,7 +29,7 @@
         WHERE f3.follower = #{userId})
          GROUP BY f2.following
          ORDER BY COUNT(f2.following) DESC, nickname)
-        LIMIT 50 OFFSET 0
+        LIMIT 50 OFFSET #{page}
     </select>
 
     <select id="getUsers" parameterType="String" resultType="My">
