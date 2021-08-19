@@ -192,31 +192,4 @@ export default {
   font-size: 1rem;
   font-weight: 500;
 }
-/* .reply-list-item {
-  margin-top: 20px;
-  display: flex;
-}
-.reply-content {
-  width: 100%;
-  flex-direction: column;
-  align-items: flex-start;
-  font-family: "Noto Sans KR";
-  margin: 0px 5px;
-}
-.replier {
-  font-family: noto-sans-kr-10-bold;
-}
-
-.reply {
-  background: #fff;
-  color: rgba(33, 33, 33, 1);
-  margin-bottom: 2px;
-}
-.default-user-image,
-.user-profile {
-  width: 2.5rem;
-  height: 2.5rem;
-  border-radius: 100%;
-  margin: 0px 5px;
-} */
 </style>

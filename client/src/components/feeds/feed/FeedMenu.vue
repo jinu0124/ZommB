@@ -6,7 +6,7 @@
     <div v-show="feed.user.id == myInfo.id">
       <a class="dropdown-item" @click="deleteFeed(feed.id, 0)">삭제하기</a>
     </div>
-    <div>
+    <div v-show="feed.user.id != myInfo.id">
       <a
         class="dropdown-item"
         @click="$router.push({ name: 'Report', params: { id: feed.id } })"
