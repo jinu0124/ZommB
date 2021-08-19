@@ -100,10 +100,13 @@ div {
 }
 .follow {
   align-self: center;
+  width: 70px;
+  font-size: small;
 }
 .user-nickname {
   text-align: center;
   align-self: center;
+  margin: 0px 20px;
   width: 100px;
 }
 .default-user-image,
@@ -113,10 +116,12 @@ div {
   border-radius: 50%;
 }
 .user-images {
-  margin-right: 10px;
   align-content: center;
+  width: 280px;
 }
 .like-list-item {
   margin: 10px 0px;
+  width: 280px;
+  font-size: small;
 }
 </style>

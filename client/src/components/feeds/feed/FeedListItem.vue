@@ -129,7 +129,6 @@
         </p>
       </div>
       <p class="content-duration">{{ timeForToday(this.feed.createAt) }}</p>
-      <!-- 시간 계산 필요 -->
       <div>
         <span
           v-for="(tag, idx) in feed.hashTags"
@@ -273,11 +272,12 @@ export default {
 .feed-header {
   height: 60px;
   display: flex;
+  width: 280px;
 }
 .default-user-image,
 .user-profile {
-  width: 3rem;
-  height: 3rem;
+  width: 48px;
+  height: 48px;
   border-radius: 100%;
   margin: 0px 5px;
 }
@@ -287,10 +287,7 @@ export default {
   height: auto;
 }
 .nick-title {
-  margin-right: 40px;
-  margin-bottom: 10px;
-  font-size: 14px;
-  width: 160px;
+  width: 200px;
 }
 .edit-box {
   background: #f1f1f1;
@@ -325,7 +322,7 @@ export default {
   font-weight: 500;
 }
 .owner {
-  border: initial;
+  font-weight: 600;
   font-size: 18px;
 }
 .book-title {
@@ -338,6 +335,7 @@ export default {
 }
 .feed-menu {
   align-self: center;
+  width: 20px;
 }
 .like-reply {
   display: flex;
