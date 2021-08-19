@@ -85,7 +85,7 @@ export default {
     this.$nextTick(function() {
       const targetId= `feed${this.$route.params.target}`
       var target = document.getElementById(targetId)
-      target.scrollIntoView(false)
+      target.scrollIntoView(true)
     })
   },
 };

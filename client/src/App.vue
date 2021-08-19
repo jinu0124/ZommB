@@ -17,7 +17,7 @@
 </template>
 
 <script>
-// import messaging from "@/api/firebase.js";
+import messaging from "@/api/firebase.js";
 import Header from "@/components/Header";
 import NotificationAlert from "@/components/user/NotificationAlert";
 
