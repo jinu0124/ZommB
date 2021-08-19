@@ -163,6 +163,7 @@ public class FeedController {
         int myUserId = (Integer) request.getAttribute("userId");
         int userId = thumbService.getUserId(feedId, myUserId);
 
+
         if (myUserId != userId)
             throw new ApplicationException(HttpStatus.valueOf(403), "피드 좋아요 취소 권한 없음");
 
@@ -291,7 +292,6 @@ public class FeedController {
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
-
 
     // 피드 신고
     @PostMapping("/{feedId}/reports")
