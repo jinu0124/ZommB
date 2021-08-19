@@ -159,7 +159,7 @@ const actions = {
       commit('SET_NEW_ALERT', null)
     }, 2000)
   },
-  async onSocialLogin({ commit }, userData) {
+  async onSocialLogin({ commit, dispatch }, userData) {
     if (firebase.messaging.isSupported()) {
       await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
         .then((token) => {
@@ -173,13 +173,17 @@ const actions = {
         // console.log(res)
         commit('SET_ISLOGIN', true)
         commit('SET_MY_INFO', res.data.data)
-        router.push({ name: 'Feed' })
       })
       .catch((err) => {
-        if (err.response.status === 403) {
-          commit('SET_MY_INFO', err.response.data.data)
-        }
         return Promise.reject(err.response)
+      })
+    await userApi.getNotification()
+      .then((res) => {
+        // console.log(res)
+        res.data.forEach((alarm) => {
+          dispatch('onNotification', alarm.message)
+        })
+        router.push({ name: 'Feed' })
       })
   },
   // Profile
