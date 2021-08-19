@@ -69,12 +69,9 @@ export default {
     async onPostFeed () {
       this.makeFormData()
       await feedApi.postFeed(this.feedFD)
-        .then((res) => {
-          console.log(res)
+        .then(() => {
+          // console.log(res)
           this.$router.push({ name: 'Feed'})
-        })
-        .catch((err) => {
-          console.log(err)
         })
     },
     cancelWrite () {
