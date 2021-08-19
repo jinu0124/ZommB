@@ -18,21 +18,23 @@
       class="nickname"
       @click="$router.push({ name: 'Profile', params: {id: user.id, page: 0} })"
     >{{ user.nickname }}</span>
-    <button 
-      v-if="isFollow" 
-      class="btn-follow btn-grey"
-      @click="unfollow"
-    >언팔로우</button>
-    <button 
-      v-else 
-      class="btn-follow btn-yellow"
-      @click="follow"
-    >팔로우</button>
+    <div v-if="!isMe">
+      <button 
+        v-if="isFollow" 
+        class="btn-follow btn-grey"
+        @click="unfollow"
+      >언팔로우</button>
+      <button 
+        v-else 
+        class="btn-follow btn-yellow"
+        @click="follow"
+      >팔로우</button>
+    </div>
   </div>
 </template>
 
 <script>
-import { mapActions } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import userApi from '@/api/user'
 export default {
   name: 'UserListItem',
@@ -61,6 +63,12 @@ export default {
           this.getFollowing(this.$route.params.id)
           this.getFollower(this.$route.params.id)
         })
+    }
+  },
+  computed: {
+    ...mapState('user', ['myInfo']),
+    isMe () {
+      return this.user.id === this.myInfo.id
     }
   },
   created () {

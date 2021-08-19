@@ -361,6 +361,9 @@ export default {
   display: flex;
   align-items: center;
 }
+.content-detail {
+  white-space: pre-line;
+}
 .content-more,
 .reply-more {
   color: rgb(139, 139, 139);
