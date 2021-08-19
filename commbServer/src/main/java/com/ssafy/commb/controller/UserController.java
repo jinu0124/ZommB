@@ -202,7 +202,7 @@ public class UserController {
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
-        fcmService.save(myRes, myReq.getFirebaseToken());
+        if(myReq.getFirebaseToken() != null) fcmService.save(myRes, myReq.getFirebaseToken());
 
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }

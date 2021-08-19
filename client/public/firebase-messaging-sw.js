@@ -11,6 +11,10 @@ var firebaseConfig = {
   appId: "1:630258256989:web:2b1332259e75b71d0091b4"
 };
 
-const app = firebase.initializeApp(firebaseConfig)
+let app = null;
+let messaging = null;
+if (firebase.messaging.isSupported()) {
+  app = firebase.initializeApp(firebaseConfig)
+  messaging = firebase.messaging()
+}
 
-const messaging = firebase.messaging()
