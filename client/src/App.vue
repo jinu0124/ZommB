@@ -116,6 +116,14 @@ export default {
   },
   created() {
     if (firebase.messaging.isSupported()) {
+      Notification.requestPermission().then(function(permission) {
+        if (permission === 'granted') {
+          console.log('Notification permission granted.');
+        } else {
+          alert("브라우저 알림 설정을 허용해주세요.")
+        }
+      });
+
       messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY);
       messaging.onMessage((payload) => {
         this.$store.dispatch("user/onNotification", payload);
