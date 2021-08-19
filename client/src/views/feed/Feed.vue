@@ -1,10 +1,5 @@
 <template class="temp">
   <div id="feed" class="feed">
-    <!-- <div class="fd-header d-flex flex-column">
-      <div class="title" style="float: left" id="feed">
-        NewsFeed
-      </div>
-    </div> -->
     <FeedList
       @last="addFeed"
     />

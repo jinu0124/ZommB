@@ -1,13 +1,6 @@
 <template>
   <div class="weekly-article d-flex flex-column my-3">
     <img 
-      v-if="needBook" 
-      class="article-img" 
-      :src="bookCover" alt=""
-      @click="$router.push({ name: 'BookInfo', params: { id: feed.book.id } })"
-    >
-    <img 
-      v-else 
       class="article-img" 
       :src="feed.feedFileUrl" 
       alt="feed image"
@@ -41,7 +34,6 @@
 
 <script>
 import _ from 'lodash'
-import bookApi from '@/api/book'
 
 export default {
   name: 'ChallengeFeedItem',
@@ -82,14 +74,6 @@ export default {
       return _.slice(this.feed.hashTags, 0, 2)
     }
   },
-  async mounted () {
-    if (this.needBook) {
-      await bookApi.getBookDetail(this.feed.book.id)
-        .then((res) => {
-          this.bookCover = res.data.data.bookFileUrl
-        })
-    }
-  }
 }
 </script>
 

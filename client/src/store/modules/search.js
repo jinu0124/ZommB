@@ -18,7 +18,7 @@ const state = {
   bookType: null,
 }
 const actions = {
-  async searchBook({ state, commit }, searchData) {
+  async searchBook({ state, commit, getters }, searchData) {
     if (
       searchData.searchWord.length < 2 ||
       (searchData.page > 1 && state.stop.book)
@@ -28,6 +28,13 @@ const actions = {
     await searchApi.searchBook(searchData)
       .then((res) => {
         // console.log(res)
+        if (res.status === 204) {
+          commit('SET_STOP_BOOK', true)
+          if (searchData.page === 1) {
+            commit('SET_BOOK_RESULT', [])
+          }
+          return
+        }
         // 첫 페이지는 무조건 저장
         if (searchData.page === 1) {
           commit('SET_BOOK_RESULT', res.data.data)
@@ -39,7 +46,11 @@ const actions = {
             commit('SET_STOP_BOOK', true)
             return
           }
-          commit('ADD_BOOK_RESULT', res.data.data)
+          // 책 중복 확인
+          const uniqData = res.data.data.filter((book) => {
+            return !getters.existBook.includes(book.isbn)
+          })
+          commit('ADD_BOOK_RESULT', uniqData)
         }
         // 길이 10보다 짧으면 다음 요청 막기
         if (res.data.data.length < 10) {
@@ -183,7 +194,11 @@ const mutations = {
   }
 }
 const getters = {
-
+  existBook (state) {
+    return state.bookResult.map((book) => {
+      return book.isbn
+    })
+  }
 }
 export default {
   namespaced: true,

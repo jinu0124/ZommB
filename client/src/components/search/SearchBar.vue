@@ -16,6 +16,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapActions, mapState } from 'vuex'
 
 export default {
@@ -34,7 +35,7 @@ export default {
           this.$router.push({ 
             name: 'Search', 
             params: { flag: this.$route.params.flag },
-            query: { type: this.bookType, q: this.searchInput }
+            query: { type: this.bookType, q: this.searchFormat }
           }).catch(()=>{})
         } else {
           this.$router.push({ 
@@ -44,22 +45,22 @@ export default {
           }).catch(()=>{})
         }
       }
-      if (this.searchInput) {
+      if (this.searchInput.trim()) {
         this.registerInput()
       }
     },
     registerInput () {
-      this.$store.commit('search/SET_INPUT', this.searchInput)
-      this.$emit('search', this.searchInput)
+      this.$store.commit('search/SET_INPUT', this.searchFormat)
+      this.$emit('search', this.searchFormat)
       this.onSearch()
     },
     onSearch () {
       // user 검색
-      this.searchUser({nickname: this.searchInput, page: 0})
+      this.searchUser({nickname: this.searchFormat, page: 0})
       // 책 전체 검색
-      this.searchBook({searchWord: this.searchInput, searchType: this.bookType, page: 1})
+      this.searchBook({searchWord: this.searchFormat, searchType: this.bookType, page: 1})
       // 피드 검색
-      this.searchFeed({searchWord: this.searchInput, page: 0})
+      this.searchFeed({searchWord: this.searchFormat, page: 0})
     },
     clean () {
       this.searchInput = ''
@@ -72,16 +73,23 @@ export default {
   },
   computed: {
     ...mapState('search', ['bookType']),
+    searchFormat () {
+      if (this.$route.params.flag === 'books'
+          && this.$route.query.type != 'keyword') {
+            return _.replace(this.searchInput, ' ', '+')
+          }
+      return _.replace(this.searchInput, '+', ' ')
+    },
   },
   watch: {
     searchInput () {
-      if (!this.searchInput.length) {
+      if (this.searchInput === '') {
         this.clean()
       }
     },
     '$route' () {
       if (this.$route.query.q) {
-        this.searchInput = this.$route.query.q
+        this.searchInput = _.replace(this.$route.query.q, '+', ' ')
       }
       this.registerInput()
     }
@@ -97,7 +105,7 @@ export default {
       }
     }
     if (this.$route.query.q) {
-        this.searchInput = this.$route.query.q
+        this.searchInput = _.replace(this.$route.query.q, '+', ' ')
       }
     this.registerInput()
   }

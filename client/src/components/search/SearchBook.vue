@@ -42,6 +42,7 @@
 </template>
 
 <script>
+import _ from 'lodash'
 import { mapState, mapActions } from "vuex"
 import SearchBookListItem from "./SearchBookListItem"
 
@@ -118,10 +119,16 @@ export default {
   },
   computed: {
     ...mapState('search', ['searchInput', 'bookResult']),
+    searchFormat () {
+      if (this.selectedTab != 3) {
+            return _.replace(this.searchInput, ' ', '+')
+          }
+      return _.replace(this.searchInput, '+', ' ')
+    },
     searchData() {
       return {
         searchType: this.type,
-        searchWord: this.searchInput,
+        searchWord: this.searchFormat,
         page: 1,
       }
     },
