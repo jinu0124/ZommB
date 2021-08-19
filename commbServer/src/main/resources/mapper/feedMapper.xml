@@ -27,7 +27,7 @@
     <select id="getComments" parameterType="Integer" resultType="Comment">
         SELECT distinct T1.cid as id, T1.content, T1.uid as userId, T1.nickname, T1.thumb_cnt, T1.create_at, T1.is_mod, IF(IFNULL(comment_id, 0) = 0, 0, 1) AS is_thumb
         FROM
-            (SELECT c.id AS cid, c.content, c.user_id AS uid, u.nickname, c.create_at, c.is_mod, COUNT(distinct ct.comment_id) AS thumb_cnt
+            (SELECT c.id AS cid, c.content, c.user_id AS uid, u.nickname, c.create_at, c.is_mod, COUNT(ct.comment_id) AS thumb_cnt
              FROM user u INNER JOIN comment c
              ON c.feed_id = #{feedId} AND u.id = c.user_id
              left outer join comment_thumb ct
