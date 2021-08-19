@@ -13,7 +13,7 @@
     <textarea 
       class="form-control content-input mt-2" 
       type="text" 
-      :placeholder=placeholder
+      :placeholder="bookInfo.bookName + '에 대한 글을 작성해주세요!'"
       @input="insertContent"
       :value="content"
     ></textarea>
@@ -22,6 +22,14 @@
       class="image-preview" 
       :src="preview" 
       alt="">
+    <div v-if="!preview" class="image-position d-flex justify-content-center align-items-center">
+      <i 
+        class="fi-sr-add add-photo"
+        data-bs-toggle="modal" 
+        data-bs-target="#imageCropModal"
+      ></i>
+    </div>
+    <span v-if="!preview" class="notice-text"><strong>사진을 추가</strong>해야 <strong>글쓰기를 완료</strong>할 수 있습니다. 게시글에 어울리는 사진을 선택해주세요!</span>
   </div>
 </template>
 
@@ -37,7 +45,7 @@ export default {
   data () {
     return {
       content: '',
-      placeholder: '글을 작성하고 우측 상단에 이미지 아이콘을 클릭해 사진을 추가해주세요!'
+      placeholder: "this.bookInfo.bookName + '글을 작성해주세요!'"
     }
   },
   methods: {
@@ -107,6 +115,12 @@ export default {
     font-size: 1.1rem;
     cursor: pointer;
   }
+  .add-photo {
+    margin-top: 5px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #C4C4C4;
+  }
   .write-box .image-preview {
     position: absolute;
     left: 10px;
@@ -114,6 +128,25 @@ export default {
     border-radius: 10px;
     width: 50px;
     height: auto;
+  }
+  .write-box .image-position {
+    position: absolute;
+    left: 10px;
+    bottom: 10px;
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    border: #F1F1F1 dashed 3px;
+    text-align: center;
+  }
+  .notice-text {
+    position: absolute;
+    left: 60px;
+    bottom: 10px;
+    width: 210px;
+    padding-left: 10px;
+    color: #7540EE;
+    font-size: 0.75rem;
   }
   .content-input {
     background: none;
@@ -133,4 +166,5 @@ export default {
   .content-input::-webkit-scrollbar {
     display: none;
   }
+  
 </style>
