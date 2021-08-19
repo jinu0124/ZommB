@@ -123,6 +123,9 @@ export default {
         current.type = null
       }
       return current
+    },
+    temp() {
+      return this.$route.query
     }
   },
   watch: {
@@ -135,6 +138,11 @@ export default {
   },
   created () {
     this.findPage()
+  },
+  mounted () {
+    if (!Object.keys(this.$route.query).includes('q')) {
+      this.$store.commit('search/RESET_RESULT')
+    }
   }
 }
 </script>
