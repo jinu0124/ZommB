@@ -168,7 +168,7 @@ public class UserController {
     @GetMapping("/social/login")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code,
-                                                    @RequestParam(value="code") String firebaseToken
+                                                    @RequestParam(value="firebaseToken") String firebaseToken
     ) {
         String userId = redisService.getStringValue(code);
 
