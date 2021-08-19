@@ -1,9 +1,10 @@
 import router from '@/router'
 import userApi from '@/api/user'
 import messaging from '@/api/firebase'
+import firebase from 'firebase/app'
 
 const state = {
-  isResister: false, 
+  isResister: false,
   tempNickname: null,
   isLogin: false,
   accessToken: null,
@@ -34,30 +35,30 @@ const state = {
 
 const actions = {
   // 페이지 이동
-  moveToLogin () {
+  moveToLogin() {
     router.push({ name: 'Login' })
   },
-  moveToSignup () {
+  moveToSignup() {
     router.push({ name: 'Signup' })
   },
-  moveToSignupEmail () {
+  moveToSignupEmail() {
     router.push({ name: 'SignupEmail' })
   },
-  moveToFindPassword () {
+  moveToFindPassword() {
     router.push({ name: 'FindPassword' })
   },
-  moveToUpdateInfo () {
+  moveToUpdateInfo() {
     router.push({ name: 'UpdateInfo' })
   },
   moveToMyProfile() {
     router.push({ name: 'MyProfile' })
   },
   moveToFollow() {
-    router.push({name: 'Follow'})
+    router.push({ name: 'Follow' })
   },
   // api 요청
   // Accounts
-  async onSignup ({ dispatch, commit }, userData) {
+  async onSignup({ dispatch, commit }, userData) {
     console.log(userData)
     await userApi.signup(userData)
       .then((res) => {
@@ -75,7 +76,7 @@ const actions = {
         dispatch('moveToSignupEmail')
       })
   },
-  async sendEmail ({ commit }, userData) {
+  async sendEmail({ commit }, userData) {
     await userApi.sendEmail(userData)
       .then(() => {
         // console.log(res)
@@ -83,12 +84,14 @@ const actions = {
       })
   },
   async onLogin({ commit, dispatch }, userData) {
-    await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
-      .then((token) => {
-        // console.log(token)
-        userData.firebaseToken = token
-        commit('SET_FIREBASE_TOKEN', token)
-      })
+    if (firebase.messaging.isSupported()) {
+      await messaging.getToken({ vapidKey: process.env.VUE_APP_FIREBASE_KEY })
+        .then((token) => {
+          // console.log(token)
+          userData.firebaseToken = token
+          commit('SET_FIREBASE_TOKEN', token)
+        })
+    }
     await userApi.login(userData)
       .then((res) => {
         commit('SET_ISLOGIN', true)
@@ -110,7 +113,9 @@ const actions = {
       })
   },
   async onLogout({ state, commit, dispatch }) {
-    await userApi.logout(state.firebaseToken)
+    if (firebase.messaging.isSupported()) {
+      await userApi.logout(state.firebaseToken)
+    }
     commit('SET_ISLOGIN', false)
     commit('SET_ACCESS_TOKEN', null)
     commit('SET_REFRESH_TOKEN', null)
@@ -119,7 +124,7 @@ const actions = {
     commit('RESET_MY_INFO')
     dispatch('moveToLogin')
   },
-  async withdrawal ({ dispatch }) {
+  async withdrawal({ dispatch }) {
     await userApi.withdrawal()
       .then(() => {
         // console.log(res)
@@ -154,7 +159,7 @@ const actions = {
       commit('SET_NEW_ALERT', null)
     }, 2000)
   },
-  async onSocialLogin ({ commit }, userData) {
+  async onSocialLogin({ commit }, userData) {
     await userApi.socialLogin(userData)
       .then((res) => {
         // console.log(res)
@@ -179,7 +184,7 @@ const actions = {
           // console.log(res)
           commit('SET_USER_INFO', res.data.data)
         } else {
-          router.push({name: 'PageNotFound'})
+          router.push({ name: 'PageNotFound' })
         }
       })
     const cntInfo = {
@@ -232,7 +237,7 @@ const actions = {
       })
   },
   // 서재 목록 얻기
-  async getBookShelf ({ commit }, userId) {
+  async getBookShelf({ commit }, userId) {
     await userApi.getBookList(userId, 1)
       .then((res) => {
         // console.log(res)
@@ -240,7 +245,7 @@ const actions = {
       })
   },
   // 북카트 목록 얻기
-  async getBookCart ({ commit }, userId) {
+  async getBookCart({ commit }, userId) {
     await userApi.getBookList(userId, 0)
       .then((res) => {
         // console.log(res)
@@ -248,7 +253,7 @@ const actions = {
       })
   },
   // 내 서재 목록 얻기
-  async getMyBookShelf ({ state, commit }) {
+  async getMyBookShelf({ state, commit }) {
     await userApi.getBookList(state.myInfo.id, 1)
       .then((res) => {
         // console.log(res)
@@ -256,7 +261,7 @@ const actions = {
       })
   },
   // 내 북카트 목록 얻기
-  async getMyBookCart ({ state, commit }) {
+  async getMyBookCart({ state, commit }) {
     await userApi.getBookList(state.myInfo.id, 0)
       .then((res) => {
         // console.log(res)
@@ -297,16 +302,16 @@ const mutations = {
   SET_NOTIFICATION(state, payload) {
     const newNoti = state.notification.filter((note) => {
       return (
-        payload.type != note.type || 
-        payload.data.userId != note.data.userId || 
-        payload.data.feedId != note.data.feedId || 
+        payload.type != note.type ||
+        payload.data.userId != note.data.userId ||
+        payload.data.feedId != note.data.feedId ||
         payload.data.commentId != note.data.commentId)
     })
     newNoti.push(payload)
     state.notification = newNoti
   },
   SET_NOTI_CNT(state) {
-    state.notiCnt ++
+    state.notiCnt++
   },
   SET_NEW_ALERT(state, payload) {
     state.newAlert = payload

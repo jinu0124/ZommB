@@ -10,6 +10,11 @@ const firebaseConfig = {
   appId: "1:630258256989:web:2b1332259e75b71d0091b4"
 }
 
-firebase.initializeApp(firebaseConfig)
+let messaging = null
 
-export default firebase.messaging()
+if (firebase.messaging.isSupported()) {
+  firebase.initializeApp(firebaseConfig)
+  messaging = firebase.messaging()
+}
+
+export default messaging

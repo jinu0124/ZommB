@@ -18,6 +18,7 @@
 
 <script>
 import messaging from "@/api/firebase.js";
+import firebase from "firebase/app";
 import Header from "@/components/Header";
 import NotificationAlert from "@/components/user/NotificationAlert";
 
@@ -89,7 +90,8 @@ export default {
         this.$route.name === "Notification" ||
         this.$route.name === "Profile" ||
         this.$route.name === "FeedView" ||
-        (this.$route.name === "SelectBook" && this.$route.params.flag != 'write') ||
+        (this.$route.name === "SelectBook" &&
+          this.$route.params.flag != "write") ||
         this.$route.name === "Follow"
       ) {
         return true;
@@ -113,12 +115,13 @@ export default {
     },
   },
   created() {
-    messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY);
-
-    messaging.onMessage((payload) => {
-      this.$store.dispatch("user/onNotification", payload);
-      this.$store.dispatch("user/newAlert", payload);
-    });
+    if (firebase.messaging.isSupported()) {
+      messaging.usePublicVapidKey(process.env.VUE_APP_FIREBASE_KEY);
+      messaging.onMessage((payload) => {
+        this.$store.dispatch("user/onNotification", payload);
+        this.$store.dispatch("user/newAlert", payload);
+      });
+    }
   },
 };
 </script>
