@@ -91,8 +91,7 @@ export default {
     }
   },
   mounted () {
-    // window.addEventListener('resize', this.calLine)
-    this.calLine()
+    this.$nextTick(this.calLine())
   }
 }
 </script>
