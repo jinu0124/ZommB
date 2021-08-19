@@ -415,8 +415,9 @@ public class BookServiceImpl implements BookService{
         List<Book> books = qf.selectFrom(qBook)
                 .leftJoin(qBook.keywords, qKeyword)
                 .where(builder)
-                .offset(bookReq.getPage())
+                .offset(bookReq.getPage() * 10)
                 .limit(10)
+                .distinct()
                 .fetch();
 
         return books;

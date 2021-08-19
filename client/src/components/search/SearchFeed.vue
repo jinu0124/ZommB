@@ -30,14 +30,24 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "SearchFeed",
   computed: {
-    ...mapState('search', ['feedResult']),
+    ...mapState('search', ['searchInput', 'feedResult']),
+    searchData() {
+      return {
+        searchWord: this.searchInput,
+        page: 0,
+      }
+    },
   },
   methods: {
+    ...mapActions('search', ['searchFeed']),
+    onSearch () {
+      this.searchFeed(this.searchData)
+    },
     moveToDetail (feedId) {
       this.$router.push({ name: 'FeedView', params: { flag: 'sf', target: feedId }})
     },
@@ -69,6 +79,9 @@ export default {
     goToTop() {
       document.getElementById('search').scrollTop = 0
     }
+  },
+  created () {
+    this.onSearch()
   },
   mounted () {
     const search = document.getElementById('search')

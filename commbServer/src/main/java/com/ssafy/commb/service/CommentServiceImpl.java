@@ -108,17 +108,15 @@ public class CommentServiceImpl implements CommentService {
     public void deleteLikeComment(int feedId, int commentId, int userId){
 
         Optional<Feed> feed = feedRepository.findById(feedId);
-        Optional<Comment> comment = commentRepository.findById(commentId);
-        Optional<User> user = userRepository.findById(userId);
-
         if (!feed.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "존재하지 않는 피드입니다!");
 
+        Optional<Comment> comment = commentRepository.findById(commentId);
         if (!comment.isPresent()) throw new ApplicationException(HttpStatus.valueOf(400), "존재하지 않는 댓글입니다!");
 
+        Optional<User> user = userRepository.findById(userId);
         if (comment.get().getFeed().getId() != feedId) throw new ApplicationException(HttpStatus.valueOf(400), "해당 피드에 존재하지 않는 댓글입니다!");
 
         Optional<CommentThumb> commentThumb = commentThumbRepository.findByCommentAndUser(comment.get(), user.get());
-
         if(!commentThumb.isPresent()) throw new ApplicationException(HttpStatus.valueOf(404), "좋아요를 누른 댓글이 아닙니다!");
 
         commentThumbRepository.delete(commentThumb.get());
