@@ -128,6 +128,7 @@ export default {
     padding: 1rem;
     height: 200px;
     word-wrap: break-word;
+    resize: none;
   }
   .content-input::-webkit-scrollbar {
     display: none;
