@@ -16,7 +16,7 @@
       <img v-if="newAlert.data.userFileUrl" class="profile" :src="newAlert.data.userFileUrl" alt="">
       <img v-else class="profile" src="@/assets/image/common/profileDefault.svg" alt="">
       <span class="content">
-        <strong>nickname</strong>님이 회원님의 게시물에 댓글을 남겼습니다.
+        <strong>{{ newAlert.data.nickname }}</strong>님이 회원님의 게시물에 댓글을 남겼습니다.
       </span>
       <img class="feed-img" src="@/assets/image/test/imageTest.jpg" alt="">
     </div>
