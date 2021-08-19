@@ -271,10 +271,6 @@ public class FeedController {
     public ResponseEntity deleteLikeComment(@PathVariable Integer feedId, @PathVariable Integer commentId, HttpServletRequest request) {
 
         int myUserId = (Integer) request.getAttribute("userId");
-        int userId = feedService.getUserId(feedId);
-
-        if (myUserId != userId)
-            throw new ApplicationException(HttpStatus.valueOf(403), "댓글 좋아요 취소 권한 없음");
 
         commentService.deleteLikeComment(feedId, commentId, myUserId);
 
