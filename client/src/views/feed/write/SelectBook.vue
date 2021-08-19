@@ -63,8 +63,11 @@ export default {
       this.page = 2
     },
     addResult () {
-      this.searchBook(this.searchData)
-      this.page ++
+      if (!this.stop.book) {
+        this.searchBook(this.searchData)
+        this.page ++
+      }
+      
     },
     closeRating () {
       this.$store.commit('user/SET_MOVE_TARGET', null)
@@ -77,6 +80,7 @@ export default {
   },
   computed: {
     ...mapState('user', ['moveTarget']),
+    ...mapState('search', ['stop']),
     searchData () {
       return {
         searchType: 'title', 
