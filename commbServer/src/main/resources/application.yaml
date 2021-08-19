@@ -94,9 +94,9 @@ cloud:
       auto: false
 
 dynamic:
-  path: http://localhost/
+  path: https://i5a602.p.ssafy.io/
   front:
-    path: http://localhost/
+    path: https://i5a602.p.ssafy.io/
 
 # Backend Local : http://127.0.0.1:8080/
 # Frontend Local : http://127.0.0.1:8000/
