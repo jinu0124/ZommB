@@ -17,7 +17,7 @@
 </template>
 
 <script>
-import messaging from "@/api/firebase.js";
+// import messaging from "@/api/firebase.js";
 import Header from "@/components/Header";
 import NotificationAlert from "@/components/user/NotificationAlert";
 
@@ -42,6 +42,7 @@ export default {
         this.$route.name === "PageNotFound" ||
         this.$route.name === "ServerError" ||
         this.$route.name === "BookInfo" ||
+        this.$route.name === "FeedView" ||
         this.$route.name === "Like" ||
         this.$route.name === "Report" ||
         this.$route.name === "Write" ||
@@ -87,8 +88,8 @@ export default {
       if (
         this.$route.name === "Notification" ||
         this.$route.name === "Profile" ||
-        (this.$route.name === "SelectBook" &&
-          this.$route.params.flag != "write") ||
+        this.$route.name === "FeedView" ||
+        (this.$route.name === "SelectBook" && this.$route.params.flag != 'write') ||
         this.$route.name === "Follow"
       ) {
         return true;

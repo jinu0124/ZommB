@@ -27,7 +27,7 @@
               alt="미니북"
               class="minibook"
               src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
-            />{{ feed.book.bookName }}</span
+            />{{ shortenBookName }}</span
           >
         </span>
         <span class="dropdown">
@@ -40,10 +40,7 @@
             type="button"
             :id="'FeedMenuDropdown' + feed.id"
           />
-          <FeedMenu 
-            :feed="feed"
-            @edit="turnIntoEditMode"
-          />
+          <FeedMenu :feed="feed" @edit="turnIntoEditMode" />
         </span>
       </div>
 
@@ -101,40 +98,36 @@
     </div>
     <div v-if="isEditMode" class="edit-box d-flex align-items-center">
       <textarea
-        class="form-control edit-input" 
+        class="form-control edit-input"
         type="text"
         @input="editContent"
         :value="contentNew"
       ></textarea>
       <div class="d-flex flex-column me-2 gap-1">
-        <button 
-          class="btn-edit btn-yellow"
-          @click="onUpdate"
-        >수정</button>
-        <button 
-          class="btn-edit btn-grey"
-          @click="cancelUpdate"
-        >취소</button>
+        <button class="btn-edit btn-yellow" @click="onUpdate">수정</button>
+        <button class="btn-edit btn-grey" @click="cancelUpdate">취소</button>
       </div>
     </div>
     <div v-else class="content">
       <p class="content-detail">{{ shortenContent }}</p>
-      <p
-        class="content-more"
-        type="button"
-        @click="showMoreContent(true)"
-        v-show="!moreContent"
-      >
-        더보기
-      </p>
-      <p
-        class="content-more"
-        type="button"
-        @click="showMoreContent(false)"
-        v-show="moreContent"
-      >
-        접기
-      </p>
+      <div>
+        <p
+          class="content-more"
+          type="button"
+          @click="showMoreContent(true)"
+          v-show="!moreContent"
+        >
+          더보기
+        </p>
+        <p
+          class="content-more"
+          type="button"
+          @click="showMoreContent(false)"
+          v-show="moreContent"
+        >
+          접기
+        </p>
+      </div>
       <p class="content-duration">{{ timeForToday(this.feed.createAt) }}</p>
       <!-- 시간 계산 필요 -->
       <div>
@@ -170,6 +163,7 @@ export default {
   },
   data() {
     return {
+      moremore: false,
       moreContent: false,
       Like: false,
       disLike: true,
@@ -177,11 +171,11 @@ export default {
       isThumb: this.feed.isThumb,
       // 수정 관련 데이터
       isEditMode: false,
-      contentNew: ''
+      contentNew: "",
     };
   },
   methods: {
-    ...mapActions("feed", ["likeFeed", "dislikeFeed", 'updateFeed']),
+    ...mapActions("feed", ["likeFeed", "dislikeFeed", "updateFeed"]),
     like() {
       this.isThumb = true;
       this.feed.thumbCnt += 1;
@@ -190,20 +184,20 @@ export default {
       this.isThumb = false;
       this.feed.thumbCnt -= 1;
     },
-    turnIntoEditMode () {
-      this.isEditMode = true
+    turnIntoEditMode() {
+      this.isEditMode = true;
     },
-    editContent (event) {
-      this.contentNew = event.target.value
+    editContent(event) {
+      this.contentNew = event.target.value;
     },
-    cancelUpdate () {
-      this.isEditMode = false
-      this.contentNew = this.feed.content
+    cancelUpdate() {
+      this.isEditMode = false;
+      this.contentNew = this.feed.content;
     },
-    async onUpdate () {
-      await this.updateFeed({ id: this.feed.id, content: this.contentNew })
-      this.isEditMode = false
-      this.contentNew = this.feed.content
+    async onUpdate() {
+      await this.updateFeed({ id: this.feed.id, content: this.contentNew });
+      this.isEditMode = false;
+      this.contentNew = this.feed.content;
     },
     showMoreContent(flag) {
       this.moreContent = flag;
@@ -240,8 +234,8 @@ export default {
       return `${Math.floor(betweenTimeDay / 365)}년전`;
     },
     onMoveToComment() {
-      this.$store.commit("feed/SET_TARGET_FEED", this.feed.id)
-      this.$router.push({ name: "Reply", params: { id: this.feed.id } })
+      this.$store.commit("feed/SET_TARGET_FEED", this.feed.id);
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } });
     },
     searchTag(keyword) {
       this.$router.push({
@@ -261,10 +255,14 @@ export default {
         return _.truncate(content, { length: 100 });
       }
     },
+    shortenBookName() {
+      let title = this.feed.book.bookName;
+      return _.truncate(title, { length: 18 });
+    },
   },
-  mounted () {
-    this.contentNew = this.feed.content
-  }
+  mounted() {
+    this.contentNew = this.feed.content;
+  },
 };
 </script>
 
@@ -278,8 +276,8 @@ export default {
 }
 .default-user-image,
 .user-profile {
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 100%;
   margin: 0px 5px;
 }
@@ -295,7 +293,7 @@ export default {
   width: 160px;
 }
 .edit-box {
-  background: #F1F1F1;
+  background: #f1f1f1;
   width: 280px;
   height: fit-content;
   border-radius: 10px;
@@ -326,8 +324,13 @@ export default {
   font-size: 1rem;
   font-weight: 500;
 }
+.owner {
+  border: initial;
+  font-size: 18px;
+}
 .book-title {
   width: 160px;
+  font-size: 12px;
 }
 .minibook {
   width: 1rem;

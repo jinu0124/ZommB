@@ -5,7 +5,7 @@
       :title=title
     />
     <div class="notification-body d-flex flex-column align-items-center gap-3">
-      <div v-if="notifications" class="align-self-end delete-alert mb-2">
+      <div v-if="notifications.length" class="align-self-end delete-alert mb-2">
         <i 
           class="fi-sr-cross-circle del-btn"
           @click="resetAlert"
@@ -20,6 +20,10 @@
         :key=idx
         :note=note
       />
+      <div
+        v-if="!notifications.length"
+        class="no-result mt-5"
+      >새로운 알림이 없습니다.</div>
     </div>
   </div>
 </template>
@@ -110,4 +114,7 @@ export default {
   .delete-alert:hover .del-text {
     opacity: 1;
   } 
+  .no-result {
+    color: #C4C4C4;
+  }
 </style>
