@@ -15,6 +15,7 @@
              GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
         ON T1.fid = t.feed_id AND #{myUserId} = t.user_id
         ORDER BY T1.create_at DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
     <select id="getHashTags" parameterType="Integer" resultType="HashTag">
@@ -43,37 +44,74 @@
     </select>
 
     <select id="getFollowingFeeds" parameterType="Integer" resultMap="feedInformation">
-        SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
-        FROM
-           (SELECT f.id fid, create_at, content, f.file_url AS f_file_url, u.id AS uid, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
-                   COUNT(distinct t.user_id) AS thumb_cnt
-            FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN follow
-            on f.user_id = u.id AND f.book_id = b.id AND follow.follower = #{userId} AND u.id = follow.following AND f.blocked = 0
-            left outer join thumb t
-            on t.feed_id = f.id
-            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
-        ON T1.fid = t.feed_id AND t.user_id = #{userId}
-        ORDER BY T1.create_at DESC
+        SELECT distinct T.fid, T.create_at, T.content, T.f_file_url, T.is_thumb, T.thumb_cnt, T.uid, T.nickname, T.u_file_url, T.bid, T.book_name
+        FROM (
+                (SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+                FROM
+                   (SELECT f.id fid, create_at, content, f.file_url AS f_file_url, u.id AS uid, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                           COUNT(distinct t.user_id) AS thumb_cnt
+                    FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN follow
+                    on f.user_id = u.id AND f.book_id = b.id AND follow.follower = #{userId} AND u.id = follow.following AND f.blocked = 0
+                    left outer join thumb t
+                    on t.feed_id = f.id
+                    GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+                ON T1.fid = t.feed_id AND t.user_id = #{userId})
+                UNION
+                (SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+                FROM
+                   (SELECT f.id fid, create_at, content, f.file_url AS f_file_url, u.id AS uid, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                           COUNT(distinct t.user_id) AS thumb_cnt
+                    FROM feed f INNER JOIN user u INNER JOIN book b
+                    on f.user_id = u.id And u.id = #{userId} AND f.book_id = b.id AND f.blocked = 0
+                    left outer join thumb t
+                    on t.feed_id = f.id
+                    GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+                ON T1.fid = t.feed_id AND t.user_id = #{userId})
+        ) T
+        ORDER BY T.create_at DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
-    <select id="getFeeds" parameterType="String" resultMap="feedInformation">
+    <select id="getFeeds" parameterType="HashMap" resultMap="feedInformation">
         SELECT T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
         FROM
             (SELECT u.id AS uid, f.id fid, create_at, content, f.file_url AS f_file_url, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
-                    COUNT(t.user_id) AS thumb_cnt
-            FROM feed f INNER JOIN user u INNER JOIN book b
-            on f.user_id = u.id AND f.book_id = b.id AND f.blocked = 0 AND f.id IN (SELECT feed_id
-                                                                                      FROM hashtag h
-                                                                                      WHERE ${dynamicQuery}
-                                                                                      GROUP BY feed_id
-            <![CDATA[
-                                                                                    HAVING COUNT(feed_id) >= #{wordCnt})
-                ]]>
+                    COUNT(t.user_id) AS thumb_cnt, h.score
+             FROM feed f INNER JOIN user u INNER JOIN book b INNER JOIN (SELECT feed_id, sum(MATCH tag AGAINST ('${dynamicQuery}' IN BOOLEAN MODE)) AS score
+                                                                         FROM hashtag
+                                                                         WHERE MATCH tag AGAINST ('${dynamicQuery}' IN BOOLEAN MODE)
+                                                                         GROUP BY feed_id
+             <![CDATA[
+                                                                         HAVING COUNT(feed_id) >= #{countOfWords}) AS h
+                 ]]>
+            on f.user_id = u.id AND f.book_id = b.id AND f.blocked = 0 AND f.id = h.feed_id
             left outer join thumb t
             on t.feed_id = f.id
             GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
             ON T1.fid = t.feed_id AND #{userId} = t.user_id
-        ORDER BY T1.create_at DESC;
+        ORDER BY T1.score DESC, T1.create_at DESC
+        LIMIT 20 OFFSET #{page}
+    </select>
+
+
+    <select id="getFeedWriterToken" parameterType="Integer" resultType="String">
+        SELECT ft.token as token
+        FROM feed f, firebase_token ft
+        WHERE f.id = #{feedId} AND f.user_id = ft.user_id
+        ORDER BY ft.create_at DESC
+    </select>
+
+    <select id="searchFeed" parameterType="Integer" resultMap="feedInformation">
+        SELECT distinct T1.fid, T1.create_at, T1.content, T1.f_file_url, IF(IFNULL(t.feed_id, 0) != 0, 1, 0) AS is_thumb, T1.thumb_cnt, T1.uid, T1.nickname, T1.u_file_url, T1.bid, T1.book_name
+        FROM
+           (SELECT f.id fid, create_at, content, f.file_url AS f_file_url, u.id AS uid, nickname, u.file_url AS u_file_url, b.id AS bid, b.book_name,
+                   COUNT(distinct t.user_id) AS thumb_cnt
+            FROM feed f INNER JOIN user u INNER JOIN book b
+            on f.user_id = u.id AND f.book_id = b.id AND f.id = #{feedId} AND f.blocked = 0
+            left outer join thumb t
+            on t.feed_id = f.id
+            GROUP BY f.id) AS T1 LEFT OUTER JOIN thumb t
+        ON T1.fid = t.feed_id AND t.feed_id = #{feedId}
     </select>
 
 

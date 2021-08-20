@@ -29,6 +29,7 @@ public class Followers {
 
     public void remove(Follow follow){
         if(!this.followers.contains((follow))){
+            System.out.println("Follower 삭제실패");
             return;
         }
         followers.remove(follow);

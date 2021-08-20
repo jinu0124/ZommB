@@ -32,36 +32,46 @@ public class AuthInterceptor implements HandlerInterceptor {
     @Value("${security.refreshtoken}")
     private String refreshToken;
 
-    // Authorization : Bearer <TOKEN>
-    // 로그인 Authorization
+    /**
+     * @ 회원 토큰 검증 PreHandler
+     * @param request : 요청
+     * @param response : 반환
+     * @param Handler : 핸들러
+     * @return True, False with response
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object Handler) throws Exception {
-        System.out.println("Interceptor Pre / Request Url : " + request.getRequestURI());
+
+        System.out.println("(" + request.getMethod() + ")PreHandler / Request Url : " + request.getRequestURI());
 
         Map<String, Object> map = new HashMap<>();
         Gson gson = new Gson();
         JsonObject jsonObject = new JsonObject();
 
-//        String acToken = request.getParameter("acToken");      //  테스트용
-//        String rfToken = request.getParameter("rfToken");
-        String acToken = request.getHeader(accessToken);       // Header를 통해 Token 받기
+        /**
+         * @ 토큰 받기
+         */
+        String acToken = request.getHeader(accessToken);
         String rfToken;
         if(request.getHeader(refreshToken) == null) rfToken = null;
-        else rfToken = (String) request.getHeader(refreshToken);
+        else rfToken = request.getHeader(refreshToken);
 
-        if(acToken == null || acToken.length() < 24) {                               // Access 토큰이 없을 때
+        /**
+         * @ AccessToken이 없을때 / Access, Refresh Token 둘 다 있을 때 / Access Token 만 있을 때
+         */
+        if(acToken == null || acToken.length() < 24) {
             map.put("status", 401);
             map.put("msg", "There is no Token");
         }
-        else if(rfToken != null){                          // Access 토큰과 Refresh 토큰이 둘 다 있을 때
+        else if(rfToken != null){
             map = securityService.validRefreshToken(acToken, rfToken);
             if((int) map.get("status") == 200) {
                 response.setHeader(refreshToken, rfToken);
-                response.setHeader(accessToken, (String) map.get("token"));  // Access 토큰이 성공적으로 재 발행 되었을 때
+                response.setHeader(accessToken, (String) map.get("token"));
                 request.setAttribute("userId", map.get("userId"));
             }
         }
-        else{                                                                         // Access 토큰만 있을 때
+        else{
             String ret = securityService.decodeToken(acToken, secretKey);
             if(ret.equals("expire")) {
                 map.put("msg", "AccessToken has been expired");
@@ -73,16 +83,14 @@ public class AuthInterceptor implements HandlerInterceptor {
             }
             else {
                 request.setAttribute("userId", Integer.parseInt(ret));
-                map.put("status", 200);                                                // AccessToken이 유효할 때
+                map.put("status", 200);
             }
         }
         jsonObject.addProperty("token", (String) map.get("token"));
         jsonObject.addProperty("msg", (String) map.get("msg"));
 
         response.setStatus((int) map.get("status"));
-        if((int) map.get("status") == 200) {
-            return true;
-        }
+        if((int) map.get("status") == 200) return true;
 
         response.getWriter().write(gson.toJson(jsonObject));
         return false;

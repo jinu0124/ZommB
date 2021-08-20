@@ -1,10 +1,11 @@
 import axios from 'axios'
 import router from '@/router'
 import store from '@/store/index.js'
-
+// process.env.VUE_APP_SERVER_URL
 const _axios = axios.create({
   baseURL: process.env.VUE_APP_SERVER_URL,
-  timeout: 10000,
+  // baseURL: 'https://i5a602.p.ssafy.io/api',
+  timeout: 20000,
 })
 
 _axios.interceptors.request.use(

@@ -1,56 +1,49 @@
 <template class="temp">
-  <div class="feed">
-    <div class="fd-header d-flex flex-column">
-      <div class="title" style="float: left">
-        NewsFeed<img
-          src="@/assets/image/test/write-btn.svg"
-          class="write-btn"
-          style="float: right"
-          type="button"
-          @click="moveToWrite()"
-        />
+  <div id="feed" class="feed">
+    <!-- <div class="fd-header d-flex flex-column">
+      <div class="title" style="float: left" id="feed">
+        NewsFeed
       </div>
-    </div>
-    <div>
-      <FeedList />
-    </div>
-    <div>
-      Scroll Test 입니다. <br />
-      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nemo, numquam
-      quis sunt nisi modi sequi enim cumque rerum placeat doloribus in, possimus
-      aliquam eum beatae assumenda officia quo odit optio! Lorem ispsum, dolor
-      sit amet consectetur adipisicing elit. Nemo, numquam quis sunt nisi modi
-      sequi enim cumque rerum placeat doloribus in, possimus aliquam eum beatae
-      assumenda officia quo odit optio!
-    </div>
+    </div> -->
+    <FeedList
+      @last="addFeed"
+    />
   </div>
 </template>
 
 <script>
 import FeedList from "@/components/feeds/feed/FeedList";
-import { mapActions, mapState } from "vuex";
+import { mapActions } from "vuex";
 
 export default {
   name: "Feed",
   components: {
     FeedList,
   },
-  methods: {
-    ...mapActions("feed", ["getFeedList"]),
-    moveToWrite() {
-      this.$router.push("/write");
-    },
+  data () {
+    return {
+      page: 1
+    }
   },
-  computed: {
-    ...mapState("feed", ["userInfo"]),
+  methods: {
+    ...mapActions("feed", ["getFeedInfo"]),
+    addFeed () {
+      this.getFeedInfo(this.page)
+      this.page ++
+    }
+  },
+  //페이지 렌더링 시 피드 정보를 0페이지부터 가져온다.
+  created() {
+    this.getFeedInfo(0);
   },
 };
 </script>
 
 <style scoped>
 .feed {
-  background: #ffffff;
   height: 100vh;
+  width: 100vw;
+  background: #ffffff;
   border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
   padding: 20px 20px 100px;
@@ -64,6 +57,7 @@ export default {
 .fd-header .title {
   font-size: 1.5rem;
   font-weight: 700;
+  margin-bottom: 10px;
 }
 .write-btn {
   width: 24px;

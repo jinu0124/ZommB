@@ -12,7 +12,9 @@
         <button class="btn-5 btn-yellow feed-write-btn" @click="moveToWrite()">
           피드 작성
         </button>
-        <button class="btn-5 btn-grey delete-btn">삭제</button>
+        <button class="btn-5 btn-grey delete-btn" @click="deleteBook(true)">
+          삭제
+        </button>
         <button class="btn-5 btn-yellow add-library-btn" @click="AddLibrary()">
           완독
         </button>
@@ -36,17 +38,30 @@
         </button>
       </span>
     </div>
+    <div v-if="!deleteClick"></div>
+    <DeleteBookAlert
+      v-if="deleteClick"
+      class="alert-center"
+      data-bs-backdrop="static"
+      tabindex="-1"
+      aria-hidden="true"
+      @ok="deleteClick = false"
+    />
   </div>
 </template>
 
 <script>
+import DeleteBookAlert from "@/components/profile/DeleteBookAlert";
+
 export default {
   name: "BookListItem",
+  components: DeleteBookAlert,
   data() {
     return {
       title: "아몬드",
       writer: "손원평",
       comp: "창비",
+      deleteClick: false,
     };
   },
   methods: {
@@ -60,6 +75,9 @@ export default {
       this.$router.push("/addBookcart");
     },
     AddLibrary() {},
+    deleteBook(flag) {
+      this.deleteClick = flag;
+    },
   },
 };
 </script>

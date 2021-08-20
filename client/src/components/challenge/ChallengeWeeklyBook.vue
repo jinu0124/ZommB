@@ -7,7 +7,7 @@
         alt="weeklyBookCover"
         @click="$router.push({ name: 'BookInfo', params: {id: weeklyBook.id} })"
       >
-      <div class="title my-2">{{ weeklyBook.bookName }}</div>
+      <div class="title mt-3 mb-2">{{ weeklyBook.bookName }}</div>
       <div class="info d-flex">
         <div>{{ author }}</div>
         <div class="mx-1">|</div>
@@ -21,14 +21,10 @@
 
 <script>
 import _ from 'lodash'
-import moment from 'moment'
-import { mapState, mapActions } from 'vuex'
+import { mapState } from 'vuex'
 
 export default {
   name: 'ChallengeWeeklyBook',
-  methods: {
-    ...mapActions('challenge', ['getWeeklyBook']),
-  },
   computed: {
     ...mapState('challenge', ['weeklyBook']),
     author () {
@@ -38,19 +34,20 @@ export default {
       }
       return this.weeklyBook.author
     }
-  },
-  created () {
-    this.getWeeklyBook(moment().format('YYYY-MM-DD'))
-  },
+  }
 }
 </script>
 
 <style scoped>
   .weekly-book .book {
-    height: 150px;
     width: 100px;
+    height: auto;
     border-radius: 10px;
     box-shadow: 5px 5px 5px 3px rgba(0, 0, 0, 0.25);
+    cursor: pointer;
+  }
+  .weekly-book .book:hover {
+    width: 105px;
   }
   .weekly-book .title {
     width: 80%;
@@ -60,7 +57,7 @@ export default {
     font-weight: 700;
   }
   .weekly-book .info {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 300;
   }
 </style>

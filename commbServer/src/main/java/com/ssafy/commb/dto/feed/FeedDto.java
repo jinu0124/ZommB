@@ -40,15 +40,24 @@ public class FeedDto {
         private Integer bookId;
         private String keywordId;
 
-        private String content;
+        private String contents;
     }
 
     @Getter
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class RequestContent {                // 요청
+
+        private String content;
+    }
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class RegisterRequest {                // 요청
         private Integer bookId;
-        private String content;
+        private String contents;
     }
 
     @Getter
@@ -66,6 +75,7 @@ public class FeedDto {
     @AllArgsConstructor
     @NoArgsConstructor
     @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Builder
     public static class ResponseList {          // 반환
         private List<FeedDto> data;
         private String retMsg;                  // message

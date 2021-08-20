@@ -1,5 +1,5 @@
 <template>
-  <div class="like-list">
+  <div>
     <div
       class="like-list-item"
       @mouseover="currentItem(true)"
@@ -8,28 +8,45 @@
     >
       <span class="user-images">
         <img
-          v-if="myInfo.userFileUrl"
+          v-if="feed.userFileUrl"
           class="user-profile"
           type="button"
           id="UserProfile"
-          :src="myInfo.userFileUrl"
+          :src="feed.userFileUrl"
           alt="user-profile"
+          @click="
+            $router.push({ name: 'Profile', params: { id: feed.id, page: 0 } })
+          "
         />
         <img
           v-else
           src="@/assets/image/common/profileDefault.svg"
           alt="default-user-image user-profile"
-          class="user-image"
+          class="user-profile"
           type="button"
         />
-      </span>
-      <span class="user-nickname">{{ nickname }}</span>
-      <span>
-        <button class="follow btn-5 btn-yellow" @click="follow()" v-show="Follow">팔로우</button>
-      </span>
-      <span>
-        <button class="follow btn-5 btn-grey" type="button" @click="unfollow()" v-show="unFollow">
-          팔로우 취소
+        <span
+          class="user-nickname"
+          type="button"
+          @click="
+            $router.push({ name: 'Profile', params: { id: feed.id, page: 0 } })
+          "
+          >{{ feed.nickname }}</span
+        >
+        <button
+          class="follow btn-5 btn-grey"
+          @click="unfollow"
+          v-if="feed.isFollow"
+        >
+          언팔로우
+        </button>
+        <button
+          class="follow btn-5 btn-yellow"
+          type="button"
+          @click="follow"
+          v-else
+        >
+          팔로우
         </button>
       </span>
     </div>
@@ -37,38 +54,36 @@
 </template>
 
 <script>
-import { mapState } from "vuex";
-
+import { mapActions } from "vuex";
+import userApi from "@/api/user";
 export default {
   name: "LikeListItem",
   data() {
     return {
+      isFollow: null,
       isColor: false,
-      Follow: true,
-      unFollow: false,
-      nickname: "Nickname",
     };
   },
   props: {
-    like: Object,
+    feed: Object,
   },
   methods: {
+    ...mapActions("user", ["myInfo", "getFollowing", "getUserInfo"]),
     currentItem(flag) {
       this.isColor = flag;
     },
-    follow() {
-      this.Follow = false;
-      this.unFollow = true;
-      console.log("팔로우");
+    async follow() {
+      this.feed.isFollow = true;
+      await userApi.follow(this.feed.id).then(() => {
+        this.getFollowing(this.myInfo.id);
+      });
     },
-    unfollow() {
-      this.Follow = true;
-      this.unFollow = false;
-      console.log("팔로우 취소");
+    async unfollow() {
+      this.feed.isFollow = false;
+      await userApi.unfollow(this.feed.id).then(() => {
+        this.getFollowing(this.myInfo.id);
+      });
     },
-  },
-  computed: {
-    ...mapState("user", ["myInfo"]),
   },
 };
 </script>
@@ -83,24 +98,26 @@ div {
   width: 100%;
   margin: 20px auto;
 }
-.user-image {
+.follow {
+  align-self: center;
+}
+.user-nickname {
+  text-align: center;
+  align-self: center;
+  margin-left: 20px;
+  width: 150px;
+}
+.default-user-image,
+.user-profile {
   width: 40px;
   height: 40px;
   border-radius: 50%;
 }
-.follow {
-  align-self: right;
+.user-images {
+  margin-right: 10px;
+  align-content: center;
 }
-.user-nickname {
-  margin: 0 50px 0 3px;
+.like-list-item {
+  margin: 10px 0px;
 }
-.default-user-image,
-.user-profile {
-  width: 2rem;
-  height: 2rem;
-  border-radius: 100%;
-}
-/* .user-profile {
-  align-self: center;
-} */
 </style>

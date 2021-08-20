@@ -2,49 +2,56 @@
   <div class="feed-list-item">
     <div class="item-body d-flex flex-column align-items-center">
       <div class="feed-header align-items-center">
-        <span
-          ><img
-            v-if="myInfo.userFileUrl"
+        <span>
+          <img
+            v-if="feed.user.userFileUrl"
             class="user-profile"
-            type="button"
-            id="UserProfile"
-            :src="myInfo.userFileUrl"
-            alt="user-profile" />
+            :src="feed.user.userFileUrl"
+            alt="user-profile"
+            @click="moveToUserDetail()"
+          />
           <img
             v-else
-            alt="디폴트 회원 이미지"
             class="default-user-image user-profile"
             src="@/assets/image/common/profileDefault.svg"
-            type="button"
-            id="UserProfile"
-        /></span>
-        <span class="nick-title">
-          <div class="owner">{{ nickname }}</div>
-          <img
-            alt="미니북"
-            class="minibook"
-            src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
+            alt="디폴트 회원 이미지"
+            @click="moveToUserDetail()"
           />
-          <span class="book-title">{{ title }}</span>
         </span>
-        <span
-          ><img
+        <span class="nick-title">
+          <div class="owner" type="button" @click="moveToUserDetail()">
+            {{ feed.user.nickname }}
+          </div>
+          <span class="book-title" type="button" @click="moveToBookDetail()"
+            ><img
+              alt="미니북"
+              class="minibook"
+              src="https://static.overlay-tech.com/assets/d4d5499f-e401-4358-8f23-e21f81457d3a.svg"
+            />{{ feed.book.bookName }}</span
+          >
+        </span>
+        <span class="dropdown">
+          <img
             alt="피드 메뉴"
             class="feed-menu dropdown-toggle"
             data-bs-toggle="dropdown"
             aria-expanded="false"
             src="@/assets/image/deco/feedMenu.svg"
             type="button"
-            id="FeedMenuDropdown"
-        /></span>
-        <FeedMenu />
+            :id="'FeedMenuDropdown' + feed.id"
+          />
+          <FeedMenu 
+            :feed="feed"
+            @edit="turnIntoEditMode"
+          />
+        </span>
       </div>
+
       <img
-        v-if="myInfo.userFileUrl"
+        v-if="feed.feedFileUrl"
         class="feed-image"
         type="button"
-        id="FeedImage"
-        :src="myInfo.userFileUrl"
+        :src="feed.feedFileUrl"
         alt="feed-image"
       />
       <img
@@ -57,39 +64,60 @@
     <div class="like-reply">
       <span>
         <img
-          alt="좋아요버튼안눌림"
-          class="dislike btn-like"
-          type="button"
-          @click="like()"
-          src="@/assets/image/deco/heartEmpty.svg"
-          v-show="disLike"
-        />
-        <img
+          v-show="this.isThumb"
           alt="좋아요버튼눌림"
           class="like btn-like"
           type="button"
-          @click="dislike()"
+          @click="dislikeFeed(feed.id), dislike()"
           src="@/assets/image/deco/heartFill.svg"
-          v-show="Like"
+        />
+        <img
+          v-show="!this.isThumb"
+          alt="좋아요버튼안눌림"
+          class="dislike btn-like"
+          type="button"
+          @click="likeFeed(feed.id), like()"
+          src="@/assets/image/deco/heartEmpty.svg"
         />
       </span>
-      <span class="like-num" type="button" @click="moveToLike">{{
-        this.likeNum
-      }}</span>
+      <span
+        class="like-num"
+        type="button"
+        @click="$router.push({ name: 'Like', params: { id: feed.id } })"
+        >{{ feed.thumbCnt }}</span
+      >
       <span>
         <img
           alt=""
           class="btn-reply"
           type="button"
-          @click="moveToReply"
+          @click="onMoveToComment"
           src="https://static.overlay-tech.com/assets/49561840-b376-4f24-8538-528bb7386fa4.svg"
         />
       </span>
-      <span class="reply-num" type="button" @click="moveToReply">{{
-        this.replyNum
+      <span class="reply-num" type="button" @click="onMoveToComment">{{
+        feed.comments.length
       }}</span>
     </div>
-    <div class="content">
+    <div v-if="isEditMode" class="edit-box d-flex align-items-center">
+      <textarea
+        class="form-control edit-input" 
+        type="text"
+        @input="editContent"
+        :value="contentNew"
+      ></textarea>
+      <div class="d-flex flex-column me-2 gap-1">
+        <button 
+          class="btn-edit btn-yellow"
+          @click="onUpdate"
+        >수정</button>
+        <button 
+          class="btn-edit btn-grey"
+          @click="cancelUpdate"
+        >취소</button>
+      </div>
+    </div>
+    <div v-else class="content">
       <p class="content-detail">{{ shortenContent }}</p>
       <p
         class="content-more"
@@ -107,86 +135,143 @@
       >
         접기
       </p>
-      <p class="content-duration">{{ duration }}시간 전</p>
+      <p class="content-duration">{{ timeForToday(this.feed.createAt) }}</p>
+      <!-- 시간 계산 필요 -->
       <div>
         <span
-          v-for="(tag, idx) in tags"
+          v-for="(tag, idx) in feed.hashTags"
           :key="idx"
-          class="tag rounded-pill me-1"
-          >#{{ tag }}</span
+          class="tag rounded-pill"
+          type="button"
+          @click="searchTag(tag.tag)"
+          >#{{ tag.tag }}</span
         >
       </div>
       <hr />
     </div>
-    <ReplyListItem />
     <div class="reply-more">
-      <span type="button" @click="moveToReply">더보기</span>
+      <span type="button" @click="onMoveToComment">댓글보기</span>
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from "vuex";
+import { mapActions, mapState } from "vuex";
 import FeedMenu from "@/components/feeds/feed/FeedMenu";
-import ReplyListItem from "@/components/feeds/reply/ReplyListItem.vue";
 import _ from "lodash";
 
 export default {
   name: "FeedListItem",
   components: {
     FeedMenu,
-    ReplyListItem,
+  },
+  props: {
+    feed: Object,
   },
   data() {
     return {
-      content:
-        "피드 게시물 내용입니다. 많으면 짤리게 할까요 이것도...세라누나 코드 좀 가져갈게....누나 너무 잘한다. 많이 배워가. 근데 진짜 긴데도 안짤리네..length 200으로 하고 더보기 누르면 보이게 만들고 싶다. 헐 200으로 했는데 아직도 안짤렸네,,,이제는 ... 무한반복................................................. 이건 왜 안짤려...",
-      tags: ["해시태그", "테스트", "입니다."],
-      nickname: "Nickname",
-      title: "미드나잇 라이브러리",
-      likeNum: 0,
-      replyNum: 0,
+      moreContent: false,
       Like: false,
       disLike: true,
-      moreContent: false,
-      duration: "3",
+      idx: null,
+      isThumb: this.feed.isThumb,
+      // 수정 관련 데이터
+      isEditMode: false,
+      contentNew: ''
     };
   },
   methods: {
-    moveToLike() {
-      this.$router.push("/like");
-    },
-    moveToReply() {
-      this.$router.push("/reply");
-    },
+    ...mapActions("feed", ["likeFeed", "dislikeFeed", 'updateFeed']),
     like() {
-      this.Like = true;
-      this.disLike = false;
-      this.likeNum += 1;
+      this.isThumb = true;
+      this.feed.thumbCnt += 1;
     },
     dislike() {
-      this.Like = false;
-      this.disLike = true;
-      this.likeNum -= 1;
+      this.isThumb = false;
+      this.feed.thumbCnt -= 1;
+    },
+    turnIntoEditMode () {
+      this.isEditMode = true
+    },
+    editContent (event) {
+      this.contentNew = event.target.value
+    },
+    cancelUpdate () {
+      this.isEditMode = false
+      this.contentNew = this.feed.content
+    },
+    async onUpdate () {
+      await this.updateFeed({ id: this.feed.id, content: this.contentNew })
+      this.isEditMode = false
+      this.contentNew = this.feed.content
     },
     showMoreContent(flag) {
       this.moreContent = flag;
     },
+    moveToBookDetail() {
+      let bookid = this.feed.book.id;
+      this.$router.push("/book/" + bookid);
+    },
+    moveToUserDetail() {
+      let userid = this.feed.user.id;
+      this.$router.push("/profile/" + userid + "/0");
+    },
+    timeForToday(value) {
+      const today = new Date();
+      const timeValue = new Date(value);
+
+      const betweenTime = Math.floor(
+        (today.getTime() - timeValue.getTime()) / 1000 / 60
+      );
+      if (betweenTime < 1) return "방금전";
+      if (betweenTime < 60) {
+        return `${betweenTime}분전`;
+      }
+      const betweenTimeHour = Math.floor(betweenTime / 60);
+      if (betweenTimeHour < 24) {
+        return `${betweenTimeHour}시간전`;
+      }
+
+      const betweenTimeDay = Math.floor(betweenTime / 60 / 24);
+      if (betweenTimeDay < 365) {
+        return `${betweenTimeDay}일전`;
+      }
+
+      return `${Math.floor(betweenTimeDay / 365)}년전`;
+    },
+    onMoveToComment() {
+      this.$store.commit("feed/SET_TARGET_FEED", this.feed.id)
+      this.$router.push({ name: "Reply", params: { id: this.feed.id } })
+    },
+    searchTag(keyword) {
+      this.$router.push({
+        name: "Search",
+        params: { flag: "feeds" },
+        query: { q: keyword },
+      });
+    },
   },
   computed: {
+    ...mapState("user", ["myInfo"]),
     shortenContent() {
+      let content = this.feed.content;
       if (this.moreContent) {
-        return this.content;
+        return content;
       } else {
-        return _.truncate(this.content, { length: 80 });
+        return _.truncate(content, { length: 100 });
       }
     },
-    ...mapState("user", ["myInfo"]),
   },
+  mounted () {
+    this.contentNew = this.feed.content
+  }
 };
 </script>
 
 <style lang="scss" scoped>
+.feed-list-item {
+  margin-top: 20px;
+}
 .feed-header {
   height: 60px;
   display: flex;
@@ -198,12 +283,51 @@ export default {
   border-radius: 100%;
   margin: 0px 5px;
 }
-.default-feed-image {
+.default-feed-image,
+.feed-image {
   width: 280px;
   height: auto;
 }
 .nick-title {
   margin-right: 40px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  width: 160px;
+}
+.edit-box {
+  background: #F1F1F1;
+  width: 280px;
+  height: fit-content;
+  border-radius: 10px;
+}
+.edit-input {
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+  border: none;
+  font-size: 14px;
+  letter-spacing: 1px;
+  word-spacing: 1px;
+  line-height: 18px;
+  outline: none;
+  padding: 10px 20px;
+  height: 80px;
+  word-wrap: break-word;
+}
+.edit-input::-webkit-scrollbar {
+  display: none;
+}
+.btn-edit {
+  border: none;
+  width: 50px;
+  height: 25px;
+  border-radius: 13px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 500;
+}
+.book-title {
+  width: 160px;
 }
 .minibook {
   width: 1rem;
@@ -241,7 +365,8 @@ export default {
 .tag {
   color: #585858;
   background: #ffdc7c;
-  padding: 5px;
+  padding: 0px 5px;
+  margin: 5px;
 }
 .reply-more {
   margin: 0px auto;
@@ -254,5 +379,27 @@ export default {
   font-weight: 400;
   line-height: normal;
   color: rgba(164, 164, 164, 1);
+}
+.reply-list-item {
+  margin-top: 10px;
+}
+.reply-content {
+  font-family: "Noto Sans KR";
+  margin: 0px 5px;
+}
+.replier {
+  font-family: noto-sans-kr-10;
+  margin-right: 10px;
+  font-weight: bold;
+}
+.reply-like-num {
+  font-family: "Noto Sans KR";
+  font-size: 9px;
+  color: rgba(164, 164, 164, 1);
+}
+.reply {
+  background: #fff;
+  color: rgba(33, 33, 33, 1);
+  margin-bottom: 2px;
 }
 </style>

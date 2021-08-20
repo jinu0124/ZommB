@@ -4,18 +4,20 @@
 <mapper namespace="com.ssafy.commb.dao.BookDao">
 
     <select id="getBooksByName" parameterType="Map" resultMap="bookInformation">
-        SELECT T.id, T.book_name, T.author, T.publisher, T.year, T.isbn, T.file_url AS bookFileUrl, T.rate, COUNT(bs.book_id) AS readCnt
+        SELECT T.id, T.book_name, T.author, T.publisher, T.year, T.isbn, T.file_url AS bookFileUrl, T.rate, COUNT(bs.book_id)
         FROM
             (SELECT B.ID AS id, BOOK_NAME, AUTHOR, PUBLISHER, YEAR, ISBN, FILE_URL, AVG(RATE) AS rate
              FROM BOOK B, BOOK_SHELVES BS
-             WHERE B.ID = BS.BOOK_ID AND IS_READ = #{isRead} AND BOOK_NAME LIKE '${bookName}%'
+             WHERE B.ID = BS.BOOK_ID AND BOOK_NAME LIKE '${bookName}%'
              GROUP BY B.ID) AS T,
             (SELECT bs.book_id
              FROM book_shelves bs
              WHERE bs.user_id = #{userId} AND bs.is_read = #{isRead}) AS T2,
             book_shelves bs
-        WHERE T.id = bs.book_id AND bs.is_read = #{isRead} AND T.id = T2.book_id
+        WHERE T.id = T2.book_id AND bs.is_read = 1 AND bs.book_id = T.id
         GROUP BY bs.book_id
+        ORDER BY T.rate DESC
+        LIMIT 20 OFFSET #{page}
     </select>
 
     <select id="getUserReadCnt" parameterType="Integer" resultType="HashMap">
@@ -23,13 +25,13 @@
         FROM book_shelves bs
         WHERE bs.user_id = #{userId}
         GROUP BY bs.is_read
-        ORDER BY bs.is_read DESC;
+        ORDER BY bs.is_read DESC
     </select>
 
     <select id="getTopBooks" parameterType="Integer" resultType="Book">
         SELECT distinct b.id AS id, file_url AS bookFileUrl
         FROM top_book t, book b
-        WHERE user_id = #{userId} AND t.book_id = b.id;
+        WHERE user_id = #{userId} AND t.book_id = b.id
     </select>
 
     <select id="getBookByUserIdAndBookId" parameterType="Integer" resultType="Integer">
@@ -52,6 +54,20 @@
         delete from top_book
         where user_id = #{userId} and book_id = #{bookId}
     </delete>
+
+    <select id="getRandomBook" resultType="Book">
+        SELECT book.id
+        FROM book INNER JOIN (SELECT id
+                              FROM book
+                              ORDER BY RAND()
+                              LIMIT 2) AS b
+                  inner JOIN (SELECT book_id
+                              FROM weekly_event
+                              ORDER BY id DESC
+                              LIMIT 1) AS w
+        ON book.id = b.id AND w.book_id != b.id
+        LIMIT 1
+    </select>
 
     <resultMap type="Book" id="bookInformation">
         <result column="id" property="id"/>

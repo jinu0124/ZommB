@@ -18,7 +18,7 @@ bin/
 !**/src/test/**/bin/
 
 ### IntelliJ IDEA ###
-.idea
+.idea/
 *.iws
 *.iml
 *.ipr
@@ -41,3 +41,12 @@ out/
 
 ### indexl.html
 **/src/main/resources/static/
+
+# backup 파일
+*.bak
+
+# build layer 파일
+dependencies/
+snapshot-dependencies/
+spring-boot-loader/
+application/

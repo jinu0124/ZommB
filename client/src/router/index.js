@@ -5,7 +5,9 @@ import Index from '@/views/Index'
 import Login from '@/views/user/Login'
 import Signup from '@/views/user/Signup'
 import SignupEmail from '@/views/user/SignupEmail'
+import Notification from '@/views/user/Notification'
 import UpdateInfo from '@/views/user/UpdateInfo'
+import Withdraw from '@/views/user/Withdraw'
 import Profile from '@/views/user/profile/Profile'
 import Follow from '@/views/user/profile/Follow'
 import Search from '@/views/search/Search'
@@ -21,8 +23,6 @@ import Write from '@/views/feed/write/Write'
 import PageNotFound from '@/views/error/PageNotFound'
 import ServerError from '@/views/error/ServerError'
 import Challenge from '@/views/challenge/Challenge'
-import AddBookcart from '@/components/profile/AddBookcart'
-import AddLibrary from '@/components/profile/AddLibrary'
 import OAuthRedirect from '@/views/user/OAuthRedirect'
 
 Vue.use(VueRouter)
@@ -53,6 +53,7 @@ const routes = [
     path: '/updateinfo',
     name: 'UpdateInfo',
     component: UpdateInfo,
+    meta: { requireAuth: true }
   },
   {
     path: '/find-password',
@@ -63,6 +64,30 @@ const routes = [
     path: '/reset-password',
     name: 'ResetPassword',
     component: ResetPassword,
+  },
+  {
+    path: '/withdraw',
+    name: 'Withdraw',
+    component: Withdraw,
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/notification',
+    name: 'Notification',
+    component: Notification,
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/profile/:id/:page',
+    name: 'Profile',
+    component: Profile,
+    meta: { requireAuth: true }
+  },
+  {
+    path: '/follow/:id/:flag',
+    name: 'Follow',
+    component: Follow,
+    meta: { requireAuth: true }
   },
   // social login
   {
@@ -89,73 +114,56 @@ const routes = [
   {
     path: '/book/:id',
     name : 'BookInfo',
-    component : BookInfo
+    component : BookInfo,
+    meta: { requireAuth: true }
   },
   //feed
   {
     path: '/feed',
-      name : 'Feed',
-      component : Feed,
-      // meta: { requireAuth: true }
+    name : 'Feed',
+    component : Feed,
+    meta: { requireAuth: true }
   },
   {
-    path: '/like',
-      name : 'Like',
-      component : Like,
-      // meta: { requireAuth: true }
+    path: '/like/:id',
+    name : 'Like',
+    component : Like,
+    meta: { requireAuth: true }
   },
   {
-    path: '/reply',
+    path: '/reply/:id',
     name: 'Reply',
     component: Reply
   },
   {
-    path: '/profile',
-    name: 'Profile',
-    component: Profile
-  },
-  {
-    path: '/report',
+    path: '/report/:id',
     name: 'Report',
     component: Report
   },
   {
-    path: '/select',
+    path: '/select/:flag',
     name: 'SelectBook',
-    component: SelectBook
+    component: SelectBook,
+    meta: { requireAuth: true }
   },
   {
     path: '/write/:id',
     name: 'Write',
-    component: Write
-  },
-  {
-    path: '/follow',
-    name: 'Follow',
-    component: Follow,
-    // meta: { requireAuth: true }
+    component: Write,
+    meta: { requireAuth: true }
   },
   // challenge
   {
-    path: '/challenge',
+    path: '/challenge/:page',
     name : 'Challenge',
     component : Challenge,
-    // meta: { requireAuth: true }
+    meta: { requireAuth: true }
   },
   {
-    path: '/addBookcart',
-    name: 'AddBookcart',
-    component: AddBookcart
-  },
-  {
-    path: '/addLibrary',
-    name: 'AddLibrary',
-    component: AddLibrary
-  },
-  {
-    path: '/search',
+    path: '/search/:flag',
     name: 'Search',
-    component: Search
+    component: Search,
+    meta: { requireAuth: true }
   },
 ]
 

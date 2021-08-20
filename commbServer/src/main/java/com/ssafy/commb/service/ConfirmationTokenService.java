@@ -10,4 +10,6 @@ public interface ConfirmationTokenService {
     public Optional<ConfirmationToken> findByIdAndExpirationDateAfterAndExpired(String confirmationTokenId);
 
     public int findById(String key);
+
+    public void deleteLast();
 }

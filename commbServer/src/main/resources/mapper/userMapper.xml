@@ -9,11 +9,11 @@
                (SELECT COUNT(*) FROM follow WHERE following = #{userId}) AS follower,
                (SELECT COUNT(*) FROM follow WHERE follower = #{myUserId} and following = #{userId}) AS isFollow
         FROM user
-        WHERE id = #{userId};
+        WHERE id = #{userId}
     </select>
 
     <select id="getMyFollowerExFollowing" parameterType="Integer" resultMap="userInformation">
-        SELECT u.id, NAME, nickname, file_url AS userFileUrl, 0 AS isFollow, bookmark, pencil, 5 as cnt
+        SELECT distinct u.id, NAME, nickname, file_url, 0 AS isFollow, bookmark, pencil, 5 as cnt
         FROM follow f2, user u
         WHERE u.id = f2.follower and f2.following = #{userId} AND f2.follower NOT IN (
             SELECT f1.following
@@ -27,7 +27,20 @@
             FROM follow f3
             WHERE f3.follower = #{userId})
         GROUP BY f2.following
-        ORDER BY cnt DESC, nickname;
+        ORDER BY cnt DESC, nickname
+        LIMIT 50 OFFSET #{page}
+    </select>
+
+    <select id="getUsers" parameterType="String" resultType="My">
+        SELECT T.id, T.name, T.nickname, T.file_url AS userFileUrl, IF(IFNULL(f.following, 0) = 0, 0, 1) AS isFollow, LENGTH(T.nickname) AS len
+        FROM
+            (SELECT *
+             FROM user u
+             WHERE nickname LIKE '${nickname}%') AS T LEFT OUTER JOIN follow f
+            ON f.follower = #{userId} AND T.id = f.following
+        ORDER BY len, isFollow DESC
+        LIMIT 50
+        OFFSET ${page}
     </select>
 
     <resultMap type="User" id="userInformation">
@@ -40,7 +53,7 @@
         <result column="pencilOn" property="level.pencilOn"/>
         <result column="bookmark" property="level.bookmark"/>
         <result column="bookmarkOn" property="level.bookmarkOn"/>
-        <result column="isFollow" property="follow.isFollow"/>
+        <result column="isFollow" property="isFollow"/>
         <result column="following" property="follow.following"/>
         <result column="follower" property="follow.follower"/>
     </resultMap>

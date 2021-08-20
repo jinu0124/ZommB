@@ -1,9 +1,12 @@
 package com.ssafy.commb.controller;
 
 import com.ssafy.commb.common.QueryStringArgResolver;
+import com.ssafy.commb.common.fcm.FcmService;
 import com.ssafy.commb.dto.book.BookDto;
 import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.dto.bookshelf.BookShelfCntDto;
+import com.ssafy.commb.dto.bookshelf.BookShelfDto;
+import com.ssafy.commb.dto.fcm.FcmDto;
 import com.ssafy.commb.dto.feed.FeedDto;
 import com.ssafy.commb.dto.user.MyDto;
 import com.ssafy.commb.dto.user.UserDto;
@@ -22,14 +25,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
+import javax.annotation.Nullable;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+/**
+ * @ User, Bookshelves, Keyword/Follow Recommend Function Controller
+ */
 @RestController
 @RequestMapping(value = "/api/users")
 @Api("User Controller API V1")
@@ -62,7 +72,10 @@ public class UserController {
     private UserRepository userRepository;
 
     @Autowired
-    RedisService redisService;
+    private RedisService redisService;
+
+    @Autowired
+    private FcmService fcmService;
 
     @Value("${security.accesstoken}")
     private String accessToken;
@@ -76,21 +89,23 @@ public class UserController {
     @Value("${dynamic.front.path}")
     private String dynamicFrontPath;
 
-    @Value("${cloud.profile}")
-    private String awsProfilePath;
-
-    // 회원관리(관리자) - (관리자)가 회원 정보 리스트 검색
-    @GetMapping("")
+    @GetMapping("/info")
     @ApiOperation(value = "(관리자)회원 정보 리스트 검색", response = UserDto.Response.class)
-    public ResponseEntity<UserDto.ResponseList> findUserList(@RequestParam String nickname) {
+    public ResponseEntity findUserList(@RequestParam String nickname,
+                                                             @RequestParam Integer page,
+                                                             HttpServletRequest request) {
 
-        UserDto.ResponseList userResList = userService.getUsers(nickname);
+        switch (userService.getUserRole((int) request.getAttribute("userId"))) {
+            case "USR":
+                return ResponseEntity.ok().body(userService.getUsers(nickname, page * 50, request));
+            case "ADM":
+                UserDto.ResponseList userResList = userService.getUsers(nickname, page * 50);
+                return ResponseEntity.ok().body(userResList);
+        }
 
-        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
+        return ResponseEntity.status(401).build();
     }
 
-    // 일반 회원 검색 만들기
-    
 
 
 //    // 회원관리(관리자) - (관리자) 피드 삭제
@@ -103,7 +118,6 @@ public class UserController {
 //        return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
 //    }
 
-    // 회원가입/로그인 - 자체 회원가입
     @PostMapping("")
     @ApiOperation(value = "자체 회원가입")
     public ResponseEntity<Map<String, Integer>> singUp(@RequestBody @Valid MyDto.Request myReq, BindingResult bindingResult) {
@@ -120,22 +134,18 @@ public class UserController {
         return new ResponseEntity<>(map, HttpStatus.valueOf(201));
     }
 
-    // 회원가입/로그인 - Email 중복 확인
     @GetMapping("/email")
     @ApiOperation(value = "Email 중복 확인")
     public ResponseEntity duplicateEmail(@RequestParam String email) {
-        if (userService.isExistEmail(email))
-            return new ResponseEntity(HttpStatus.valueOf(400));
+        if (userService.isExistEmail(email)) return new ResponseEntity(HttpStatus.valueOf(400));
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
-    // 회원가입/로그인 - Email 인증
     @PostMapping("/confirm-email")
     @ApiOperation(value = "Email 인증")
     public ResponseEntity viewConfirmEmail(@RequestBody MyDto.TokenRequest myTokenReq){
-
-        String token = userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail(), "");
+        userService.TokenGeneration(myTokenReq.getId(), myTokenReq.getEmail(), "");
 
         return ResponseEntity.ok().build();
     }
@@ -143,9 +153,6 @@ public class UserController {
     @GetMapping("/checkEmailComplete")
     @ApiOperation(value = "Email 인증 확인")
     public String checkEmailComplete(@RequestParam String key, String url, HttpServletResponse response) throws IOException {
-
-//       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url);
-//       response.sendRedirect("Http://i5a602.p.ssafy.io:8080/" + url + "?key=" + key);
         switch(url){
             case "" :
                 if(userService.confirmEmail(key)) response.sendRedirect(dynamicFrontPath + url);
@@ -158,7 +165,6 @@ public class UserController {
         return "<h4>메일 인증을 위한 토큰이 만료되었거나 유효하지 않아 인증에 실패하였습니다.</h4>";
     }
 
-    // 회원가입/로그인 - 소셜 회원가입
     @GetMapping("/social/login")
     @ApiOperation(value = "소셜 회원가입", response = MyDto.Response.class)
     public ResponseEntity<MyDto.Response> socialLogin(@RequestParam(value="code") String code) {
@@ -176,15 +182,19 @@ public class UserController {
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
-        System.out.println(resHeader.get(accessToken));
-        System.out.println(resHeader.get(refreshToken));
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
-    // 회원가입/로그인 - 자체 로그인
+    @DeleteMapping("/login")
+    @ApiOperation(value = "로그아웃")
+    public ResponseEntity logout(@RequestParam String firebaseToken){
+        fcmService.del(firebaseToken);
+        return ResponseEntity.status(204).build();
+    }
+
     @PostMapping("/login")
     @ApiOperation(value = "자체 로그인", response = MyDto.Response.class)
-    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) {
+    public ResponseEntity<MyDto.Response> login(@RequestBody MyDto.LoginRequest myReq) throws InterruptedException, IOException {
         MyDto.Response myRes = userService.login(myReq);
         Map<String, Object> map = securityService.createToken(myRes.getData().getId());
 
@@ -192,8 +202,8 @@ public class UserController {
         resHeader.set(accessToken, (String) map.get("acToken"));
         resHeader.set(refreshToken, (String) map.get("rfToken"));
 
-        System.out.println(resHeader.get(accessToken));
-        System.out.println(resHeader.get(refreshToken));
+        fcmService.save(myRes, myReq.getFirebaseToken());
+
         return ResponseEntity.ok().headers(resHeader).body(myRes);
     }
 
@@ -201,23 +211,19 @@ public class UserController {
     @ApiOperation(value = "회원 정보 조회")
     public ResponseEntity<UserDto.Response> userInfo(@PathVariable Integer userId, HttpServletRequest request){
         UserDto.Response userRes = userService.getUserInfo(userId, request);
-        userRes.getData().setUserFileUrl(awsProfilePath + userRes.getData().getUserFileUrl());
+
         return ResponseEntity.ok().body(userRes);
     }
 
-
-    // 회원가입/로그인 - 비밀번호 찾기
     @GetMapping("/find-password")
     @ApiOperation(value = "비밀번호 찾기 요청")
     public ResponseEntity findUser(@RequestParam String email) {
         int userId = userService.getUserInfoByEmail(email);
-        System.out.println(email);
         userService.TokenGeneration(userId, email, "reset-password");
 
         return ResponseEntity.ok().build();
     }
 
-    //
     @PutMapping("/update-password")
     @ApiOperation(value = "비밀번호 찾기를 통한 Password 변경 요청")
     public ResponseEntity updatePassword(@RequestBody Map<String, Object> map) {
@@ -232,8 +238,10 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-    // 회원가입/로그인 - 프로필 수정        // flag : 0:유지 , 1:수정, 2:삭제
-    // @RequestBody 는 Json type으로 들어오는 객체를 파싱하는 역할 -> formData 형식에서는 사용치 않아야한다.
+    /**
+     * @ RequestBody Parse request of JSON type Object, So do not use in Multipart/Form-Data
+     * @ flag   0: 유지,  1: 수정,  2: 삭제
+     */
     @PostMapping("/{userId}")
     @ApiOperation(value="프로필 수정")
     public ResponseEntity updateUser(@PathVariable Integer userId,
@@ -250,7 +258,6 @@ public class UserController {
         return ResponseEntity.ok().body(myRes);
     }
 
-    // 회원가입/로그인 - 비밀번호 변경
     @PutMapping("/{userId}")
     @ApiOperation(value = "비밀번호 변경")
     public ResponseEntity updateUserInfo(@PathVariable("userId") Integer userId,
@@ -259,63 +266,77 @@ public class UserController {
         if(userReq == null) return ResponseEntity.status(401).build();
         userService.validatePassword(userReq.getNewPassword());
 
-//        request.setAttribute("userId", userId);                // 테스트용(Auto Interceptor WebConfig 적용 전)
         userService.updatePassword(userReq, request);
 
         return new ResponseEntity(HttpStatus.valueOf(200));
     }
 
-    // 회원가입/로그인 - 회원 탈퇴
     @DeleteMapping("/withdraw")
     @ApiOperation(value = "회원탈퇴")
     public ResponseEntity deleteUser(HttpServletRequest request) {
         int userId = (int) request.getAttribute("userId");
         s3Service.deleteS3(userRepository.findUserById(userId).get().getFileUrl(), "profile");
+
+        int p = 0;
+        List<FeedDto> feeds = new ArrayList<>();
+        while(feeds.size() >= 20 || p == 0){
+            feeds = feedService.getUserFeed((int) request.getAttribute("userId"), p++, request).getData();
+            s3Service.deleteS3(feeds.stream().map(FeedDto::getFeedFileUrl).collect(Collectors.toList()), "feed");
+        }
         userService.deleteUser(userId);
+
 
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
-    // 회원 프로필 - 1인 게시물(피드) 리스트 조회
-    // 피드 게시물 리스트 조회
     @GetMapping("/{userId}/feeds")
-    @ApiOperation(value = "1인 피드 리스트 조회", response = FeedDto.Response.class)
+    @ApiOperation(value = "1인(특정 사람) 피드 리스트 조회", response = FeedDto.Response.class)
     public ResponseEntity<FeedDto.ResponseList> findUserFeed(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-//        request.setAttribute("userId", 10000001);               // 테스트 용
-        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, request);
+        FeedDto.ResponseList feedResList = feedService.getUserFeed(userId, page * 20, request);
 
         return new ResponseEntity<FeedDto.ResponseList>(feedResList, HttpStatus.OK);
     }
 
-    // 회원의 게시물(피드) 수
     @GetMapping("/{userId}/feeds/cnt")
-    @ApiOperation(value = "회원의 피드 수")
+    @ApiOperation(value = "회원의 피드 개수")
     public ResponseEntity<Map<String, Integer>> findUserFeedCnt(
             @PathVariable("userId") Integer userId
     ) {
         HashMap<String, Integer> map = new HashMap<>();
         map.put("cnt", feedService.getUserFeedCnt(userId));
 
-        return new ResponseEntity<Map<String, Integer>>(map, HttpStatus.OK);
+        return new ResponseEntity<>(map, HttpStatus.OK);
     }
 
-    // 서재/북카트 내 도서 검색
+    //서재, 북카트
+    // users/{userId}/bookshelves/all
+    @GetMapping("/{userId}/bookshelves/all")
+    @ApiOperation(value = "북카트/서재 도서 목록 불러오기")
+    public ResponseEntity getBookshelfAll(@PathVariable Integer userId,
+                                         @RequestParam Integer isRead){
+
+        List<BookDto> books = bookService.getBookshelfAll(userId, isRead);
+
+        return ResponseEntity.ok().body(BookDto.ResponseList.builder().data(books).build());
+    }
+
     @GetMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 내 도서 검색", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findUserBookShelvesList(
             @PathVariable("userId") Integer userId,
             @QueryStringArgResolver BookDto.BookShelfSearchRequest bookReq,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, request);
+        BookDto.ResponseList bookResList = bookService.getBooksByName(bookReq, page * 20, request);
 
         return ResponseEntity.ok().body(bookResList);
     }
 
-    // 서재/북카트 책 추가
     @PostMapping("/{userId}/bookshelves")
     @ApiOperation(value = "북카트/서재 도서 추가")
     public ResponseEntity insertUserBookShelves(
@@ -327,17 +348,14 @@ public class UserController {
         return new ResponseEntity(HttpStatus.valueOf(201));
     }
 
-    // 읽은/읽을 책 수 반환
     @GetMapping("/{userId}/bookshelves/cnt")
     @ApiOperation(value = "읽은/읽을(서재/북카트) 도서 수", response = BookShelfCntDto.Response.class)
     public ResponseEntity<BookShelfCntDto.Response> findUserBookShelvesCnt(
             @PathVariable("userId") Integer userId
     ) {
-
-        return new ResponseEntity<BookShelfCntDto.Response>(bookService.getUserReadCnt(userId), HttpStatus.OK);
+        return new ResponseEntity<>(bookService.getUserReadCnt(userId), HttpStatus.OK);
     }
 
-    // 서재 책 1권 삭제하기
     @DeleteMapping("/{userId}/bookshelves/{bookId}")
     @ApiOperation(value = "서재/북카트 도서 1권 삭제하기")
     public ResponseEntity deleteUserBookShelf(
@@ -349,20 +367,29 @@ public class UserController {
         return ResponseEntity.status(204).build();
     }
 
-    // 북카트에서 서재로 옮기기
-    @PatchMapping("/{userId}/bookshelves/{bookId}")
-    @ApiOperation(value = "북카트에서 서재로 도서 이동")
+    @PutMapping("/{userId}/bookshelves/{bookId}")
+    @ApiOperation(value = "북카트 <-> 서재 도서 이동")
     public ResponseEntity updateUserBookShelf(
             @PathVariable("userId") Integer userId,
             @PathVariable("bookId") Integer bookId,
+            @RequestBody @Nullable Map<String, Double> map,
             HttpServletRequest request
     ) {
-        bookService.moveBook(bookId, request);
+        if(map == null || map.get("rate") == null)  bookService.moveBook(bookId, 0, request);       // 서재 -> 북카트
+        else if(map.get("rate") != null) bookService.moveBook(bookId, map.get("rate"), request);        // 북카트 -> 서재
 
         return new ResponseEntity(HttpStatus.OK);
     }
 
-    // 상단 바 도서 목록 조회
+    @GetMapping("/{userId}/bookshelves/{bookId}")
+    @ApiOperation(value = "북카트/서재 특정 도서 조회")
+    public ResponseEntity findUserBookShelf(
+            @PathVariable("userId") Integer userId,
+            @PathVariable("bookId") Integer bookId
+    ) {
+        return new ResponseEntity<BookShelfDto.Response>(bookService.getBookShelf(userId, bookId), HttpStatus.OK);
+    }
+
     @GetMapping("/{userId}/top-bar")
     @ApiOperation(value = "상단 바 도서 목록 조회", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findUserTopBar(
@@ -373,9 +400,8 @@ public class UserController {
         return new ResponseEntity<BookDto.ResponseList>(bookResList, HttpStatus.OK);
     }
 
-    // 상단 바 도서 등록 : 서재에 있는 책인지 확인 후 등록(PRI KEY 조건으로 데이터 중복 시 throw 500)
     @PostMapping("/{userId}/top-bar")
-    @ApiOperation(value = "상단 바 도서 등록")
+    @ApiOperation(value = "상단 바에 도서 등록")
     public ResponseEntity InsertUserTopBar(
             @PathVariable("userId") Integer userId,
             @RequestBody BookDto.TopBarRegisterRequest bookReq,
@@ -385,7 +411,6 @@ public class UserController {
         return ResponseEntity.status(201).body(bookReq.getId());
     }
 
-    // 상단 바 도서 전체 삭제
     @DeleteMapping("/{userId}/top-bar")
     @ApiOperation(value = "상단 바 도서 전체 삭제")
     public ResponseEntity deleteUserTopBarAll(
@@ -397,7 +422,6 @@ public class UserController {
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
-    // 상단바 도서 삭제
     @DeleteMapping("/{userId}/top-bar/{bookId}")
     @ApiOperation(value = "상단 바 도서 1권 삭제")
     public ResponseEntity deleteUserTopBar(
@@ -406,22 +430,22 @@ public class UserController {
             HttpServletRequest request
     ) {
         bookService.deleteBookTop(bookId, request);
+
         return new ResponseEntity(HttpStatus.valueOf(204));
     }
 
-    // 친구 추천 목록 조회
     @GetMapping("/{userId}/follow-recommend")
     @ApiOperation(value = "친구 추천 목록 조회", response = UserDto.Response.class)
     public ResponseEntity<UserDto.ResponseList> findFollowRecommend(
             @PathVariable("userId") Integer userId,
+            @RequestParam Integer page,
             HttpServletRequest request
     ) {
-        UserDto.ResponseList userResList = userService.followRecommend(request);
+        UserDto.ResponseList userResList = userService.followRecommend(page * 50, request);
 
         return new ResponseEntity<UserDto.ResponseList>(userResList, HttpStatus.OK);
     }
 
-    // 추천 키워드 목록
     @GetMapping("/{userId}/keyword-recommend")
     @ApiOperation(value = "추천 키워드 리스트", response = KeywordDto.Response.class)
     public ResponseEntity<KeywordDto.ResponseList> findKeywordRecommend(
@@ -429,7 +453,96 @@ public class UserController {
             HttpServletRequest request
     ) {
         KeywordDto.ResponseList keyResList =  keywordService.keywordRecommend(request);
+
         return new ResponseEntity<KeywordDto.ResponseList>(keyResList, HttpStatus.OK);
     }
 
+    @GetMapping("/alarms")
+    @ApiOperation(value = "쌓인 알림 목록 요청")
+    public ResponseEntity getAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @GetMapping("/alarms/all")
+    @ApiOperation(value = "전체 알림 목록 요청")
+    public ResponseEntity getAllAlarms(HttpServletRequest request,
+                                    @RequestParam Integer page){
+        List<FcmDto> alarms = userService.getAllAlarms(page * 20, request);
+
+        return ResponseEntity.ok().body(alarms);
+    }
+
+    @PutMapping("/pencil")
+    @ApiOperation(value = "pencil 표시 여부 변경")
+    public ResponseEntity pencil(HttpServletRequest request){
+        userService.updatePencil(request);
+
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("/bookmark")
+    @ApiOperation(value = "bookmark 표시 여부 변경")
+    public ResponseEntity bookmark(HttpServletRequest request){
+        userService.updateBookmark(request);
+
+        return ResponseEntity.ok().build();
+    }
 }
+
+
+
+/*
+
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+     https://firebase.google.com/docs/web/setup#available-libraries -->
+
+<script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+    apiKey: "AIzaSyBBx4cBxQU_YDA4IWx11dT6UXwtvrQgdE4",
+    authDomain: "commb-27f77.firebaseapp.com",
+    projectId: "commb-27f77",
+    storageBucket: "commb-27f77.appspot.com",
+    messagingSenderId: "1096431511822",
+    appId: "1:1096431511822:web:8098fb0674c582d68acf5f"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+</script>
+
+
+
+AAAA_0hpKQ4:APA91bFyxBKgfKFJwtQCKfodjXI5ANsC6srfmShL3vjDVxAQKIbuqCVvml5dbzdvcuFe6OJhEHiEcXJUmFwvjicOvqhptiWhOQacPX1Gi8AqPP59tiU452lXJR_lSjN5g4LAsGUTZkuQ
+
+BJF9g6SsclFA3hxLFj8YgBgT4vhAaUXL6Mzsad7Dh2nESKkS1cm1jURzUA9hactgtLe9-HGh_uEX4WIGl3D1YPk
+
+
+
+ */
+
+
+//<!-- The core Firebase JS SDK is always required and must be listed first -->
+//<script src="https://www.gstatic.com/firebasejs/8.9.1/firebase-app.js"></script>
+//
+//<!-- TODO: Add SDKs for Firebase products that you want to use
+//        https://firebase.google.com/docs/web/setup#available-libraries -->
+//
+//<script>
+//// Your web app's Firebase configuration
+//  var firebaseConfig = {
+//          apiKey: "AIzaSyBi-CjUpqtPjDFgo8jLiwxwpcm0KhWI31g",
+//          authDomain: "commb-43e85.firebaseapp.com",
+//          projectId: "commb-43e85",
+//          storageBucket: "commb-43e85.appspot.com",
+//          messagingSenderId: "366820301866",
+//          appId: "1:366820301866:web:ef81fde40aeda933d63753"
+//          };
+//          // Initialize Firebase
+//          firebase.initializeApp(firebaseConfig);
+//</script>

@@ -70,7 +70,7 @@
 
 .btn-6 {
   border: none;
-  width: 50px;
+  width: fit-content;
   height: 20px;
   border-radius: 10px;
   outline: none;
@@ -81,17 +81,38 @@
   font-size: 0.6rem;
 }
 
+.top-btn {
+  border: none;
+  outline: none;
+  position: fixed;
+  text-align: center;
+  vertical-align: middle;
+  bottom: 15px;
+  right: 15px;
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  background-color: #F1F1F1;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.25);
+  opacity: 0;
+  transition: all 0.5s ease-in-out;
+  z-index: 1060;
+}
 
 .btn-primary1 {
-  background-color: #683EC9;
+  background-color: #683ec9;
   color: #fff;
 }
 .btn-yellow {
-  background-color: #FFDC7C;
+  background-color: #ffdc7c;
   color: #585858;
 }
 .btn-grey {
-  background-color: #A4A4A4;
+  background-color: #a4a4a4;
+  color: #fff;
+}
+.btn-red {
+  background-color: #ff7777;
   color: #fff;
 }
 .btn-disabled {
@@ -101,12 +122,14 @@
 }
 
 .btn-text-s {
-  color: #A4A4A4;
+  color: #a4a4a4;
   font-size: 0.75rem;
+  cursor: pointer;
 }
 
 .btn-text-primary {
-  color: #683EC9;
+  color: #683ec9;
   font-size: 0.75rem;
   font-weight: 500;
+  cursor: pointer;
 }

@@ -1,17 +1,36 @@
 <template>
-  <div class="dropdown-menu">
-    <div class="dropdown-item">수정하기</div>
-    <div><a class="dropdown-item">삭제하기</a></div>
-    <div><a class="dropdown-item" @click="moveToReport()">신고하기</a></div>
+  <div class="dropdown-menu" :aria-labelledby="'FeedMenuDropdown' + feed.id">
+    <div v-show="feed.user.id == myInfo.id">
+      <a class="dropdown-item" @click="editContent()">수정하기</a>
+    </div>
+    <div v-show="feed.user.id == myInfo.id">
+      <a class="dropdown-item" @click="deleteFeed(feed.id, 0)">삭제하기</a>
+    </div>
+    <div>
+      <a
+        class="dropdown-item"
+        @click="$router.push({ name: 'Report', params: { id: feed.id } })"
+        >신고하기</a
+      >
+    </div>
   </div>
 </template>
 
 <script>
+import { mapActions, mapState } from "vuex";
+
 export default {
   name: "FeedMenu",
+  computed: {
+    ...mapState("user", ["myInfo"]),
+  },
+  props: {
+    feed: Object,
+  },
   methods: {
-    moveToReport() {
-      this.$router.push("/report");
+    ...mapActions("feed", ["deleteFeed"]),
+    editContent() {
+      this.$emit("edit");
     },
   },
 };

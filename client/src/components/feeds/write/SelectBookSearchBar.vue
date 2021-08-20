@@ -4,7 +4,7 @@
       class="search-input"
       type="text"
       placeholder="글을 쓰려는 책을 검색하세요"
-      :value="searchData"
+      :value="searchInput"
       @input="insertInput"
     />
   </div>
@@ -17,28 +17,39 @@ export default {
   name: 'SelectBookSearchBar',
   data () {
     return {
-      searchData: ''
+      searchInput: '',
     }
   },
   methods: {
-    ...mapActions('search', ['searchBookTitle']),
+    ...mapActions('search', ['searchBook']),
     insertInput (event) {
-      this.searchData = event.target.value
-      this.searchBookTitle(this.searchData)
+      this.searchInput = event.target.value
+      this.searchBook(this.searchData)
+      this.$emit('search', this.searchInput)
     },
     clean () {
-      this.$store.commit('search/SET_SEARCH_RESULT', null)
+      this.$store.commit('search/SET_BOOK_RESULT', null)
+    },
+    
+  },
+  computed: {
+    searchData () {
+      return {
+        searchType: 'title', 
+        searchWord: this.searchInput,
+        page: 1
+      }
     }
   },
   watch: {
     searchData () {
-      if (this.searchData.length === 0) {
+      if (!this.searchData.length) {
         this.clean()
       }
     }
   },
   created () {
-    this.$store.commit('search/SET_SEARCH_RESULT', null)
+    this.$store.commit('search/SET_BOOK_RESULT', null)
   }
 }
 </script>

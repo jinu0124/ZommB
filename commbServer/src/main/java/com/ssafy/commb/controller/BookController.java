@@ -2,9 +2,7 @@ package com.ssafy.commb.controller;
 
 import com.ssafy.commb.common.QueryStringArgResolver;
 import com.ssafy.commb.dto.book.BookDto;
-import com.ssafy.commb.dto.book.KeywordDto;
 import com.ssafy.commb.service.BookService;
-//import com.ssafy.commb.util.JungboNaruAPI;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 @RestController
 @RequestMapping(value="/api/books")
@@ -28,23 +24,15 @@ public class BookController {
     @Autowired
     BookService bookService;
 
-    // /books?searchType=""&searchWord=""
     // 전체 도서 검색
     @GetMapping("")
     @ApiOperation(value="검색 책 리스트(searchType, Word)", response = BookDto.Response.class)
     public ResponseEntity<BookDto.ResponseList> findBookList(@QueryStringArgResolver BookDto.BookSearchRequest bookReq) throws IOException {
 
-        // 더미데이터
-        BookDto book = BookDto.builder().id(1).bookName(bookReq.getSearchWord()).author("문성욱").publisher("싸피괴물").year(2021)
-        .isbn("1234567891234").bookFileUrl(url).readCnt(9999999).rate(3.5).build();
+        BookDto.ResponseList res = bookService.findBookList(bookReq);
 
-        BookDto.Response bookRes = new BookDto.Response();
-        bookRes.setData(book);
-
-        List<BookDto.Response> books = new ArrayList<>();
-        books.add(bookRes);
-
-        return new ResponseEntity<BookDto.ResponseList>(bookService.findBookList(bookReq), HttpStatus.OK);
+        if(res == null) return new ResponseEntity<BookDto.ResponseList>(HttpStatus.NO_CONTENT);
+        else return new ResponseEntity<BookDto.ResponseList>(res, HttpStatus.OK);
     }
 
     // 도서 상세 조회

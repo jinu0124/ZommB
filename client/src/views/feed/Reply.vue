@@ -1,18 +1,38 @@
 <template>
   <div class="reply">
-    <SimpleHeader class="reply-header" :title="title" />
+    <SimpleHeader class="reply-header" :title="title"/>
     <div class="reply-box">
-      <Content />
-      <ReplyList />
-      <hr />
-      <ReplyRegist />
+      <div class="d-flex mb-3">
+        <img 
+          v-if="targetFeed.user.userFileUrl" 
+          class="profile"
+          :src="targetFeed.user.userFileUrl" 
+          alt="user profile"
+          @click="moveToUserDetail()"
+        >
+        <img
+          v-else
+          class="profile"
+          src="@/assets/image/common/profileDefault.svg"
+          alt="default image"
+          @click="moveToUserDetail()"
+        />
+        <div class="feed-content">
+          <strong>{{ targetFeed.user.nickname }}</strong> {{ targetFeed.content }}
+        </div>
+      </div>
+      <ReplyList/>
+      <ReplyRegist
+        class="reply-bar"
+      />
+      <div class="invisible"></div>
     </div>
   </div>
 </template>
 
 <script>
+import { mapGetters } from 'vuex'
 import SimpleHeader from "@/components/SimpleHeader";
-import Content from "@/components/feeds/reply/Content";
 import ReplyList from "@/components/feeds/reply/ReplyList";
 import ReplyRegist from "@/components/feeds/reply/ReplyRegist";
 
@@ -20,7 +40,6 @@ export default {
   name: "Reply",
   components: {
     SimpleHeader,
-    Content,
     ReplyList,
     ReplyRegist,
   },
@@ -29,7 +48,15 @@ export default {
       title: "댓글",
     };
   },
-  methods: {},
+  methods: {
+    moveToUserDetail() {
+      let userid = this.targetFeed.user.id;
+      this.$router.push("/profile/" + userid + "/0");
+    },
+  },
+  computed: {
+    ...mapGetters('feed', ['targetFeed'])
+  }
 };
 </script>
 
@@ -52,12 +79,21 @@ export default {
   width: 100vw;
   border-radius: 30px 0px 0px 0px;
   margin-top: 60px;
-  padding: 20px 20px 100px;
+  padding: 20px 20px 200px;
   position: fixed;
   overflow-y: scroll;
   overflow-x: hidden;
 }
 .reply-box::-webkit-scrollbar {
   display: none;
+}
+.profile {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 100%;
+  margin: 0px 5px;
+}
+.feed-content {
+  font-size: 12px;
 }
 </style>
