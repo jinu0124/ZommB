@@ -1,5 +1,5 @@
 <template>
-  <div class="search-book">
+  <div class="search-book d-flex flex-column align-items-center">
     <div class="tabs mt-3">
       <span
         @click="changeTab(0)"
