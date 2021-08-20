@@ -124,9 +124,6 @@ export default {
       }
       return current
     },
-    temp() {
-      return this.$route.query
-    }
   },
   watch: {
     bookType () {
@@ -140,7 +137,7 @@ export default {
     this.findPage()
   },
   mounted () {
-    if (!Object.keys(this.$route.query).includes('q')) {
+    if (!Object.keys(this.$route.query).includes('q') || !this.$route.query.q) {
       this.$store.commit('search/RESET_RESULT')
     }
   }
