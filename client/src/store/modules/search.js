@@ -20,104 +20,102 @@ const state = {
 const actions = {
   async searchBook({ state, commit, getters }, searchData) {
     if (
-      searchData.searchWord.length < 2 ||
-      (searchData.page > 1 && state.stop.book)
+      searchData.searchWord.length >= 2 &&
+      (searchData.page === 1 || !state.stop.book)
     ) {
-      return
-    }
-    await searchApi.searchBook(searchData)
-      .then((res) => {
-        // console.log(res)
-        if (res.status === 204) {
-          commit('SET_STOP_BOOK', true)
-          if (searchData.page === 1) {
-            commit('SET_BOOK_RESULT', [])
-          }
-          return
-        }
-        // 첫 페이지는 무조건 저장
-        if (searchData.page === 1) {
-          commit('SET_BOOK_RESULT', res.data.data)
-        } else {
-          const oldLast = state.bookResult[state.bookResult.length - 1]
-          const newLast = res.data.data[res.data.data.length - 1]
-          // 기존 데이터와 새로운 데이터가 같으면 요청 막고 함수 종료
-          if (oldLast.isbn === newLast.isbn) {
+      await searchApi.searchBook(searchData)
+        .then((res) => {
+          // console.log(res)
+          if (res.status === 204) {
             commit('SET_STOP_BOOK', true)
+            if (searchData.page === 1) {
+              commit('SET_BOOK_RESULT', [])
+            }
             return
           }
-          // 책 중복 확인
-          const uniqData = res.data.data.filter((book) => {
-            return !getters.existBook.includes(book.isbn)
-          })
-          commit('ADD_BOOK_RESULT', uniqData)
-        }
-        // 길이 10보다 짧으면 다음 요청 막기
-        if (res.data.data.length < 10) {
+          // 첫 페이지는 무조건 저장
+          if (searchData.page === 1) {
+            commit('SET_BOOK_RESULT', res.data.data)
+          } else {
+            const oldLast = state.bookResult[state.bookResult.length - 1]
+            const newLast = res.data.data[res.data.data.length - 1]
+            // 기존 데이터와 새로운 데이터가 같으면 요청 막고 함수 종료
+            if (oldLast.isbn === newLast.isbn) {
+              commit('SET_STOP_BOOK', true)
+              return
+            }
+            // 책 중복 확인
+            const uniqData = res.data.data.filter((book) => {
+              return !getters.existBook.includes(book.isbn)
+            })
+            commit('ADD_BOOK_RESULT', uniqData)
+          }
+          // 길이 10보다 짧으면 다음 요청 막기
+          if (res.data.data.length < 10) {
+            commit('SET_STOP_BOOK', true)
+          } else {
+            commit('SET_STOP_BOOK', false)
+          }
+        })
+        .catch(() => {
           commit('SET_STOP_BOOK', true)
-        } else {
-          commit('SET_STOP_BOOK', false)
-        }
-      })
-      .catch(() => {
-        commit('SET_STOP_BOOK', true)
-      })
+        })
+    }
   },
   async searchUser({ commit }, searchData) {
     if (
-      !searchData.nickname.trim().length ||
-      (searchData.page && state.stop.user)
-    ) {
-      return
-    }
-    await searchApi.searchUser(searchData)
-      .then((res) => {
-        // console.log(res)
-        if (res.status === 200) {
-          if (!searchData.page) {
-            commit('SET_USER_RESULT', res.data.data)
-          } else {
-            commit('ADD_USER_RESULT', res.data.data)
-          }
-          commit('SET_STOP_USER', false)
-        } else if (res.status === 204) {
-          if (!searchData.page) {
-            commit('SET_USER_RESULT', [])
-          }
+      searchData.nickname.trim() &&
+      (!searchData.page || !state.stop.user)) {
+        await searchApi.searchUser(searchData)
+          .then((res) => {
+            // console.log(res)
+            if (res.status === 200) {
+              if (!searchData.page) {
+                commit('SET_USER_RESULT', res.data.data)
+              } else {
+                commit('ADD_USER_RESULT', res.data.data)
+              }
+              commit('SET_STOP_USER', false)
+            } else if (res.status === 204) {
+              if (!searchData.page) {
+                commit('SET_USER_RESULT', [])
+              }
+              commit('SET_STOP_USER', true)
+            }        
+          })
+        .catch(() => {
           commit('SET_STOP_USER', true)
-        }        
-      })
-    .catch(() => {
-      commit('SET_STOP_USER', true)
-      })
+          })
+      }
+    
   },
   async searchFeed({ commit }, searchData) {
     if (
-      !searchData.searchWord.trim().length ||
-      (searchData.page && state.stop.user)
+      searchData.searchWord.trim() &&
+      (!searchData.page || !state.stop.feed)
     ) {
-      return
-    }
-    await searchApi.searchFeed(searchData)
-    .then((res) => {
-      // console.log(res)
-      if (res.status === 200) {
-        if (!searchData.page) {
-          commit('SET_FEED_RESULT', res.data.data)
-        } else {
-          commit('ADD_FEED_RESULT', res.data.data)
-        }
-        commit('SET_STOP_FEED', false)
-      } else if (res.status === 204) {
-        if (!searchData.page) {
-          commit('SET_FEED_RESULT', [])
-        }
-        commit('SET_STOP_FEED', true)
-      }  
-    })
-    .catch(() => {
-        commit('SET_STOP_FEED', true)
-    })
+      await searchApi.searchFeed(searchData)
+        .then((res) => {
+          // console.log(res)
+          if (res.status === 200) {
+            if (!searchData.page) {
+              commit('SET_FEED_RESULT', res.data.data)
+            } else {
+              commit('ADD_FEED_RESULT', res.data.data)
+            }
+            commit('SET_STOP_FEED', false)
+          } else if (res.status === 204) {
+            if (!searchData.page) {
+              commit('SET_FEED_RESULT', [])
+            }
+            commit('SET_STOP_FEED', true)
+          }  
+        })
+        .catch(() => {
+            commit('SET_STOP_FEED', true)
+        })
+      }
+    
   },
   async recommendUser({ rootState, commit }, page) {
     await searchApi.getRecommendUSR(rootState.user.myInfo.id, page)

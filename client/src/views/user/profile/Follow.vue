@@ -47,13 +47,26 @@ export default {
     }
   },
   computed: {
-    ...mapState('user', ['followInfo'])
+    ...mapState('user', ['followInfo', 'newAlert', 'myInfo'])
   },
   methods: {
     ...mapActions('user', ['getFollower', 'getFollowing']),
     changePage(val) {
       this.selectedPage = val;
     },
+    getNew () {
+      if (Number(this.$route.params.id) === this.myInfo.id) {
+        this.getFollower(this.$route.params.id)
+        this.getFollowing(this.$route.params.id)
+      }
+    }
+  },
+  watch: {
+    newAlert () {
+      if (this.newAlert.type === 'follow') {
+        this.getNew()
+      }
+    }
   },
   created () {
     if (this.$route.params.flag === 'following') {

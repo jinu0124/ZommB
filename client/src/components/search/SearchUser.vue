@@ -34,7 +34,9 @@ export default {
   methods: {
     ...mapActions('search', ['searchUser']),
     onSearch () {
-      this.searchUser(this.searchData)
+      if (this.searchData.nickname) {
+        this.searchUser(this.searchData)
+      }
     },
     isElementUnderBottom(elem, triggerDiff) {
       const { top } = elem.getBoundingClientRect()
